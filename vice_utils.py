@@ -63,8 +63,8 @@ def show_at_R_z(stars, x="[fe/h]", y=None, c=None, xlim=None, ylim=None, **kwarg
 
     """
     fig, axs = plt.subplots(5, 3, sharex=True, sharey=True, figsize=(15,15), squeeze=True)
-    fig.supxlabel(x)
-    fig.supylabel(y)
+    # fig.supxlabel(x)
+    # fig.supylabel(y)
 
     vmin = None
     vmax = None
@@ -96,7 +96,7 @@ def show_at_R_z(stars, x="[fe/h]", y=None, c=None, xlim=None, ylim=None, **kwarg
 
 
 
-def show_stars(stars, x="[fe/h]", y=None, c=None, s=1, alpha=1, kde=False, ax=None, fig=None, colorbar=None, **args):
+def show_stars(stars, x="[fe/h]", y=None, c=None, s=1, alpha=1, kde=False, ax=None, fig=None, colorbar=None,vmin=None, vmax=None, **args):
     if ax is None or fig is None:
         fig, ax = plt.subplots()
         
@@ -107,10 +107,10 @@ def show_stars(stars, x="[fe/h]", y=None, c=None, s=1, alpha=1, kde=False, ax=No
         ax.set_ylabel("count")
     else:
         if c is None:
-            im = ax.scatter(stars[x], stars[y], s=s, alpha=alpha, **args)
+            im = ax.scatter(stars[x], stars[y], s=s, vmin=vmin, vmax=vmax, alpha=alpha, **args)
 
         else:
-            im = ax.scatter(stars[x], stars[y], c=stars[c], s=s, alpha=alpha, **args)
+            im = ax.scatter(stars[x], stars[y], c=stars[c], s=s, alpha=alpha, vmin=vmin, vmax=vmax, **args)
             if colorbar is None:
                 colorbar = True
         
