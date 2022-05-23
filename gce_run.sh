@@ -19,7 +19,7 @@ source activate local
 echo "Begining simulations"
 
 export OMP_NUM_THREADS=4
-python ../VICE/migration/simulations.py -f --dt=0.01 --name=$TMPDIR/cristallo11_multithreaded --nstars=2  --elements=c_n_o_fe --setup_nthreads=4 
+python ../VICE/migration/simulations.py -f --dt=0.01 --name=$TMPDIR/cristallo11_multithreaded --nstars=2  --elements=fe_o_n_c --setup_nthreads=4 
 echo "Completed simulation"
 cp -r -u $TMPDIR/* $SLURM_SUBMIT_DIR/output
 
