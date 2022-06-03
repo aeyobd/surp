@@ -1,0 +1,15 @@
+logs
+output
+__pycache__
+
+*.pdf
+*.jpeg
+*.vice
+
+*.swp
+*.fits
+*.fits.1
+*.obj
+.ipynb*
+
+final_figures

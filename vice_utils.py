@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import vice
 import seaborn as sns
 
+AGB_MODELS = ["cristallo11", "karakas10", "ventura13", "karakas16"]
+
 
 def analogdata(filename):
     # from VICE/src/utils
