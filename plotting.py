@@ -61,7 +61,7 @@ def arg(name, arg_type=object, value_constraint=True, default_value="None"):
 
 # @arg("ylim", default_value="(min(y), max(y))")
 # @arg("xlim", default_value="(min(x), max(x))")
-def density_scatter(x, y, xlim=None, ylim=None, n_bins=100, fig=None, ax=None, **kwargs):
+def density_scatter(x, y, xlim=None, ylim=None, n_bins=100, fig=None, ax=None, dropna=True, density=True, **kwargs):
     if xlim is None:
         xlim = (min(x), max(x))
     if ylim is None:
@@ -73,9 +73,16 @@ def density_scatter(x, y, xlim=None, ylim=None, n_bins=100, fig=None, ax=None, *
     x_bins = np.linspace(xlim[0], xlim[1], n_bins)
     y_bins = np.linspace(ylim[0], ylim[1], n_bins)
 
+    if dropna:
+        filt = np.isnan(x) | np.isnan(y)
 
-    f = ax.hist2d(x, y, bins=[x_bins, y_bins], cmin=1, density=True)
 
-    fig.colorbar(f, label="Density", ax=ax)
+    _, _, _, f =  ax.hist2d(x[~filt], y[~filt], bins=[x_bins, y_bins], cmin=1, density=density, **kwargs)
+
+    if density:
+        fig.colorbar(f, label="Density", ax=ax)
+    else:
+        fig.colorbar(f, label="Count", ax=ax)
+       
     return f
 
