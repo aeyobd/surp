@@ -10,13 +10,24 @@ from vice.yields.presets import JW20
 # vice.yields.sneia.settings['fe'] = 0.0017
 # vice.yields.sneia.settings['sr'] = 0
 # "cristallo11" agb yields for O, Fe, and Sr
-vice.yields.ccsne.settings['n'] = 3.6e-4
-def n_agb(m, z, slope = 9.0e-4):
-    return slope * m * (z / 0.014)
-vice.yields.agb.settings['n'] = n_agb
 
-vice.yields.ccsne.settings["c"] = 0.002
-vice.yields.sneia.settings["c"] = 0
+def set_yields():
+    vice.yields.ccsne.settings['n'] = 3.6e-4
+    def n_agb(m, z, slope = 9.0e-4):
+        return slope * m * (z / 0.014)
+    vice.yields.agb.settings['n'] = n_agb
+
+    vice.yields.ccsne.settings["c"] = 0.002
+    vice.yields.sneia.settings["c"] = 0
+
+    vice.yields.ccsne.settings['o'] = 0.015
+    vice.yields.ccsne.settings['fe'] = 0.0012
+    vice.yields.ccsne.settings['sr'] = 3.5e-8
+    vice.yields.sneia.settings['o'] = 0
+    vice.yields.sneia.settings['fe'] = 0.0017
+    vice.yields.sneia.settings['sr'] = 0
+
+set_yields()
 # for elem in ['c', 'o', 'fe', 'n']: vice.yields.agb.settings[elem] = "karakas16"
 # vice.yields.agb.settings["c"] = "cristallo11"
 # vice.yields.sneia.settings['fe'] *= 10**0.1

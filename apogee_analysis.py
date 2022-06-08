@@ -50,7 +50,7 @@ def vincenzo2021():
         "[c/h]": ch,
         "[n/h]": nh,
         "age": age,
-        "[c/n]": cn,
+        "[c/n]": log_to_bracket(cn, "c", "n"),
         "[o/h]": oh,
         "[n/o]": no
     })
