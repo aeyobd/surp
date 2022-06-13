@@ -99,6 +99,22 @@ def plot_apogee_cnfe(**kwargs):
     v21 = v21 = vincenzo2021()
     plt.scatter(v21["[fe/h]"], v21["[c/n]"], s=1, alpha=0.2, **kwargs)
 
+def bracket_to_abundance(data, ele):
+    return 10**data * vice.solar_z(ele)
+
+def abundance_to_bracket(data, ele):
+    return np.log10(data/vice.solar_z(ele))
+    
+def plot_apogee_cpnoh(**kwargs):
+    v21 = vincenzo2021()
+    v21["[cn/h]"] = np.log10((
+        bracket_to_abundance(v21["[c/h]"], "C") +
+        bracket_to_abundance(v21["[n/h]"], "N"))
+        / (vice.solar_z("C") + vice.solar_z("N")))
+    
+    plt.scatter(v21["[o/h]"], v21["[cn/h]"] - v21["[o/h]"], s=1, alpha=0.5, **kwargs)
+
+
 def plot_skillman20_cooh(**kwargs):
     c_o = [-0.04, -0.08, -0.31, -0.39,-.28,-.34,-.30,-.25,-.63,-.47]
     c_o_err = [.07,.04,.12,.19,.12,.11,.09,.17,.50,.46]
