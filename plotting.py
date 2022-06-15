@@ -11,8 +11,8 @@ class fig_saver():
             self.output_dir = output_dir + "/"
 
     def save(self, name):
-        plt.savefig(self.output_dir + name + ".pdf")
-        plt.savefig(self.output_dir + name + ".jpeg")
+        plt.savefig(self.output_dir + name + ".pdf", facecolor="white")
+        plt.savefig(self.output_dir + name + ".jpeg", facecolor="white")
         if self.show:
             plt.show()
 

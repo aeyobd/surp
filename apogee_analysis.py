@@ -114,6 +114,15 @@ def plot_apogee_cpnoh(**kwargs):
     
     plt.scatter(v21["[o/h]"], v21["[cn/h]"] - v21["[o/h]"], s=1, alpha=0.5, **kwargs)
 
+def plot_apogee_cmnoh(**kwargs):
+    v21 = vincenzo2021()
+    v21["[cn/h]"] = np.log10((
+        bracket_to_abundance(v21["[c/h]"], "C") -
+        bracket_to_abundance(v21["[n/h]"], "N"))
+        / (vice.solar_z("C") - vice.solar_z("N")))
+    
+    plt.scatter(v21["[o/h]"], v21["[cn/h]"] - v21["[o/h]"], s=1, alpha=0.5, **kwargs)
+
 
 def plot_skillman20_cooh(**kwargs):
     c_o = [-0.04, -0.08, -0.31, -0.39,-.28,-.34,-.30,-.25,-.63,-.47]

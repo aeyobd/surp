@@ -19,6 +19,7 @@ def set_yields():
 
     vice.yields.ccsne.settings["c"] = 0.002
     vice.yields.sneia.settings["c"] = 0
+    vice.yields.agb.settings["c"] = "cristallo11"
 
     vice.yields.ccsne.settings['o'] = 0.015
     vice.yields.ccsne.settings['fe'] = 0.0012
