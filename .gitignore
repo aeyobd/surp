@@ -24,3 +24,7 @@ figures
 
 .txt
 .csv
+
+*.csv
+*.gz
+*.out

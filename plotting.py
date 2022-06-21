@@ -62,6 +62,28 @@ def arg(name, arg_type=object, value_constraint=True, default_value="None"):
 # @arg("ylim", default_value="(min(y), max(y))")
 # @arg("xlim", default_value="(min(x), max(x))")
 def density_scatter(x, y, xlim=None, ylim=None, n_bins=100, fig=None, ax=None, dropna=True, density=True, **kwargs):
+    """
+    Plots the density of the data in each bin provided there is data in the bin. 
+    The function wrapps matplotlib.pyplot.hist2d, calculating the bins for the histogram.
+
+    Parameters
+    ----------
+    x: listlike
+        The x values of each data point to plot
+    y: listlike
+        The y values of each data point to plot
+    xlim: (float, float)
+        The lower and upper bounds on the x axis
+    ylim: (float, float)
+        The lower and upper bounds of the y axis
+    n_bins: int
+        The number of bins to divide each axis into
+    dropna: bool
+    
+    Returns
+    -------
+    The four outputs from hist2d
+    """
     if xlim is None:
         xlim = (min(x), max(x))
     if ylim is None:
@@ -77,12 +99,14 @@ def density_scatter(x, y, xlim=None, ylim=None, n_bins=100, fig=None, ax=None, d
         filt = np.isnan(x) | np.isnan(y)
 
 
-    _, _, _, f =  ax.hist2d(x[~filt], y[~filt], bins=[x_bins, y_bins], cmin=1, density=density, **kwargs)
+    R =  ax.hist2d(x[~filt], y[~filt], bins=[x_bins, y_bins], cmin=1, density=density, **kwargs)
+
+    _, _, _, f = R
 
     if density:
         fig.colorbar(f, label="Density", ax=ax)
     else:
         fig.colorbar(f, label="Count", ax=ax)
        
-    return f
+    return R
 
