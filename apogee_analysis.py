@@ -104,6 +104,29 @@ def bracket_to_abundance(data, ele):
 
 def abundance_to_bracket(data, ele):
     return np.log10(data/vice.solar_z(ele))
+
+def cpn(c1, n1):
+    if type(c1) in (list, tuple):
+        c = np.array(c1)
+    else:
+        c = c1
+    if type(n1) in (list, tuple):
+        n = np.array(n1)
+    else:
+        n = n1
+
+    return np.log10( (bracket_to_abundance(c, "c") + bracket_to_abundance(n, "n")) / (vice.solar_z("c") + vice.solar_z("n")) )
+
+def cmn(c1, n1):
+    if type(c1) in (list, tuple):
+        c = np.array(c1)
+    else:
+        c = c1
+    if type(n1) in (list, tuple):
+        n = np.array(n1)
+    else:
+        n = n1
+    return np.log10( (bracket_to_abundance(c, "c") - bracket_to_abundance(n, "n")) / (vice.solar_z("c") - vice.solar_z("n")) )
     
 def plot_apogee_cpnoh(**kwargs):
     v21 = vincenzo2021()

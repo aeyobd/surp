@@ -130,3 +130,30 @@ def R_to_zone(r: float):
     return int(1 + np.round(r/zone_width))
 def zone_to_R(zone: int):
     return (zone) * zone_width
+
+
+def load_model(name):
+    """Loads a vice.milkyway model output at the location name
+
+    Parameters
+    ----------
+    name : str
+        the name of the model to load
+
+    Returns
+    -------
+    vice.multioutput file
+    """
+    milkyway = vice.output(name)
+    milkyway.stars["abs_z"] = calculate_z(milkyway)
+    milkyway.stars["R_origin"] = zone_to_R(np.array(milkyway.stars["zone_origin"]))
+    milkyway.stars["R_final"] = zone_to_R(np.array(milkyway.stars["zone_final"]))
+    if "[c/o]" not in milkyway.stars.keys():
+        milkyway.stars["[c/o]"] = -np.array(milkyway.stars["[o/c]"])
+    if "[c/n]" not in milkyway.stars.keys():
+        milkyway.stars["[c/n]"] = -np.array(milkyway.stars["[n/c]"])
+    return milkyway
+
+
+
+
