@@ -38,7 +38,35 @@ class ModelComparer():
             plt.title(name)
             plt.show()
 
-    def plot_stars(self, x, y, c=None, solar_neighborhood=False):
+    def plot_model_fixed_t(self, x_name="[o/h]", y_name="[c/o]", xlim=None, ylim=None):
+        for name, model in self.models.items():
+            for t in [2, 5, 8, 11, 13]:
+                times = np.array(model.zones["zone0"].history["time"])
+                j = int(100*t)
+                j = np.arange(len(times))[times == t][0]
+
+                y = np.zeros(155)
+                x = np.zeros(155)
+                R = np.arange(0, 15.5, 0.1)
+
+                for i in range(155):
+                    y[i] = model.zones["zone%i" % i].history[y_name][j]
+                    x[i] = model.zones["zone%i" % i].history[x_name][j]
+                plt.plot(x, y, label=t)
+
+            plt.legend(title="t/Gry")
+            plt.title(name)
+            plt.xlabel(x_name)
+            plt.ylabel(y_name)
+
+            if xlim is not None:
+                plt.xlim(xlim)
+            if ylim is not None:
+                plt.ylim(ylim)
+
+            plt.show()
+
+    def plot_stars(self, x, y, c=None, solar_neighborhood=False, xlim=None, ylim=None):
         for name, model in self.models.items():
             if solar_neighborhood:
                 s = self.solar_neighborhood_stars[name]
@@ -47,12 +75,23 @@ class ModelComparer():
 
             show_stars(s, x, y, c=c, s=0.1)
             plt.title(name)
+
+            if xlim is not None:
+                plt.xlim(xlim)
+            if ylim is not None:
+                plt.ylim(ylim)
             plt.show()
 
     def plot_gas(self, x, y):
         for name, model in self.models.items():
             show_annulus(model, x, y, label=name,)
         plt.legend()
+
+    def plot_mdf(self, x):
+        for name, st in self.stars.items():
+            plt.hist(st[x], 50, histtype="step", label=name)
+        plt.legend(loc="upper left")
+        plt.xlabel(x)
 
     def plot_cooh(self):
         plt.figure(figsize=(8,6))
@@ -74,6 +113,27 @@ class ModelComparer():
         plt.xlim(x_min,x_max)
 
         aah.plot_apogee_cooh(c="black")
+
+    def plot_nooh(self):
+        plt.figure(figsize=(8,6))
+        N = len(list(self.stars.keys()))
+        x_min = -0.6
+        x_max = 0.4
+        for i in range(N):
+            name = list(self.stars.keys())[i]
+            s = self.solar_neighborhood_stars[name]
+            dx = 0.04
+            bins = np.arange(x_min, x_max+dx, dx)
+            y, yerr= means_star_value(s, "[n/o]", "[o/h]", bins)
+            plt.plot(bins[:-1], y, label=name)
+            plt.fill_between(bins[:-1], y-yerr, y+yerr, alpha=0.2)
+
+        plt.legend()
+        plt.xlabel("[o/h]")
+        plt.ylabel("[n/o]")
+        plt.xlim(x_min,x_max)
+
+        aah.plot_apogee_nooh(c="black")
 
 
     def plot_cnfeh(self):
