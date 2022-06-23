@@ -92,15 +92,15 @@ def log_to_bracket(ratio, elem, elem2="H"):
 
 
 def plot_apogee_cooh(**kwargs):
-    v21 = v21 = vincenzo2021()
+    v21 = vincenzo2021()
     plt.scatter(v21["[o/h]"], v21["[c/o]"], s=1, alpha=0.2, **kwargs)
 
 def plot_apogee_nooh(**kwargs):
-    v21 = v21 = vincenzo2021()
+    v21 = vincenzo2021()
     plt.scatter(v21["[o/h]"], v21["[n/o]"], s=1, alpha=0.2, **kwargs)
 
 def plot_apogee_cnfe(**kwargs):
-    v21 = v21 = vincenzo2021()
+    v21 = vincenzo2021()
     plt.scatter(v21["[fe/h]"], v21["[c/n]"], s=1, alpha=0.2, **kwargs)
 
 def bracket_to_abundance(data, ele):
