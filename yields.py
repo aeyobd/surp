@@ -10,11 +10,11 @@ from vice.yields.presets import JW20
 # vice.yields.sneia.settings['fe'] = 0.0017
 # vice.yields.sneia.settings['sr'] = 0
 # "cristallo11" agb yields for O, Fe, and Sr
+def n_agb(m, z, slope = 9.0e-4):
+    return slope * m * (z / 0.014)
 
 def set_yields():
     vice.yields.ccsne.settings['n'] = 3.6e-4
-    def n_agb(m, z, slope = 9.0e-4):
-        return slope * m * (z / 0.014)
     vice.yields.agb.settings['n'] = n_agb
 
     vice.yields.ccsne.settings["c"] = 0.002

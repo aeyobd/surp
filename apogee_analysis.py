@@ -60,6 +60,13 @@ def vincenzo2021():
     filt &= data["[n/o]"] <= 10
     
     data["[c/o]"] = data["[c/h]"] - data["[o/h]"]
+
+    data["[c+n/h]"] = np.log10((
+        bracket_to_abundance(data["[c/h]"], "C") +
+        bracket_to_abundance(data["[n/h]"], "N"))
+        / (vice.solar_z("C") + vice.solar_z("N")))
+
+    data["[c+n/o]"] = data["[c+n/h]"] - data["[o/h]"]
     return data[filt]
 
 
@@ -91,17 +98,34 @@ def log_to_bracket(ratio, elem, elem2="H"):
         return r - np.log10(vice.solar_z(elem)/vice.solar_z(elem2)) + np.log10(mm_of_elements[elem]/mm_of_elements[elem2])
 
 
-def plot_apogee_cooh(**kwargs):
+def plot_v21(x, y, **kwargs):
     v21 = vincenzo2021()
-    plt.scatter(v21["[o/h]"], v21["[c/o]"], s=1, alpha=0.2, **kwargs)
+    plt.scatter(v21[x], v21[y], s=1, alpha=0.2, c="black", **kwargs)
 
-def plot_apogee_nooh(**kwargs):
-    v21 = vincenzo2021()
-    plt.scatter(v21["[o/h]"], v21["[n/o]"], s=1, alpha=0.2, **kwargs)
 
-def plot_apogee_cnfe(**kwargs):
+def plot_mean_v21(x, y, bins=50, xlim=None, ylim=None, **kwargs):
     v21 = vincenzo2021()
-    plt.scatter(v21["[fe/h]"], v21["[c/n]"], s=1, alpha=0.2, **kwargs)
+
+    if xlim is None:
+        xlim = (min(v21[x]), max(v21[x]))
+
+    bins = np.linspace(xlim[0], xlim[1], 50)
+
+    N = len(bins) - 1
+    means = np.zeros(N)
+    sds = np.zeros(N)
+
+    for i in range(N):
+        filt = v21[(v21[x] >= bins[i]) & (v21[x] < bins[i+1])]
+        means[i] = np.mean(filt[y])
+        sds[i] = np.std(filt[y])
+
+    plt.plot(bins[:-1], means, label="V21", color="black")
+    plt.fill_between(bins[:-1], means-sds, means+sds, color="black", alpha=0.2)
+
+    # plt.plot(bins[:-1], means-sds, color="black", ls=":")
+    # plt.plot(bins[:-1], means+sds, color="black", ls=":")
+
 
 def bracket_to_abundance(data, ele):
     return 10**data * vice.solar_z(ele)
@@ -132,23 +156,6 @@ def cmn(c1, n1):
         n = n1
     return np.log10( (bracket_to_abundance(c, "c") - bracket_to_abundance(n, "n")) / (vice.solar_z("c") - vice.solar_z("n")) )
     
-def plot_apogee_cpnoh(**kwargs):
-    v21 = vincenzo2021()
-    v21["[cn/h]"] = np.log10((
-        bracket_to_abundance(v21["[c/h]"], "C") +
-        bracket_to_abundance(v21["[n/h]"], "N"))
-        / (vice.solar_z("C") + vice.solar_z("N")))
-    
-    plt.scatter(v21["[o/h]"], v21["[cn/h]"] - v21["[o/h]"], s=1, alpha=0.5, **kwargs)
-
-def plot_apogee_cmnoh(**kwargs):
-    v21 = vincenzo2021()
-    v21["[cn/h]"] = np.log10((
-        bracket_to_abundance(v21["[c/h]"], "C") -
-        bracket_to_abundance(v21["[n/h]"], "N"))
-        / (vice.solar_z("C") - vice.solar_z("N")))
-    
-    plt.scatter(v21["[o/h]"], v21["[cn/h]"] - v21["[o/h]"], s=1, alpha=0.5, **kwargs)
 
 
 def plot_skillman20_cooh(**kwargs):

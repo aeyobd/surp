@@ -28,3 +28,5 @@ figures
 *.csv
 *.gz
 *.out
+
+*.dat

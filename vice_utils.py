@@ -100,7 +100,8 @@ def show_at_R_z(stars, x="[fe/h]", y=None, c=None, xlim=None, ylim=None, **kwarg
 
 def show_stars(stars, x="[fe/h]", y=None, c=None, s=1, alpha=1, kde=False, ax=None, fig=None, colorbar=None,vmin=None, vmax=None, **args):
     if ax is None or fig is None:
-        fig, ax = plt.subplots()
+        ax = plt.gca()
+        fig = plt.gcf()
         
     if kde:
         im = sns.kdeplot(stars[x], ax=ax, **args)

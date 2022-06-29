@@ -26,6 +26,15 @@ class ModelComparer():
         for name, model in self.models.items():
             # remove numerical artifacts
             s = model.stars.filter("zone_origin", "<", max_zone)
+
+            # add C+N column
+            cn_h = np.log10((
+                aah.bracket_to_abundance(np.array(s["[c/h]"]), "C") +
+                aah.bracket_to_abundance(np.array(s["[n/h]"]), "N"))
+                / (vice.solar_z("C") + vice.solar_z("N")))
+            s["[c+n/h]"] = cn_h
+            s["[c+n/o]"] = cn_h - s["[o/h]"]
+
             self.stars[name] = sample_stars(s, num=10_000)
             self.solar_neighborhood_stars[name] = sample_stars(filter_stars(s, 7, 9, 0, 0.5), num=10_000)
 
@@ -73,6 +82,11 @@ class ModelComparer():
             else:
                 s = self.stars[name]
 
+            v21 = aah.vincenzo2021()
+
+            if x in v21.keys() and y in v21.keys():
+                aah.plot_mean_v21(x, y, xlim=xlim)
+
             show_stars(s, x, y, c=c, s=0.1)
             plt.title(name)
 
@@ -80,6 +94,7 @@ class ModelComparer():
                 plt.xlim(xlim)
             if ylim is not None:
                 plt.ylim(ylim)
+
             plt.show()
 
     def plot_gas(self, x, y):
@@ -89,87 +104,41 @@ class ModelComparer():
 
     def plot_mdf(self, x):
         for name, st in self.stars.items():
-            plt.hist(st[x], 50, histtype="step", label=name)
+            plt.hist(st[x], 50, histtype="step", label=name, density=True)
+
+        v21 = aah.vincenzo2021()
+        if x in v21.keys():
+            plt.hist(v21[x], 50, histtype="step", label="V21", ls="--", density=True, color="black")
+
         plt.legend(loc="upper left")
         plt.xlabel(x)
+        plt.ylabel("density of stars")
 
-    def plot_cooh(self):
+    def plot_mean_stars(self, x_name, y_name, xlim=None, nbins=50):
         plt.figure(figsize=(8,6))
         N = len(list(self.stars.keys()))
-        x_min = -0.6
-        x_max = 0.4
+
+
+        names = list(self.stars.keys())
+        if xlim is None:
+            xlim = (min(self.stars[names[0]][x_name]), max(self.stars[names[0]][x_name]))
+
+        v21 = aah.vincenzo2021()
+        if x_name in v21.keys() and y_name in v21.keys():
+            aah.plot_v21(x_name, y_name)
+
         for i in range(N):
-            name = list(self.stars.keys())[i]
+            name = names[i]
             s = self.solar_neighborhood_stars[name]
-            dx = 0.04
-            bins = np.arange(x_min, x_max+dx, dx)
-            y, yerr= means_star_value(s, "[c/o]", "[o/h]", bins)
+            bins = np.linspace(xlim[0], xlim[1], nbins)
+            y, yerr= means_star_value(s, y_name, x_name, bins)
             plt.plot(bins[:-1], y, label=name)
             plt.fill_between(bins[:-1], y-yerr, y+yerr, alpha=0.2)
 
         plt.legend()
-        plt.xlabel("[o/h]")
-        plt.ylabel("[c/o]")
-        plt.xlim(x_min,x_max)
-
-        aah.plot_apogee_cooh(c="black")
-
-    def plot_nooh(self):
-        plt.figure(figsize=(8,6))
-        N = len(list(self.stars.keys()))
-        x_min = -0.6
-        x_max = 0.4
-        for i in range(N):
-            name = list(self.stars.keys())[i]
-            s = self.solar_neighborhood_stars[name]
-            dx = 0.04
-            bins = np.arange(x_min, x_max+dx, dx)
-            y, yerr= means_star_value(s, "[n/o]", "[o/h]", bins)
-            plt.plot(bins[:-1], y, label=name)
-            plt.fill_between(bins[:-1], y-yerr, y+yerr, alpha=0.2)
-
-        plt.legend()
-        plt.xlabel("[o/h]")
-        plt.ylabel("[n/o]")
-        plt.xlim(x_min,x_max)
-
-        aah.plot_apogee_nooh(c="black")
-
-
-    def plot_cnfeh(self):
-        plt.figure(figsize=(8,6))
-        for name, s in self.stars.items():
-            bins = np.arange(-0.6, 0.6, 0.02)
-            y, yerr= means_star_value(s, "[c/n]", "[o/h]", bins)
-            plt.plot(bins[:-1], y, label=name)
-            plt.fill_between(bins[:-1], y-yerr, y+yerr, alpha=0.2)
-
-        plt.legend()
-        plt.xlabel("[fe/h]")
-        plt.ylabel("[c/n]")
-        aah.plot_apogee_cnfe(c="black")
-        plt.xlim(-0.5, 0.5)
-
-
-    def plot_cnooh(self):
-        plt.figure(figsize=(8,6))
-        for name, s in self.stars.items():
-            cn_h = np.log10((
-                aah.bracket_to_abundance(s["[c/h]"], "C") +
-                aah.bracket_to_abundance(s["[n/h]"], "N"))
-                / (vice.solar_z("C") + vice.solar_z("N")))
-            s["[cn/h]"] = cn_h
-            s["[cn/o]"] = cn_h - s["[o/h]"]
-            bins = np.arange(-0.7, 0.5, 0.02)
-            y, yerr= means_star_value(s, "[cn/o]", "[o/h]", bins)
-            plt.plot(bins[:-1], y, label=name)
-            plt.fill_between(bins[:-1], y-yerr, y+yerr, alpha=0.2)
-
-        aah.plot_apogee_cpnoh()
-        plt.xlim(-0.7, 0.5)
-        plt.legend()
-        plt.xlabel("[o/h]")
-        plt.ylabel("[c+n/o]")
+        plt.xlabel(x_name)
+        plt.ylabel(y_name)
+        plt.xlim(xlim)
 
 
 
@@ -215,58 +184,58 @@ def show_annulus(output, x, y, c=None, R_min=0, R_max=15.4, **kwargs):
     plt.xlabel(x)
     plt.ylabel(y)
 
-def cooh_age(model, name):
-    for i in np.array([4, 6, 8, 10, 12])*10:
-        show_annulus_average(model, "[o/h]", "[c/o]", R_min=i/10-0.5, R_max=i/10+0.5, label=i/10)
-    plt.legend(title="r/kpc")
-    plt.xlim(-1,0.6)
-    plt.title(name)
-
-    sf("cooh_gas_" + name)
-    plt.show()
-
-def cooh_R(model, name):
-    for t in [2, 5, 8, 11, 13]:
-        times = np.array(model.zones["zone0"].history["time"])
-        j = int(100*t)
-        j = np.arange(len(times))[times == t][0]
-
-        y = np.zeros(155)
-        x = np.zeros(155)
-        R = np.arange(0, 15.5, 0.1)
-
-        for i in range(155):
-            y[i] = model.zones["zone%i" % i].history["[c/o]"][j]
-            x[i] = model.zones["zone%i" % i].history["[o/h]"][j]
-        plt.plot(x, y, label=t)
-
-    plt.legend(title="t/Gry")
-    #plt.xlim(-1,0.6)
-    plt.title(name)
-    plt.ylim(-0.7, 0.2)
-    plt.xlabel("[o/h]")
-    plt.ylabel("[c/o]")
-
-    plt.show()
-
-def cooh(model, name):
-    t = 13.2
-    j = int(100*t)
-
-    j = -1
-
-    i_min = 20
-    i_max = 155
-    y = np.zeros(i_max - i_min)
-    x = np.zeros(i_max - i_min)
-
-    for i in range(i_max - i_min):
-        y[i] = model.zones["zone%i" % (i+i_min)].history["[c/o]"][j]
-        x[i] = model.zones["zone%i" % (i+i_min)].history["[o/h]"][j]
-    plt.plot(x, y, label=name)
-    plt.ylim(-0.5, 0.2)
-    plt.xlabel("[o/h]")
-    plt.ylabel("[c/o]")
+# def cooh_age(model, name):
+#     for i in np.array([4, 6, 8, 10, 12])*10:
+#         show_annulus_average(model, "[o/h]", "[c/o]", R_min=i/10-0.5, R_max=i/10+0.5, label=i/10)
+#     plt.legend(title="r/kpc")
+#     plt.xlim(-1,0.6)
+#     plt.title(name)
+# 
+#     sf("cooh_gas_" + name)
+#     plt.show()
+# 
+# def cooh_R(model, name):
+#     for t in [2, 5, 8, 11, 13]:
+#         times = np.array(model.zones["zone0"].history["time"])
+#         j = int(100*t)
+#         j = np.arange(len(times))[times == t][0]
+# 
+#         y = np.zeros(155)
+#         x = np.zeros(155)
+#         R = np.arange(0, 15.5, 0.1)
+# 
+#         for i in range(155):
+#             y[i] = model.zones["zone%i" % i].history["[c/o]"][j]
+#             x[i] = model.zones["zone%i" % i].history["[o/h]"][j]
+#         plt.plot(x, y, label=t)
+# 
+#     plt.legend(title="t/Gry")
+#     #plt.xlim(-1,0.6)
+#     plt.title(name)
+#     plt.ylim(-0.7, 0.2)
+#     plt.xlabel("[o/h]")
+#     plt.ylabel("[c/o]")
+# 
+#     plt.show()
+# 
+# def cooh(model, name):
+#     t = 13.2
+#     j = int(100*t)
+# 
+#     j = -1
+# 
+#     i_min = 20
+#     i_max = 155
+#     y = np.zeros(i_max - i_min)
+#     x = np.zeros(i_max - i_min)
+# 
+#     for i in range(i_max - i_min):
+#         y[i] = model.zones["zone%i" % (i+i_min)].history["[c/o]"][j]
+#         x[i] = model.zones["zone%i" % (i+i_min)].history["[o/h]"][j]
+#     plt.plot(x, y, label=name)
+#     plt.ylim(-0.5, 0.2)
+#     plt.xlabel("[o/h]")
+#     plt.ylabel("[c/o]")
 
 def means_star_value(stars, value, bin_name, bins):
     N = len(bins) - 1
