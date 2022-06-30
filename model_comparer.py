@@ -4,10 +4,16 @@ import pandas as pd
 from vice_utils import sample_stars, load_model, filter_stars, calculate_z, show_stars, R_to_zone, zone_to_R, show_at_R_z
 import apogee_analysis as aah
 import vice
+import gas_phase_data
+from plotting import fig_saver
 
 class ModelComparer():
-    def __init__(self, model_names):
+    def __init__(self, model_names, sf=None):
         """This is a class used to create plots for comparison and model analysis"""
+        if sf is None:
+            self.sf = fig_saver("figures")
+        else:
+            self.sf=sf
 
         # import surp
         self.models = {}
@@ -38,16 +44,18 @@ class ModelComparer():
             self.stars[name] = sample_stars(s, num=10_000)
             self.solar_neighborhood_stars[name] = sample_stars(filter_stars(s, 7, 9, 0, 0.5), num=10_000)
 
-    def plot_model_fixed_r(self, x="[o/h]", y="[c/o]"):
+    def plot_model_fixed_r(self, x="[o/h]", y="[c/o]", filename=None):
         for name, model in self.models.items():
             for i in np.array([4, 6, 8, 10, 12])*10:
                 show_annulus_average(model, x, y, R_min=i/10-0.5, R_max=i/10+0.5, label=i/10)
             plt.legend(title="r/kpc")
             plt.xlim(-1,0.6)
             plt.title(name)
+            if filename is not None:
+                self.sf(filename)
             plt.show()
 
-    def plot_model_fixed_t(self, x_name="[o/h]", y_name="[c/o]", xlim=None, ylim=None):
+    def plot_model_fixed_t(self, x_name="[o/h]", y_name="[c/o]", xlim=None, ylim=None, filename=None):
         for name, model in self.models.items():
             for t in [2, 5, 8, 11, 13]:
                 times = np.array(model.zones["zone0"].history["time"])
@@ -73,9 +81,11 @@ class ModelComparer():
             if ylim is not None:
                 plt.ylim(ylim)
 
+            if filename is not None:
+                self.sf(filename)
             plt.show()
 
-    def plot_stars(self, x, y, c=None, solar_neighborhood=False, xlim=None, ylim=None):
+    def plot_stars(self, x, y, c=None, solar_neighborhood=False, xlim=None, ylim=None, filename=None):
         for name, model in self.models.items():
             if solar_neighborhood:
                 s = self.solar_neighborhood_stars[name]
@@ -85,9 +95,9 @@ class ModelComparer():
             v21 = aah.vincenzo2021()
 
             if x in v21.keys() and y in v21.keys():
-                aah.plot_mean_v21(x, y, xlim=xlim)
+                aah.plot_mean_v21(x, y, xlim=xlim, zorder=1, levels=6)
 
-            show_stars(s, x, y, c=c, s=0.1)
+            show_stars(s, x, y, c=c, s=0.1, zorder=2)
             plt.title(name)
 
             if xlim is not None:
@@ -95,14 +105,24 @@ class ModelComparer():
             if ylim is not None:
                 plt.ylim(ylim)
 
+            if filename is not None:
+                self.sf(filename)
             plt.show()
 
-    def plot_gas(self, x, y):
+
+    def plot_gas(self, x, y, filename=None):
         for name, model in self.models.items():
             show_annulus(model, x, y, label=name,)
+        gas_phase_data.plot_all(x, y)
         plt.legend()
 
-    def plot_mdf(self, x):
+        if filename is not None:
+            self.sf(filename)
+
+        plt.show()
+
+
+    def plot_mdf(self, x, filename=None):
         for name, st in self.stars.items():
             plt.hist(st[x], 50, histtype="step", label=name, density=True)
 
@@ -114,9 +134,31 @@ class ModelComparer():
         plt.xlabel(x)
         plt.ylabel("density of stars")
 
-    def plot_mean_stars(self, x_name, y_name, xlim=None, nbins=50):
+        if filename is not None:
+            self.sf(filename)
+
+        plt.show()
+
+    def plot_all_mean_stars(self, filename=None):
+        fig, axs = plt.subplots(2, 2, figsize=(15, 9))
+        for n in range(4):
+            i = n % 2
+            j = n // 2
+
+            ax = axs[i][j]
+            x = ["[o/h]", "[o/h]", "[fe/h]", "[o/h]"][n]
+            y = ["[c/o]", "[n/o]", "[c/n]", "[c+n/o]"][n]
+            self.plot_mean_stars(x, y, xlim=(-0.6, 0.4), ax=ax)
+        if filename is not None:
+            self.sf(filename)
+        plt.show()
+
+    def plot_mean_stars(self, x_name, y_name, xlim=None, nbins=50, filename=None, ax=None):
         plt.figure(figsize=(8,6))
         N = len(list(self.stars.keys()))
+        
+        if ax is None:
+            ax = plt.gca()
 
 
         names = list(self.stars.keys())
@@ -125,22 +167,24 @@ class ModelComparer():
 
         v21 = aah.vincenzo2021()
         if x_name in v21.keys() and y_name in v21.keys():
-            aah.plot_v21(x_name, y_name)
+            aah.plot_v21(x_name, y_name, zorder=1, ax=ax)
 
         for i in range(N):
             name = names[i]
             s = self.solar_neighborhood_stars[name]
             bins = np.linspace(xlim[0], xlim[1], nbins)
             y, yerr= means_star_value(s, y_name, x_name, bins)
-            plt.plot(bins[:-1], y, label=name)
-            plt.fill_between(bins[:-1], y-yerr, y+yerr, alpha=0.2)
+            ax.plot(bins[:-1], y, label=name, zorder=3)
+            ax.fill_between(bins[:-1], y-yerr, y+yerr, alpha=0.2, zorder=2)
 
-        plt.legend()
-        plt.xlabel(x_name)
-        plt.ylabel(y_name)
-        plt.xlim(xlim)
+        ax.legend()
+        ax.set(xlabel=x_name, ylabel=y_name)
+        ax.set_xlim(xlim)
 
-
+        if filename is not None:
+            self.sf(filename)
+        if ax is None:
+            plt.show()
 
 
 

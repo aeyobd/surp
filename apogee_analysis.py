@@ -3,6 +3,7 @@ import pickle
 import matplotlib.pyplot as plt
 import vice
 import pandas as pd
+import seaborn as sns
 
 mm_of_elements = {'h': 1.00794, 'he': 4.002602, 'li': 6.941, 'be': 9.012182, 'b': 10.811, 'c': 12.0107, 'n': 14.0067,
                   'o': 15.9994, 'f': 18.9984032, 'ne': 20.1797, 'na': 22.98976928, 'mg': 24.305, 'al': 26.9815386,
@@ -67,6 +68,8 @@ def vincenzo2021():
         / (vice.solar_z("C") + vice.solar_z("N")))
 
     data["[c+n/o]"] = data["[c+n/h]"] - data["[o/h]"]
+
+    data["age"].replace(-999, np.NaN, inplace=True)
     return data[filt]
 
 
@@ -98,30 +101,33 @@ def log_to_bracket(ratio, elem, elem2="H"):
         return r - np.log10(vice.solar_z(elem)/vice.solar_z(elem2)) + np.log10(mm_of_elements[elem]/mm_of_elements[elem2])
 
 
-def plot_v21(x, y, **kwargs):
+def plot_v21(x, y, ax=None, **kwargs):
     v21 = vincenzo2021()
-    plt.scatter(v21[x], v21[y], s=1, alpha=0.2, c="black", **kwargs)
+    if ax is None:
+        ax = plt.gca()
+    ax.scatter(v21[x], v21[y], s=1, alpha=0.2, c="black", **kwargs)
 
 
 def plot_mean_v21(x, y, bins=50, xlim=None, ylim=None, **kwargs):
     v21 = vincenzo2021()
+    sns.kdeplot(v21[x], v21[y], color="black", linewidths=1, **kwargs)
 
-    if xlim is None:
-        xlim = (min(v21[x]), max(v21[x]))
+    # if xlim is None:
+    #     xlim = (min(v21[x]), max(v21[x]))
 
-    bins = np.linspace(xlim[0], xlim[1], 50)
+    # bins = np.linspace(xlim[0], xlim[1], 50)
 
-    N = len(bins) - 1
-    means = np.zeros(N)
-    sds = np.zeros(N)
+    # N = len(bins) - 1
+    # means = np.zeros(N)
+    # sds = np.zeros(N)
 
-    for i in range(N):
-        filt = v21[(v21[x] >= bins[i]) & (v21[x] < bins[i+1])]
-        means[i] = np.mean(filt[y])
-        sds[i] = np.std(filt[y])
+    # for i in range(N):
+    #     filt = v21[(v21[x] >= bins[i]) & (v21[x] < bins[i+1])]
+    #     means[i] = np.mean(filt[y])
+    #     sds[i] = np.std(filt[y])
 
-    plt.plot(bins[:-1], means, label="V21", color="black")
-    plt.fill_between(bins[:-1], means-sds, means+sds, color="black", alpha=0.2)
+    # plt.plot(bins[:-1], means, label="V21", color="black")
+    # plt.fill_between(bins[:-1], means-sds, means+sds, color="black", alpha=0.2)
 
     # plt.plot(bins[:-1], means-sds, color="black", ls=":")
     # plt.plot(bins[:-1], means+sds, color="black", ls=":")
@@ -157,6 +163,8 @@ def cmn(c1, n1):
     return np.log10( (bracket_to_abundance(c, "c") - bracket_to_abundance(n, "n")) / (vice.solar_z("c") - vice.solar_z("n")) )
     
 
+def skillman20():
+    p
 
 def plot_skillman20_cooh(**kwargs):
     c_o = [-0.04, -0.08, -0.31, -0.39,-.28,-.34,-.30,-.25,-.63,-.47]
