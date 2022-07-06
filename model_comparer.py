@@ -150,7 +150,8 @@ class ModelComparer():
             y = ["[c/o]", "[n/o]", "[c/n]", "[c+n/o]"][n]
             self.plot_mean_stars(x, y, xlim=(-0.6, 0.4), ax=ax)
         if filename is not None:
-            self.sf(filename)
+            print("saving")
+            self.sf(filename, fig=fig)
         plt.show()
 
     def plot_mean_stars(self, x_name, y_name, xlim=None, nbins=50, filename=None, ax=None):
@@ -183,8 +184,6 @@ class ModelComparer():
 
         if filename is not None:
             self.sf(filename)
-        if ax is None:
-            plt.show()
 
 
 

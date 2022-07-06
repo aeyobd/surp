@@ -30,3 +30,7 @@ figures
 *.out
 
 *.dat
+*.txt
+
+nucleosynthesis_yields
+ReadMe

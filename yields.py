@@ -54,6 +54,18 @@ def y_c_agb(m_c=0.008, m0=2.6, alpha=40, k=1.5, gamma=2):
 
     return model
 
+def y_c_agb2(m_c=0.007, m0=1, alpha=40, k=0.7, y0=0):
+    def model(mass, Z):
+        m = (mass - m0)/k
+        return m_c/k * (1 - alpha*Z) * mass**2.3 * np.exp(-m) / (1 + np.exp(-m))**2 + y0
+    return model
+
+def y_c_gauss(m_c=0.03, m0=2.6, beta=-30, sigma=0.5):
+    def model(mass, Z):
+        return m_c*(1 + beta*Z) / np.sqrt(2 * np.pi * sigma) * np.exp(-(mass - m0)**2/(2*sigma**2))
+
+    return model
+
 
 
 

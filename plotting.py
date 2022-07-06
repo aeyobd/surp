@@ -10,14 +10,16 @@ class fig_saver():
         else:
             self.output_dir = output_dir + "/"
 
-    def save(self, name):
-        plt.savefig(self.output_dir + name + ".pdf", facecolor="white", bbox_inches='tight', dpi=150)
-        plt.savefig(self.output_dir + name + ".jpeg", facecolor="white", bbox_inches='tight', dpi=150)
+    def save(self, name, fig=None):
+        if fig is None:
+            fig = plt.gcf()
+        fig.savefig(self.output_dir + name + ".pdf", facecolor="white", bbox_inches='tight', dpi=150)
+        fig.savefig(self.output_dir + name + ".jpeg", facecolor="white", bbox_inches='tight', dpi=150)
         if self.show:
             plt.show()
 
-    def __call__(self, name):
-        self.save(name)
+    def __call__(self, name, fig=None):
+        self.save(name, fig=fig)
 
 
 

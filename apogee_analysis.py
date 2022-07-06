@@ -107,30 +107,35 @@ def plot_v21(x, y, ax=None, **kwargs):
         ax = plt.gca()
     ax.scatter(v21[x], v21[y], s=1, alpha=0.2, c="black", **kwargs)
 
-
-def plot_mean_v21(x, y, bins=50, xlim=None, ylim=None, **kwargs):
+def plot_v21_contour(x, y, bins=50, **kwargs):
     v21 = vincenzo2021()
     sns.kdeplot(v21[x], v21[y], color="black", linewidths=1, **kwargs)
 
-    # if xlim is None:
-    #     xlim = (min(v21[x]), max(v21[x]))
 
-    # bins = np.linspace(xlim[0], xlim[1], 50)
+def plot_mean_v21(x, y, ax=None, bins=50, xlim=None, ylim=None, **kwargs):
+    v21 = vincenzo2021()
+    if ax is None:
+        ax = plt.gca()
 
-    # N = len(bins) - 1
-    # means = np.zeros(N)
-    # sds = np.zeros(N)
+    if xlim is None:
+        xlim = (min(v21[x]), max(v21[x]))
 
-    # for i in range(N):
-    #     filt = v21[(v21[x] >= bins[i]) & (v21[x] < bins[i+1])]
-    #     means[i] = np.mean(filt[y])
-    #     sds[i] = np.std(filt[y])
+    bins = np.linspace(xlim[0], xlim[1], 50)
 
-    # plt.plot(bins[:-1], means, label="V21", color="black")
-    # plt.fill_between(bins[:-1], means-sds, means+sds, color="black", alpha=0.2)
+    N = len(bins) - 1
+    means = np.zeros(N)
+    sds = np.zeros(N)
 
-    # plt.plot(bins[:-1], means-sds, color="black", ls=":")
-    # plt.plot(bins[:-1], means+sds, color="black", ls=":")
+    for i in range(N):
+        filt = v21[(v21[x] >= bins[i]) & (v21[x] < bins[i+1])]
+        means[i] = np.mean(filt[y])
+        sds[i] = np.std(filt[y])
+
+    ax.plot(bins[:-1], means, label="V21", color="black")
+    ax.fill_between(bins[:-1], means-sds, means+sds, color="black", alpha=0.2)
+
+    # ax.plot(bins[:-1], means-sds, color="black", ls=":")
+    # ax.plot(bins[:-1], means+sds, color="black", ls=":")
 
 
 def bracket_to_abundance(data, ele):
