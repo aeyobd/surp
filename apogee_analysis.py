@@ -61,6 +61,7 @@ def vincenzo2021():
     filt &= data["[n/o]"] <= 10
     
     data["[c/o]"] = data["[c/h]"] - data["[o/h]"]
+    data["[c/fe]"] = data["[c/h]"] - data["[fe/h]"]
 
     data["[c+n/h]"] = np.log10((
         bracket_to_abundance(data["[c/h]"], "C") +
@@ -70,6 +71,13 @@ def vincenzo2021():
     data["[c+n/o]"] = data["[c+n/h]"] - data["[o/h]"]
 
     data["age"].replace(-999, np.NaN, inplace=True)
+
+    def o_fe_cutoff(fe_h):
+        return 0.12 - (fe_h < 0) * 0.13 * fe_h
+
+    high_alpha = data["[o/h]"] - data["[fe/h]"] > o_fe_cutoff(data["[fe/h]"])
+    data["high_alpha"]  = high_alpha
+
     return data[filt]
 
 
@@ -101,45 +109,83 @@ def log_to_bracket(ratio, elem, elem2="H"):
         return r - np.log10(vice.solar_z(elem)/vice.solar_z(elem2)) + np.log10(mm_of_elements[elem]/mm_of_elements[elem2])
 
 
-def plot_v21(x, y, ax=None, **kwargs):
+def plot_v21(x, y, ax=None, exclude_high_alpha=True, **kwargs):
     v21 = vincenzo2021()
+    if exclude_high_alpha:
+        v21 = v21[~v21["high_alpha"]]
     if ax is None:
         ax = plt.gca()
-    ax.scatter(v21[x], v21[y], s=1, alpha=0.2, c="black", **kwargs)
+    ax.scatter(v21[x], v21[y], s=1, alpha=0.2, c="black", **kwargs, label="V+21")
 
-def plot_v21_contour(x, y, bins=50, **kwargs):
+def plot_v21_contour(x, y, bins=50,exclude_high_alpha=True,  **kwargs):
     v21 = vincenzo2021()
-    sns.kdeplot(v21[x], v21[y], color="black", linewidths=1, **kwargs)
+    if exclude_high_alpha:
+        v21 = v21[~v21["high_alpha"]]
+    sns.kdeplot(v21[x], v21[y], color="black", linewidths=1, **kwargs, label="V+21")
 
 
-def plot_mean_v21(x, y, ax=None, bins=50, xlim=None, ylim=None, **kwargs):
-    v21 = vincenzo2021()
-    if ax is None:
-        ax = plt.gca()
+def calc_mean(x, y, bins=50, xlim=None):
 
-    if xlim is None:
-        xlim = (min(v21[x]), max(v21[x]))
-
-    bins = np.linspace(xlim[0], xlim[1], 50)
+    if type(bins) is int:
+        if xlim is None:
+            xlim = (min(x), max(x))
+        bins = np.linspace(xlim[0], xlim[1], 50)
 
     N = len(bins) - 1
     means = np.zeros(N)
     sds = np.zeros(N)
+    counts = np.zeros(N)
+
+    for i in range(N):
+        filt = y[(x >= bins[i]) & (x < bins[i+1])]
+        means[i] = np.mean(filt)
+        sds[i] = np.std(filt)
+        counts[i] = len(filt)
+
+    return bins, means, sds, counts
+
+def calc_mean_v21(x, y, bins=50, xlim=None, exclude_high_alpha=True):
+    v21 = vincenzo2021()
+    if exclude_high_alpha:
+        v21 = v21[~v21["high_alpha"]]
+
+    if type(bins) is int:
+        if xlim is None:
+            xlim = (min(v21[x]), max(v21[x]))
+        bins = np.linspace(xlim[0], xlim[1], 50)
+
+    N = len(bins) - 1
+    means = np.zeros(N)
+    sds = np.zeros(N)
+    counts = np.zeros(N)
 
     for i in range(N):
         filt = v21[(v21[x] >= bins[i]) & (v21[x] < bins[i+1])]
         means[i] = np.mean(filt[y])
         sds[i] = np.std(filt[y])
+        counts[i] = len(filt)
+
+    return bins, means, sds, counts
+
+def plot_mean_v21(x, y, ax=None, bins=50, exclude_high_alpha=True, xlim=None, ylim=None, **kwargs):
+    if ax is None:
+        ax = plt.gca()
+
+    bins, means, sds, counts = calc_mean_v21(x, y, bins, xlim, exclude_high_alpha)
 
     ax.plot(bins[:-1], means, label="V21", color="black")
-    ax.fill_between(bins[:-1], means-sds, means+sds, color="black", alpha=0.2)
+    ax.fill_between(bins[:-1], means-sds, means+sds, color="black", alpha=0.2, label="V+21")
 
+    return means, sds
     # ax.plot(bins[:-1], means-sds, color="black", ls=":")
     # ax.plot(bins[:-1], means+sds, color="black", ls=":")
 
 
-def bracket_to_abundance(data, ele):
-    return 10**data * vice.solar_z(ele)
+def bracket_to_abundance(data, ele, ele2="h"):
+    if ele2 == "h":
+        return 10**data * vice.solar_z(ele)
+    else:
+        return 10**data * vice.solar_z(ele) / vice.solar_z(ele2)
 
 def abundance_to_bracket(data, ele):
     return np.log10(data/vice.solar_z(ele))

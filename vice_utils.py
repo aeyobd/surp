@@ -153,8 +153,13 @@ def load_model(name):
         milkyway.stars["[c/o]"] = -np.array(milkyway.stars["[o/c]"])
     if "[c/n]" not in milkyway.stars.keys():
         milkyway.stars["[c/n]"] = -np.array(milkyway.stars["[n/c]"])
+
+    o_fe = np.array(milkyway.stars["[o/fe]"])
+    fe_h = np.array(milkyway.stars["[fe/h]"])
+    milkyway.stars["high_alpha"] = o_fe > o_fe_cutoff(fe_h)
+
     return milkyway
 
-
-
+def o_fe_cutoff(fe_h):
+    return 0.12 - (fe_h < 0) * 0.13 * fe_h
 

@@ -95,7 +95,7 @@ class ModelComparer():
             v21 = aah.vincenzo2021()
 
             if x in v21.keys() and y in v21.keys():
-                aah.plot_mean_v21(x, y, xlim=xlim, zorder=1, levels=6)
+                aah.plot_v21_contour(x, y, xlim=xlim, zorder=1, levels=6)
 
             show_stars(s, x, y, c=c, s=0.1, zorder=2)
             plt.title(name)
@@ -155,11 +155,11 @@ class ModelComparer():
         plt.show()
 
     def plot_mean_stars(self, x_name, y_name, xlim=None, nbins=50, filename=None, ax=None):
-        plt.figure(figsize=(8,6))
         N = len(list(self.stars.keys()))
         
         if ax is None:
             ax = plt.gca()
+            plt.figure(figsize=(8,6))
 
 
         names = list(self.stars.keys())
@@ -178,12 +178,13 @@ class ModelComparer():
             ax.plot(bins[:-1], y, label=name, zorder=3)
             ax.fill_between(bins[:-1], y-yerr, y+yerr, alpha=0.2, zorder=2)
 
-        ax.legend()
+        ax.legend(bbox_to_anchor=(1,1), loc="upper left", markerscale=10)
         ax.set(xlabel=x_name, ylabel=y_name)
         ax.set_xlim(xlim)
 
         if filename is not None:
             self.sf(filename)
+            print("saved")
 
 
 

@@ -85,7 +85,9 @@ ccsne_studies = ["LC18", "S16/N20", "WW95","NKT13"]
 cmap = plt.get_cmap("jet")
 N = len(ccsne_studies)
 
-def plot_ycc(ele="c"):
+def plot_ycc(ele="c", ax=None):
+    if ax is None:
+        ax = plt.gca()
     for i in range(N):
         study=ccsne_studies[i]
         metalicities = allowed_MoverH[study]
@@ -103,17 +105,17 @@ def plot_ycc(ele="c"):
                 marker="+"
             elif rotation == 300:
                 marker="^"
-            plt.scatter(np.log10(Z), y, color=cmap(i/N), label=f"{study}, v={rotation}", marker=marker)
+            ax.scatter(np.log10(Z), y, color=cmap(i/N), label=f"{study}, v={rotation}", marker=marker)
 
-    plt.legend()
-    plt.axhline(0.002)
+    ax.legend()
+    ax.axhline(0.002)
     #plt.xscale("log")
-    plt.ylim([0, 0.008])
+    ax.set_ylim([0, 0.008])
 
-    plt.xlabel("[M/H]")
-    plt.ylabel(r"$y_C^{cc}$")
+    ax.set_xlabel("[M/H]")
+    ax.set_ylabel(r"$y_C^{cc}$")
 
-def plot_ycyo(ax=None):
+def plot_ycyo(ax=None, scaled=True):
     if ax is None:
         ax = plt.gca()
 
@@ -128,7 +130,9 @@ def plot_ycyo(ax=None):
                  for metalicity in metalicities]
             yo = [vice.yields.ccsne.fractional('o', study=study, MoverH=metalicity, rotation=rotation)[0]
                   for metalicity in metalicities]
-            y = np.log10(np.array(yc)/yo) - np.log10(vice.solar_z("c")/vice.solar_z("o"))
+            y = np.log10(np.array(yc)/yo) 
+            if scaled:
+                y -= np.log10(vice.solar_z("c")/vice.solar_z("o"))
 
             Z = list(map(lambda x: 10**x, metalicities))
             if rotation == 0:
@@ -139,8 +143,8 @@ def plot_ycyo(ax=None):
                 marker="^"
             ax.scatter(np.log10(Z), y, color=cmap(i/N), label=f"{study}, v={rotation}", marker=marker)
 
-    ax.axhline(0)
-    ax.axhline(-0.49, ls="--")
+    # ax.axhline(0)
+    # ax.axhline(-0.49, ls="--")
 
 
     #plt.ylim([0, 0.008])

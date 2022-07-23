@@ -1,6 +1,7 @@
 import vice
 import numpy as np
 from vice.yields.agb import interpolator
+from scipy.integrate import quad
 
 from vice.yields.presets import JW20
 # vice.yields.ccsne.settings['o'] = 0.015
@@ -60,9 +61,12 @@ def y_c_agb2(m_c=0.007, m0=1, alpha=40, k=0.7, y0=0):
         return m_c/k * (1 - alpha*Z) * mass**2.3 * np.exp(-m) / (1 + np.exp(-m))**2 + y0
     return model
 
-def y_c_gauss(m_c=0.03, m0=2.6, beta=-30, sigma=0.5):
+def y_c_gauss(m_c=0.0008, m0=2.6, beta=-1.2, sigma=0.5):
+    C = quad(lambda mass: np.exp(-(mass - m0)**2/(2*sigma**2)) * mass**-2.3, 1, 8)[0]
+    print(C)
+
     def model(mass, Z):
-        return m_c*(1 + beta*Z) / np.sqrt(2 * np.pi * sigma) * np.exp(-(mass - m0)**2/(2*sigma**2))
+        return m_c*(1 + beta*np.log10(Z/0.014)) / C * np.exp(-(mass - m0)**2/(2*sigma**2))
 
     return model
 
