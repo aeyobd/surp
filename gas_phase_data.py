@@ -49,8 +49,10 @@ def plot_md22(x, y):
 
 
 def plot_all(x, y):
-    for df in [read_skillman20(), read_md22()]:
-        plt.errorbar(df[x], df[y], xerr=df[x + "_err"], yerr=df[y+"_err"], fmt="o", label=df.name)
+    if x in read_skillman20().keys():
+        if y in read_skillman20().keys():
+            for df in [read_skillman20(), read_md22()]:
+                plt.errorbar(df[x], df[y], xerr=df[x + "_err"], yerr=df[y+"_err"], fmt="o", label=df.name)
 
 
 

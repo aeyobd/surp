@@ -5,24 +5,31 @@ from vice_utils import sample_stars, load_model, filter_stars, calculate_z, show
 import apogee_analysis as aah
 import vice
 import gas_phase_data
-from plotting import fig_saver
+from plotting_utils import fig_saver
 
 class ModelComparer():
-    def __init__(self, model_names, sf=None):
+    def __init__(self, model_names, labels=None, sf=None, isotopic=False):
         """This is a class used to create plots for comparison and model analysis"""
         if sf is None:
             self.sf = fig_saver("figures")
         else:
             self.sf=sf
 
+        if labels is None:
+            labels = model_names
+
         # import surp
         self.models = {}
         output_dir = "output/"
         
-        for name in model_names:
-            self.models[name] = load_model(output_dir + name)
+        for i in range(len(model_names)):
+            self.models[model_names[i]] = load_model(output_dir + model_names[i], isotopic=isotopic)
+            self.models[model_names[i]].label = labels[i]
 
-        self.calc_stars()
+        if not isotopic:
+            self.calc_stars()
+
+        self.isotopic=isotopic
 
     def calc_stars(self):
         max_zone = 155
@@ -41,8 +48,8 @@ class ModelComparer():
             s["[c+n/h]"] = cn_h
             s["[c+n/o]"] = cn_h - s["[o/h]"]
 
-            self.stars[name] = sample_stars(s, num=10_000)
-            self.solar_neighborhood_stars[name] = sample_stars(filter_stars(s, 7, 9, 0, 0.5), num=10_000)
+            self.stars[model.label] = sample_stars(s, num=10_000)
+            self.solar_neighborhood_stars[model.label] = sample_stars(filter_stars(s, 7, 9, 0, 0.5), num=10_000)
 
     def plot_model_fixed_r(self, x="[o/h]", y="[c/o]", filename=None):
         for name, model in self.models.items():
@@ -85,19 +92,55 @@ class ModelComparer():
                 self.sf(filename)
             plt.show()
 
-    def plot_stars(self, x, y, c=None, solar_neighborhood=False, xlim=None, ylim=None, filename=None):
-        for name, model in self.models.items():
-            if solar_neighborhood:
-                s = self.solar_neighborhood_stars[name]
-            else:
-                s = self.stars[name]
+    def plot_model_time_evolution(self, name, x_name="[o/h]", y_name="[c/o]", filename=None):
+
+        model = self.models[name]
+
+        # constant radius tracks
+        for i in np.array([4, 6, 8, 10, 12])*10:
+            show_annulus_average(model, x_name, y_name, R_min=i/10-0.5, R_max=i/10+0.5, label=i/10)
+
+        # constant time slices
+        for k in range(4):
+            t = [1, 2, 4, 13][k]
+            times = np.array(model.zones["zone0"].history["time"])
+            j = int(100*t)
+            j = np.arange(len(times))[times == t][0]
+
+            y = np.zeros(155)
+            x = np.zeros(155)
+            R = np.arange(0, 15.5, 0.1)
+
+            for i in range(155):
+                y[i] = model.zones["zone%i" % i].history[y_name][j]
+                x[i] = model.zones["zone%i" % i].history[x_name][j]
+            plt.plot(x, y, label=t, color="k", linestyle = [":", "-.", "--", "-"][k])
+
+        lines = plt.gca().get_lines()
+        include = [0,1,2,3,4]
+        legend1 = plt.legend([lines[i] for i in include],[lines[i].get_label() for i in include], loc=2)
+        legend2 = plt.legend([lines[i] for i in [5,6,7,8]],[lines[i].get_label() for i in [5,6,7,8]], loc=4)
+        #legend2 = plt.legend([lines[i] for i in [2,3]],['manual label 3','manual label 4'], loc=4)
+        plt.gca().add_artist(legend1)
+
+        if filename is not None:
+            self.sf(filename)
+        plt.show()
+
+    def plot_stars(self, x, y, c=None, c_label=None, solar_neighborhood=False, xlim=None, ylim=None, filename=None):
+        if solar_neighborhood:
+            stars = self.solar_neighborhood_stars
+        else:
+            stars = self.stars
+
+        for name, s in stars.items():
 
             v21 = aah.vincenzo2021()
 
             if x in v21.keys() and y in v21.keys():
                 aah.plot_v21_contour(x, y, xlim=xlim, zorder=1, levels=6)
 
-            show_stars(s, x, y, c=c, s=0.1, zorder=2)
+            show_stars(s, x, y, c=c, c_label=c_label, s=0.1, zorder=2)
             plt.title(name)
 
             if xlim is not None:
@@ -110,9 +153,9 @@ class ModelComparer():
             plt.show()
 
 
-    def plot_gas(self, x, y, filename=None):
+    def plot_gas(self, x, y, ratio=False, filename=None):
         for name, model in self.models.items():
-            show_annulus(model, x, y, label=name,)
+            show_annulus(model, x, y, label=model.label,)
         gas_phase_data.plot_all(x, y)
         plt.legend()
 

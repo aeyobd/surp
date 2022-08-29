@@ -98,22 +98,22 @@ def show_at_R_z(stars, x="[fe/h]", y=None, c=None, xlim=None, ylim=None, **kwarg
 
 
 
-def show_stars(stars, x="[fe/h]", y=None, c=None, s=1, alpha=1, kde=False, ax=None, fig=None, colorbar=None,vmin=None, vmax=None, **args):
+def show_stars(stars, x="[fe/h]", y=None, c=None, c_label=None, s=1, alpha=1, kde=False, ax=None, fig=None, colorbar=None,vmin=None, vmax=None, x_err=0.03, y_err=0.03, **args):
     if ax is None or fig is None:
         ax = plt.gca()
         fig = plt.gcf()
         
     if kde:
-        im = sns.kdeplot(stars[x], ax=ax, **args)
+        im = sns.kdeplot(stars[x]+ np.random.normal(0, x_err, len(stars[x])), ax=ax, **args)
     elif y is None:
-        im = ax.hist(stars[x], **args)
+        im = ax.hist(stars[x]+ np.random.normal(0, x_err, len(stars[x])), **args)
         ax.set_ylabel("count")
     else:
         if c is None:
-            im = ax.scatter(stars[x], stars[y], s=s, vmin=vmin, vmax=vmax, alpha=alpha, **args)
+            im = ax.scatter(stars[x] + np.random.normal(0, x_err, len(stars[x])), stars[y] + np.random.normal(0, y_err, len(stars[x])), s=s, vmin=vmin, vmax=vmax, alpha=alpha, **args)
 
         else:
-            im = ax.scatter(stars[x], stars[y], c=stars[c], s=s, alpha=alpha, vmin=vmin, vmax=vmax, **args)
+            im = ax.scatter(stars[x] + np.random.normal(0, x_err, len(stars[x])), stars[y] + np.random.normal(0, y_err, len(stars[x])), c=stars[c], s=s, alpha=alpha, vmin=vmin, vmax=vmax, **args)
             if colorbar is None:
                 colorbar = True
         
@@ -121,7 +121,9 @@ def show_stars(stars, x="[fe/h]", y=None, c=None, s=1, alpha=1, kde=False, ax=No
     ax.set_xlabel(x)
     
     if colorbar:
-        fig.colorbar(im, ax = ax, label=c)
+        if c_label is None:
+            c_label = c
+        fig.colorbar(im, ax = ax, label=c_label)
 
     return im
 
@@ -133,7 +135,7 @@ def zone_to_R(zone: int):
     return (zone) * zone_width
 
 
-def load_model(name):
+def load_model(name, isotopic=False):
     """Loads a vice.milkyway model output at the location name
 
     Parameters
@@ -149,14 +151,16 @@ def load_model(name):
     milkyway.stars["abs_z"] = calculate_z(milkyway)
     milkyway.stars["R_origin"] = zone_to_R(np.array(milkyway.stars["zone_origin"]))
     milkyway.stars["R_final"] = zone_to_R(np.array(milkyway.stars["zone_final"]))
-    if "[c/o]" not in milkyway.stars.keys():
-        milkyway.stars["[c/o]"] = -np.array(milkyway.stars["[o/c]"])
-    if "[c/n]" not in milkyway.stars.keys():
-        milkyway.stars["[c/n]"] = -np.array(milkyway.stars["[n/c]"])
 
-    o_fe = np.array(milkyway.stars["[o/fe]"])
-    fe_h = np.array(milkyway.stars["[fe/h]"])
-    milkyway.stars["high_alpha"] = o_fe > o_fe_cutoff(fe_h)
+    if not isotopic:
+        if "[c/o]" not in milkyway.stars.keys():
+            milkyway.stars["[c/o]"] = -np.array(milkyway.stars["[o/c]"])
+        if "[c/n]" not in milkyway.stars.keys():
+            milkyway.stars["[c/n]"] = -np.array(milkyway.stars["[n/c]"])
+
+        o_fe = np.array(milkyway.stars["[o/fe]"])
+        fe_h = np.array(milkyway.stars["[fe/h]"])
+        milkyway.stars["high_alpha"] = o_fe > o_fe_cutoff(fe_h)
 
     return milkyway
 
