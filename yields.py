@@ -18,7 +18,8 @@ def set_yields():
     vice.yields.ccsne.settings['n'] = 3.6e-4
     vice.yields.agb.settings['n'] = n_agb
 
-    vice.yields.ccsne.settings["c"] = 0.002
+    # we are changing the default c yield from 0.002, all models will change
+    vice.yields.ccsne.settings["c"] = 0.005
     vice.yields.sneia.settings["c"] = 0
     vice.yields.agb.settings["c"] = "cristallo11"
 
