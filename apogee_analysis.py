@@ -63,6 +63,8 @@ def vincenzo2021():
     data["[c/o]"] = data["[c/h]"] - data["[o/h]"]
     data["[c/fe]"] = data["[c/h]"] - data["[fe/h]"]
 
+    data["[o/fe]"] = data["[o/h]"] - data["[fe/h]"]
+
     data["[c+n/h]"] = np.log10((
         bracket_to_abundance(data["[c/h]"], "C") +
         bracket_to_abundance(data["[n/h]"], "N"))
