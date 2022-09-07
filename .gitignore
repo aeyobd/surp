@@ -22,15 +22,9 @@ VICE
 
 figures
 
-.txt
-.csv
 
-*.csv
 *.gz
 *.out
-
-*.dat
-*.txt
 
 nucleosynthesis_yields
 ReadMe
