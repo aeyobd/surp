@@ -50,7 +50,7 @@ def set_cc_yields():
     Z = [0.014 * 10**M_H for M_H in MoverH]
     y_c = [vice.yields.ccsne.fractional("c", MoverH=M_H, rotation=0, study="LC18")[0] for M_H in MoverH]
     
-    vice.yields.ccsne.settings["C"] = vice.toolkit.interpolation.interp_scheme_1d(Z, y_c)
+    # vice.yields.ccsne.settings["C"] = vice.toolkit.interpolation.interp_scheme_1d(Z, y_c)
     
     vice.yields.ccsne.settings["au"] = vice.toolkit.interpolation.interp_scheme_1d(Z, yields_c12)
     vice.yields.ccsne.settings["ag"] = vice.toolkit.interpolation.interp_scheme_1d(Z, yields_c13)

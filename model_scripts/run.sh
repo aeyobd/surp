@@ -19,7 +19,8 @@ source activate local
 # export OMP_NUM_THREADS=8
 
 # python milkyway.py $TMPDIR/
-python model_scripts/fiducial.py $TMPDIR/
+# python model_scripts/fiducial.py $TMPDIR/
+python $1 $TMPDIR/
 
 
 

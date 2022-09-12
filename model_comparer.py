@@ -5,7 +5,7 @@ from vice_utils import sample_stars, load_model, filter_stars, calculate_z, show
 import apogee_analysis as aah
 import vice
 import gas_phase_data
-from plotting_utils import fig_saver
+from plotting_utils import fig_saver, legend_outside
 
 class ModelComparer():
     def __init__(self, model_names, labels=None, sf=None, isotopic=False):
@@ -51,46 +51,46 @@ class ModelComparer():
             self.stars[model.label] = sample_stars(s, num=10_000)
             self.solar_neighborhood_stars[model.label] = sample_stars(filter_stars(s, 7, 9, 0, 0.5), num=10_000)
 
-    def plot_model_fixed_r(self, x="[o/h]", y="[c/o]", filename=None):
-        for name, model in self.models.items():
-            for i in np.array([4, 6, 8, 10, 12])*10:
-                show_annulus_average(model, x, y, R_min=i/10-0.5, R_max=i/10+0.5, label=i/10)
-            plt.legend(title="r/kpc")
-            plt.xlim(-1,0.6)
-            plt.title(name)
-            if filename is not None:
-                self.sf(filename)
-            plt.show()
+    def plot_model_fixed_r(self, model_name, x="[o/h]", y="[c/o]", filename=None):
+        model = self.models[model_name]
+        for i in np.array([4, 6, 8, 10, 12])*10:
+            show_annulus_average(model, x, y, R_min=i/10-0.5, R_max=i/10+0.5, label=i/10)
+        plt.legend(title="r/kpc", bbox_to_anchor=(1,1), loc="upper left")
+        plt.xlim(-1,0.6)
+        plt.title(model.label)
+        if filename is not None:
+            self.sf(filename)
 
-    def plot_model_fixed_t(self, x_name="[o/h]", y_name="[c/o]", xlim=None, ylim=None, filename=None):
-        for name, model in self.models.items():
-            for t in [2, 5, 8, 11, 13]:
-                times = np.array(model.zones["zone0"].history["time"])
-                j = int(100*t)
-                j = np.arange(len(times))[times == t][0]
 
-                y = np.zeros(155)
-                x = np.zeros(155)
-                R = np.arange(0, 15.5, 0.1)
 
-                for i in range(155):
-                    y[i] = model.zones["zone%i" % i].history[y_name][j]
-                    x[i] = model.zones["zone%i" % i].history[x_name][j]
-                plt.plot(x, y, label=t)
+    def plot_model_fixed_t(self, model_name, x_name="[o/h]", y_name="[c/o]", xlim=None, ylim=None, filename=None):
+        model = self.models[model_name]
+        for t in [2, 5, 8, 11, 13]:
+            times = np.array(model.zones["zone0"].history["time"])
+            j = int(100*t)
+            j = np.arange(len(times))[times == t][0]
 
-            plt.legend(title="t/Gry")
-            plt.title(name)
-            plt.xlabel(x_name)
-            plt.ylabel(y_name)
+            y = np.zeros(155)
+            x = np.zeros(155)
+            R = np.arange(0, 15.5, 0.1)
 
-            if xlim is not None:
-                plt.xlim(xlim)
-            if ylim is not None:
-                plt.ylim(ylim)
+            for i in range(155):
+                y[i] = model.zones["zone%i" % i].history[y_name][j]
+                x[i] = model.zones["zone%i" % i].history[x_name][j]
+            plt.plot(x, y, label=t)
 
-            if filename is not None:
-                self.sf(filename)
-            plt.show()
+        plt.legend(title="t/Gry", bbox_to_anchor=(1,1), loc="upper left")
+        plt.title(model.label)
+        plt.xlabel(x_name)
+        plt.ylabel(y_name)
+
+        if xlim is not None:
+            plt.xlim(xlim)
+        if ylim is not None:
+            plt.ylim(ylim)
+        if filename is not None:
+            self.sf(filename)
+        plt.show()
 
     def plot_model_time_evolution(self, name, x_name="[o/h]", y_name="[c/o]", filename=None):
 
@@ -149,7 +149,7 @@ class ModelComparer():
                 plt.ylim(ylim)
 
             if filename is not None:
-                self.sf(filename)
+                self.sf(filename + "_" + name)
             plt.show()
 
 
@@ -157,13 +157,58 @@ class ModelComparer():
         for name, model in self.models.items():
             show_annulus(model, x, y, label=model.label,)
         gas_phase_data.plot_all(x, y)
-        plt.legend()
+        legend_outside()
 
         if filename is not None:
             self.sf(filename)
 
         plt.show()
 
+    def plot_coofe(self, solar_neighborhood=True):
+        if solar_neighborhood:
+            stars = self.solar_neighborhood_stars
+        else:
+            stars = self.stars
+
+        for name, s in stars.items():
+            aah.plot_v21_coofe()
+
+            df = s.filter("[fe/h]", ">", -0.15).filter("[fe/h]", "<", -0.05)
+
+            show_stars(df, "[o/fe]", "[c/o]", c="age", c_label="R", s=1, zorder=2)
+            plt.title(name)
+
+            plt.show()
+
+    def plot_coofe_stars(self, solar_neighborhood=True, ax=None, xlim=None):
+        aah.plot_v21_coofe()
+        if ax is None:
+            ax = plt.gca()
+            plt.figure(figsize=(5,5))
+
+        if solar_neighborhood:
+            stars = self.solar_neighborhood_stars
+        else:
+            stars = self.stars
+
+        xlim = (-0.2, 0.4)
+        nbins=30
+        bins = np.linspace(xlim[0], xlim[1], nbins)
+
+
+        for name, s in stars.items():
+
+            df = s.filter("[fe/h]", ">", -0.15).filter("[fe/h]", "<", -0.05)
+
+            y, yerr= means_star_value(df, "[c/o]", "[o/fe]", bins)
+            ax.plot(bins[:-1], y, label=name, zorder=3)
+            ax.fill_between(bins[:-1], y-yerr, y+yerr, alpha=0.2, zorder=2)
+
+
+        ax.legend(bbox_to_anchor=(1,1), loc="upper left", markerscale=10)
+        ax.set(xlabel="[O/Fe]", ylabel="[C/O]")
+        ax.set_xlim(xlim)
+        
 
     def plot_mdf(self, x, filename=None):
         for name, st in self.stars.items():

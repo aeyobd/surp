@@ -1,5 +1,3 @@
-import sys
-sys.path.append("..")
 from multizone_sim import run_model
 
 

@@ -4,16 +4,13 @@ import numpy as np
 import matplotlib as mpl
 import sys
 
-sys.path.append("../..")
+sys.path.append("..")
 from plotting_utils import fig_saver
-
-sys.path.append("/home/daniel")
-from python_packages.plotting import rc_params
 
 sf = fig_saver()
 
 
-cmap = mpl.cm.plasma
+cmap = mpl.cm.viridis
 Z_max = 0.02
 Z_min = 0.0001
 AGB_MODELS = ["cristallo11", "karakas10", "ventura13", "karakas16"]

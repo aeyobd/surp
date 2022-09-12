@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from functools import wraps
+import rc_params
 
 class fig_saver():
     def __init__(self, output_dir = ".", show=True):
@@ -23,6 +24,8 @@ class fig_saver():
 
 
 
+def legend_outside(**kwargs):
+    plt.legend(bbox_to_anchor=(1,1), loc="upper left", **kwargs)
 
 def arg(name, arg_type=object, value_constraint=True, default_value="None"):
     """A wrapper funcion to check arguments"""

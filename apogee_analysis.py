@@ -63,7 +63,6 @@ def vincenzo2021():
     data["[c/o]"] = data["[c/h]"] - data["[o/h]"]
     data["[c/fe]"] = data["[c/h]"] - data["[fe/h]"]
 
-    data["[o/fe]"] = data["[o/h]"] - data["[fe/h]"]
 
     data["[c+n/h]"] = np.log10((
         bracket_to_abundance(data["[c/h]"], "C") +
@@ -73,11 +72,12 @@ def vincenzo2021():
     data["[c+n/o]"] = data["[c+n/h]"] - data["[o/h]"]
 
     data["age"].replace(-999, np.NaN, inplace=True)
+    data["[o/fe]"] = data["[o/h]"] - data["[fe/h]"]
 
     def o_fe_cutoff(fe_h):
         return 0.12 - (fe_h < 0) * 0.13 * fe_h
 
-    high_alpha = data["[o/h]"] - data["[fe/h]"] > o_fe_cutoff(data["[fe/h]"])
+    high_alpha = data["[o/fe]"] > o_fe_cutoff(data["[fe/h]"])
     data["high_alpha"]  = high_alpha
 
     return data[filt]
@@ -125,9 +125,30 @@ def plot_v21_contour(x, y, bins=50,exclude_high_alpha=True,  **kwargs):
         v21 = v21[~v21["high_alpha"]]
     sns.kdeplot(v21[x], v21[y], color="black", linewidths=1, **kwargs, label="V+21")
 
+def plot_v21_coofe():
+    v21 = vincenzo2021()
+    c = -0.1
+    w = 0.05
+
+    filt = v21["[fe/h]"] > c - w
+    filt &= v21["[fe/h]"] < c + w
+    df=  v21[filt]
+    df["[o/fe]"] = df["[o/h]"] - df["[fe/h]"]
+    sns.kdeplot(df["[o/fe]"], df["[c/o]"], color="black", linewidths=1)
+
+def plot_v21_coofe_scatter():
+    v21 = vincenzo2021()
+    c = -0.1
+    w = 0.05
+
+    filt = v21["[fe/h]"] > c - w
+    filt &= v21["[fe/h]"] < c + w
+    df=  v21[filt]
+    df["[o/fe]"] = df["[o/h]"] - df["[fe/h]"]
+    plt.scatter(df["[o/fe]"], df["[c/o]"], color="black", s=1)
+
 
 def calc_mean(x, y, bins=50, xlim=None):
-
     if type(bins) is int:
         if xlim is None:
             xlim = (min(x), max(x))
