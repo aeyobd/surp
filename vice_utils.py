@@ -98,7 +98,7 @@ def show_at_R_z(stars, x="[fe/h]", y=None, c=None, xlim=None, ylim=None, **kwarg
 
 
 
-def show_stars(stars, x="[fe/h]", y=None, c=None, c_label=None, s=1, alpha=1, kde=False, ax=None, fig=None, colorbar=None,vmin=None, vmax=None, x_err=0.03, y_err=0.03, **args):
+def show_stars(stars, x="[fe/h]", y=None, c=None, c_label=None, s=1, alpha=1, kde=False, ax=None, fig=None, colorbar=None,vmin=None, vmax=None, x_err=0.00, y_err=0.00, **args):
     if ax is None or fig is None:
         ax = plt.gca()
         fig = plt.gcf()

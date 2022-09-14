@@ -125,21 +125,18 @@ def plot_v21_contour(x, y, bins=50,exclude_high_alpha=True,  **kwargs):
         v21 = v21[~v21["high_alpha"]]
     sns.kdeplot(v21[x], v21[y], color="black", linewidths=1, **kwargs, label="V+21")
 
-def plot_v21_coofe():
+def plot_v21_coofe(c=-0.1, w=0.05):
     v21 = vincenzo2021()
-    c = -0.1
-    w = 0.05
 
     filt = v21["[fe/h]"] > c - w
     filt &= v21["[fe/h]"] < c + w
-    df=  v21[filt]
+    df = v21[filt]
     df["[o/fe]"] = df["[o/h]"] - df["[fe/h]"]
-    sns.kdeplot(df["[o/fe]"], df["[c/o]"], color="black", linewidths=1)
+    df["[fe/o]"] = -df["[o/fe]"]
+    sns.kdeplot(df["[fe/o]"], df["[c/o]"], color="black", linewidths=1)
 
-def plot_v21_coofe_scatter():
+def plot_v21_coofe_scatter(c=-0.1, w=0.05):
     v21 = vincenzo2021()
-    c = -0.1
-    w = 0.05
 
     filt = v21["[fe/h]"] > c - w
     filt &= v21["[fe/h]"] < c + w

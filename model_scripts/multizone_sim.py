@@ -5,6 +5,7 @@ from vice.toolkit import hydrodisk
 from VICE.migration.src.simulations.migration import diskmigration
 from VICE.migration.src.simulations.disks import star_formation_history
 from surp import yields, c_isotopic_yields
+from surp.yields import amplified_yields
 import gc
 import os
 import sys
@@ -15,7 +16,8 @@ MAX_SF_RADIUS = 15.5 #kpc
 END_TIME = 13.2
 
 def run_model(name, migration_mode="diffusion", spec="insideout", n_stars=2, agb_yields="cristallo11", 
-              seed=None, multithread=False, dt=0.01, n_yields=None, burst_size=1.5, eta_factor=1, reduced_n=True, isotopic=True):
+              seed=None, multithread=False, dt=0.01, n_yields=None, burst_size=1.5, eta_factor=1, 
+              reduced_n=True, isotopic=False, ratio_reduce=False, agb_factor=1):
     """
     This function wraps various settings to make running VICE multizone models
     easier for the carbon paper investigation
@@ -51,9 +53,15 @@ def run_model(name, migration_mode="diffusion", spec="insideout", n_stars=2, agb
     if type(agb_yields) == str:
         for elem in ["c", "n", "o", "fe"]:
             if elem == "fe" and agb_yields == "ventura13":
-                vice.yields.agb.settings[elem] = "cristallo11"
+                if agb_factor == 1:
+                    vice.yields.agb.settings[elem] = "cristallo11"
+                else:
+                    vice.yields.agb.settings[elem] = amplified_yields(elem, "cristallo11", agb_factor)
             else:
-                vice.yields.agb.settings[elem] = agb_yields
+                if agb_factor == 1:
+                    vice.yields.agb.settings[elem] = agb_yields
+                else:
+                    vice.yields.agb.settings[elem] = amplified_yields(elem, agb_yields, agb_factor)
 
     
     model = vice.milkyway(zone_width=zone_width,
@@ -97,7 +105,17 @@ def run_model(name, migration_mode="diffusion", spec="insideout", n_stars=2, agb
                 zone_width = zone_width)
 
     # for changing value of eta
-    model.mass_loading = lambda R: model.default_mass_loading(R) * eta_factor
+    if ratio_reduce:
+        def mass_loading(R):
+            eta_0 = model.default_mass_loading(R)
+            r = 0.4 # this is an approximation
+            eta =  (1 - r) * (eta_factor - 1) + eta_factor * eta_0
+            if eta < 0:
+                eta = 0
+            return eta
+        model.mass_loading = mass_loading
+    else:
+        model.mass_loading = lambda R: model.default_mass_loading(R) * eta_factor
 
     # non reduced_n makes model consistant with J+22
     # we are not using this anymore as it is unphysical

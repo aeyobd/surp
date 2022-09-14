@@ -164,18 +164,19 @@ class ModelComparer():
 
         plt.show()
 
-    def plot_coofe(self, solar_neighborhood=True):
+    def plot_coofe(self, solar_neighborhood=True, fe_h_0=-0.1, d_fe_h = 0.05):
         if solar_neighborhood:
             stars = self.solar_neighborhood_stars
         else:
             stars = self.stars
 
         for name, s in stars.items():
-            aah.plot_v21_coofe()
+            aah.plot_v21_coofe(fe_h_0, d_fe_h)
 
-            df = s.filter("[fe/h]", ">", -0.15).filter("[fe/h]", "<", -0.05)
+            df = s.filter("[fe/h]", ">", fe_h_0 - d_fe_h).filter("[fe/h]", "<", fe_h_0 + d_fe_h)
 
-            show_stars(df, "[o/fe]", "[c/o]", c="age", c_label="R", s=1, zorder=2)
+            df["[fe/o]"] = - np.array(df["[o/fe]"])
+            show_stars(df, "[fe/o]", "[c/o]", c="age", c_label="R", s=1, zorder=2)
             plt.title(name)
 
             plt.show()
