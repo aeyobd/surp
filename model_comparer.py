@@ -173,16 +173,19 @@ class ModelComparer():
         for name, s in stars.items():
             aah.plot_v21_coofe(fe_h_0, d_fe_h)
 
-            df = s.filter("[fe/h]", ">", fe_h_0 - d_fe_h).filter("[fe/h]", "<", fe_h_0 + d_fe_h)
+            df = s.filter("[o/h]", ">", fe_h_0 - d_fe_h).filter("[o/h]", "<", fe_h_0 + d_fe_h)
 
             df["[fe/o]"] = - np.array(df["[o/fe]"])
-            show_stars(df, "[fe/o]", "[c/o]", c="age", c_label="R", s=1, zorder=2)
+            show_stars(df, "[fe/o]", "[c/o]", c="age", c_label="age", s=1, zorder=2)
             plt.title(name)
 
             plt.show()
 
-    def plot_coofe_stars(self, solar_neighborhood=True, ax=None, xlim=None):
-        aah.plot_v21_coofe()
+    def plot_coofe_stars(self, fe_0=-0.1, solar_neighborhood=True, ax=None, xlim=None):
+        d_fe = 0.05
+
+        aah.plot_v21_coofe_scatter(fe_0, d_fe)
+
         if ax is None:
             ax = plt.gca()
             plt.figure(figsize=(5,5))
@@ -192,19 +195,17 @@ class ModelComparer():
         else:
             stars = self.stars
 
-        xlim = (-0.2, 0.4)
+
+        xlim = (-0.4, 0.2)
         nbins=30
         bins = np.linspace(xlim[0], xlim[1], nbins)
 
-
         for name, s in stars.items():
-
-            df = s.filter("[fe/h]", ">", -0.15).filter("[fe/h]", "<", -0.05)
-
-            y, yerr= means_star_value(df, "[c/o]", "[o/fe]", bins)
+            df = s.filter("[o/h]", ">", fe_0 - d_fe).filter("[o/h]", "<", fe_0 + d_fe)
+            df["[fe/o]"] = - np.array(df["[o/fe]"])
+            y, yerr= means_star_value(df, "[c/o]", "[fe/o]", bins)
             ax.plot(bins[:-1], y, label=name, zorder=3)
             ax.fill_between(bins[:-1], y-yerr, y+yerr, alpha=0.2, zorder=2)
-
 
         ax.legend(bbox_to_anchor=(1,1), loc="upper left", markerscale=10)
         ax.set(xlabel="[O/Fe]", ylabel="[C/O]")

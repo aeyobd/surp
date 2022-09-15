@@ -128,8 +128,8 @@ def plot_v21_contour(x, y, bins=50,exclude_high_alpha=True,  **kwargs):
 def plot_v21_coofe(c=-0.1, w=0.05):
     v21 = vincenzo2021()
 
-    filt = v21["[fe/h]"] > c - w
-    filt &= v21["[fe/h]"] < c + w
+    filt = v21["[o/h]"] > c - w
+    filt &= v21["[o/h]"] < c + w
     df = v21[filt]
     df["[o/fe]"] = df["[o/h]"] - df["[fe/h]"]
     df["[fe/o]"] = -df["[o/fe]"]
@@ -138,11 +138,12 @@ def plot_v21_coofe(c=-0.1, w=0.05):
 def plot_v21_coofe_scatter(c=-0.1, w=0.05):
     v21 = vincenzo2021()
 
-    filt = v21["[fe/h]"] > c - w
-    filt &= v21["[fe/h]"] < c + w
+    filt = v21["[o/h]"] > c - w
+    filt &= v21["[o/h]"] < c + w
     df=  v21[filt]
     df["[o/fe]"] = df["[o/h]"] - df["[fe/h]"]
-    plt.scatter(df["[o/fe]"], df["[c/o]"], color="black", s=1)
+    df["[fe/o]"] = -df["[o/fe]"]
+    plt.scatter(df["[fe/o]"], df["[c/o]"], color="black", s=1)
 
 
 def calc_mean(x, y, bins=50, xlim=None):

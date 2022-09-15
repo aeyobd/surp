@@ -84,7 +84,7 @@ def run_model(name, migration_mode="diffusion", spec="insideout", n_stars=2, agb
     # multithreading may or may not work
     if multithread:
         model.setup_nthreads = 8
-        model.nthreads = 4
+        model.nthreads = 8
     else:
         model.setup_nthreads = 1
         model.nthreads = 1
