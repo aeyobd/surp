@@ -40,6 +40,7 @@ def sample_stars(stars, num=1000):
     -------
     A np.array of the sampled parameter from stars
     """
+
     size = len(stars.todict()["mass"])
     result = {key: np.zeros(num) for key in stars.keys()}
 
