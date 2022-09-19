@@ -3,14 +3,19 @@ import pandas as pd
 import numpy as np
 import scipy
 import random
-from vice_utils import load_model, show_stars
+import matplotlib.pyplot as plt
+from os.path import exists
 import pickle
+
+import sys
+sys.path.append("/users/PAS2232/aeyobd/surp")
+from vice_utils import load_model, show_stars
+import multizone_sim
 import apogee_analysis as aah
 import gas_phase_data
 from plotting_utils import legend_outside
-import matplotlib.pyplot as plt
 
-def pickle_output(file_name, pickle_name=None, isotopic=False):
+def pickle_output(file_name, pickle_name=None, isotopic=False, overwrite=False):
     """
     Creates a vice_model object from the given vice_file and then pickles this object
     to store model information in a single file
@@ -21,6 +26,14 @@ def pickle_output(file_name, pickle_name=None, isotopic=False):
         dir_loc = file_name.rfind("/") + 1
         name = file_name[dir_loc:ext_loc]
         pickle_name = "pickles/%s.pickle" % name
+
+
+
+    if exists(pickle_name) and not overwrite:
+        # raise ValueError("file %s exists and overwrite is not set" % pickle_name)
+        print("skipping %s, file exists" % pickle_name)
+        return 0
+
 
     # TODO add isotopic options
     output = load_model(file_name)
@@ -156,14 +169,14 @@ class vice_model():
             if x in v21.keys() and y in v21.keys():
                 aah.plot_v21(x, y, zorder=1)
 
-        plot_mean_track(stars[x], stars[y], xlim=xlim)
+        plot_mean_track(stars[x], stars[y], xlim=xlim, **kwargs)
 
         plt.xlabel(x)
         plt.ylabel(y)
         plt.xlim(xlim)
 
-    def plot_mdf(self, x, star_group="all", plot_data=True, **kwargs):
-        plt.hist(self.stars[star_group][x], 50, histtype="step", density=True, **kwargs)
+    def plot_mdf(self, x, star_group="all", plot_data=True, xlim=None, **kwargs):
+        plt.hist(self.stars[star_group][x], 50, histtype="step", density=True, range=xlim, **kwargs)
         if plot_data:
             v21 = aah.vincenzo2021()
             if x in v21.keys():

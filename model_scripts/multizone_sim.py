@@ -17,21 +17,67 @@ END_TIME = 13.2
 
 def run_model(name, migration_mode="diffusion", spec="insideout", n_stars=2, agb_yields="cristallo11", 
               seed=None, multithread=False, dt=0.01, n_yields=None, burst_size=1.5, eta_factor=1, 
-              reduced_n=True, isotopic=False, ratio_reduce=False, agb_factor=1):
+              isotopic=False, ratio_reduce=False, agb_factor=1):
     """
     This function wraps various settings to make running VICE multizone models
     easier for the carbon paper investigation
     
     Parameters
     ----------
-    name: str
+    name: ``str``
         The name of the model
         
-    migration_mode: str
+    migration_mode: ``str``
         Default value: diffusion
         The migration mode for the simulation. 
         Can be one of diffusion (most physical), linear, post-process, ???
-        
+
+    spec: ``str`` [default: "insideout"]
+        The star formation specification. 
+        Accepable values are
+        - "insideout"
+        - "constant"
+        - "lateburst"
+        - "outerburst"
+        see vice.migration.src.simulation.disks.star_formation_history
+
+    n_stars: ``int`` [default: 2]
+        The number of stars to create during each timestep of the model.
+
+    agb_yields: ``str`` [default: "cristallo11"]
+        The yield set to use for AGB carbon produciton. Acceptable values are
+        - "cristallo11"
+        - "karakas10"
+        - "ventura13"
+        - "karakas16"
+        Look at VICE for more details
+
+    seed: ``int?`` [default: None]
+        The seed to use for the model
+
+    multithread: ``bool`` [default: False]
+        If true, runs the multithreaded version of the model.
+        The maximum number of threads is currently 8
+        Requires the development-openmp branch of VICE
+
+    dt: ``float`` [default: 0.01]
+        The timestep of the simulation, measured in Gyr.
+        Decreasing this value can significantly speed up results
+
+    n_yields: ``str`` [defalt: None]
+        Only acceptable value is "J22", which sets the
+        AGB N yields to the analytic form in
+        Johnson, et. al. 2022 (Emperical constraints of N)
+
+    burst_size: ``float`` [default: 1.5]
+        The size of the SFH burst for lateburst model.
+
+
+    eta_factor: ``float`` [default: 1]
+        A factor by which to reduce the model's outflows. 
+        Does not reduce CCSNe yields
+
+    ratio_reduce: ``bool``
         
     """
 
@@ -84,7 +130,7 @@ def run_model(name, migration_mode="diffusion", spec="insideout", n_stars=2, agb
     # multithreading may or may not work
     if multithread:
         model.setup_nthreads = 8
-        model.nthreads = 8
+        model.nthreads = 4
     else:
         model.setup_nthreads = 1
         model.nthreads = 1
@@ -117,22 +163,6 @@ def run_model(name, migration_mode="diffusion", spec="insideout", n_stars=2, agb
     else:
         model.mass_loading = lambda R: model.default_mass_loading(R) * eta_factor
 
-    # non reduced_n makes model consistant with J+22
-    # we are not using this anymore as it is unphysical
-    # if reduced_n:
-    #     elems = ["n", "o", "fe"]
-    # else:
-    #     elems = ["o", "fe"]
-
-    # for ele in model.elements:
-    #     val = vice.yields.ccsne.settings[ele]
-    #     if type(val) is float:
-    #         vice.yields.ccsne.settings[ele] *= eta_factor
-    #     else:
-    #         vice.yields.ccsne.settings[ele] = lambda z: eta_factor*vice.yields.ccsne.settings[ele](z)
-        # vice.yields.sneia.settings[ele] *= eta_factor
-
-        # vice.yields.agb.settings[ele] = yields.amplified_yields(ele, prefactor=eta_factor)
 
     if n_yields == "J22":
         # this is just a coefficient

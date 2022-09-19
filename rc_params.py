@@ -42,3 +42,5 @@ mpl.rcParams["xtick.major.width"] = 0.5
 mpl.rcParams["ytick.major.width"] = 0.5
 mpl.rcParams["xtick.minor.width"] = 0.5
 mpl.rcParams["ytick.minor.width"] = 0.5
+
+mpl.rcParams["axes.unicode_minus"] = False
