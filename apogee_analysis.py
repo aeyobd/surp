@@ -117,13 +117,13 @@ def plot_v21(x, y, ax=None, exclude_high_alpha=True, **kwargs):
         v21 = v21[~v21["high_alpha"]]
     if ax is None:
         ax = plt.gca()
-    ax.scatter(v21[x], v21[y], s=1, alpha=0.2, c="black", **kwargs, label="V+21")
+    ax.scatter(v21[x], v21[y], s=1, alpha=0.2, c="black", **kwargs)#, label="V+21")
 
 def plot_v21_contour(x, y, bins=50,exclude_high_alpha=True,  **kwargs):
     v21 = vincenzo2021()
     if exclude_high_alpha:
         v21 = v21[~v21["high_alpha"]]
-    sns.kdeplot(v21[x], v21[y], color="black", linewidths=1, **kwargs, label="V+21")
+    sns.kdeplot(v21[x], v21[y], color="black", linewidths=1, **kwargs)#, label="V+21")
 
 def plot_v21_coofe(c=-0.1, w=0.05):
     v21 = vincenzo2021()

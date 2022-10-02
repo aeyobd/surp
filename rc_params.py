@@ -1,5 +1,5 @@
 import matplotlib as mpl
-import matplotlib.style as style
+import matplotlib.style as style 
 style.use('seaborn-colorblind')
 
 # Text parameters
