@@ -3,11 +3,9 @@ import vice
 import sys
 import numpy as np
 
-sys.path.append("../../")
+sys.path.append("../")
 from plotting_utils import fig_saver
-
-sys.path.append("/home/daniel")
-from python_packages.plotting import rc_params
+import rc_params
 
 sf = fig_saver()
 
@@ -21,7 +19,7 @@ vice.yields.ccsne.settings["fe"] = 0
 for i in range(4):
     model = AGB_MODELS[i]
     vice.yields.agb.settings["c"] = model
-    m_c, times = vice.single_stellar_population("c", Z=0.014)
+    m_c, times = vice.single_stellar_population("c", Z=0.014 * 10**0.3)
     m_c = [c for c in m_c]
     plt.plot(times, np.array(m_c)/m_c[-1])
 
