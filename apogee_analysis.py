@@ -111,13 +111,13 @@ def log_to_bracket(ratio, elem, elem2="H"):
         return r - np.log10(vice.solar_z(elem)/vice.solar_z(elem2)) + np.log10(mm_of_elements[elem]/mm_of_elements[elem2])
 
 
-def plot_v21(x, y, ax=None, exclude_high_alpha=True, **kwargs):
+def plot_v21(x, y, ax=None, exclude_high_alpha=True, s=1,**kwargs):
     v21 = vincenzo2021()
     if exclude_high_alpha:
         v21 = v21[~v21["high_alpha"]]
     if ax is None:
         ax = plt.gca()
-    ax.scatter(v21[x], v21[y], s=1, alpha=0.2, c="black", **kwargs)#, label="V+21")
+    ax.scatter(v21[x], v21[y], s=s, c="black", **kwargs)#, label="V+21")
 
 def plot_v21_contour(x, y, bins=50,exclude_high_alpha=True,  **kwargs):
     v21 = vincenzo2021()
@@ -126,6 +126,15 @@ def plot_v21_contour(x, y, bins=50,exclude_high_alpha=True,  **kwargs):
     sns.kdeplot(v21[x], v21[y], color="black", linewidths=1, **kwargs)#, label="V+21")
 
 def plot_v21_coofe(c=-0.1, w=0.05):
+    v21 = vincenzo2021()
+
+    filt = v21["[o/h]"] > c - w
+    filt &= v21["[o/h]"] < c + w
+    df = v21[filt]
+    df["[o/fe]"] = df["[o/h]"] - df["[fe/h]"]
+    sns.kdeplot(df["[o/fe]"], df["[c/o]"], color="black", linewidths=1)
+
+def plot_v21_cofeo(c=-0.1, w=0.05):
     v21 = vincenzo2021()
 
     filt = v21["[o/h]"] > c - w
@@ -143,8 +152,17 @@ def plot_v21_coofe_scatter(c=-0.1, w=0.05):
     df=  v21[filt]
     df["[o/fe]"] = df["[o/h]"] - df["[fe/h]"]
     df["[fe/o]"] = -df["[o/fe]"]
-    plt.scatter(df["[fe/o]"], df["[c/o]"], color="black", s=1)
+    plt.scatter(df["[o/fe]"], df["[c/o]"], color="black", s=1)
 
+def plot_v21_cofeo_scatter(c=-0.1, w=0.05):
+    v21 = vincenzo2021()
+
+    filt = v21["[o/h]"] > c - w
+    filt &= v21["[o/h]"] < c + w
+    df=  v21[filt]
+    df["[o/fe]"] = df["[o/h]"] - df["[fe/h]"]
+    df["[fe/o]"] = -df["[o/fe]"]
+    plt.scatter(df["[fe/o]"], df["[c/o]"], color="black", s=1)
 
 def calc_mean(x, y, bins=50, xlim=None):
     if type(bins) is int:
@@ -195,7 +213,7 @@ def plot_mean_v21(x, y, ax=None, bins=50, exclude_high_alpha=True, xlim=None, yl
     bins, means, sds, counts = calc_mean_v21(x, y, bins, xlim, exclude_high_alpha)
 
     ax.plot(bins[:-1], means, label="V21", color="black")
-    ax.fill_between(bins[:-1], means-sds, means+sds, color="black", alpha=0.2, label="V+21")
+    ax.fill_between(bins[:-1], means-sds, means+sds, color="black", label="V+21")
 
     return means, sds
     # ax.plot(bins[:-1], means-sds, color="black", ls=":")

@@ -124,10 +124,19 @@ def show_stars(stars, x="[fe/h]", y=None, c=None, c_label=None, s=1, alpha=1, kd
     if colorbar:
         if c_label is None:
             c_label = c
-        fig.colorbar(im, ax = ax, label=c_label)
+        alt_colorbar(im, label=c_label)
+        # fig.colorbar(im, ax = ax, label=c_label)
 
     return im
 
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+
+def alt_colorbar(mappable, **kwargs):
+    ax = mappable.axes
+    fig = ax.figure
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes("right", size="5%", pad="5%")
+    return fig.colorbar(mappable, cax=cax, **kwargs)
 
 zone_width=0.1
 def R_to_zone(r: float):

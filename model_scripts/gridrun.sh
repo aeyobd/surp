@@ -16,7 +16,9 @@ source activate local
 
 python gridrun.py $TMPDIR/ $1 $2 $3 $4
 
-cp -r -u $TMPDIR/* $SLURM_SUBMIT_DIR/surp/output
+python pickle_outputs.py $TMPDIR/
+
+cp -r -u $TMPDIR/*.pickle $SLURM_SUBMIT_DIR/surp/pickles
 
 
 scontrol show job=$SLURM_JOB_ID

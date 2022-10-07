@@ -13,7 +13,7 @@ from vice_utils import load_model, show_stars
 import multizone_sim
 import apogee_analysis as aah
 import gas_phase_data
-from plotting_utils import legend_outside
+from plotting_utils import legend_outside, fancy_legend
 
 def pickle_output(file_name, pickle_name=None, isotopic=False, overwrite=False):
     """
@@ -158,7 +158,7 @@ class vice_model():
         if xlim is not None:
             plt.xlim(xlim)
 
-    def plot_mean_stars(self, x, y, plot_data=True, xlim=None, star_group="all", **kwargs):
+    def plot_mean_stars(self, x, y, plot_data=True, xlim=None, star_group="all", ax=None, s=1, **kwargs):
         stars = self.stars[star_group]
         
         if xlim is None:
@@ -167,9 +167,9 @@ class vice_model():
         if plot_data:
             v21 = aah.vincenzo2021()
             if x in v21.keys() and y in v21.keys():
-                aah.plot_v21(x, y, zorder=1)
+                aah.plot_v21(x, y, zorder=1, ax=ax, s=s)
 
-        plot_mean_track(stars[x], stars[y], xlim=xlim, **kwargs)
+        plot_mean_track(stars[x], stars[y], xlim=xlim, ax=ax,  **kwargs)
 
         plt.xlabel(x)
         plt.ylabel(y)
@@ -190,7 +190,10 @@ class vice_model():
         gas_phase_data.plot_all(x, y)
         legend_outside()
 
-    def plot_annulus_at_t(self, x, y, t = 13, dt = 0.1, c=None, R_min=0, R_max=15.4, **kwargs):
+    def plot_annulus_at_t(self, x, y, t = 13, dt = 0.1, c=None, R_min=0, R_max=15.4, ax=None, **kwargs):
+        if ax is None:
+            ax = plt.gca()
+            
         # modified to just show values at present_day
         filt = self.history["time"] > t
         filt &= self.history["time"] < t+dt
@@ -203,38 +206,44 @@ class vice_model():
         y_values = df[filt][y]
 
         if c is None:
-            plt.plot(x_values, y_values, **kwargs)
+            ax.plot(x_values, y_values, **kwargs)
         else:
             c_values = df[filt][c]
-            plt.scatter(x_values, y_values, c=c_values, **kwargs)
-            plt.colorbar()
+            ax.scatter(x_values, y_values, c=c_values, **kwargs)
+            ax.colorbar()
 
-        plt.xlabel(x)
-        plt.ylabel(y)
+        ax.set_xlabel(x)
+        ax.set_ylabel(y)
 
-    def plot_annulus_history(self, x, y, c=None, R_min=7, R_max=9, **kwargs):
+    def plot_annulus_history(self, x, y, c=None, R_min=7, R_max=9, ax=None, **kwargs):
+        if ax is None:
+            ax = plt.gca()
+
         ave = self.annulus_average(R_min, R_max)
         x_values = ave[x]
         y_values = ave[y]
 
         if c is None:
-            plt.plot(x_values, y_values, **kwargs)
+            ax.plot(x_values, y_values, **kwargs)
         else:
             c_values = ave[c]
-            plt.scatter(x_values, y_values, c=c_values, **kwargs)
-            plt.colorbar()
-        plt.xlabel(x)
-        plt.ylabel(y)
+            ax.scatter(x_values, y_values, c=c_values, **kwargs)
+            ax.colorbar()
+        ax.set_xlabel(x)
+        ax.set_ylabel(y)
 
-    def plot_t_slices(self, x, y, xlim=None, times=[2,5,8,11,13]):
+    def plot_t_slices(self, x, y, xlim=None, times=[2,5,8,11,13], ax=None):
+        if ax is None:
+            ax = plt.gca()
+
         for t in times:
-            self.plot_annulus_at_t(x, y, t, label="%i Gyr" % t)
-        legend_outside()
+            self.plot_annulus_at_t(x, y, t, label="%i" % t, ax=ax)
+        fancy_legend(title="t/Gyr", ax=ax)
 
-    def plot_R_slices(self, x, y, Rs=[4,6,8,10,12]):
+    def plot_R_slices(self, x, y, Rs=[4,6,8,10,12], ax=None):
         for i in np.array([4, 6, 8, 10, 12])*10:
-            self.plot_annulus_history(x, y, R_min=i/10-0.5, R_max=i/10+0.5, label=i/10)
-        legend_outside(title="r/kpc")
+            self.plot_annulus_history(x, y, R_min=i/10-0.5, R_max=i/10+0.5, label=i/10, ax=ax)
+        fancy_legend(title="r/kpc", ax=ax)
 
     def annulus_average(self, R_min, R_max):
         """
@@ -250,10 +259,22 @@ class vice_model():
         df = self.history[filt]
         return df.groupby("time").mean()
 
-    def plot_coofe(self, star_group="all", o_h_0=-0.1, d_o_h = 0.05):
+    def plot_coofe(self, star_group="all", o_h_0=-0.1, d_o_h = 0.05, **kwargs):
+
         stars = self.stars[star_group]
 
         aah.plot_v21_coofe(o_h_0, d_o_h)
+
+        filt = stars["[o/h]"] > o_h_0 - d_o_h
+        filt &= stars["[o/h]"] < o_h_0 + d_o_h
+        df = stars[filt]
+        show_stars(df, "[o/fe]", "[c/o]", c="age", c_label="age", s=1, zorder=2,
+                **kwargs)
+
+    def plot_cofeo(self, star_group="all", o_h_0=-0.1, d_o_h = 0.05):
+        stars = self.stars[star_group]
+
+        aah.plot_v21_cofeo(o_h_0, d_o_h)
 
         filt = stars["[o/h]"] > o_h_0 - d_o_h
         filt &= stars["[o/h]"] < o_h_0 + d_o_h
@@ -262,10 +283,29 @@ class vice_model():
 
         show_stars(df, "[fe/o]", "[c/o]", c="age", c_label="age", s=1, zorder=2)
 
-    def plot_mean_coofe(self, o_h_0=-0.1, d_o_h = 0.05, star_group="all", xlim=None, plot_data=True, **kwargs):
+    def plot_mean_coofe(self, o_h_0=-0.1, d_o_h = 0.05, star_group="all", xlim=None, plot_data=True, ax=None, **kwargs):
+        if ax is None:
+            ax = plt.gca()
 
         if plot_data:
             aah.plot_v21_coofe_scatter(o_h_0, d_o_h)
+
+        stars = self.stars[star_group]
+
+        filt = stars["[o/h]"] > o_h_0 - d_o_h
+        filt &= stars["[o/h]"] < o_h_0 + d_o_h
+        df = stars[filt]
+
+        plot_mean_track(df["[o/fe]"], df["[c/o]"], xlim=xlim, **kwargs)
+        plt.xlabel("[o/fe]")
+        plt.ylabel("[c/o]")
+
+    def plot_mean_cofeo(self, o_h_0=-0.1, d_o_h = 0.05, star_group="all", xlim=None, plot_data=True, ax=None, **kwargs):
+        if ax is None:
+            ax = plt.gca()
+
+        if plot_data:
+            aah.plot_v21_cofeo_scatter(o_h_0, d_o_h)
 
         stars = self.stars[star_group]
 
@@ -303,7 +343,7 @@ def sample_stars(stars, num=1000):
     return stars.iloc[index].copy()
 
 
-def plot_mean_track(x_vals, y_vals, bins=50, xlim=None, err_mean = False, **kwargs):
+def plot_mean_track(x_vals, y_vals, bins=50, xlim=None, err_mean = False, ax=None, **kwargs):
     """
     Plots the mean of the data as a line
     with a shaded region representing the standard deviation
@@ -324,10 +364,13 @@ def plot_mean_track(x_vals, y_vals, bins=50, xlim=None, err_mean = False, **kwar
         If true, plots the error of the mean instead
         of the standard deviation for the shaded regions
     """
+
+    if ax is None:
+        ax = plt.gca()
     means, bins, nums = scipy.stats.binned_statistic(x_vals, y_vals, statistic="mean", bins=bins, range=xlim)
 
     x_bins = 0.5*(bins[1:] + bins[:-1])
-    p = plt.plot(x_bins, means, **kwargs)
+    p = ax.plot(x_bins, means, **kwargs)
     
     std, _, _ = scipy.stats.binned_statistic(x_vals, y_vals, statistic="std", bins=bins, range=xlim)
     if err_mean:
@@ -335,5 +378,5 @@ def plot_mean_track(x_vals, y_vals, bins=50, xlim=None, err_mean = False, **kwar
     else:
         dy = std
 
-    plt.fill_between(x_bins, means - std, means + std, alpha=0.3, color=p[0].get_color())
+    ax.fill_between(x_bins, means - std, means + std, alpha=0.3, color=p[0].get_color())
 

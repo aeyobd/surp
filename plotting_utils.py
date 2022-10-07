@@ -27,6 +27,19 @@ class fig_saver():
 def legend_outside(**kwargs):
     plt.legend(bbox_to_anchor=(1,1), loc="upper left", **kwargs)
 
+def fancy_legend(ax=None, **kwargs):
+    if ax is None:
+        ax = plt.gca()
+       
+    prop_cycle = plt.rcParams['axes.prop_cycle']
+    COLORS = prop_cycle.by_key()['color']
+    leg = ax.legend(frameon = False, handlelength = 0, columnspacing = 0.8, 
+                     fontsize = 20, **kwargs)
+    for i in range(len(leg.get_texts())):
+        leg.get_texts()[i].set_color(COLORS[i])
+        leg.legendHandles[i].set_visible(False)
+
+
 def arg(name, arg_type=object, value_constraint=True, default_value="None"):
     """A wrapper funcion to check arguments"""
     def decorator(func):

@@ -14,9 +14,7 @@ AGB_MODELS = ["cristallo11", "karakas10", "ventura13", "karakas16"]
 AGB_LABELS = ["C11+C15", "K10", "V13", "KL16+K18"]
 
 
-prop_cycle = plt.rcParams['axes.prop_cycle']
-COLORS = prop_cycle.by_key()['color']
-print(COLORS)
+
 
 plt.figure(figsize=(5,5))
 
@@ -69,6 +67,9 @@ for i in range(len(AGB_MODELS)):
 plt.axhline(0, color="k", ls=":")
 plt.xlabel(r"[M/H]")
 plt.ylabel(r"$y_\text{C}^\text{AGB}$")
+
+prop_cycle = plt.rcParams['axes.prop_cycle']
+COLORS = prop_cycle.by_key()['color']
 
 leg = plt.legend(frameon = False, handlelength = 0, columnspacing = 0.8, 
                  fontsize = 20)
