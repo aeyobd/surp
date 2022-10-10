@@ -2,6 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from functools import wraps
 import rc_params
+from matplotlib.collections import LineCollection
+
+prop_cycle = plt.rcParams['axes.prop_cycle']
+COLORS = prop_cycle.by_key()['color']
 
 class fig_saver():
     def __init__(self, output_dir = ".", show=True):
@@ -31,12 +35,10 @@ def fancy_legend(ax=None, **kwargs):
     if ax is None:
         ax = plt.gca()
        
-    prop_cycle = plt.rcParams['axes.prop_cycle']
-    COLORS = prop_cycle.by_key()['color']
     leg = ax.legend(frameon = False, handlelength = 0, columnspacing = 0.8, 
                      fontsize = 20, **kwargs)
     for i in range(len(leg.get_texts())):
-        leg.get_texts()[i].set_color(COLORS[i])
+        leg.get_texts()[i].set_color(COLORS[i % len(COLORS)])
         leg.legendHandles[i].set_visible(False)
 
 
@@ -128,3 +130,66 @@ def density_scatter(x, y, xlim=None, ylim=None, n_bins=100, fig=None, ax=None, d
        
     return R
 
+
+def plot_density_line(x, y, i=0, xlim=None, ylim=None, **kwargs):
+    """
+    This method is like plt.plot except plots
+    the line with a variable width which represents how 
+    clustered the data are
+
+    Parameters
+    ----------
+    x: list like
+    y: list like
+    **kwargs:
+        Passed to plt.plot
+
+    """
+    lw_max = 10
+    lw_min = 1
+
+    ds_min = 1e-9
+
+    dx = differential(x)
+    dy = differential(y)
+    ds = np.sqrt(dx**2 + dy**2) 
+    w = 1/ds 
+    w_scaled = (w - np.nanmin(w))/(np.nanmax(w) - np.nanmin(w))
+    lwidths = (-lw_min + lw_max)*w_scaled + lw_min
+
+    points = np.array([x, y]).T.reshape(-1, 1, 2)
+    segments = np.concatenate([points[:-1], points[1:]], axis=1)
+
+    ax = plt.gca()
+
+    lc = LineCollection(segments, linewidths=lwidths, color=COLORS[i], **kwargs)
+    ax.add_collection(lc)
+
+    if xlim is None:
+        ax.set_xlim(np.nanmin(x), np.nanmax(x))
+    if ylim is None:
+        ax.set_ylim(np.nanmin(y), np.nanmax(y))
+
+
+
+def differential(l):
+    """
+    Calculates the differentail of a list l.
+
+    Parameters
+    ----------
+    l:  list like
+        A list of which to calculate the differential
+
+    Returns
+    -------
+    dl:     ``np.list``
+        A list of the change between each value of l
+    """
+
+    li = np.array(l)[:-1]
+    lf = np.array(l)[1:]
+    dl = li-lf
+
+    d_end = dl[-1]
+    return np.append(dl, d_end)

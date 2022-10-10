@@ -4,12 +4,14 @@ import sys
 
 if __name__ == "__main__":
 
-    lateburst = True
     # prefix = sys.argv[1]
     f_agb = sys.argv[2]
     beta = sys.argv[3]
     agb_model = sys.argv[4]
     eta = sys.argv[5]
+
+    A = 0.75
+    lateburst = False
 
     name = agb_model + "_f" + f_agb + "_Z" + beta + "_eta" + eta + "_v1"
 
@@ -54,4 +56,10 @@ if __name__ == "__main__":
     else:
         spec = "insideout"
 
-    run_model(name, agb_yields=agb_model, agb_factor=alpha_agb, n_yields="J22", eta_factor=eta, spec=spec)
+    if A is None:
+        pass
+        A = 1.5
+    else:
+        name += "_A%s" % A
+
+    run_model(name, agb_yields=agb_model, agb_factor=alpha_agb, n_yields="J22", eta_factor=eta, spec=spec, burst_size=A)

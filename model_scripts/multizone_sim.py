@@ -17,7 +17,7 @@ END_TIME = 13.2
 
 def run_model(name, migration_mode="diffusion", spec="insideout", n_stars=2, agb_yields="cristallo11", 
               seed=None, multithread=False, dt=0.01, n_yields=None, burst_size=1.5, eta_factor=1, 
-              isotopic=False, ratio_reduce=False, agb_factor=1):
+              isotopic=False, ratio_reduce=False, agb_factor=1, prefix=None):
     """
     This function wraps various settings to make running VICE multizone models
     easier for the carbon paper investigation
@@ -84,7 +84,8 @@ def run_model(name, migration_mode="diffusion", spec="insideout", n_stars=2, agb
     # collects the first argument of the command as the directory to write
     # the simulation output to
     # this allows OSC to use the temperary directory
-    prefix = sys.argv[1]
+    if prefix is None:
+        prefix = sys.argv[1]
 
     zone_width = 0.1
     simple = False

@@ -13,7 +13,7 @@ from vice_utils import load_model, show_stars
 import multizone_sim
 import apogee_analysis as aah
 import gas_phase_data
-from plotting_utils import legend_outside, fancy_legend
+from plotting_utils import legend_outside, fancy_legend, plot_density_line
 
 def pickle_output(file_name, pickle_name=None, isotopic=False, overwrite=False):
     """
@@ -153,7 +153,7 @@ class vice_model():
         if x in v21.keys() and y in v21.keys():
             aah.plot_v21_contour(x, y, xlim=xlim, zorder=1, levels=6)
 
-        show_stars(stars, x, y, c=c, c_label=c_label, s=0.1, zorder=2)
+        show_stars(stars, x, y, c=c, c_label=c_label, zorder=2, **kwargs)
 
         if xlim is not None:
             plt.xlim(xlim)
@@ -223,8 +223,9 @@ class vice_model():
         x_values = ave[x]
         y_values = ave[y]
 
+
         if c is None:
-            ax.plot(x_values, y_values, **kwargs)
+            plot_density_line(x_values, y_values, **kwargs)
         else:
             c_values = ave[c]
             ax.scatter(x_values, y_values, c=c_values, **kwargs)
@@ -241,8 +242,9 @@ class vice_model():
         fancy_legend(title="t/Gyr", ax=ax)
 
     def plot_R_slices(self, x, y, Rs=[4,6,8,10,12], ax=None):
-        for i in np.array([4, 6, 8, 10, 12])*10:
-            self.plot_annulus_history(x, y, R_min=i/10-0.5, R_max=i/10+0.5, label=i/10, ax=ax)
+        for j in range(5):
+            i = (np.array([4, 6, 8, 10, 12])*10)[j]
+            self.plot_annulus_history(x, y, i=j, R_min=i/10-0.5, R_max=i/10+0.5, label=i/10, ax=ax)
         fancy_legend(title="r/kpc", ax=ax)
 
     def annulus_average(self, R_min, R_max):
@@ -343,7 +345,7 @@ def sample_stars(stars, num=1000):
     return stars.iloc[index].copy()
 
 
-def plot_mean_track(x_vals, y_vals, bins=50, xlim=None, err_mean = False, ax=None, **kwargs):
+def plot_mean_track(x_vals, y_vals, bins=50, xlim=None, shade_width=True, err_mean = False, ax=None, **kwargs):
     """
     Plots the mean of the data as a line
     with a shaded region representing the standard deviation
@@ -372,11 +374,15 @@ def plot_mean_track(x_vals, y_vals, bins=50, xlim=None, err_mean = False, ax=Non
     x_bins = 0.5*(bins[1:] + bins[:-1])
     p = ax.plot(x_bins, means, **kwargs)
     
-    std, _, _ = scipy.stats.binned_statistic(x_vals, y_vals, statistic="std", bins=bins, range=xlim)
-    if err_mean:
-        dy = std / np.sqrt(nums)
-    else:
-        dy = std
 
-    ax.fill_between(x_bins, means - std, means + std, alpha=0.3, color=p[0].get_color())
+    if shade_width:
+        std, _, _ = scipy.stats.binned_statistic(x_vals, y_vals, statistic="std", bins=bins, range=xlim)
+        if err_mean:
+            dy = std / np.sqrt(nums)
+        else:
+            dy = std
+        ax.fill_between(x_bins, means - std, means + std, alpha=0.3, color=p[0].get_color())
+
+
+
 
