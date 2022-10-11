@@ -7,6 +7,8 @@ pickles
 *.pdf
 *.jpeg
 *.vice
+*.gif
+*.csv
 
 *.swp
 *.fits

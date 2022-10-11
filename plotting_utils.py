@@ -171,6 +171,12 @@ def plot_density_line(x, y, i=0, xlim=None, ylim=None, **kwargs):
         ax.set_ylim(np.nanmin(y), np.nanmax(y))
 
 
+def dual_plot():
+    fig = plt.figure(figsize=(10, 5))
+    gs = fig.add_gridspec(1, 2, wspace=0)
+    axs = gs.subplots(sharey=True)
+
+    return fig, axs
 
 def differential(l):
     """
