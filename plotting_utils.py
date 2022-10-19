@@ -31,14 +31,14 @@ class fig_saver():
 def legend_outside(**kwargs):
     plt.legend(bbox_to_anchor=(1,1), loc="upper left", **kwargs)
 
-def fancy_legend(ax=None, **kwargs):
+def fancy_legend(ax=None, colors=COLORS, **kwargs):
     if ax is None:
         ax = plt.gca()
        
     leg = ax.legend(frameon = False, handlelength = 0, columnspacing = 0.8, 
                      fontsize = 20, **kwargs)
     for i in range(len(leg.get_texts())):
-        leg.get_texts()[i].set_color(COLORS[i % len(COLORS)])
+        leg.get_texts()[i].set_color(colors[i % len(colors)])
         leg.legendHandles[i].set_visible(False)
 
 
@@ -130,8 +130,24 @@ def density_scatter(x, y, xlim=None, ylim=None, n_bins=100, fig=None, ax=None, d
        
     return R
 
+def plot_thick_line(x, y, w, i=0, xlim=None, ylim=None, ax=None, **kwargs):
+    w_max = np.nanmax(w)
+    points = np.array([x, y]).T.reshape(-1, 1, 2)
+    segments = np.concatenate([points[:-1], points[1:]], axis=1)
 
-def plot_density_line(x, y, i=0, xlim=None, ylim=None, **kwargs):
+    if ax is None:
+        ax = plt.gca()
+
+    lwidths = w/w_max * 5
+    lc = LineCollection(segments, linewidths=lwidths, color=COLORS[i], **kwargs)
+    ax.add_collection(lc)
+
+    if xlim is None:
+        ax.set_xlim(np.nanmin(x), np.nanmax(x))
+    if ylim is None:
+        ax.set_ylim(np.nanmin(y), np.nanmax(y))
+
+def plot_density_line(x, y, **kwargs):
     """
     This method is like plt.plot except plots
     the line with a variable width which represents how 
@@ -157,19 +173,7 @@ def plot_density_line(x, y, i=0, xlim=None, ylim=None, **kwargs):
     w_scaled = (w - np.nanmin(w))/(np.nanmax(w) - np.nanmin(w))
     lwidths = (-lw_min + lw_max)*w_scaled + lw_min
 
-    points = np.array([x, y]).T.reshape(-1, 1, 2)
-    segments = np.concatenate([points[:-1], points[1:]], axis=1)
-
-    ax = plt.gca()
-
-    lc = LineCollection(segments, linewidths=lwidths, color=COLORS[i], **kwargs)
-    ax.add_collection(lc)
-
-    if xlim is None:
-        ax.set_xlim(np.nanmin(x), np.nanmax(x))
-    if ylim is None:
-        ax.set_ylim(np.nanmin(y), np.nanmax(y))
-
+    plot_thick_line(x, y, lwidths, **kwargs)
 
 def dual_plot():
     fig = plt.figure(figsize=(10, 5))

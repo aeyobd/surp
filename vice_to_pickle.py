@@ -13,7 +13,7 @@ from vice_utils import load_model, show_stars
 import multizone_sim
 import apogee_analysis as aah
 import gas_phase_data
-from plotting_utils import legend_outside, fancy_legend, plot_density_line
+from plotting_utils import legend_outside, fancy_legend, plot_density_line, COLORS, plot_thick_line
 
 def pickle_output(file_name, pickle_name=None, isotopic=False, overwrite=False):
     """
@@ -165,9 +165,7 @@ class vice_model():
             xlim = (min(stars[x]), max(stars[x]))
 
         if plot_data:
-            v21 = aah.vincenzo2021()
-            if x in v21.keys() and y in v21.keys():
-                aah.plot_v21(x, y, zorder=1, ax=ax, s=s)
+            aah.plot_stars(x, y, zorder=1, ax=ax, s=s)
 
         plot_mean_track(stars[x], stars[y], xlim=xlim, ax=ax,  **kwargs)
 
@@ -225,7 +223,7 @@ class vice_model():
 
 
         if c is None:
-            plot_density_line(x_values, y_values, **kwargs)
+            ax.plot(x_values, y_values, **kwargs)
         else:
             c_values = ave[c]
             ax.scatter(x_values, y_values, c=c_values, **kwargs)
@@ -233,19 +231,34 @@ class vice_model():
         ax.set_xlabel(x)
         ax.set_ylabel(y)
 
-    def plot_t_slices(self, x, y, xlim=None, times=[2,5,8,11,13], ax=None):
+    def plot_t_slices(self, x, y, xlim=None, times=[2,5,8,11,13], ax=None, legend=True):
         if ax is None:
             ax = plt.gca()
 
-        for t in times:
-            self.plot_annulus_at_t(x, y, t, label="%i" % t, ax=ax)
-        fancy_legend(title="t/Gyr", ax=ax)
+        colors = COLORS[:4] + ["k"]
 
-    def plot_R_slices(self, x, y, Rs=[4,6,8,10,12], ax=None):
+        for i in range(len(times)):
+            t = times[i]
+            c = colors[i]
+
+            self.plot_annulus_at_t(x, y, t, label="%i" % t, ax=ax, color=c)
+        if legend:
+            fancy_legend(title="t/Gyr", ax=ax, colors=colors)
+
+    def plot_R_slices(self, x, y, Rs=[4,6,8,10,12], ax=None, legend=True):
         for j in range(5):
             i = (np.array([4, 6, 8, 10, 12])*10)[j]
-            self.plot_annulus_history(x, y, i=j, R_min=i/10-0.5, R_max=i/10+0.5, label=i/10, ax=ax)
-        fancy_legend(title="r/kpc", ax=ax)
+            j0 = 2
+            if j == j0:
+                c = "k"
+            elif j<j0:
+                c = COLORS[j]
+            else:
+                c = COLORS[j-1]
+
+            self.plot_annulus_history(x, y, R_min=i/10-0.5, R_max=i/10+0.5, label=i/10, ax=ax, color=c)
+        if legend:
+            fancy_legend(title="r/kpc", ax=ax, colors=COLORS[:2] + ["k"] + COLORS[2:])
 
     def annulus_average(self, R_min, R_max):
         """
@@ -265,7 +278,7 @@ class vice_model():
 
         stars = self.stars[star_group]
 
-        aah.plot_v21_coofe(o_h_0, d_o_h)
+        aah.plot_coofe(o_h_0, d_o_h)
 
         filt = stars["[o/h]"] > o_h_0 - d_o_h
         filt &= stars["[o/h]"] < o_h_0 + d_o_h
@@ -290,7 +303,7 @@ class vice_model():
             ax = plt.gca()
 
         if plot_data:
-            aah.plot_v21_coofe_scatter(o_h_0, d_o_h)
+            aah.plot_coofe(o_h_0, d_o_h)
 
         stars = self.stars[star_group]
 
@@ -345,7 +358,7 @@ def sample_stars(stars, num=1000):
     return stars.iloc[index].copy()
 
 
-def plot_mean_track(x_vals, y_vals, bins=50, xlim=None, shade_width=True, err_mean = False, ax=None, **kwargs):
+def plot_mean_track(x_vals, y_vals, bins=30, xlim=None, shade_width=False, err_mean = False, ax=None, dropna=False, **kwargs):
     """
     Plots the mean of the data as a line
     with a shaded region representing the standard deviation
@@ -369,10 +382,16 @@ def plot_mean_track(x_vals, y_vals, bins=50, xlim=None, shade_width=True, err_me
 
     if ax is None:
         ax = plt.gca()
-    means, bins, nums = scipy.stats.binned_statistic(x_vals, y_vals, statistic="mean", bins=bins, range=xlim)
-
+        
+    if dropna:
+        filt = ~(np.isnan(x_vals) | np.isnan(y_vals))
+        x_vals = x_vals[filt]
+        y_vals = y_vals[filt]
+    means, bins, _ = scipy.stats.binned_statistic(x_vals, y_vals, statistic="mean", bins=bins, range=xlim)
+    nums, _, _ = scipy.stats.binned_statistic(x_vals, y_vals, statistic="count", bins=bins, range=xlim)
     x_bins = 0.5*(bins[1:] + bins[:-1])
     p = ax.plot(x_bins, means, **kwargs)
+    # p = plot_thick_line(x_bins, means, nums/30, ax=ax, **kwargs)
     
 
     if shade_width:
@@ -381,8 +400,8 @@ def plot_mean_track(x_vals, y_vals, bins=50, xlim=None, shade_width=True, err_me
             dy = std / np.sqrt(nums)
         else:
             dy = std
-        ax.fill_between(x_bins, means - std, means + std, alpha=0.3, color=p[0].get_color())
+        ax.fill_between(x_bins, means - dy, means + dy, alpha=0.3, color=p[0].get_color())
 
 
 
-
+    return means, bins, nums

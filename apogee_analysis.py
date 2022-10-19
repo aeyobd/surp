@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 import vice
 import pandas as pd
 import seaborn as sns
+from astropy.io import fits
+import astropy.coordinates as coord
+import astropy.units as u
 
 mm_of_elements = {'h': 1.00794, 'he': 4.002602, 'li': 6.941, 'be': 9.012182, 'b': 10.811, 'c': 12.0107, 'n': 14.0067,
                   'o': 15.9994, 'f': 18.9984032, 'ne': 20.1797, 'na': 22.98976928, 'mg': 24.305, 'al': 26.9815386,
@@ -27,6 +30,90 @@ mm_of_elements = {'h': 1.00794, 'he': 4.002602, 'li': 6.941, 'be': 9.012182, 'b'
 
 def logNO_bracket_conversion(logNO):
     return np.log10(14.006/15.999) + logNO - np.log10(vice.solar_z["n"]/vice.solar_z["o"])
+
+def subgiants():
+    """
+    This returns a pd.dataframe of 
+    a subgiant sample of APOGEE c.o. Jack Roberts
+    
+    """
+    
+    # read in the fits file
+    file_name = "allStar-dr17-synspec_rev1.fits.1"
+    ff = fits.open(file_name, mmap=True)
+    da = ff[1].data
+    ff.close()
+    
+    # bit flag mask
+    apogee_target2 = 1<<17 #APOGEE_MIRCLUSTER_STAR
+    apogee_target2 ^= 1<<15 #APOGEE_EMISSION_STAR  emission line stars
+    apogee_target2 ^= 1<<13 #APOGEE_EMBEDDEDCLUSTER_STAR embedded cluster
+    
+    apogee2_target3 = 1<<5 # young cluster (IN-SYNC)
+    apogee2_target3 ^= 1<<18 #APOGEE2_W345
+    apogee2_target3 ^= 1<<1 # EB planet
+    
+    mask = (da["APOGEE2_TARGET3"] & apogee2_target3) == 0
+    mask &= (da["APOGEE_TARGET2"] & apogee_target2) == 0
+    
+    # subgiant mask
+    logg = da["LOGG"]
+    teff = da["TEFF"]
+
+    mask &= logg >= 3.5
+    mask &= logg <= 0.004*teff - 15.7
+    mask &= logg <= 0.00070588*teff + 0.358836
+    mask &= logg <= -0.0015 * teff + 12.05
+    mask &= logg >= 0.0012*teff - 2.8
+    
+    filtered = da[mask]
+    df = pd.DataFrame(filtered.tolist(), columns = [c.name for c in filtered.columns])
+    
+    # calculate galacteocentric coordinates (not super useful but here for fun)
+    c = coord.SkyCoord(ra = df["RA"] * u.degree,
+                               dec = df["DEC"] * u.degree,
+                               distance = df["GAIAEDR3_R_MED_GEO"] * u.pc,
+                               frame="icrs")
+    gc_c = c.transform_to(coord.Galactocentric)
+    df["R_gal"] = np.array(np.sqrt(gc_c.x**2 + gc_c.y**2) / 1e3)
+    df["th_gal"] = np.array(np.arctan(gc_c.y/gc_c.x))
+    df["abs_z"] = np.array(np.abs(gc_c.z) / 1e3)
+    df["z"] = np.array(gc_c.z / 1e3)
+    
+    # Add useful abundance ratios
+    df["O_H"] = bracket(df, "O")
+    df["MG_H"] = bracket(df, "MG")
+    df["C_O"] = bracket(df, "C", "O")
+    df["C_MG"] = bracket(df, "C", "MG")
+    df["C_H"] = bracket(df, "C", "H")
+    df["C_N"] = bracket(df, "C", "N")
+    df["N_H"] = bracket(df, "N", "H")
+    
+    # add high/low alpha column
+    def mg_fe_fe_h_cutoff(fe_h):
+        return 0.12 - 0.13*fe_h *(fe_h < 0)
+
+    df["high_alpha"] = df["MG_FE"] > mg_fe_fe_h_cutoff(df["FE_H"])
+    
+    return df
+
+def bracket(df, ele, ele2="H"):
+    """
+    Helper function for subgiants()
+    creates the abundance ratio [A/B]
+    from the  APOGEE dataframe
+    """
+    if ele2 == "H":
+        if ele == "FE":
+            return df["FE_H"]
+        else:
+            return df["%s_FE" % ele] + df["FE_H"]
+    else:
+        if ele2 == "FE":
+            return df["%s_FE" % ele]
+        else:
+            return df["%s_FE" % ele] - df["%s_FE" % ele2]
+
 
 def vincenzo2021():
     f = open("CNOdredgeup.obj", "rb")
@@ -109,6 +196,42 @@ def log_to_bracket(ratio, elem, elem2="H"):
         return r - np.log10(vice.solar_z(elem)) + np.log10(mm_of_elements[elem])
     else:
         return r - np.log10(vice.solar_z(elem)/vice.solar_z(elem2)) + np.log10(mm_of_elements[elem]/mm_of_elements[elem2])
+
+
+def convert_name(x):
+    """
+    Helper function. Converts a name like
+    [a/b] to A_B
+    """
+    s = x.upper()
+    s = s.replace("[", "")
+    s = s.replace("]", "")
+    s = s.replace("/", "_")
+    return s
+
+def plot_stars(x, y, ax=None, exclude_high_alpha=True, s=1,**kwargs):
+    v21 = subgiants()
+    if exclude_high_alpha:
+        v21 = v21[~v21["high_alpha"]]
+    if ax is None:
+        ax = plt.gca()
+    x = convert_name(x)
+    y = convert_name(y)
+    ax.scatter(v21[x], v21[y], s=s, c="black", **kwargs)#, label="V+21")
+
+def plot_cooh():
+    df = subgiants()
+    filt = ~df["high_alpha"]
+    df = df[filt]
+    plt.scatter(df["MG_H"], df["C_MG"], color="k", s=1, alpha=0.1)
+
+def plot_coofe(c=-0.1, w=0.05):
+    v21 = subgiants()
+
+    filt = v21["MG_H"] > c - w
+    filt &= v21["MG_H"] < c + w
+    df=  v21[filt]
+    plt.scatter(df["MG_FE"], df["C_MG"], color="black", s=1, alpha=0.1)
 
 
 def plot_v21(x, y, ax=None, exclude_high_alpha=True, s=1,**kwargs):
@@ -213,7 +336,7 @@ def plot_mean_v21(x, y, ax=None, bins=50, exclude_high_alpha=True, xlim=None, yl
     bins, means, sds, counts = calc_mean_v21(x, y, bins, xlim, exclude_high_alpha)
 
     ax.plot(bins[:-1], means, label="V21", color="black")
-    ax.fill_between(bins[:-1], means-sds, means+sds, color="black", label="V+21")
+    # ax.fill_between(bins[:-1], means-sds, means+sds, color="black", label="V+21")
 
     return means, sds
     # ax.plot(bins[:-1], means-sds, color="black", ls=":")
