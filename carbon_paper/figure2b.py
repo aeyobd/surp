@@ -3,13 +3,11 @@ import vice
 import numpy as np
 import matplotlib as mpl
 import sys
-sys.path.append("../../")
+sys.path.append("../")
 from plotting_utils import fig_saver
+import rc_params
 
 sf = fig_saver()
-
-sys.path.append("/home/daniel")
-from python_packages.plotting import rc_params
 
 colors = ['#0072B2', '#009E73', '#D55E00', '#CC79A7', '#F0E442', '#56B4E9']
 
@@ -57,13 +55,18 @@ for i in range(len(ccsne_studies)):
         plt.scatter(np.log10(Z), y, color=colors[i], label=f"{study}, v={rotation}", marker=marker)
 
 
-m_h = np.linspace(-4, 1, 1000)
 def y_c_cc(Z):
-    return 0.02 * Z**0.25
+    return 0.005 * (Z/0.014)**0.3
+
+m_h = np.linspace(-0.6, 0.6, 1000)
 Z = 0.014*10**m_h
 y = np.log10(y_c_cc(Z)/0.015) - np.log10(vice.solar_z("c")/vice.solar_z("o"))
-plt.plot(m_h, y, color=colors[5])
+plt.plot(m_h, y, color="k")
 
+m_h = np.linspace(-4, -0.6, 1000)
+Z = 0.014*10**m_h
+y = np.log10(y_c_cc(Z)/0.015) - np.log10(vice.solar_z("c")/vice.solar_z("o"))
+plt.plot(m_h, y, color="k", ls="--")
 
 
 # plt.legend()
@@ -80,7 +83,6 @@ plt.plot(m_h, y, color=colors[5])
 
 
 #plt.ylim([0, 0.008])
-plt.axhline(np.log10(0.005/0.015) - np.log10(vice.solar_z("c")/vice.solar_z("o")), linestyle="--", color="k")
 plt.xlabel("[M/H]")
 plt.ylabel(r"[C/O]$^\text{CC}$")
 

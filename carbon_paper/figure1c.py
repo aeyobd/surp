@@ -4,7 +4,7 @@ import sys
 import numpy as np
 
 sys.path.append("../")
-from plotting_utils import fig_saver
+from plotting_utils import fig_saver, fancy_legend
 import rc_params
 sf = fig_saver()
 
@@ -71,12 +71,6 @@ plt.ylabel(r"$y_\text{C}^\text{AGB}$")
 prop_cycle = plt.rcParams['axes.prop_cycle']
 COLORS = prop_cycle.by_key()['color']
 
-leg = plt.legend(frameon = False, handlelength = 0, columnspacing = 0.8, 
-                 fontsize = 20)
-for i in range(len(AGB_MODELS)):
-    leg.get_texts()[i].set_color(COLORS[i])
-    leg.legendHandles[i].set_visible(False)
-plt.tight_layout()
-
+fancy_legend()
 
 sf("figure1c")

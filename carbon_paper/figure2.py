@@ -3,11 +3,10 @@ import vice
 import numpy as np
 import matplotlib as mpl
 import sys
-sys.path.append("../../")
+sys.path.append("../")
 from plotting_utils import fig_saver
+import rc_params
 
-sys.path.append("/home/daniel")
-from python_packages.plotting import rc_params
 
 sf = fig_saver()
 
@@ -58,13 +57,16 @@ for i in range(N):
 #plt.xscale("log")
 plt.ylim([0, 0.008])
 #plt.legend(bbox_to_anchor=(1,1), loc="upper left")
-m_h = np.linspace(-4, 1, 1000)
 def y_c_cc(Z):
-    return 0.02 * Z**0.25
-Z = 0.014*10**m_h
-plt.plot(m_h, y_c_cc(Z), color=colors[5], label="adjusted")
+    return 0.005 * (Z/0.014)**0.3
 
-plt.axhline(0.005, linestyle="--", color="k", label="fiducial")
+m_h = np.linspace(-0.6, 0.5, 1000)
+Z = 0.014*10**m_h
+plt.plot(m_h, y_c_cc(Z), color="k")
+
+m_h = np.linspace(-4, -0.6, 1000)
+Z = 0.014*10**m_h
+plt.plot(m_h, y_c_cc(Z), color="k", ls="--")
 
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 

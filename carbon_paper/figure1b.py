@@ -19,7 +19,7 @@ vice.yields.ccsne.settings["fe"] = 0
 for i in range(4):
     model = AGB_MODELS[i]
     vice.yields.agb.settings["c"] = model
-    m_c, times = vice.single_stellar_population("c", Z=0.014 * 10**0.3)
+    m_c, times = vice.single_stellar_population("c", Z=0.014 * 10**0)
     m_c = [c for c in m_c]
     plt.plot(times, np.array(m_c)/m_c[-1])
 
@@ -32,7 +32,7 @@ plt.xlabel("t/Gyr")
 plt.ylabel(r"$M_X/M_{X,\text{final}}$")
 plt.xscale("log")
 plt.legend()
-plt.ylim(-1, 1.1)
+plt.ylim(-0.3, 1.1)
 plt.xlim(0.03, 13.2)
 sf("figure1b")
 
