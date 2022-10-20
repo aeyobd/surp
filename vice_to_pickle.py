@@ -278,7 +278,7 @@ class vice_model():
 
         stars = self.stars[star_group]
 
-        aah.plot_coofe(o_h_0, d_o_h)
+        aah.plot_coofe_contour(o_h_0, d_o_h)
 
         filt = stars["[o/h]"] > o_h_0 - d_o_h
         filt &= stars["[o/h]"] < o_h_0 + d_o_h
