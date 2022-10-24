@@ -4,7 +4,7 @@
 #SBATCH --mem=32gb
 #SBATCH --job-name=milkyway_fiducial
 #SBATCH --mail-type=BEGIN,END,FAIL
-#SBATCH --output=surp/logs/run.out%j
+#SBATCH --output=../logs/run.out%j
 #SBATCH --account=PAS2232
 
 
@@ -18,7 +18,7 @@ python cmlrun.py $TMPDIR/ "$@"
 
 python pickle_outputs.py $TMPDIR/
 
-cp -r -u $TMPDIR/*.pickle $SLURM_SUBMIT_DIR/surp/pickles
+cp -r -u $TMPDIR/*.pickle $SLURM_SUBMIT_DIR/../pickles
 
 
 scontrol show job=$SLURM_JOB_ID

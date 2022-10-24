@@ -1,7 +1,9 @@
-from surp.vice_to_pickle import pickle_output
 import multizone_sim
 import sys
 import os
+
+sys.path.append("../analysis_scripts")
+from vice_to_pickle import pickle_output
 
 directory = sys.argv[1]
 

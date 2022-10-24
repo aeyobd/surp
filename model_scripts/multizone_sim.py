@@ -2,13 +2,17 @@ import vice
 import numpy as np
 from vice.toolkit import hydrodisk
 
-from VICE.migration.src.simulations.migration import diskmigration
-from VICE.migration.src.simulations.disks import star_formation_history
-from surp import yields, c_isotopic_yields
-from surp.yields import amplified_yields
+import sys
 import gc
 import os
-import sys
+
+sys.path.append("../model_scripts")
+sys.path.append("..")
+
+from src.simulations.migration import diskmigration
+from src.simulations.disks import star_formation_history
+import yields, c_isotopic_yields
+from yields import amplified_yields
 
 # modify yields
 

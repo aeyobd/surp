@@ -35,7 +35,7 @@ def main():
 
     alpha_agb, alpha_cc = calc_alpha(args)
 
-    run_model(name, prefix=prefix, agb_yields=agb_model, agb_factor=alpha_agb, n_yields="J22", eta_factor=eta, spec=spec, burst_size=A)
+    run_model(name, prefix=prefix, agb_yields=agb_model, agb_factor=alpha_agb, n_yields="J22", eta_factor=eta, spec=spec, burst_size=A, dt=0.1)
 
 
 def parse_args():

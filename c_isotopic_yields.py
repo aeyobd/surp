@@ -6,7 +6,7 @@ from scipy.integrate import quad
 # we use ua as c12 and ag as c13
 
 def set_agb_yields():
-    agb = pd.read_csv("c_isotope_fruitty.txt", sep="\s+")
+    agb = pd.read_csv("../data/c_isotope_fruitty.txt", sep="\s+")
     agb["C12"] /= agb["Mass"]
     agb["C13"] /= agb["Mass"]
 

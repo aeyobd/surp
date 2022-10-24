@@ -2,8 +2,8 @@ import vice
 import numpy as np
 from vice.toolkit import hydrodisk
 
-from VICE.migration.src.simulations.migration import diskmigration
-from VICE.migration.src.simulations.disks import star_formation_history
+from simulations.migration import diskmigration
+from simulations.disks import star_formation_history
 from surp import yields, c_isotopic_yields
 import gc
 import os
