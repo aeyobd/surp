@@ -9,6 +9,7 @@ pickles
 *.vice
 *.gif
 *.csv
+*.json
 
 *.swp
 *.fits

@@ -9,11 +9,11 @@ import pickle
 
 import sys
 sys.path.append("/users/PAS2232/aeyobd/surp")
-from vice_utils import load_model, show_stars
-import multizone_sim
-import apogee_analysis as aah
-import gas_phase_data
-from plotting_utils import legend_outside, fancy_legend, plot_density_line, COLORS, plot_thick_line
+from .vice_utils import load_model, show_stars
+from ..model_scripts import multizone_sim
+from . import apogee_analysis as aah
+from . import gas_phase_data
+from .plotting_utils import legend_outside, fancy_legend, plot_density_line, COLORS, plot_thick_line
 
 def pickle_output(file_name, pickle_name=None, isotopic=False, overwrite=False):
     """

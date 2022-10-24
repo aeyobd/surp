@@ -16,9 +16,10 @@ source activate local
 
 python cmlrun.py $TMPDIR/ "$@"
 
-python pickle_outputs.py $TMPDIR/
+# python pickle_outputs.py $TMPDIR/
 
-cp -r -u $TMPDIR/*.pickle $SLURM_SUBMIT_DIR/../pickles
+cp -r -u $TMPDIR/*.vice $SLURM_SUBMIT_DIR/../output
+cp -r -u $TMPDIR/*.out $SLURM_SUBMIT_DIR/../output
 
 
 scontrol show job=$SLURM_JOB_ID

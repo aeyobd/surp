@@ -1,5 +1,5 @@
 import pandas as pd
-import apogee_analysis as aah
+from . import apogee_analysis as aah
 import matplotlib.pyplot as plt
 
 def read_skillman20():

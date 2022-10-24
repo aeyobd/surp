@@ -2,11 +2,16 @@ import vice
 import pandas as pd
 import numpy as np
 from scipy.integrate import quad
+import os
 
 # we use ua as c12 and ag as c13
 
 def set_agb_yields():
-    agb = pd.read_csv("../data/c_isotope_fruitty.txt", sep="\s+")
+    script_dir = os.path.dirname(__file__)
+    rel_path = "data/c_isotope_fruitty.txt"
+    abs_path = os.path.join(script_dir, rel_path)
+
+    agb = pd.read_csv(abs_path, sep="\s+")
     agb["C12"] /= agb["Mass"]
     agb["C13"] /= agb["Mass"]
 

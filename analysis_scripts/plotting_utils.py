@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from functools import wraps
-import rc_params
+from . import rc_params
 from matplotlib.collections import LineCollection
 
 prop_cycle = plt.rcParams['axes.prop_cycle']

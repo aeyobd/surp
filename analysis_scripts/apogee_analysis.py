@@ -39,7 +39,7 @@ def find_subgiants():
     """
     
     # read in the fits file
-    file_name = "../data/allStar-dr17-synspec_rev1.fits.1"
+    file_name = "data/allStar-dr17-synspec_rev1.fits.1"
     ff = fits.open(file_name, mmap=True)
     da = ff[1].data
     ff.close()
@@ -117,7 +117,7 @@ def bracket(df, ele, ele2="H"):
 
 
 def vincenzo2021():
-    f = open("../data/CNOdredgeup.obj", "rb")
+    f = open("data/CNOdredgeup.obj", "rb")
     raw = pickle.load(f, encoding = "bytes")
     f.close()
     
@@ -220,7 +220,7 @@ def plot_stars(x, y, ax=None, exclude_high_alpha=True, s=1,**kwargs):
     y = convert_name(y)
     ax.scatter(v21[x], v21[y], s=s, c="black", **kwargs)#, label="V+21")
 
-def plot_contour(x, y, bins=50,exclude_high_alpha=True,  **kwargs):
+def plot_contour(x, y, ax=None, bins=50,exclude_high_alpha=True,  **kwargs):
     v21 = subgiants
     if exclude_high_alpha:
         v21 = v21[~v21["high_alpha"]]
@@ -229,7 +229,6 @@ def plot_contour(x, y, bins=50,exclude_high_alpha=True,  **kwargs):
     x = convert_name(x)
     y = convert_name(y)
 
-    v21 = vincenzo2021()
     if exclude_high_alpha:
         v21 = v21[~v21["high_alpha"]]
     sns.kdeplot(v21[x], v21[y], color="black", linewidths=1, **kwargs)

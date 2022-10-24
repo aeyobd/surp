@@ -9,8 +9,8 @@ import os
 sys.path.append("../model_scripts")
 sys.path.append("..")
 
-from src.simulations.migration import diskmigration
-from src.simulations.disks import star_formation_history
+from model_scripts.src.simulations.migration import diskmigration
+from model_scripts.src.simulations.disks import star_formation_history
 import yields, c_isotopic_yields
 from yields import amplified_yields
 

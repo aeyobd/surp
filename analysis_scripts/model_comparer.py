@@ -1,11 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from vice_utils import sample_stars, load_model, filter_stars, calculate_z, show_stars, R_to_zone, zone_to_R, show_at_R_z
-import apogee_analysis as aah
+from .vice_utils import sample_stars, load_model, filter_stars, calculate_z, show_stars, R_to_zone, zone_to_R, show_at_R_z
+from . import apogee_analysis as aah
 import vice
-import gas_phase_data
-from plotting_utils import fig_saver, legend_outside
+from .import gas_phase_data
+from .plotting_utils import fig_saver, legend_outside
 
 class ModelComparer():
     def __init__(self, model_names, labels=None, sf=None, isotopic=False):
