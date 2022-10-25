@@ -7,6 +7,7 @@ import seaborn as sns
 from astropy.io import fits
 import astropy.coordinates as coord
 import astropy.units as u
+import os
 
 mm_of_elements = {'h': 1.00794, 'he': 4.002602, 'li': 6.941, 'be': 9.012182, 'b': 10.811, 'c': 12.0107, 'n': 14.0067,
                   'o': 15.9994, 'f': 18.9984032, 'ne': 20.1797, 'na': 22.98976928, 'mg': 24.305, 'al': 26.9815386,
@@ -39,8 +40,10 @@ def find_subgiants():
     """
     
     # read in the fits file
-    file_name = "data/allStar-dr17-synspec_rev1.fits.1"
-    ff = fits.open(file_name, mmap=True)
+    script_dir = os.path.dirname(__file__)
+    rel_path = "../data/allStar-dr17-synspec_rev1.fits.1"
+    abs_path = os.path.join(script_dir, rel_path)
+    ff = fits.open(abs_path, mmap=True)
     da = ff[1].data
     ff.close()
     
@@ -117,7 +120,10 @@ def bracket(df, ele, ele2="H"):
 
 
 def vincenzo2021():
-    f = open("data/CNOdredgeup.obj", "rb")
+    script_dir = os.path.dirname(__file__)
+    rel_path = "../data/CNOdredgeup.obj"
+    abs_path = os.path.join(script_dir, rel_path)
+    f = open(abs_path, "rb")
     raw = pickle.load(f, encoding = "bytes")
     f.close()
     

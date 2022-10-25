@@ -35,7 +35,7 @@ def main():
 
     alpha_agb, alpha_cc = calc_alpha(args)
 
-    run_model(name, prefix=prefix, agb_yields=agb_model, agb_factor=alpha_agb, n_yields="J22", eta_factor=eta, spec=spec, burst_size=A, dt=0.1)
+    run_model(name, prefix=prefix, agb_yields=agb_model, agb_factor=alpha_agb, n_yields="J22", eta_factor=eta, spec=spec, burst_size=A)
 
 
 def parse_args():
@@ -58,7 +58,7 @@ def parse_args():
 
     parser.add_argument("-i", "--fe_ia_factor", help="The factor by which to chante SneIa Fe contribution", type=float)
 
-    parser.add_argument("-t", "--traditional_f", help="Sets the AGB fraction to only imf averaged as is typical defined", action="store_true")
+    parser.add_argument("-t", "--traditional_f", help="Sets the AGB fraction to only imf averaged as is typical defined", action="store_false")
 
     args = parser.parse_args()
 
@@ -107,8 +107,8 @@ def find_name(args):
         if lateburst:
             name += "_lateburst"
 
-        if trad:
-            name += "_r"
+        if not trad:
+            name += "_adjf"
 
     print(name)
     return name

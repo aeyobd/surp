@@ -1,9 +1,15 @@
 import pandas as pd
 from . import apogee_analysis as aah
 import matplotlib.pyplot as plt
+import os
+
 
 def read_skillman20():
-    df = pd.read_csv("chaos_m101.dat", sep="\s+")
+    script_dir = os.path.dirname(__file__)
+    rel_path = "../data/chaos_m101.dat"
+    abs_path = os.path.join(script_dir, rel_path)
+
+    df = pd.read_csv(abs_path, sep="\s+")
     df1 = pd.DataFrame()
     df1["[o/h]"] = aah.log_to_bracket(df["O_H"], "o") - 12
     df1["[c/o]"] = aah.log_to_bracket(df["C_O"], "c", "o")
@@ -24,7 +30,10 @@ def plot_skillman20(x, y):
 
 
 def read_md22():
-    df = pd.read_csv("md22.csv")
+    script_dir = os.path.dirname(__file__)
+    rel_path = "../data/md22.csv"
+    abs_path = os.path.join(script_dir, rel_path)
+    df = pd.read_csv(abs_path)
     df1 = pd.DataFrame()
     df1["[o/h]"] = aah.log_to_bracket(df["O_H"], "o") - 12
 
