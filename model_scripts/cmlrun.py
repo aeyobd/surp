@@ -1,5 +1,3 @@
-from multizone_sim import run_model
-import vice
 import sys
 import argparse
 
@@ -10,6 +8,10 @@ version = "0.1.3"
 
 def main():
     args = parse_args()
+
+    # this is horrific but for my sake
+    from multizone_sim import run_model
+    import vice
 
     f_agb = args.agb_fraction
     beta = args.beta
@@ -43,7 +45,7 @@ def parse_args():
 
     parser.add_argument("prefix")
     parser.add_argument("-e", "--eta", help = "outflow factor", type=float, default=1)
-    parser.add_argument("-b", "--beta", help = "C CCSNe Z-dependence", type=float, default=0.3)
+    parser.add_argument("-b", "--beta", help = "C CCSNe Z-dependence", type=float, default=0.4)
 
     parser.add_argument("-l", "--lateburst", help = "sets sfh to lateburst", action="store_true")
     parser.add_argument("-f", "--agb_fraction", help="The fractional C AGB contribution", type=float, default=0.2)
@@ -72,7 +74,12 @@ def set_yields(args):
         vice.yields.ccsne.settings[elem] *= eta
     vice.yields.sneia.settings["fe"] *= eta
 
-    fe_total = vice.yields.sneia.settings["fe"] + vice.yields.ccsne.settings["c"]
+    if args.fe_ia_factor:
+        fe_total = vice.yields.sneia.settings["fe"] + vice.yields.ccsne.settings["fe"]
+        fe_ia = vice.yields.sneia.settings["fe"] * args.fe_ia_factor
+        fe_cc = fe_total - fe_ia
+        vice.yields.ccsne.settings["fe"] = fe_cc
+        vice.yields.sneia.settings["fe"] = fe_ia
 
     alpha_agb, alpha_cc = calc_alpha(args)
 
@@ -109,6 +116,10 @@ def find_name(args):
 
         if not trad:
             name += "_adjf"
+
+        if args.fe_ia_factor:
+            name += "_ia%s" % args.fe_ia_factor
+
 
     print(name)
     return name

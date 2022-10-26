@@ -124,8 +124,8 @@ def show_stars(stars, x="[fe/h]", y=None, c=None, c_label=None, s=1, alpha=1, kd
     if colorbar:
         if c_label is None:
             c_label = c
-        alt_colorbar(im, label=c_label)
-        # fig.colorbar(im, ax = ax, label=c_label)
+        # alt_colorbar(im, label=c_label)
+        fig.colorbar(im, ax = ax, label=c_label)
 
     return im
 

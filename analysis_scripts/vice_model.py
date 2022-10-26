@@ -16,6 +16,7 @@ from ..model_scripts import multizone_sim
 from . import apogee_analysis as aah
 from .import gas_phase_data
 from .plotting_utils import legend_outside, fancy_legend, plot_density_line, COLORS, plot_thick_line
+import .plotting_utils as pluto
 
 
 class vice_model():
@@ -84,7 +85,7 @@ class vice_model():
         if plot_data:
             aah.plot_stars(x, y, zorder=1, ax=ax, s=s)
 
-        plot_mean_track(stars[x], stars[y], xlim=xlim, ax=ax,  **kwargs)
+        pluto.plot_mean_track(stars[x], stars[y], xlim=xlim, ax=ax,  **kwargs)
 
         plt.xlabel(x)
         plt.ylabel(y)
@@ -228,7 +229,7 @@ class vice_model():
         filt &= stars["[o/h]"] < o_h_0 + d_o_h
         df = stars[filt]
 
-        plot_mean_track(df["[o/fe]"], df["[c/o]"], xlim=xlim, **kwargs)
+        pluto.plot_mean_track(df["[o/fe]"], df["[c/o]"], xlim=xlim, **kwargs)
         plt.xlabel("[o/fe]")
         plt.ylabel("[c/o]")
 
@@ -246,56 +247,9 @@ class vice_model():
         df = stars[filt]
 
         df["[fe/o]"] = - np.array(df["[o/fe]"])
-        plot_mean_track(df["[fe/o]"], df["[c/o]"], xlim=xlim, **kwargs)
+        pluto.plot_mean_track(df["[fe/o]"], df["[c/o]"], xlim=xlim, **kwargs)
         plt.xlabel("[fe/o]")
         plt.ylabel("[c/o]")
 
 
 
-def plot_mean_track(x_vals, y_vals, bins=30, xlim=None, shade_width=False, err_mean = False, ax=None, dropna=False, **kwargs):
-    """
-    Plots the mean of the data as a line
-    with a shaded region representing the standard deviation
-    
-    Parameters
-    ----------
-    
-    x_vals: np.array like
-        The x values of the data
-        
-    y_vals: np.array like
-    bins: ``int`` [default: 50]
-        The number of bins to bin the data by
-    xlim: ``(int, int)`` [default: None]
-        The limits of the bins of the data
-        if None, uses the minimum and maximum values
-    err_mean: ``bool`` [default: False]
-        If true, plots the error of the mean instead
-        of the standard deviation for the shaded regions
-    """
-
-    if ax is None:
-        ax = plt.gca()
-        
-    if dropna:
-        filt = ~(np.isnan(x_vals) | np.isnan(y_vals))
-        x_vals = x_vals[filt]
-        y_vals = y_vals[filt]
-    means, bins, _ = scipy.stats.binned_statistic(x_vals, y_vals, statistic="mean", bins=bins, range=xlim)
-    nums, _, _ = scipy.stats.binned_statistic(x_vals, y_vals, statistic="count", bins=bins, range=xlim)
-    x_bins = 0.5*(bins[1:] + bins[:-1])
-    p = ax.plot(x_bins, means, **kwargs)
-    # p = plot_thick_line(x_bins, means, nums/30, ax=ax, **kwargs)
-    
-
-    if shade_width:
-        std, _, _ = scipy.stats.binned_statistic(x_vals, y_vals, statistic="std", bins=bins, range=xlim)
-        if err_mean:
-            dy = std / np.sqrt(nums)
-        else:
-            dy = std
-        ax.fill_between(x_bins, means - dy, means + dy, alpha=0.3, color=p[0].get_color())
-
-
-
-    return means, bins, nums
