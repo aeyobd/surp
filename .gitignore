@@ -8,13 +8,11 @@ pickles
 *.jpeg
 *.vice
 *.gif
-*.csv
 *.json
 
 *.swp
 *.fits
 *.fits.1
-*.obj
 .ipynb*
 
 final_figures
@@ -37,4 +35,3 @@ ReadMe
 *.bst
 
 karakas16_yields
-*.tsv

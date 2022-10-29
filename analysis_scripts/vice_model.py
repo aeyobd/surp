@@ -16,7 +16,7 @@ from ..model_scripts import multizone_sim
 from . import apogee_analysis as aah
 from .import gas_phase_data
 from .plotting_utils import legend_outside, fancy_legend, plot_density_line, COLORS, plot_thick_line
-import .plotting_utils as pluto
+from . import plotting_utils as pluto
 
 
 class vice_model():
@@ -101,8 +101,8 @@ class vice_model():
         plt.xlabel(x)
         plt.ylabel("density of stars")
 
-    def plot_gas(self, x, y, ratio=False, filename=None):
-        self.plot_annulus_at_t(x, y)
+    def plot_gas(self, x, y, ratio=False, filename=None, **kwargs):
+        self.plot_annulus_at_t(x, y, **kwargs)
         gas_phase_data.plot_all(x, y)
         legend_outside()
 

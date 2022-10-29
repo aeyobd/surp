@@ -245,13 +245,13 @@ def plot_cooh():
     df = df[filt]
     plt.scatter(df["MG_H"], df["C_MG"], color="k", s=1, alpha=0.1)
 
-def plot_coofe(c=-0.1, w=0.05):
+def plot_coofe(c=-0.1, w=0.05, s=1, alpha=0.1, **kwargs):
     v21 = subgiants
 
     filt = v21["MG_H"] > c - w
     filt &= v21["MG_H"] < c + w
     df=  v21[filt]
-    plt.scatter(df["MG_FE"], df["C_MG"], color="black", s=1, alpha=0.1)
+    plt.scatter(df["MG_FE"], df["C_MG"], color="black", s=s, alpha=alpha, **kwargs)
 
 def plot_coofe_contour(c=-0.1, w=0.05):
     v21 = subgiants

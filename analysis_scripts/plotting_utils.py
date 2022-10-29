@@ -205,7 +205,7 @@ def differential(l):
     d_end = dl[-1]
     return np.append(dl, d_end)
 
-def plot_mean_track(x_vals, y_vals, bins=30, xlim=None, shade_width=False, err_mean = False, ax=None, dropna=False, **kwargs):
+def plot_mean_track(x_vals, y_vals, bins=30, xlim=None, shade_width=False, err_mean = False, ax=None, dropna=False, s=0.1, **kwargs):
     """
     Plots the mean of the data as a line
     with a shaded region representing the standard deviation
