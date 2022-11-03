@@ -103,7 +103,7 @@ class vice_model():
 
     def plot_gas(self, x, y, ratio=False, filename=None, **kwargs):
         self.plot_annulus_at_t(x, y, **kwargs)
-        gas_phase_data.plot_all(x, y)
+        gas_phase_data.plot_all(x, y, alpha_bars=0.5)
         legend_outside()
 
     def plot_annulus_at_t(self, x, y, t = 13, dt = 0.1, c=None, R_min=0, R_max=15.4, ax=None, **kwargs):

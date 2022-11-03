@@ -1,5 +1,6 @@
 import pandas as pd
 from . import apogee_analysis as aah
+from . import plotting_utils as pluto
 import matplotlib.pyplot as plt
 import os
 
@@ -57,11 +58,11 @@ def plot_md22(x, y):
     plt.errorbar(df[x], df[y], xerr=df[x + "_err"], yerr=df[y+"_err"], fmt="o", label="M101")
 
 
-def plot_all(x, y):
+def plot_all(x, y, **kwargs):
     if x in read_skillman20().keys():
         if y in read_skillman20().keys():
             for df in [read_skillman20(), read_md22()]:
-                plt.errorbar(df[x], df[y], xerr=df[x + "_err"], yerr=df[y+"_err"], fmt="o", label=df.name)
+                pluto.err_scatter(df[x], df[y], xerr=df[x + "_err"], yerr=df[y+"_err"], label=df.name, **kwargs)
 
 
 

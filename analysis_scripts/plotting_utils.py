@@ -265,7 +265,7 @@ def plot_mean_track(x_vals, y_vals, bins=30, xlim=None, shade_width=False, err_m
 
     return means, bins, nums
 
-def err_scatter(x, y, yerr=None, xerr=None, fmt=None, ax=None, marker="o", alpha_bars=1, **kwargs):
+def err_scatter(x, y, yerr=None, xerr=None, fmt=None, ax=None, capsize=0, marker="o", alpha_bars=1, **kwargs):
     """
     A wrapper around plt.errorbar which defaults to a
     scatter plot and enables changing the alpha of the
@@ -275,9 +275,10 @@ def err_scatter(x, y, yerr=None, xerr=None, fmt=None, ax=None, marker="o", alpha
     if ax is None:
         ax = plt.gca()
     if fmt is not None:
-        markers, caps, bars = ax.errorbar(x, y, xerr=xerr, yerr=yerr, fmt=fmt, **kwargs)
+        markers, caps, bars = ax.errorbar(x, y, xerr=xerr, yerr=yerr, fmt=fmt,capsize=capsize, **kwargs)
     else:
-        markers, caps, bars = ax.errorbar(x, y, xerr=xerr, yerr=yerr, ls="", marker=marker, **kwargs)
+        markers, caps, bars = ax.errorbar(x, y, xerr=xerr, yerr=yerr, ls="", marker=marker, 
+                capsize=capsize, **kwargs)
 
     for bar in bars:
         bar.set_alpha(alpha_bars) 
