@@ -9,28 +9,7 @@ import astropy.coordinates as coord
 import astropy.units as u
 import os
 
-mm_of_elements = {'h': 1.00794, 'he': 4.002602, 'li': 6.941, 'be': 9.012182, 'b': 10.811, 'c': 12.0107, 'n': 14.0067,
-                  'o': 15.9994, 'f': 18.9984032, 'ne': 20.1797, 'na': 22.98976928, 'mg': 24.305, 'al': 26.9815386,
-                  'si': 28.0855, 'p': 30.973762, 's': 32.065, 'cl': 35.453, 'ar': 39.948, 'k': 39.0983, 'ca': 40.078,
-                  'sc': 44.955912, 'ti': 47.867, 'v': 50.9415, 'cr': 51.9961, 'mn': 54.938045,
-                  'fe': 55.845, 'co': 58.933195, 'ni': 58.6934, 'cu': 63.546, 'zn': 65.409, 'ga': 69.723, 'ge': 72.64,
-                  'as': 74.9216, 'se': 78.96, 'br': 79.904, 'kr': 83.798, 'rb': 85.4678, 'sr': 87.62, 'y': 88.90585,
-                  'zr': 91.224, 'nb': 92.90638, 'mo': 95.94, 'tc': 98.9063, 'ru': 101.07, 'rh': 102.9055, 'pd': 106.42,
-                  'ag': 107.8682, 'cd': 112.411, 'in': 114.818, 'sn': 118.71, 'sb': 121.760, 'te': 127.6,
-                  'i': 126.90447, 'xe': 131.293, 'cs': 132.9054519, 'ba': 137.327, 'la': 138.90547, 'ce': 140.116,
-                  'pr': 140.90465, 'nd': 144.242, 'pm': 146.9151, 'sm': 150.36, 'eu': 151.964, 'gd': 157.25,
-                  'tb': 158.92535, 'dy': 162.5, 'ho': 164.93032, 'er': 167.259, 'tm': 168.93421, 'yb': 173.04,
-                  'lu': 174.967, 'hf': 178.49, 'ta': 180.9479, 'w': 183.84, 're': 186.207, 'os': 190.23, 'ir': 192.217,
-                  'pt': 195.084, 'au': 196.966569, 'hg': 200.59, 'tl': 204.3833, 'pb': 207.2, 'bi': 208.9804,
-                  'po': 208.9824, 'at': 209.9871, 'rn': 222.0176, 'fr': 223.0197, 'ra': 226.0254, 'ac': 227.0278,
-                  'th': 232.03806, 'pa': 231.03588, 'u': 238.02891, 'np': 237.0482, 'pu': 244.0642, 'am': 243.0614,
-                  'cm': 247.0703, 'bk': 247.0703, 'cf': 251.0796, 'es': 252.0829, 'fm': 257.0951, 'md': 258.0951,
-                  'no': 259.1009, 'lr': 262, 'rf': 267, 'db': 268, 'sg': 271, 'bh': 270, 'hs': 269, 'mt': 278,
-                  'ds': 281, 'rg': 281, 'cn': 285, 'nh': 284, 'fl': 289, 'mc': 289, 'lv': 292, 'ts': 294, 'og': 294,
-                  '': 0}
 
-def logNO_bracket_conversion(logNO):
-    return np.log10(14.006/15.999) + logNO - np.log10(vice.solar_z["n"]/vice.solar_z["o"])
 
 def find_subgiants():
     """
@@ -89,14 +68,14 @@ def find_subgiants():
     df["C_O"] = bracket(df, "C", "O")
     df["C_MG"] = bracket(df, "C", "MG")
     df["C_H"] = bracket(df, "C", "H")
+
     df["C_N"] = bracket(df, "C", "N")
     df["N_H"] = bracket(df, "N", "H")
+    df["N_O"] = bracket(df, "N", "O")
+    df["N_MG"] = bracket(df, "N", "MG")
     
     # add high/low alpha column
-    def mg_fe_fe_h_cutoff(fe_h):
-        return 0.12 - 0.13*fe_h *(fe_h < 0)
-
-    df["high_alpha"] = df["MG_FE"] > mg_fe_fe_h_cutoff(df["FE_H"])
+    df["high_alpha"] = df["MG_FE"] > mg_fe_cutoff(df["FE_H"])
     
     return df
 
@@ -118,61 +97,103 @@ def bracket(df, ele, ele2="H"):
         else:
             return df["%s_FE" % ele] - df["%s_FE" % ele2]
 
+def vincenzo2021_raw():
+    """
+    Reads in the CNOdredgeup.obj file 
+    from the data in V+21 and returns the file
+    as a pandas dataframe with original column
+    names
+    
+    Note: this does not read in the calabration values for C, N, O abundance:
 
-def vincenzo2021():
+    For solar:
+    Log C/H = -3.61
+    Log N/H = -4.22
+    Log O/H = -3.34
+
+    Also, corrections for O/H are small (<0.02), so
+    using magnesium may still be okay.
+    """
     script_dir = os.path.dirname(__file__)
     rel_path = "../data/CNOdredgeup.obj"
     abs_path = os.path.join(script_dir, rel_path)
     f = open(abs_path, "rb")
     raw = pickle.load(f, encoding = "bytes")
     f.close()
-    
-    mgfe = raw[1].tolist()
-    feh = raw[2].tolist()
-    cfe = raw[3].tolist()
-    nfe = raw[4].tolist()
-    ch = raw[5].tolist()
-    nh = raw[6].tolist()
-    age = raw[7].tolist()
-    cn = raw[9].tolist()
-    no = [logNO_bracket_conversion(_) for _ in raw[11]]
-    oh = [a - b for a, b in zip(nh, no)]
-    data = pd.DataFrame({
-        "[mg/fe]": mgfe,
-        "[fe/h]": feh,
-        "[c/fe]": cfe,
-        "[n/fe]": nfe,
-        "[c/h]": ch,
-        "[n/h]": nh,
-        "age": age,
-        "[c/n]": log_to_bracket(cn, "c", "n"),
-        "[o/h]": oh,
-        "[n/o]": no
-    })
+    data = raw[1:13]
+    columns = raw[0].split(", ")[1:13]
+
+    df = {columns[i]: data[i] for i in range(12)}
+    return pd.DataFrame(df, dtype=float)
+
+def mg_fe_cutoff(fe_h):
+    """
+    The cutoff between the high and low alpha seqeunces
+
+    Parameters
+    ----------
+    fe_h: float or np.array
+        The [Fe/H] values to evaluate the boandry at
+
+    Returns
+    -------
+    mg_fe: float or np.array
+        The [Mg/Fe] above which the high alpha sequence is defined
+    """
+    return 0.12 - (fe_h < 0) * 0.13 * fe_h
+
+
+def vincenzo2021():
+    """
+    Returns the V21 dataframe as a processed pandas
+    object.
+
+    Returns: pd.Dataframe
+    Columns: 
+        [x/y]: these are all bracket notation chemical abundances
+        apogee_id: 
+        age: calculated age of star in Gyr
+        high_alpha
+    """
+
+    raw = vincenzo2021_raw()
+
+    data = pd.DataFrame({"apogee_id": raw["apogee_id"]})
+
+    data["[mg/fe]"] = raw["MgFe_stars_bracket"]
+    data["[fe/h]"] = raw["FeH_stars_bracket"]
+
+    # these are uncorrected
+    data["[c/fe]_apo"] = raw["CFe_stars_bracket"]
+    data["[n/fe]_apo"] = raw["NFe_stars_bracket"]
+
+    data["[c/h]"] = raw["CHbirth_stars_bracket"]
+    data["[n/h]"] = raw["NHbirth_stars_bracket"]
+
+    data["[n/o]"] = log_to_bracket(raw["NObirth_stars"], "n", "o")
+    data["[c/n]"] = log_to_bracket(raw["CNbirth_stars"], "c", "n")
+
+    data["age"] = raw["age_stars"]
+
+    # additional columns for sanity's sake
+    data["[mg/h]"] = data["[mg/fe]"] + data["[fe/h]"]
+    data["[o/h]"] = data["[n/h]"] - data["[n/o]"]
+
+    data["[c/o]"] = data["[c/h]"] - data["[o/h]"]
+
+    data["[c/mg]"] = data["[c/h]"] - data["[mg/h]"]
+    data["[n/mg]"] = data["[n/h]"] - data["[mg/h]"]
+    data["[o/fe]"] = data["[o/h]"] - data["[fe/h]"]
+
+    high_alpha = data["[mg/fe]"] > mg_fe_cutoff(data["[fe/h]"])
+    data["high_alpha"]  = high_alpha
+
+    # broadly filter out the chaos
     filt = data["[o/h]"] >= -10
     filt &= data["[o/h]"] <= 10
     filt &= data["[n/o]"] >= -10
     filt &= data["[n/o]"] <= 10
-    
-    data["[c/o]"] = data["[c/h]"] - data["[o/h]"]
-    data["[c/fe]"] = data["[c/h]"] - data["[fe/h]"]
-
-
-    data["[c+n/h]"] = np.log10((
-        bracket_to_abundance(data["[c/h]"], "C") +
-        bracket_to_abundance(data["[n/h]"], "N"))
-        / (vice.solar_z("C") + vice.solar_z("N")))
-
-    data["[c+n/o]"] = data["[c+n/h]"] - data["[o/h]"]
-
     data["age"].replace(-999, np.NaN, inplace=True)
-    data["[o/fe]"] = data["[o/h]"] - data["[fe/h]"]
-
-    def o_fe_cutoff(fe_h):
-        return 0.12 - (fe_h < 0) * 0.13 * fe_h
-
-    high_alpha = data["[o/fe]"] > o_fe_cutoff(data["[fe/h]"])
-    data["high_alpha"]  = high_alpha
 
     return data[filt]
 
@@ -214,9 +235,10 @@ def convert_name(x):
     s = s.replace("[", "")
     s = s.replace("]", "")
     s = s.replace("/", "_")
+
     return s
 
-def plot_stars(x, y, ax=None, exclude_high_alpha=True, s=1,**kwargs):
+def plot_stars(x, y, ax=None, exclude_high_alpha=True, c="black", s=1,**kwargs):
     v21 = subgiants
     if exclude_high_alpha:
         v21 = v21[~v21["high_alpha"]]
@@ -224,7 +246,7 @@ def plot_stars(x, y, ax=None, exclude_high_alpha=True, s=1,**kwargs):
         ax = plt.gca()
     x = convert_name(x)
     y = convert_name(y)
-    ax.scatter(v21[x], v21[y], s=s, c="black", **kwargs)#, label="V+21")
+    ax.scatter(v21[x], v21[y], s=s, c=c, **kwargs)#, label="V+21")
 
 def plot_contour(x, y, ax=None, bins=50,exclude_high_alpha=True,  **kwargs):
     v21 = subgiants
@@ -252,6 +274,14 @@ def plot_coofe(c=-0.1, w=0.05, s=1, alpha=0.1, **kwargs):
     filt &= v21["MG_H"] < c + w
     df=  v21[filt]
     plt.scatter(df["MG_FE"], df["C_MG"], color="black", s=s, alpha=alpha, **kwargs)
+
+def plot_cofeo(c=-0.1, w=0.05, s=1, alpha=0.1, **kwargs):
+    v21 = subgiants
+
+    filt = v21["MG_H"] > c - w
+    filt &= v21["MG_H"] < c + w
+    df=  v21[filt]
+    plt.scatter(-df["MG_FE"], df["C_MG"], color="black", s=s, alpha=alpha, **kwargs)
 
 def plot_coofe_contour(c=-0.1, w=0.05):
     v21 = subgiants
@@ -422,5 +452,38 @@ def plot_skillman20_cnoh(**kwargs):
     c_n_err = [.08,.05,.13,.21,.13,.13,.10,.18,.50,.50]
     plt.errorbar(log_to_bracket(o_h, "o") - 12, log_to_bracket(c_n, "c", "n"), yerr=c_n_err, xerr = o_h_err, fmt="o", **kwargs)
 
+
+
+mm_of_elements = {'h': 1.00794, 'he': 4.002602, 'li': 6.941, 'be': 9.012182,
+                  'b': 10.811, 'c': 12.0107, 'n': 14.0067, 'o': 15.9994, 
+                  'f': 18.9984032, 'ne': 20.1797, 'na': 22.98976928, 'mg': 24.305, 
+                  'al': 26.9815386, 'si': 28.0855, 'p': 30.973762, 's': 32.065, 
+                  'cl': 35.453, 'ar': 39.948, 'k': 39.0983, 'ca': 40.078,
+                  'sc': 44.955912, 'ti': 47.867, 'v': 50.9415, 'cr': 51.9961, 
+                  'mn': 54.938045, 'fe': 55.845, 'co': 58.933195, 'ni': 58.6934, 
+                  'cu': 63.546, 'zn': 65.409, 'ga': 69.723, 'ge': 72.64,
+                  'as': 74.9216, 'se': 78.96, 'br': 79.904, 'kr': 83.798, 
+                  'rb': 85.4678, 'sr': 87.62, 'y': 88.90585, 'zr': 91.224, 
+                  'nb': 92.90638, 'mo': 95.94, 'tc': 98.9063, 'ru': 101.07, 
+                  'rh': 102.9055, 'pd': 106.42, 'ag': 107.8682, 'cd': 112.411, 
+                  'in': 114.818, 'sn': 118.71, 'sb': 121.760, 'te': 127.6,
+                  'i': 126.90447, 'xe': 131.293, 'cs': 132.9054519, 'ba': 137.327, 
+                  'la': 138.90547, 'ce': 140.116, 'pr': 140.90465, 'nd': 144.242,
+                  'pm': 146.9151, 'sm': 150.36, 'eu': 151.964, 'gd': 157.25,
+                  'tb': 158.92535, 'dy': 162.5, 'ho': 164.93032, 'er': 167.259,
+                  'tm': 168.93421, 'yb': 173.04, 'lu': 174.967, 'hf': 178.49,
+                  'ta': 180.9479, 'w': 183.84, 're': 186.207, 'os': 190.23,
+                  'ir': 192.217, 'pt': 195.084, 'au': 196.966569, 'hg': 200.59,
+                  'tl': 204.3833, 'pb': 207.2, 'bi': 208.9804, 'po': 208.9824,
+                  'at': 209.9871, 'rn': 222.0176, 'fr': 223.0197, 'ra': 226.0254, 
+                  'ac': 227.0278, 'th': 232.03806, 'pa': 231.03588, 'u': 238.02891,
+                  'np': 237.0482, 'pu': 244.0642, 'am': 243.0614, 'cm': 247.0703,
+                  'bk': 247.0703, 'cf': 251.0796, 'es': 252.0829, 'fm': 257.0951,
+                  'md': 258.0951, 'no': 259.1009, 'lr': 262, 'rf': 267,
+                  'db': 268, 'sg': 271, 'bh': 270, 'hs': 269, 'mt': 278,
+                  'ds': 281, 'rg': 281, 'cn': 285, 'nh': 284, 
+                  'fl': 289, 'mc': 289, 'lv': 292, 'ts': 294, 
+                  'og': 294,
+                  '': 0}
 
 subgiants = find_subgiants()

@@ -65,13 +65,13 @@ class vice_model():
 
 
 
-    def plot_stars(self, x, y, c=None, c_label=None, xlim=None, star_group="all", **kwargs):
+    def plot_stars(self, x, y, c=None, c_label=None, xlim=None, star_group="all", exclude_high_alpha=True, **kwargs):
         stars = self.stars[star_group]
 
 
-        aah.plot_contour(x, y, xlim=xlim, zorder=1, levels=6)
+        aah.plot_contour(x, y, xlim=xlim, zorder=2, levels=6, exclude_high_alpha=exclude_high_alpha)
 
-        show_stars(stars, x, y, c=c, c_label=c_label, zorder=2, **kwargs)
+        show_stars(stars, x, y, c=c, c_label=c_label, zorder=1, **kwargs)
 
         if xlim is not None:
             plt.xlim(xlim)
@@ -204,17 +204,19 @@ class vice_model():
         show_stars(df, "[o/fe]", "[c/o]", c="age", c_label="age", s=1, zorder=2,
                 **kwargs)
 
-    def plot_cofeo(self, star_group="all", o_h_0=-0.1, d_o_h = 0.05):
+    def plot_cofeo(self, star_group="all", o_h_0=-0.1, d_o_h = 0.05, **kwargs):
+
         stars = self.stars[star_group]
 
-        aah.plot_v21_cofeo(o_h_0, d_o_h)
+        aah.plot_coofe_contour(o_h_0, d_o_h)
 
         filt = stars["[o/h]"] > o_h_0 - d_o_h
         filt &= stars["[o/h]"] < o_h_0 + d_o_h
         df = stars[filt]
         df["[fe/o]"] = - np.array(df["[o/fe]"])
 
-        show_stars(df, "[fe/o]", "[c/o]", c="age", c_label="age", s=1, zorder=2)
+        show_stars(df, "[fe/o]", "[c/o]", c="age", c_label="age", s=1, zorder=2,
+                **kwargs)
 
     def plot_mean_coofe(self, o_h_0=-0.1, d_o_h = 0.05, star_group="all", xlim=None, plot_data=True, ax=None, **kwargs):
         if ax is None:
@@ -238,7 +240,7 @@ class vice_model():
             ax = plt.gca()
 
         if plot_data:
-            aah.plot_v21_cofeo_scatter(o_h_0, d_o_h)
+            aah.plot_cofeo(o_h_0, d_o_h)
 
         stars = self.stars[star_group]
 
@@ -250,6 +252,4 @@ class vice_model():
         pluto.plot_mean_track(df["[fe/o]"], df["[c/o]"], xlim=xlim, **kwargs)
         plt.xlabel("[fe/o]")
         plt.ylabel("[c/o]")
-
-
 

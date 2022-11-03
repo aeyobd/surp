@@ -28,7 +28,7 @@ def set_yields():
     vice.yields.ccsne.settings['sr'] = 3.5e-8
     vice.yields.sneia.settings['o'] = 0
     vice.yields.sneia.settings['fe'] = 0.0017
-    vice.yields.sneia.settings['fe'] *= 10**0.1 # correction for mdf
+    # vice.yields.sneia.settings['fe'] *= 10**0.1 # correction for mdf, only for V21
     vice.yields.sneia.settings['sr'] = 0
 
 set_yields()

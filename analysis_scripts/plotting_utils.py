@@ -205,7 +205,7 @@ def differential(l):
     d_end = dl[-1]
     return np.append(dl, d_end)
 
-def plot_mean_track(x_vals, y_vals, bins=30, xlim=None, shade_width=False, err_mean = False, ax=None, dropna=False, s=0.1, **kwargs):
+def plot_mean_track(x_vals, y_vals, bins=30, xlim=None, shade_width=False, err_mean = False, ax=None, dropna=False, s=0.1, plot_points=False, min_count=1, **kwargs):
     """
     Plots the mean of the data as a line
     with a shaded region representing the standard deviation
@@ -225,6 +225,8 @@ def plot_mean_track(x_vals, y_vals, bins=30, xlim=None, shade_width=False, err_m
     err_mean: ``bool`` [default: False]
         If true, plots the error of the mean instead
         of the standard deviation for the shaded regions
+    min_count: ``int`` [default: 1]
+        The minimum number of points in a bin required to plot a point
     """
 
     if ax is None:
@@ -237,18 +239,50 @@ def plot_mean_track(x_vals, y_vals, bins=30, xlim=None, shade_width=False, err_m
     means, bins, _ = scipy.stats.binned_statistic(x_vals, y_vals, statistic="mean", bins=bins, range=xlim)
     nums, _, _ = scipy.stats.binned_statistic(x_vals, y_vals, statistic="count", bins=bins, range=xlim)
     x_bins = 0.5*(bins[1:] + bins[:-1])
-    p = ax.plot(x_bins, means, **kwargs)
     # p = plot_thick_line(x_bins, means, nums/30, ax=ax, **kwargs)
     
+    std, _, _ = scipy.stats.binned_statistic(x_vals, y_vals, statistic="std", bins=bins, range=xlim)
+
+    filt = nums > min_count
+
+    means = means[filt]
+    x_bins = x_bins[filt]
+    nums = nums[filt]
+    std = std[filt]
+
+    if err_mean:
+        dy = std / np.sqrt(nums)
+    else:
+        dy = std
+
+    if plot_points:
+        p = err_scatter(x_bins, means, yerr=dy, ax=ax, **kwargs)
+    else:
+        p = ax.plot(x_bins, means, **kwargs)
 
     if shade_width:
-        std, _, _ = scipy.stats.binned_statistic(x_vals, y_vals, statistic="std", bins=bins, range=xlim)
-        if err_mean:
-            dy = std / np.sqrt(nums)
-        else:
-            dy = std
         ax.fill_between(x_bins, means - dy, means + dy, alpha=0.3, color=p[0].get_color())
 
-
-
     return means, bins, nums
+
+def err_scatter(x, y, yerr=None, xerr=None, fmt=None, ax=None, marker="o", alpha_bars=1, **kwargs):
+    """
+    A wrapper around plt.errorbar which defaults to a
+    scatter plot and enables changing the alpha of the
+    error bars
+    """
+
+    if ax is None:
+        ax = plt.gca()
+    if fmt is not None:
+        markers, caps, bars = ax.errorbar(x, y, xerr=xerr, yerr=yerr, fmt=fmt, **kwargs)
+    else:
+        markers, caps, bars = ax.errorbar(x, y, xerr=xerr, yerr=yerr, ls="", marker=marker, **kwargs)
+
+    for bar in bars:
+        bar.set_alpha(alpha_bars) 
+    for cap in caps:
+        cap.set_alpha(alpha_bars)
+
+    return markers, caps, bars
+
