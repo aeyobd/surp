@@ -8,8 +8,44 @@ from astropy.io import fits
 import astropy.coordinates as coord
 import astropy.units as u
 import os
+import requests
+import sys
 
 
+
+def retrieve_apogee():
+    """
+    Checks if the apogee file exists, downloads it if not, and then returns the
+    file's data"""
+
+    script_dir = os.path.dirname(__file__)
+    rel_path = "../data/allStar-dr17-synspec_rev1.fits.1"
+    abs_path = os.path.join(script_dir, rel_path)
+
+    if not os.path.exists(abs_path):
+        ans = input("Requires Apogee allStar file, download now (4GB)? Y/n")
+        if ans != "Y":
+            print("file does not exist, aborting")
+            sys.exit()
+        url = "https://data.sdss.org/sas/dr17/apogee/spectro/aspcap/dr17/synspec_rev1/allStar-dr17-synspec_rev1.fits"
+
+        print("downloading (this may take a while)")
+
+        file = requests.get(url, stream=True)
+
+        i = 0
+        with open(abs_path, "wb") as f:
+            for chunk in file.iter_content(chunk_size=4096):
+                f.write(chunk)
+                print("%i\r" % i, end="") 
+                i += 1
+        print("file saved!")
+
+    ff = fits.open(abs_path, mmap=True)
+    da = ff[1].data
+    ff.close()
+
+    return da
 
 def find_subgiants():
     """
@@ -17,14 +53,10 @@ def find_subgiants():
     a subgiant sample of APOGEE c.o. Jack Roberts
     
     """
+
+    da = retrieve_apogee()
     
     # read in the fits file
-    script_dir = os.path.dirname(__file__)
-    rel_path = "../data/allStar-dr17-synspec_rev1.fits.1"
-    abs_path = os.path.join(script_dir, rel_path)
-    ff = fits.open(abs_path, mmap=True)
-    da = ff[1].data
-    ff.close()
     
     # bit flag mask
     apogee_target2 = 1<<17 #APOGEE_MIRCLUSTER_STAR

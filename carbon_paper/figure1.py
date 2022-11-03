@@ -27,6 +27,7 @@ def plot_c_table(study = "cristallo11", ax=None, fig=None, **kwargs):
         y = np.array(y1)[:,i]
         z = z1[i]
         c = (np.log(z) - np.log(Z_min))/np.log(Z_max/Z_min)
+        f = ax.plot(m1, y, "o", label=f"Z = {z}", c=cmap(c), **kwargs)
         f = ax.plot(m1, y, label=f"Z = {z}", c=cmap(c), **kwargs)
 
     ax.set_title(study)
