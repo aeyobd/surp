@@ -73,4 +73,4 @@ COLORS = prop_cycle.by_key()['color']
 
 fancy_legend()
 
-sf("figure1c")
+sf("y_agb_vs_z")

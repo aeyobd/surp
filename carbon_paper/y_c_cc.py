@@ -2,10 +2,12 @@ import matplotlib.pyplot as plt
 import vice
 import numpy as np
 import matplotlib as mpl
+
 import sys
-sys.path.append("../")
-from plotting_utils import fig_saver
-import rc_params
+sys.path.append("../..")
+
+from surp.analysis_scripts.plotting_utils import fig_saver
+import surp.analysis_scripts.rc_params
 
 
 sf = fig_saver()
@@ -55,14 +57,57 @@ for i in range(N):
 
 #plt.axhline(0.002, ls="--", color="k", zorder=-1, label="fiducial")
 #plt.xscale("log")
-plt.ylim([0, 0.008])
+plt.ylim(0, 0.0055)
 #plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 def y_c_cc(Z):
-    return 0.005 * (Z/0.014)**0.3
+    return 0.004 *(0.5 + (Z/0.014)**0.3)/1.5
 
 m_h = np.linspace(-0.6, 0.5, 1000)
 Z = 0.014*10**m_h
 plt.plot(m_h, y_c_cc(Z), color="k")
+
+# plot AGB line
+
+vice.yields.agb.settings["c"] = "cristallo11"
+vice.yields.ccsne.settings["c"] = 0
+Zs = 0.014*10**np.linspace(-2, 1, 100)
+
+# plots importaint points
+y1, m1, z1 = vice.yields.agb.grid('c', study="cristallo11")
+Zs = np.array(z1)
+mass_yields = []
+for Z in Zs:
+    m_c, times = vice.single_stellar_population("c", Z=Z)
+    mass_yields.append(m_c[-1])
+    
+y_c_agb = np.array(mass_yields)/1e6 
+y_o_cc = 0.015
+plt.scatter(np.log10(Zs/0.014), y_c_agb)
+MoverH_min = np.log10(min(Zs)/0.014)
+MoverH_max = np.log10(max(Zs)/0.014)
+
+Zs = 0.014*10**np.linspace(MoverH_min, MoverH_max, 100)
+mass_yields = []
+for Z in Zs:
+    m_c, times = vice.single_stellar_population("c", Z=Z)
+    mass_yields.append(m_c[-1])
+line, = plt.plot(np.log10(Zs/0.014), (np.array(mass_yields)/1e6 ), label="C11 (AGB)")
+
+color = line.get_color()
+
+Zs = 0.014*10**np.linspace(-2.1, MoverH_min, 100)
+mass_yields = []
+for Z in Zs:
+    m_c, times = vice.single_stellar_population("c", Z=Z)
+    mass_yields.append(m_c[-1])
+plt.plot(np.log10(Zs/0.014), (np.array(mass_yields)/1e6 ), linestyle="--", color=color)
+
+Zs = 0.014*10**np.linspace(MoverH_max, 0.6, 100)
+mass_yields = []
+for Z in Zs:
+    m_c, times = vice.single_stellar_population("c", Z=Z)
+    mass_yields.append(m_c[-1])
+plt.plot(np.log10(Zs/0.014), (np.array(mass_yields)/1e6 ), linestyle="--", color=color)
 
 m_h = np.linspace(-4, -0.6, 1000)
 Z = 0.014*10**m_h
@@ -75,4 +120,4 @@ plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 #plt.plot(x, y)
 plt.xlabel("[M/H]")
 plt.ylabel(r"$y_C^{CC}$")
-sf("figure2")
+sf("y_c_cc")

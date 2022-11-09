@@ -3,9 +3,9 @@ import vice
 import sys
 import numpy as np
 
-sys.path.append("../")
-from plotting_utils import fig_saver
-import rc_params
+sys.path.append("../..")
+from surp.analysis_scripts.plotting_utils import fig_saver
+import surp.analysis_scripts.rc_params
 
 sf = fig_saver()
 
@@ -25,7 +25,8 @@ for i in range(4):
 
 m_fe, times = vice.single_stellar_population("fe", Z=0.014)
 m_fe = [fe for fe in m_fe]
-plt.plot(times, np.array(m_fe)/m_fe[-1], label=r"Fe; $R_{Ia} \propto t^{-1.1}$", linestyle="--", color="k")
+plt.plot(times, np.array(m_fe)/m_fe[-1], label="SN Ia Fe",
+         linestyle="--", color="k")
 
 
 plt.xlabel("t/Gyr")
@@ -34,5 +35,5 @@ plt.xscale("log")
 plt.legend()
 plt.ylim(-0.3, 1.1)
 plt.xlim(0.03, 13.2)
-sf("figure1b")
+sf("y_agb_vs_t")
 
