@@ -164,6 +164,8 @@ class vice_model():
             fancy_legend(title="t/Gyr", ax=ax, colors=colors)
 
     def plot_R_slices(self, x, y, Rs=[4,6,8,10,12], ax=None, legend=True):
+        if ax is None:
+            ax = plt.gca()
         for j in range(5):
             i = (np.array([4, 6, 8, 10, 12])*10)[j]
             j0 = 2
@@ -173,8 +175,18 @@ class vice_model():
                 c = COLORS[j]
             else:
                 c = COLORS[j-1]
+            R_min=i/10-0.5
+            R_max=i/10+0.5
+            self.plot_annulus_history(x, y, R_min=R_min, R_max=R_max,
+                    label=i/10, ax=ax, color=c)
 
-            self.plot_annulus_history(x, y, R_min=i/10-0.5, R_max=i/10+0.5, label=i/10, ax=ax, color=c)
+            # mark points
+            ave = self.annulus_average(R_min, R_max)
+            t = np.arange(0.2, 13.2, 1)
+            x_values = ave[x][t]
+            y_values = ave[y][t]
+            ax.scatter(x_values, y_values, marker="x", color=c)
+
         if legend:
             fancy_legend(title="r/kpc", ax=ax, colors=COLORS[:2] + ["k"] + COLORS[2:])
 

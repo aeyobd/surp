@@ -30,8 +30,8 @@ class fig_saver():
 
 
 
-def legend_outside(**kwargs):
-    plt.legend(bbox_to_anchor=(1,1), loc="upper left", **kwargs)
+def legend_outside(bbox = (1,1), **kwargs):
+    plt.legend(bbox_to_anchor=bbox, loc="upper left", **kwargs)
 
 def fancy_legend(ax=None, colors=COLORS, **kwargs):
     if ax is None:
@@ -274,7 +274,9 @@ def plot_median_track(x_vals, y_vals, bins=30, xlim=None, shade_width=False, ax=
 
     return medians, x_bins, 0.5*(dy_low + dy_high)
 
-def plot_mean_track(x_vals, y_vals, bins=30, xlim=None, shade_width=False, err_mean = False, ax=None, dropna=False, s=0.1, plot_points=False, min_count=1, **kwargs):
+def plot_mean_track(x_vals, y_vals, bins=30, xlim=None, shade_width=False,
+        err_mean = False, ax=None, dropna=False, s=0.1, plot_points=False,
+        plot_errorbar=True, plot_alt=False, min_count=1, **kwargs):
     """
     Plots the mean of the data as a line
     with a shaded region representing the standard deviation
@@ -328,12 +330,21 @@ def plot_mean_track(x_vals, y_vals, bins=30, xlim=None, shade_width=False, err_m
         dy = std
 
     if plot_points:
-        p = err_scatter(x_bins, means, yerr=dy, ax=ax, **kwargs)
+        if plot_errorbar:
+            p = err_scatter(x_bins, means, yerr=dy, ax=ax, **kwargs)
+        else:
+            p = ax.plot(x_bins, means, "o", **kwargs)
     else:
         p = ax.plot(x_bins, means, **kwargs)
 
+    if plot_alt:
+        ax.scatter(x_bins, means - dy, alpha=0.3, marker="_",
+                color=p[0].get_color(), zorder=-1)
+        ax.scatter(x_bins, means + dy, alpha=0.3, marker="_",
+                color=p[0].get_color(), zorder=-1)
     if shade_width:
-        ax.fill_between(x_bins, means - dy, means + dy, alpha=0.3, color=p[0].get_color())
+        ax.fill_between(x_bins, means - dy, means + dy, alpha=0.3,
+                color=p[0].get_color(), zorder=-1)
 
     return means, bins, nums
 
@@ -358,4 +369,20 @@ def err_scatter(x, y, yerr=None, xerr=None, fmt=None, ax=None, capsize=0, marker
         cap.set_alpha(alpha_bars)
 
     return markers, caps, bars
+
+
+def smooth_hist(x, range=None, bins=20, orientation="vertical", **kwargs):
+    if range is None:
+        range = (np.nanmin(x),
+                np.nanmax(x))
+
+    counts, bin_edges = np.histogram(x, bins, range)
+    bin_widths = bin_edges[1:] - bin_edges[:-1]
+    densities = counts/bin_widths/len(x)
+    bin_means = (bin_edges[1:] + bin_edges[:-1])/2
+
+    if orientation=="vertical":
+        plt.plot(bin_means, densities, **kwargs)
+    else:
+        plt.plot(densities, bin_means, **kwargs)
 
