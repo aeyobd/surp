@@ -7,7 +7,7 @@ import os
 
 def read_skillman20():
     script_dir = os.path.dirname(__file__)
-    rel_path = "../data/chaos_m101.dat"
+    rel_path = "../../data/chaos_m101.dat"
     abs_path = os.path.join(script_dir, rel_path)
 
     df = pd.read_csv(abs_path, sep="\s+")
@@ -32,7 +32,7 @@ def plot_skillman20(x, y):
 
 def read_md22():
     script_dir = os.path.dirname(__file__)
-    rel_path = "../data/md22.csv"
+    rel_path = "../../data/md22.csv"
     abs_path = os.path.join(script_dir, rel_path)
     df = pd.read_csv(abs_path)
     df1 = pd.DataFrame()

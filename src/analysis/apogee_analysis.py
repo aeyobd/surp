@@ -19,7 +19,7 @@ def retrieve_apogee():
     file's data"""
 
     script_dir = os.path.dirname(__file__)
-    rel_path = "../data/allStar-dr17-synspec_rev1.fits.1"
+    rel_path = "../../data/allStar-dr17-synspec_rev1.fits.1"
     abs_path = os.path.join(script_dir, rel_path)
 
     if not os.path.exists(abs_path):
@@ -165,7 +165,7 @@ def vincenzo2021_raw():
     using magnesium may still be okay.
     """
     script_dir = os.path.dirname(__file__)
-    rel_path = "../data/CNOdredgeup.obj"
+    rel_path = "../../data/CNOdredgeup.obj"
     abs_path = os.path.join(script_dir, rel_path)
     f = open(abs_path, "rb")
     raw = pickle.load(f, encoding = "bytes")

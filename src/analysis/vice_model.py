@@ -8,11 +8,8 @@ import os.path
 from os.path import exists
 import json
 
-import sys
-sys.path.append("../..")
-
 from .vice_utils import load_model, show_stars
-from ..model_scripts import multizone_sim
+from ..simulation import multizone_sim
 from . import apogee_analysis as aah
 from .import gas_phase_data
 from .plotting_utils import legend_outside, fancy_legend, plot_density_line, COLORS, plot_thick_line
