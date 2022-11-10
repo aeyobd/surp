@@ -111,6 +111,24 @@ def find_subgiants():
     
     return df
 
+def read_subgiants():
+    """
+    Either reads in the subgiants from a csv file or
+    calculates the subgiant sample from apogee and writes this to 
+    a file if the file does not yet exist
+    """
+    script_dir = os.path.dirname(__file__)
+    rel_path = "../data/subgiants.csv"
+    abs_path = os.path.join(script_dir, rel_path)
+
+    if not os.path.exists(abs_path):
+        subgiants = find_subgiants()
+        subgiants.to_csv(abs_path)
+    else:
+        subgiants = pd.read_csv(abs_path)
+
+    return subgiants
+
 
 def bracket(df, ele, ele2="H"):
     """
@@ -299,13 +317,21 @@ def plot_cooh():
     df = df[filt]
     plt.scatter(df["MG_H"], df["C_MG"], color="k", s=1, alpha=0.1)
 
-def plot_coofe(c=-0.1, w=0.05, s=1, alpha=0.1, **kwargs):
+def plot_coofe(c=-0.1, w=0.05, s=1, alpha=0.1, color="black", **kwargs):
     v21 = subgiants
 
     filt = v21["MG_H"] > c - w
     filt &= v21["MG_H"] < c + w
     df=  v21[filt]
-    plt.scatter(df["MG_FE"], df["C_MG"], color="black", s=s, alpha=alpha, **kwargs)
+    plt.scatter(df["MG_FE"], df["C_MG"], color=color, s=s, alpha=alpha, **kwargs)
+
+def plot_mean_coofe(c=-0.1, w=0.05, s=1, color="black", **kwargs):
+    v21 = subgiants
+
+    filt = v21["MG_H"] > c - w
+    filt &= v21["MG_H"] < c + w
+    df=  v21[filt]
+    pluto.plot_mean_track(df["MG_FE"], df["C_MG"], color="black", **kwargs)
 
 def plot_cofeo(c=-0.1, w=0.05, s=1, alpha=0.1, **kwargs):
     v21 = subgiants

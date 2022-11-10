@@ -7,6 +7,7 @@ import scipy
 
 prop_cycle = plt.rcParams['axes.prop_cycle']
 COLORS = prop_cycle.by_key()['color']
+LINE_STYLES = ["-", "--", ":", "--."]
 
 class fig_saver():
     def __init__(self, output_dir = ".", show=True):
@@ -204,6 +205,74 @@ def differential(l):
 
     d_end = dl[-1]
     return np.append(dl, d_end)
+def plot_median_track(x_vals, y_vals, bins=30, xlim=None, shade_width=False, ax=None, dropna=False, s=0.1, plot_points=False, min_count=1, **kwargs):
+    """
+    Plots the mean of the data as a line
+    with a shaded region representing the standard deviation
+    
+    Parameters
+    ----------
+    
+    x_vals: np.array like
+        The x values of the data
+        
+    y_vals: np.array like
+    bins: ``int`` [default: 50]
+        The number of bins to bin the data by
+    xlim: ``(int, int)`` [default: None]
+        The limits of the bins of the data
+        if None, uses the minimum and maximum values
+    err_mean: ``bool`` [default: False]
+        If true, plots the error of the mean instead
+        of the standard deviation for the shaded regions
+    min_count: ``int`` [default: 1]
+        The minimum number of points in a bin required to plot a point
+
+    Returns
+    -------
+    medians
+    bins
+    deviations
+    """
+
+    if ax is None:
+        ax = plt.gca()
+        
+    if dropna:
+        filt = ~(np.isnan(x_vals) | np.isnan(y_vals))
+        x_vals = x_vals[filt]
+        y_vals = y_vals[filt]
+    medians, bins, _ = scipy.stats.binned_statistic(x_vals, y_vals, statistic="mean", bins=bins, range=xlim)
+    nums, _, _ = scipy.stats.binned_statistic(x_vals, y_vals, statistic="count", bins=bins, range=xlim)
+    x_bins = 0.5*(bins[1:] + bins[:-1])
+    # p = plot_thick_line(x_bins, means, nums/30, ax=ax, **kwargs)
+    
+    per16, _, _ = scipy.stats.binned_statistic(x_vals, y_vals,
+            statistic=lambda x: np.percentile(x, 16), bins=bins, range=xlim)
+
+    per84, _, _ = scipy.stats.binned_statistic(x_vals, y_vals,
+            statistic=lambda x: np.percentile(x, 84), bins=bins, range=xlim)
+
+    dy_low = medians - per16
+    dy_high = per84 - medians
+
+    filt = nums > min_count
+
+    medians = medians[filt]
+    x_bins = x_bins[filt]
+    nums = nums[filt]
+    dy_low = dy_low[filt]
+    dy_high = dy_high[filt]
+
+    if plot_points:
+        p = err_scatter(x_bins, medians, yerr=dy, ax=ax, **kwargs)
+    else:
+        p = ax.plot(x_bins, medians, **kwargs)
+
+    if shade_width:
+        ax.fill_between(x_bins, medians - dy_low, medians + dy_high, alpha=0.3, color=p[0].get_color())
+
+    return medians, x_bins, 0.5*(dy_low + dy_high)
 
 def plot_mean_track(x_vals, y_vals, bins=30, xlim=None, shade_width=False, err_mean = False, ax=None, dropna=False, s=0.1, plot_points=False, min_count=1, **kwargs):
     """
@@ -227,6 +296,9 @@ def plot_mean_track(x_vals, y_vals, bins=30, xlim=None, shade_width=False, err_m
         of the standard deviation for the shaded regions
     min_count: ``int`` [default: 1]
         The minimum number of points in a bin required to plot a point
+
+    Returns
+    -------
     """
 
     if ax is None:

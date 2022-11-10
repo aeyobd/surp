@@ -65,18 +65,21 @@ class vice_model():
 
 
 
-    def plot_stars(self, x, y, c=None, c_label=None, xlim=None, star_group="all", exclude_high_alpha=True, **kwargs):
+    def plot_stars(self, x, y, c=None, c_label=None, xlim=None,
+            star_group="solar", exclude_high_alpha=True, plot_data = True, **kwargs):
         stars = self.stars[star_group]
 
 
-        aah.plot_contour(x, y, xlim=xlim, zorder=2, levels=6, exclude_high_alpha=exclude_high_alpha)
+        if plot_data:
+                aah.plot_contour(x, y, xlim=xlim, zorder=2, levels=6, exclude_high_alpha=exclude_high_alpha)
 
         show_stars(stars, x, y, c=c, c_label=c_label, zorder=1, **kwargs)
 
         if xlim is not None:
             plt.xlim(xlim)
 
-    def plot_mean_stars(self, x, y, plot_data=True, xlim=None, star_group="all", ax=None, s=1, **kwargs):
+    def plot_mean_stars(self, x, y, plot_data=True, xlim=None,
+            star_group="solar", ax=None, s=1, **kwargs):
         stars = self.stars[star_group]
         
         if xlim is None:
@@ -91,7 +94,7 @@ class vice_model():
         plt.ylabel(y)
         plt.xlim(xlim)
 
-    def plot_mdf(self, x, star_group="all", plot_data=True, xlim=None, **kwargs):
+    def plot_mdf(self, x, star_group="solar", plot_data=True, xlim=None, **kwargs):
         plt.hist(self.stars[star_group][x], 50, histtype="step", density=True, range=xlim, **kwargs)
         if plot_data:
             v21 = aah.vincenzo2021()
@@ -192,7 +195,7 @@ class vice_model():
         df = self.history[filt]
         return df.groupby("time").mean()
 
-    def plot_coofe(self, star_group="all", o_h_0=-0.1, d_o_h = 0.05, **kwargs):
+    def plot_coofe(self, star_group="solar", o_h_0=-0.1, d_o_h = 0.05, **kwargs):
 
         stars = self.stars[star_group]
 
@@ -204,7 +207,7 @@ class vice_model():
         show_stars(df, "[o/fe]", "[c/o]", c="age", c_label="age", s=1, zorder=2,
                 **kwargs)
 
-    def plot_cofeo(self, star_group="all", o_h_0=-0.1, d_o_h = 0.05, **kwargs):
+    def plot_cofeo(self, star_group="solar", o_h_0=-0.1, d_o_h = 0.05, **kwargs):
 
         stars = self.stars[star_group]
 
@@ -218,7 +221,7 @@ class vice_model():
         show_stars(df, "[fe/o]", "[c/o]", c="age", c_label="age", s=1, zorder=2,
                 **kwargs)
 
-    def plot_mean_coofe(self, o_h_0=-0.1, d_o_h = 0.05, star_group="all", xlim=None, plot_data=True, ax=None, **kwargs):
+    def plot_mean_coofe(self, o_h_0=-0.1, d_o_h = 0.05, star_group="solar", xlim=None, plot_data=True, ax=None, **kwargs):
         if ax is None:
             ax = plt.gca()
 
@@ -235,7 +238,7 @@ class vice_model():
         plt.xlabel("[o/fe]")
         plt.ylabel("[c/o]")
 
-    def plot_mean_cofeo(self, o_h_0=-0.1, d_o_h = 0.05, star_group="all", xlim=None, plot_data=True, ax=None, **kwargs):
+    def plot_mean_cofeo(self, o_h_0=-0.1, d_o_h = 0.05, star_group="solar", xlim=None, plot_data=True, ax=None, **kwargs):
         if ax is None:
             ax = plt.gca()
 
