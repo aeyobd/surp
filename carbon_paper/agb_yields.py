@@ -6,9 +6,9 @@ import matplotlib as mpl
 import sys
 sys.path.append("../..")
 
-from surp.analysis_scripts.plotting_utils import fig_saver
+from surp.src.analysis.plotting_utils import fig_saver
 
-sf = fig_saver()
+sf = fig_saver("figures")
 
 
 
@@ -62,6 +62,6 @@ mappable = mpl.cm.ScalarMappable(cmap=cmap, norm=norm)
 fig.colorbar(mappable, ax=axs.ravel().tolist(), label="[M/H]")
 
 plt.setp(axs[-1, :], xlabel=r'$M\ [M_\odot]$')
-plt.setp(axs[:, 0], ylabel=r'$m_{\rm C}^{\rm AGB}$')
+plt.setp(axs[:, 0], ylabel=r'$y_{\rm C}^{\rm AGB}$')
 
 sf("agb_yields")

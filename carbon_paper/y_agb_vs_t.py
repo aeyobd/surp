@@ -4,10 +4,9 @@ import sys
 import numpy as np
 
 sys.path.append("../..")
-from surp.analysis_scripts.plotting_utils import fig_saver
-import surp.analysis_scripts.rc_params
+from surp.src.analysis.plotting_utils import fig_saver
 
-sf = fig_saver()
+sf = fig_saver("figures")
 
 
 AGB_MODELS = ["cristallo11", "karakas10", "ventura13", "karakas16"]
@@ -30,7 +29,7 @@ plt.plot(times, np.array(m_fe)/m_fe[-1], label="SN Ia Fe",
 
 
 plt.xlabel("t/Gyr")
-plt.ylabel(r"$M_X/M_{X,\text{final}}$")
+plt.ylabel(r"$M(t)/M_{\rm tot}$")
 plt.xscale("log")
 plt.legend()
 plt.ylim(-0.3, 1.1)

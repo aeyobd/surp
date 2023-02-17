@@ -6,11 +6,10 @@ import matplotlib as mpl
 import sys
 sys.path.append("../..")
 
-from surp.analysis_scripts.plotting_utils import fig_saver
-import surp.analysis_scripts.rc_params
+from surp.src.analysis.plotting_utils import fig_saver
 
 
-sf = fig_saver()
+sf = fig_saver("figures")
 
 colors = ['#0072B2', '#009E73', '#D55E00', '#CC79A7', '#F0E442', '#56B4E9']
 
@@ -82,7 +81,7 @@ for Z in Zs:
     
 y_c_agb = np.array(mass_yields)/1e6 
 y_o_cc = 0.015
-plt.scatter(np.log10(Zs/0.014), y_c_agb)
+# plt.scatter(np.log10(Zs/0.014), y_c_agb)
 MoverH_min = np.log10(min(Zs)/0.014)
 MoverH_max = np.log10(max(Zs)/0.014)
 
@@ -100,14 +99,14 @@ mass_yields = []
 for Z in Zs:
     m_c, times = vice.single_stellar_population("c", Z=Z)
     mass_yields.append(m_c[-1])
-plt.plot(np.log10(Zs/0.014), (np.array(mass_yields)/1e6 ), linestyle="--", color=color)
+#plt.plot(np.log10(Zs/0.014), (np.array(mass_yields)/1e6 ), linestyle="--", color=color)
 
 Zs = 0.014*10**np.linspace(MoverH_max, 0.6, 100)
 mass_yields = []
 for Z in Zs:
     m_c, times = vice.single_stellar_population("c", Z=Z)
     mass_yields.append(m_c[-1])
-plt.plot(np.log10(Zs/0.014), (np.array(mass_yields)/1e6 ), linestyle="--", color=color)
+# plt.plot(np.log10(Zs/0.014), (np.array(mass_yields)/1e6 ), linestyle="--", color=color)
 
 m_h = np.linspace(-4, -0.6, 1000)
 Z = 0.014*10**m_h
@@ -118,6 +117,6 @@ plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 #x = np.linspace(-4, 1)
 #y = y_cc(0.014*10**x)
 #plt.plot(x, y)
-plt.xlabel("[M/H]")
-plt.ylabel(r"$y_C^{CC}$")
+plt.xlabel(r"$\log Z/Z_\odot$")
+plt.ylabel(r"$Y_{\rm C}^{\rm CC}$")
 sf("y_c_cc")

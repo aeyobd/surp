@@ -3,12 +3,10 @@ import vice
 import sys
 import numpy as np
 
-sys.path.append("../")
-from plotting_utils import fig_saver, fancy_legend
-import rc_params
-sf = fig_saver()
+sys.path.append("../..")
+from surp.src.analysis.plotting_utils import fig_saver, fancy_legend
 
-sys.path.append("/home/daniel")
+sf = fig_saver("figures")
 
 AGB_MODELS = ["cristallo11", "karakas10", "ventura13", "karakas16"]
 AGB_LABELS = ["C11+C15", "K10", "V13", "KL16+K18"]
@@ -65,8 +63,8 @@ for i in range(len(AGB_MODELS)):
     plt.plot(np.log10(Zs/0.014), (np.array(mass_yields)/1e6 ), linestyle="--", color=color)
 
 plt.axhline(0, color="k", ls=":")
-plt.xlabel(r"[M/H]")
-plt.ylabel(r"$y_\text{C}^\text{AGB}$")
+plt.xlabel(r"$\log Z/Z_\odot$")
+plt.ylabel(r"$Y_\text{C}^\text{AGB}$")
 
 prop_cycle = plt.rcParams['axes.prop_cycle']
 COLORS = prop_cycle.by_key()['color']
