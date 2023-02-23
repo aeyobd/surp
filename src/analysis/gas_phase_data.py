@@ -136,4 +136,5 @@ def plot_all(x, y, **kwargs):
     if x in read_skillman20().keys():
         if y in read_skillman20().keys():
             for df in [read_skillman20(), read_md22()]:
-                pluto.err_scatter(df[x], df[y], xerr=df[x + "_err"], yerr=df[y+"_err"], label=df.name, **kwargs)
+                # pluto.err_scatter(df[x], df[y], xerr=df[x + "_err"], yerr=df[y+"_err"], label=df.name, **kwargs)
+                plt.scatter(df[x], df[y], label=df.name, **kwargs)

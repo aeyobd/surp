@@ -38,7 +38,7 @@ def fancy_legend(ax=None, colors=COLORS, **kwargs):
         ax = plt.gca()
        
     leg = ax.legend(frameon = False, handlelength = 0, columnspacing = 0.8, 
-                     fontsize = 20, **kwargs)
+                    **kwargs)
     for i in range(len(leg.get_texts())):
         leg.get_texts()[i].set_color(colors[i % len(colors)])
         leg.legendHandles[i].set_visible(False)

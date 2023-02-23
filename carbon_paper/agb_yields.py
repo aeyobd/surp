@@ -3,14 +3,7 @@ import vice
 import numpy as np
 import matplotlib as mpl
 
-import sys
-sys.path.append("../..")
-
-from surp.src.analysis.plotting_utils import fig_saver
-
-sf = fig_saver("figures")
-
-
+import plot_style
 
 
 cmap = mpl.cm.viridis
@@ -39,9 +32,9 @@ def plot_c_table(study = "cristallo11", ax=None, fig=None, **kwargs):
     return f
 
 
-fig, axs = plt.subplots(2, 2, figsize=(12, 8), sharex=True, sharey=True)
+fig, axs = plt.subplots(2, 2, figsize=(2*plot_style.WIDTH, 4/3*plot_style.WIDTH), sharex=True, sharey=True)
 plt.subplots_adjust(hspace=0, wspace=0)
-plt.minorticks_off()
+# plt.minorticks_off()
 
 for i in range(4):
     study = AGB_MODELS[i]
@@ -51,9 +44,9 @@ for i in range(4):
     ax.text(0.9, 0.9, label, horizontalalignment='right',
             verticalalignment='top', transform=ax.transAxes)
     #plt.legend()
-    ax.tick_params(
-            length=5
-            )
+    # ax.tick_params(
+    #         length=5
+    #         )
 
 
 
@@ -64,4 +57,4 @@ fig.colorbar(mappable, ax=axs.ravel().tolist(), label="[M/H]")
 plt.setp(axs[-1, :], xlabel=r'$M\ [M_\odot]$')
 plt.setp(axs[:, 0], ylabel=r'$y_{\rm C}^{\rm AGB}$')
 
-sf("agb_yields")
+plot_style.save()

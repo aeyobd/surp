@@ -101,12 +101,13 @@ class vice_model():
         plt.xlabel(x)
         plt.ylabel("density of stars")
 
-    def plot_gas(self, x, y, ratio=False, filename=None, **kwargs):
+    def plot_gas(self, x, y, ratio=False, filename=None, plot_data=True, **kwargs):
         self.plot_annulus_at_t(x, y, **kwargs)
-        gas_phase_data.plot_all(x, y, alpha_bars=0.5)
+        if plot_data:
+            gas_phase_data.plot_all(x, y, alpha_bars=0.5)
         legend_outside()
 
-    def plot_annulus_at_t(self, x, y, t = 13, dt = 0.1, c=None, R_min=0, R_max=15.4, ax=None, **kwargs):
+    def plot_annulus_at_t(self, x, y, t = 13.1, dt = 0.1, c=None, R_min=0, R_max=15.4, ax=None, **kwargs):
         if ax is None:
             ax = plt.gca()
             
@@ -182,7 +183,7 @@ class vice_model():
 
             # mark points
             ave = self.annulus_average(R_min, R_max)
-            t = np.arange(0.2, 13.2, 1)
+            t = np.arange(0.2, 13.21, 1)
             x_values = ave[x][t]
             y_values = ave[y][t]
             ax.scatter(x_values, y_values, marker="x", color=c)

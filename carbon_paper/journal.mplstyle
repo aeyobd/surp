@@ -1,0 +1,81 @@
+
+#---------------Fonts----------------
+font.family:		serif
+# font.serif: 		'Times'
+font.size:		10
+
+figure.titlesize:	large
+axes.titlesize:		small
+axes.labelsize:		large
+xtick.labelsize:	medium
+ytick.labelsize:	medium
+legend.fontsize:	medium
+
+
+
+#---------------Figure----------------
+figure.figsize:		3.15, 3.15
+figure.dpi:		200
+figure.facecolor:	white
+
+# default flalse
+# figure.constrained_layout.use: True
+
+savefig.facecolor: 	'white'
+
+# savefig.bbox:'tight' 
+
+# 3: default is type3
+pdf.fonttype: 		42
+
+
+#---------------Latex----------------
+text.usetex:		True
+mathtext.fontset: 	custom
+text.latex.preamble:	\usepackage{amsmath,newtxtext,newtxmath}
+axes.unicode_minus:	False
+
+#---------------Plotting-------------
+
+lines.linewidth:	0.8
+lines.markersize:	3
+errorbar.capsize:	2.5
+
+axes.prop_cycle: cycler('color', ['0173b2', 'de8f05', '029e73', 'd55e00', 'cc78bc', 'ca9161', 'fbafe4', '949494', 'ece133', '56b4e9'])
+
+
+
+#---------------Legend----------------
+legend.numpoints:	1
+legend.frameon:		False
+legend.handletextpad:	0.3
+
+
+#---------------Ticks----------------
+
+axes.linewidth:		0.8
+
+# default:	3.5
+xtick.major.size:	3.5
+ytick.major.size:	3.5
+
+# default:	2
+xtick.minor.size:	2
+ytick.minor.size:	2
+
+# default:	0.8
+xtick.major.width:	0.8
+ytick.major.width:	0.8
+
+# default:	0.6
+xtick.minor.width:	0.6
+ytick.minor.width:	0.6
+
+xtick.direction:	in
+ytick.direction:	in
+xtick.top:		True
+ytick.right:		True
+xtick.minor.visible:	True
+ytick.minor.visible:	True
+
+
