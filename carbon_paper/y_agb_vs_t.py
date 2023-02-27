@@ -3,10 +3,7 @@ import vice
 import sys
 import numpy as np
 
-sys.path.append("../..")
-from surp.src.analysis.plotting_utils import fig_saver
-
-sf = fig_saver("figures")
+import plot_style
 
 
 AGB_MODELS = ["cristallo11", "karakas10", "ventura13", "karakas16"]
@@ -34,5 +31,5 @@ plt.xscale("log")
 plt.legend()
 plt.ylim(-0.3, 1.1)
 plt.xlim(0.03, 13.2)
-sf("y_agb_vs_t")
 
+plot_style.save()

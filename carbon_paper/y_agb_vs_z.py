@@ -3,18 +3,14 @@ import vice
 import sys
 import numpy as np
 
-sys.path.append("../..")
-from surp.src.analysis.plotting_utils import fig_saver, fancy_legend
-
-sf = fig_saver("figures")
+sys.path.append("..")
+from src.analysis.plotting_utils import fancy_legend
+import plot_style
 
 AGB_MODELS = ["cristallo11", "karakas10", "ventura13", "karakas16"]
 AGB_LABELS = ["C11+C15", "K10", "V13", "KL16+K18"]
 
 
-
-
-plt.figure(figsize=(5,5))
 
 
 for i in range(len(AGB_MODELS)):
@@ -71,4 +67,4 @@ COLORS = prop_cycle.by_key()['color']
 
 fancy_legend()
 
-sf("y_agb_vs_z")
+plot_style.save()

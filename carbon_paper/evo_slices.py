@@ -11,7 +11,7 @@ from src.analysis.vice_model import vice_model
 import src.analysis.apogee_analysis as aah
 import src.analysis.plotting_utils as pluto
 
-sf = pluto.fig_saver("./figures")
+import plot_style
 
 @dataclass
 class model_id():
@@ -48,8 +48,7 @@ fiducial.plot_t_slices("[o/h]", "[c/o]", ax=axs[0])
 axs[0].set(
            ylim=(-0.7, 0.3),
            xlabel=r"[$\alpha$/H]",
-           ylabel=r"[C/$\alpha$]",
-           xticks=np.arange(-1,0.7,1)
+           ylabel=r"[C/$\alpha$]"
           )
 
 
@@ -59,4 +58,4 @@ axs[1].set(
            xlabel=r"[$\alpha$/Fe]"
           )
 
-sf("evo_slices")
+plot_style.save()

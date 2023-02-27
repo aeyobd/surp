@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from functools import wraps
-from . import rc_params
+# from . import rc_params
 from matplotlib.collections import LineCollection
 import scipy
 

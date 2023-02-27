@@ -12,6 +12,8 @@ Z_min = 0.0001
 AGB_MODELS = ["cristallo11", "karakas10", "ventura13", "karakas16"]
 AGB_LABELS = ["C11+C15", "K10", "V13", "KL16+K18"]
 
+# plt.rc('xtick.minor', visible=False)
+
 def plot_c_table(study = "cristallo11", ax=None, fig=None, **kwargs):
     if ax is None:
         fig, ax = plt.subplots()
@@ -25,7 +27,7 @@ def plot_c_table(study = "cristallo11", ax=None, fig=None, **kwargs):
         c = (np.log(z) - np.log(Z_min))/np.log(Z_max/Z_min)
         f = ax.plot(m1, y, "o", label=f"Z = {z}", c=cmap(c), **kwargs)
         f = ax.plot(m1, y, label=f"Z = {z}", c=cmap(c), **kwargs)
-        ax.set_xticks(np.arange(1, 8))
+        # ax.set_xticks(np.arange(1, 8))
     
     ax.axhline(0, color="k", ls="--", zorder=-1)
 
