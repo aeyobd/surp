@@ -10,13 +10,16 @@ import plot_style
 
 fig, (ax, ax_cb) = plt.subplots(1, 2)
 
-width = 3
+width = plot_style.WIDTH
 height = width
-padding = 0.1
-cbar_width = 0.05 # relative
-divider = SubplotDivider(fig, 111,
-                         horizontal=[Size.Fixed(width),Size.Fixed(padding), Size.Fixed(width * cbar_width)],
-                         vertical=[Size.Fixed(height)])
+padding = 0.05*width
+cbar_width = 0.05*width
+
+divider = SubplotDivider(fig, 111)
+divider.set_horizontal( [Size.Fixed(width),Size.Fixed(padding),
+                         Size.Fixed(cbar_width)])
+divider.set_vertical([divider.get_horizontal()[0]])
+                    
 
 plt.sca(ax)
 

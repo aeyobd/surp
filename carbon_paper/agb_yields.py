@@ -6,6 +6,7 @@ import matplotlib as mpl
 import plot_style
 
 
+
 cmap = mpl.cm.viridis
 Z_max = 0.02
 Z_min = 0.0001

@@ -9,6 +9,7 @@ pickles
 *.vice
 *.gif
 *.json
+*.mp4
 
 *.swp
 *.fits
@@ -37,3 +38,21 @@ ReadMe
 karakas16_yields
 
 subgiants.csv
+
+*.out
+*.dvi
+*.fdb_latexmk
+*.fls
+*.log
+*.blg
+*.bbl
+
+
+*.out
+*.dvi
+*.fdb_latexmk
+*.fls
+*.log
+*.blg
+*.bbl
+ux

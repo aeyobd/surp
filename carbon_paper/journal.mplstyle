@@ -33,7 +33,7 @@ savefig.facecolor: 	'white'
 #---------------Latex----------------
 text.usetex:		True
 mathtext.fontset: 	custom
-text.latex.preamble:	\usepackage{amsmath,newtxtext,newtxmath}
+text.latex.preamble:	\usepackage{amsmath,txfonts}
 axes.unicode_minus:	False
 
 #---------------Plotting-------------
