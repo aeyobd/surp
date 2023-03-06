@@ -3,8 +3,8 @@ from .coord import Length
 class FigBase():
     children = [[]]
     floats = []
-    h_pad = (0,0)
-    v_pad = (0,0)
+    h_pad = (Length(0),Length(0))
+    v_pad = (Length(0),Length(0))
 
     @property
     def n_rows(self):
@@ -43,3 +43,6 @@ class FigBase():
                 self._height += child.height
                 self._height += child.v_pad[0]
                 self._height += child.v_pad[1]
+
+    def remove(self):
+        pass

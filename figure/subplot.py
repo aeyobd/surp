@@ -3,21 +3,21 @@ from .coord import Length
 from .axis import Axis
 
 class Subplot():
-    def __init__(self, fig=None, size=(3,3), loc="right", axis=True, **kwargs):
-
+    def __init__(self, fig=None, size=(3,3), loc="right", row=0, col=0, axis=True):
         if fig is None:
             from .figure import Figure
             fig = Figure()
 
         self.fig = fig
 
-        self.fig.add_subplot(self)
-        self.mpl_ax = self.fig.mpl_fig.add_subplot(**kwargs)
+        self.mpl_ax = self.fig.mpl_fig.add_subplot()
 
         self.x = Axis(self, "bottom")
         self.y = Axis(self, "left")
         self.width = size[0]
         self.height = size[1]
+
+        self.fig.add_subplot(subplot=self, row=row, col=col)
 
 
     @property
@@ -51,6 +51,8 @@ class Subplot():
         return self._title
 
 
+    def remove(self):
+        self.mpl_ax.remove()
 
     @property
     def h_pad(self):

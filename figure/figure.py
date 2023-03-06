@@ -34,23 +34,26 @@ class Figure(FigBase):
         self.remove_child(row, col)
 
         if subplot is None:
-            subplot = Subplot(self)
+            subplot = Subplot(self, row=row, col=col)
+            self.children[row][col] = subplot
+        else:
+            self.children[row][col] = subplot
+            self.update()
 
-        self.children[row][col] = subplot
-
-        self.update()
         return subplot
 
     def remove_child(self, row=0, col=0):
-        del self.children[row][col]
-        self.children[row].insert(col, FigBase())
+        if self.n_rows > 0 and self.n_cols > 0:
+            self.children[row][col].remove()
+            del self.children[row][col]
+            self.children[row].insert(col, FigBase())
 
     def add_subfig(self):
         pass # this is for nested array elements ...
 
     def _fill_array(self, row: int, col: int):
         for i in range(row + 1):
-            if i > self.n_rows:
+            if self.n_rows < i+1:
                 self.children.append([])
 
             for j in range(col + 1):
