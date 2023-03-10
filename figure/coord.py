@@ -1,6 +1,7 @@
 # This is a coordinate class used 
 # to define the current figure's cooridnate system
 from mpl_toolkits.axes_grid1.axes_size import Fixed, Scaled
+from functools import total_ordering
 
 
 class Coordinate():
@@ -25,6 +26,7 @@ class Coordinate():
     def y(self, val):
         self._y = val
 
+@total_ordering
 class Length():
     _IN = 1.0 #inches are defined as internal standard
     _CM = 1.0/2.54
@@ -67,3 +69,9 @@ class Length():
 
     def __str__(self):
         return str(self.inch) + " in."
+
+    def __eq__(self, other):
+        return self.inch == other.inch
+
+    def __lt__(self, other):
+        return self.inch < other.inch

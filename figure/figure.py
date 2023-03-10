@@ -19,7 +19,7 @@ class Figure(FigBase):
     def __init__(self, size=(), **kwargs):
         self.mpl_fig = plt.figure()
         self._fig = self.mpl_fig
-        self.children = [[]]
+        self.children = [[FigBase()]]
         self.floats = [] # TODO: for legends/etc.
 
         self.h_pad = (Length(0.0), Length(0.0))
@@ -31,7 +31,6 @@ class Figure(FigBase):
     def add_subplot(self, subplot=None, loc=None, row=0, col=0):
         # to add children if not there
         self._fill_array(row, col)
-        self.remove_child(row, col)
 
         if subplot is None:
             subplot = Subplot(self, row=row, col=col)
@@ -52,8 +51,8 @@ class Figure(FigBase):
         pass # this is for nested array elements ...
 
     def _fill_array(self, row: int, col: int):
-        for i in range(row + 1):
-            if self.n_rows < i+1:
+        for i in range(row+1):
+            if self.n_rows < i + 1:
                 self.children.append([])
 
             for j in range(col + 1):
@@ -72,7 +71,7 @@ class Figure(FigBase):
                 child = self.children[i][j]
                 nx = 2*j + 1
                 ny = 2*i + 1
-                child.mpl_ax.set_axes_locator(self.mpl_div.new_locator(nx=nx, ny=ny))
+                child.locate(nx, ny)
 
     @property
     def h_divs(self):
@@ -81,38 +80,55 @@ class Figure(FigBase):
         pad_sep += self.h_pad[0]
 
         for i in range(self.n_cols):
-            child = self.children[0][i]
-            pad_sep += child.h_pad[0]
-            h_divs.append(pad_sep)
+            width = Length(0)
 
-            h_divs.append(child.width)
+            pad_sep1 = pad_sep2 = Length(0)
+
+            for j in range(self.n_rows):
+                child = self.children[j][i]
+
+                pad_sep1 = max(child.h_pad[0], pad_sep)
+                width = max(child.width, width)
+                pad_sep2 = max(child.h_pad[1], pad_sep2)
+
+            h_divs.append(pad_sep + pad_sep1)
+            h_divs.append(width)
 
             pad_sep = Length(padding)
-            pad_sep += child.h_pad[1]
+            pad_sep += pad_sep2
 
         pad_sep += self.h_pad[1]
         h_divs.append(pad_sep)
+
         return h_divs
 
     @property
     def v_divs(self):
         v_divs = []
         pad_sep = Length(padding)
-        pad_sep += self.v_pad[1]
+        pad_sep += self.v_pad[0]
 
         for i in range(self.n_rows):
-            child = self.children[i][0]
-            pad_sep += child.v_pad[0]
-            v_divs.append(pad_sep)
+            height = Length(0)
 
-            v_divs.append(child.height)
+            pad_sep1 = pad_sep2 = Length(0)
+            for j in range(self.n_cols):
+                child = self.children[i][j]
+                pad_sep1 = max(child.v_pad[0], pad_sep)
+                height = max(child.height, height)
+                pad_sep2 = max(child.v_pad[1], pad_sep2)
+
+            v_divs.append(pad_sep + pad_sep1)
+            v_divs.append(height)
 
             pad_sep = Length(padding)
-            pad_sep += child.v_pad[1]
+            pad_sep += pad_sep2
 
         pad_sep += self.v_pad[1]
         v_divs.append(pad_sep)
+
         return v_divs
+
 
 
     def update(self):
@@ -153,3 +169,6 @@ class Figure(FigBase):
     def sp(self):
         if len(self.children) == 1 and len(self.children[0]) == 1:
             return self.children[0][0]
+
+    def show(self):
+        self.mpl_fig.show()

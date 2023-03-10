@@ -2,7 +2,10 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from functools import singledispatchmethod
+
 from ..figure import Subfig
+from . import PlotData
+from . import Scatter
 
 class Plot():
     def __init__(self, x, y, axes=None, **kwargs):

@@ -67,3 +67,6 @@ class Subplot():
         and top of the subplot (respectively)
         """
         return (self.x.height, Length(0))
+
+    def locate(self, row, col):
+        self.mpl_ax.set_axes_locator(self.fig.mpl_div.new_locator(nx=row, ny=col))

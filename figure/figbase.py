@@ -46,3 +46,6 @@ class FigBase():
 
     def remove(self):
         pass
+
+    def locate(self, a, b):
+        pass
