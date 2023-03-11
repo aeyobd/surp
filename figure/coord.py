@@ -75,3 +75,16 @@ class Length():
 
     def __lt__(self, other):
         return self.inch < other.inch
+
+    def copy(self):
+        return Length(self.inch)
+
+    def __mul__(self, other):
+        if isinstance(other, Coordinate):
+            l = self.inch * other.inch
+            return Length(l)
+        else:
+            l = self.inch * other
+            return Length(l)
+
+

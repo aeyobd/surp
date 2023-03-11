@@ -3,31 +3,33 @@ from .coord import Length
 from .axis import Axis
 
 class Subplot():
-    def __init__(self, fig=None, size=(3,3), loc="right", row=0, col=0, axis=True):
-        if fig is None:
+    def __init__(self, figure=None, size=(3,3), loc="right", row=0, col=0, axis=True):
+        if figure is None:
             from .figure import Figure
-            fig = Figure()
+            figure = Figure()
 
-        self.fig = fig
+        self.figure = figure
 
-        self.mpl_ax = self.fig.mpl_fig.add_subplot()
+        self.mpl_ax = self.figure.mpl_fig.add_subplot()
 
         self.x = Axis(self, "bottom")
         self.y = Axis(self, "left")
         self.width = size[0]
         self.height = size[1]
 
-        self.fig.add_subplot(subplot=self, row=row, col=col)
+        self.row = row
+        self.col = col
+        self.figure.add_subplot(subplot=self, row=row, col=col)
 
 
     @property
-    def fig(self):
+    def figure(self):
         """ The Figure object associated with this subplot """
-        return self._fig
+        return self._figure
 
-    @fig.setter
-    def fig(self, value):
-        self._fig = value
+    @figure.setter
+    def figure(self, value):
+        self._figure = value
 
     @property
     def width(self):
@@ -69,4 +71,4 @@ class Subplot():
         return (self.x.height, Length(0))
 
     def locate(self, row, col):
-        self.mpl_ax.set_axes_locator(self.fig.mpl_div.new_locator(nx=row, ny=col))
+        self.mpl_ax.set_axes_locator(self.figure.mpl_div.new_locator(nx=row, ny=col))
