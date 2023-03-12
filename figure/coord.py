@@ -87,4 +87,7 @@ class Length():
             l = self.inch * other
             return Length(l)
 
+    def __rmul__(self, other):
+        return self * other
+
 

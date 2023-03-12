@@ -11,6 +11,7 @@ from .figbase import FigBase
 plt.rcParams['figure.constrained_layout.use'] = False
 
 padding = 0.2
+in_pad = 0.0
 
 
 
@@ -87,14 +88,14 @@ class Figure(FigBase):
             for j in range(self.n_rows):
                 child = self.children[j][i]
 
-                pad_sep1 = max(child.h_pad[0], pad_sep)
+                pad_sep1 = max(child.h_pad[0], pad_sep1)
                 width = max(child.width, width)
                 pad_sep2 = max(child.h_pad[1], pad_sep2)
 
             h_divs.append(pad_sep + pad_sep1)
             h_divs.append(width)
 
-            pad_sep = Length(padding)
+            pad_sep = Length(0)
             pad_sep += pad_sep2
 
         pad_sep += self.h_pad[1]
@@ -114,14 +115,14 @@ class Figure(FigBase):
             pad_sep1 = pad_sep2 = Length(0)
             for j in range(self.n_cols):
                 child = self.children[i][j]
-                pad_sep1 = max(child.v_pad[0], pad_sep)
+                pad_sep1 = max(child.v_pad[0], pad_sep1)
                 height = max(child.height, height)
                 pad_sep2 = max(child.v_pad[1], pad_sep2)
 
             v_divs.append(pad_sep + pad_sep1)
             v_divs.append(height)
 
-            pad_sep = Length(padding)
+            pad_sep = Length(0)
             pad_sep += pad_sep2
 
         pad_sep += self.v_pad[1]

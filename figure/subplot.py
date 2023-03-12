@@ -20,7 +20,24 @@ class Subplot():
         self.row = row
         self.col = col
         self.figure.add_subplot(subplot=self, row=row, col=col)
+        self._layers = []
 
+
+
+    @property
+    def layers(self):
+        return self._layers
+
+    def add_layer(self, layer):
+        self._layers.append(layer)
+
+    @property
+    def labels(self):
+        return [lay.label for lay in self.layers]
+
+    @property
+    def handles(self):
+        return [lay.handle for lay in self.layers]
 
     @property
     def figure(self):
@@ -72,3 +89,6 @@ class Subplot():
 
     def locate(self, row, col):
         self.mpl_ax.set_axes_locator(self.figure.mpl_div.new_locator(nx=row, ny=col))
+
+    def add_legend(self, legend):
+        self.legend = legend

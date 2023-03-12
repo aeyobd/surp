@@ -8,24 +8,31 @@ from .data import PlotData
 from .layer import Layer
 
 
-class Scatter(Layer):
-    marker = "o"
-    size = 1
-    def __init__(self, x, y, c=None, s=None, marker="o", subplot=None,
-                 size=None, **kwargs):
+class Scatters(Layer):
+    def __init__(self, x, y, c=None, s=None, m=None, marker=None, subplot=None,
+                 size=None, cats=None, **kwargs):
         super().__init__(subplot)
-
         self.marker = marker
 
         if isinstance(s, (int, float)):
             size=s
             s=None
+            print(size)
 
+        self.cats = cats
         self.size=size
-        self.data = PlotData(x=x, y=y, c=c, s=s)
+        self.data = PlotData(x=x, y=y, c=c, s=s, m=m)
         self.plot()
 
     def plot(self, **kwargs):
+        if self.cats is not None and len(self.cats):
+            self.plot_cats(**kwargs)
+
+        if any([cat in ("c", "s", "m") for cat in self.data.cats]):
+            self.cats = self.data.cats
+            self.plot_cats(**kwargs)
+
+
         self.mpl_scat = self.mpl_ax.scatter(self.data.x, self.data.y, 
                                        marker="o", s=self.size, **kwargs)
 
@@ -76,13 +83,15 @@ class Scatter(Layer):
 
 
     @property
-    def label(self):
-        return self._label
+    def labels(self):
+        return self._labels
 
-    @label.setter
-    def label(self, label):
-        self._label = label
+    @labels.setter
+    def labels(self, labels):
+        self._labels = labels
 
-
-        self._handle = Line2D([], [], linewidth=0, marker=self.marker, 
-                              markersize=self.size, label = label)
+        self._handles = []
+        for label in labels:
+            self._handles.append(Line2D([], [], linewidth=0, marker="o",
+                                 label = label)
+                                 )

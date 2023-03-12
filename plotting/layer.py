@@ -10,25 +10,29 @@ class Layer:
             subplot = fig.children[0][0]
 
         self.subplot = subplot
+        self.subplot.add_layer(self)
+
         self.mpl_ax = self.subplot.mpl_ax
+        self.label = ""
+        self.handle = None
 
     def update(self):
         pass
 
     @property
-    def labels(self):
-        return self._labels
+    def label(self):
+        return self._label
 
-    @labels.setter
-    def labels(self, l):
-        self._labels = l
+    @label.setter
+    def label(self, l):
+        self._label = l
 
 
     @property
-    def handles(self):
-        return self._handles
+    def handle(self):
+        return self._handle
 
-    @handles.setter
-    def handles(self, h):
-        self._handles = h
+    @handle.setter
+    def handle(self, h):
+        self._handle = h
 

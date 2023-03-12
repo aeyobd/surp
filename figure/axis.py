@@ -3,11 +3,11 @@ from .coord import Length
 
 class Axis():
     label = ""
-    def __init__(self, subfig, loc="bottom"):
-        self.subfig = subfig
+    def __init__(self, subplot, loc="bottom"):
+        self.subplot = subplot
 
         #mpl axis handl
-        self._ax = subfig.mpl_ax
+        self._ax = subplot.mpl_ax
         self._fig = self._ax.figure
 
         if loc == "bottom":
@@ -29,6 +29,19 @@ class Axis():
     @ticks.setter
     def ticks(self, array):
         self._ticks = array
+
+    @property
+    def lim(self):
+        return self._lim
+
+    @lim.setter
+    def lim(self, l):
+        if self.x:
+            self._ax.set(xlim=l)
+        else:
+            self._ax.set(ylim=l)
+
+        self._lim = l
 
     @property
     def label(self):
