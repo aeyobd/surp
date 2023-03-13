@@ -36,6 +36,11 @@ class Scatter(Layer):
         self.sizes = self.data.s
 
     @property
+    def color(self):
+        if self.data.c is None:
+            return self.mpl_ax.get_edgecolor()
+
+    @property
     def x(self):
         return self.data.x
 
@@ -85,4 +90,4 @@ class Scatter(Layer):
 
 
         self._handle = Line2D([], [], linewidth=0, marker=self.marker, 
-                              markersize=self.size, label = label)
+                              markersize=self.size, facecolor=self.color, edgecolor=self.color, label = label)
