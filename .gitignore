@@ -55,4 +55,4 @@ subgiants.csv
 *.log
 *.blg
 *.bbl
-ux
+*.aux
