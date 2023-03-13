@@ -12,6 +12,11 @@ plt.rcParams['figure.constrained_layout.use'] = False
 
 padding = 0.2
 in_pad = 0.0
+fig_dir = "."
+
+def save_at(directory: str):
+    global fig_dir
+    fig_dir = directory
 
 
 
@@ -144,12 +149,16 @@ class Figure(FigBase):
         self.update()
         plt.show()
 
-    def save(self, filename):
-        self.update
-        self._fig.savefig(self.output_dir + name + ".pdf", facecolor="white", 
-                         dpi=150)
+    def save(self, filename, show=False):
+        global fig_dir
 
-        if self.show:
+        self.update()
+
+        fpath = path.join(fig_dir, filename)
+        self.mpl_fig.savefig(fpath, facecolor="white", bbox_inches="tight", dpi=150)
+
+        print(f"one file saved at {fpath}")
+        if show:
             plt.show()
 
     @property

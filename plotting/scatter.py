@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 import matplotlib as mpl
+import numpy as np
 
-from ..style.style import colors, markers, fill
 from ..figure import Figure
 from .data import PlotData
 from .layer import Layer
@@ -11,19 +11,53 @@ from .layer import Layer
 class Scatter(Layer):
     marker = "o"
     size = 1
-    def __init__(self, x, y, c=None, s=None, marker="o", subplot=None,
-                 size=None, **kwargs):
-        super().__init__(subplot)
+    def __init__(self, x, y, c=None, s=None, marker="o", subplot=None, size=None, **kwargs):
+        """
+        A simple scatter plot
 
-        self.marker = marker
+        Parameters
+        ----------
+        x: array-like
+        y:
+        c:
+        s:
+        marker:
+        subplot: [Defaut=None]
+        size: [None]
+        """
+
+        super().__init__(subplot)
+        self.set(x=x, y=y, c=c, s=s, size=size, marker=marker)
+        self.plot(**kwargs)
+
+
+    def set(self, x, y, c, s, size, marker):
+        self.mpl_scat = None
+        self._color = None
 
         if isinstance(s, (int, float)):
             size=s
             s=None
 
-        self.size=size
+        self.marker = marker
+
+        # only use subplot cycler if needed
+        # so we don't increment otherwise
+        if (marker is None) or (c is None):
+            mcolor, msty = self.subplot.next_marksty()
+            if marker is None:
+                self.marker = msty
+            if c is None:
+                self.color = mcolor
+
         self.data = PlotData(x=x, y=y, c=c, s=s)
-        self.plot()
+        self.size=size
+
+        if c is not None:
+            self.clim = (min(c), max(c))
+
+        return self
+
 
     def plot(self, **kwargs):
         self.mpl_scat = self.mpl_ax.scatter(self.data.x, self.data.y, 
@@ -35,10 +69,26 @@ class Scatter(Layer):
         self.colors = self.data.c
         self.sizes = self.data.s
 
-    @property
-    def color(self):
+    def map(self, x:float) -> tuple:
         if self.data.c is None:
-            return self.mpl_ax.get_edgecolor()
+            return None
+
+        return self.mpl_map.to_rgba(x)
+
+
+    # ------------- class properties --------------
+
+    @property 
+    def clim(self):
+        return self._clim
+
+    @clim.setter
+    def clim(self, clh: tuple):
+        self._clim = clh
+
+        norm = mpl.colors.Normalize(*self.clim)
+        cmap = mpl.cm.get_cmap()
+        self.mpl_map = mpl.cm.ScalarMappable(norm, cmap)
 
     @property
     def x(self):
@@ -60,14 +110,21 @@ class Scatter(Layer):
             return 
 
         self.data.c = cs
+        self.mpl_scat.set_color(self.map(self.data.c))
 
-        self.norm = mpl.colors.Normalize(min(cs), max(cs))
-        self.cmap = mpl.cm.get_cmap()
-        self.map = mpl.cm.ScalarMappable(self.norm, self.cmap)
+    @property
+    def color(self):
+        if self.data.c is None:
+            return self.mpl_scat.get_edgecolor()
+        else:
+            return (0.0, 0.0, 0.0, 1.0)
 
-        self._colors = self.map.to_rgba(self.data.c)
+    @color.setter
+    def color(self, c):
+        if self.mpl_scat is not None:
+            self.mpl_scat.set_color(c)
+        self._color = c
 
-        self.mpl_scat.set_color(self._colors)
 
     @property
     def sizes(self):
@@ -89,5 +146,8 @@ class Scatter(Layer):
         self._label = label
 
 
-        self._handle = Line2D([], [], linewidth=0, marker=self.marker, 
-                              markersize=self.size, facecolor=self.color, edgecolor=self.color, label = label)
+    @property
+    def handle(self):
+        return Line2D([], [], linewidth=0, marker=self.marker, 
+                      markersize=self.size, color=self.color, 
+                      label = self.label)

@@ -1,17 +1,22 @@
 import matplotlib as mpl
+import os
 # the smallest plot elements should be 0.3pt \approx 0.1mm
 # for a paper, we want fonts 10/12/14
 
-colors = ['#0173b2', '#de8f05', '#029e73', '#d55e00', '#cc78bc', 
+COLORS = ['#0173b2', '#de8f05', '#029e73', '#d55e00', '#cc78bc', 
           '#ca9161', '#fbafe4', '#949494', '#ece133', '#56b4e9']
-markers = ['o', '+', '^', '*', 's', 
+MARKERS = ['o', '+', '^', '*', 's', 
            'd', 'o', 'x', '1']
-fill =    [True,  True,  True,  True,
+FILL =    [True,  True,  True,  True,
            False, False, False, False]
 
 
 def init():
-    mpl.style.use("./journal.mplstyle")
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    style = "journal"
+
+    path = os.path.join(dir_path, style + ".mplstyle")
+    mpl.style.use(path)
     # style.use('seaborn-colorblind')
     mpl.ticker.AutoLocator.__init__ = AutoLocatorInit
 

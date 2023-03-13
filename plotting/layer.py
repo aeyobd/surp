@@ -14,7 +14,6 @@ class Layer:
 
         self.mpl_ax = self.subplot.mpl_ax
         self.label = ""
-        self.handle = None
 
     def update(self):
         pass

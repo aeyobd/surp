@@ -19,7 +19,7 @@ class Colorbar(Subplot):
         self._width = self._sp.width * 0.05
         self._height = self._sp.height
 
-        self.map = self.layer.map
+        self.map = self.layer.mpl_map
 
         self.mpl_ax = self.figure.mpl_fig.add_subplot()
 
@@ -48,7 +48,11 @@ class Colorbar(Subplot):
 
     @property
     def label(self):
-        return self._labels
+        return self.ax.label
+
+    @label.setter
+    def label(self, l):
+        self.ax.label = l
 
     @property
     def markers(self):

@@ -9,6 +9,8 @@ class PlotData():
                  m=None, df=None):
         if df is not None:
             self.df = df
+
+        self.length = len(x)
         self.x = x
         self.y = y
         self.z = z
@@ -127,6 +129,8 @@ class PlotData():
             return None
         elif type(a) == str:
             return self.df[a]
+        elif isinstance(a, (int, float)):
+            return np.repeat(self.length, a)
         elif self.is_array(a):
             return pd.Series(a)
         else:

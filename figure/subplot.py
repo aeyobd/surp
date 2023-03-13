@@ -1,6 +1,8 @@
 from matplotlib import pyplot as plt
 from .coord import Length
 from .axis import Axis
+from itertools import cycle
+from ..style.style import COLORS, MARKERS, FILL
 
 class Subplot():
     def __init__(self, figure=None, size=(3,3), loc="right", row=0, col=0, axis=True):
@@ -22,14 +24,38 @@ class Subplot():
         self.figure.add_subplot(subplot=self, row=row, col=col)
         self._layers = []
 
+        self.lc_cycle = cycle(COLORS)
+        self.mc_cycle = cycle(COLORS)
+        self.ms_cycle = cycle(MARKERS)
 
+
+    def next_linesty(self):
+        return next(self.lc_cycle)
+
+    def next_marksty(self):
+        return next(self.mc_cycle), next(self.ms_cycle)
+
+    def locate(self, row, col):
+        self.mpl_ax.set_axes_locator(self.figure.mpl_div.new_locator(nx=row, ny=col))
+
+    def add_legend(self, legend):
+        self.legend = legend
+
+    def remove(self):
+        self.mpl_ax.remove()
+
+    def add_layer(self, layer):
+        self._layers.append(layer)
+
+    def save(self, filename):
+        self.figure.save(filename)
+
+    def show(self):
+        self.figure.show()
 
     @property
     def layers(self):
         return self._layers
-
-    def add_layer(self, layer):
-        self._layers.append(layer)
 
     @property
     def labels(self):
@@ -66,14 +92,6 @@ class Subplot():
         self._height = Length(h)
 
     @property
-    def title(self):
-        return self._title
-
-
-    def remove(self):
-        self.mpl_ax.remove()
-
-    @property
     def h_pad(self):
         """A duple of Length representing padding to the left
         and right of the subplot
@@ -87,8 +105,7 @@ class Subplot():
         """
         return (self.x.height, Length(0))
 
-    def locate(self, row, col):
-        self.mpl_ax.set_axes_locator(self.figure.mpl_div.new_locator(nx=row, ny=col))
+    @property
+    def title(self):
+        return self._title
 
-    def add_legend(self, legend):
-        self.legend = legend

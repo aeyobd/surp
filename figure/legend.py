@@ -1,18 +1,56 @@
 from matplotlib import pyplot as plt
 
+class Legend:
+    def __init__(self, subplot):
+        self.labels = subplot.labels
 
-prop_cycle = plt.rcParams["axes.prop_cycle"]
-COLORS = prop_cycle.by_key()['color']
+        self.mpl_leg = subplot.mpl_ax.legend(subplot.handles, self.labels, frameon=False)
+        subplot.add_legend(self)
 
-class Legend():
-    def __init__(self, **kwargs):
-        self.mpl_legend = plt.legend(**kwargs)
+    @property
+    def labels(self):
+        return self._labels
 
-    def fancy(self, **kwargs):
-        del self.mpl_legend
+    @labels.setter
+    def labels(self, a):
+        self._labels = a
 
-        self.mpl_legend = self.mpl_ax.legend(frameon=False, handlelength=0, 
-                                             columnspacing=0.8, **kwargs)
-        for i in range(len(self.mpl_legend.get_texts())):
-            self.mpl_legend.get_texts()[i].set_color(COLORS[i % len(COLORS)])
-            self.mpl_legend.legendHandles[i].set_visible(False)
+    @property
+    def handles(self):
+        return self.mpl_leg.legendHandles
+
+    @property
+    def ms(self):
+        return [h.get_markersize() for h in self.handles]
+
+    @ms.setter
+    def ms(self, size):
+        if isinstance(size, (int, float)):
+            for h in self.mpl_leg.legendHandles:
+                h.set_markersize(size)
+        elif isinstance(size, (tuple, list)):
+            if len(size) != len(self.handles):
+                raise ValueError("size must be same len as handles")
+            for h in self.handles:
+                h.set_markersize(size)
+
+    def hide_handles(self):
+        for h in self.handles:
+            h.set_visible(False)
+
+        self.mpl_leg.handlelength = 0
+        self.mpl_leg.columnspacing = 0
+
+    def color_labels(self):
+        texts = self.mpl_leg.get_texts()
+        for t, c in zip(texts, self.colors):
+            t.set_color(c)
+
+    @property
+    def colors(self):
+        return [h.get_color()[0] for h in self.handles]
+
+
+
+
+
