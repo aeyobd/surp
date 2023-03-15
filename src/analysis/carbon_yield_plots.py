@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import vice
-import apogee_analysis as aah
+from . import apogee_analysis as aah
 
 
 def plot_c_table(study = "cristallo11", ax=None, fig=None, **kwargs):
