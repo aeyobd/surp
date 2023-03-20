@@ -2,17 +2,23 @@ from matplotlib import pyplot as plt
 from .coord import Length
 from .axis import Axis
 from itertools import cycle
-from ..style.style import COLORS, MARKERS, FILL
+from ..style.style import COLORS, MARKERS, FILL, FIG_SIZE
 
 class Subplot():
-    def __init__(self, figure=None, size=(3,3), loc="right", row=0, col=0, axis=True):
+    def __init__(self, figure=None, size=FIG_SIZE, loc="right", row=0, col=0, ax=None, add_to_fig = True):
         if figure is None:
             from .figure import Figure
             figure = Figure()
 
         self.figure = figure
 
-        self.mpl_ax = self.figure.mpl_fig.add_subplot()
+        if ax is None:
+            self.mpl_ax = self.figure.mpl_fig.add_subplot()
+        else:
+            self.mpl_ax = ax
+
+        self._v_pad = None
+        self._h_pad = None
 
         self.x = Axis(self, "bottom")
         self.y = Axis(self, "left")
@@ -21,12 +27,14 @@ class Subplot():
 
         self.row = row
         self.col = col
-        self.figure.add_subplot(subplot=self, row=row, col=col)
+        if add_to_fig:
+            self.figure.add_subplot(subplot=self, row=row, col=col)
         self._layers = []
 
         self.lc_cycle = cycle(COLORS)
         self.mc_cycle = cycle(COLORS)
         self.ms_cycle = cycle(MARKERS)
+
 
 
     def next_linesty(self):
@@ -96,14 +104,28 @@ class Subplot():
         """A duple of Length representing padding to the left
         and right of the subplot
         """
-        return (self.y.width, Length(0))
+        if self._h_pad is None:
+            return (self.y.width, Length(0))
+        else:
+            return self._h_pad
 
     @property
     def v_pad(self):
         """A duple of Length representing padding to the bottom
         and top of the subplot (respectively)
         """
-        return (self.x.height, Length(0))
+        if self._v_pad is None:
+            return (self.x.height, Length(0))
+        else:
+            return self._v_pad
+
+    @v_pad.setter
+    def v_pad(self, a):
+        self._v_pad = a
+
+    @h_pad.setter
+    def h_pad(self, a):
+        self._h_pad = a
 
     @property
     def title(self):

@@ -26,6 +26,7 @@ def AutoLocatorInit(self):
             nbins = "auto",
             steps = [1,2,5,10])
 
+FIG_SIZE = (2.362, 2.362)
 
 init()
 

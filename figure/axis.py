@@ -17,6 +17,9 @@ class Axis():
             self.x = False
             self.mpl_axis = self._ax.get_yaxis()
 
+        self.null = self.mpl_axis is None
+
+
         # init hidden vars
         self._label = ""
         self._ticks = None
@@ -67,9 +70,13 @@ class Axis():
     @property
     def width(self):
         """The width of the bounding box for this axis instance"""
+        if self.null:
+            return Length(0)
         return Length(self._get_bbox().width)
 
     @property
     def height(self):
+        if self.null:
+            return Length(0)
         return Length(self._get_bbox().height)
 

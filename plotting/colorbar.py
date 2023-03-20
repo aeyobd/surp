@@ -6,15 +6,20 @@ from ..figure.axis import Axis
 class Colorbar(Subplot):
     cmin = 0
     cmax = 1
-    def __init__(self, layer):
+    def __init__(self, layer, figure=None, row=None, col=None):
 
         self.layer = layer
+
         self._sp = layer.subplot
-        self.figure = self._sp.figure
 
-        row = self._sp.row
-        col = self._sp.col + 1 # create to the right of the subfigure
+        if figure is None:
+            figure = self._sp.figure
+        if row is None:
+            row = self._sp.row
+        if col is None:
+            col = self._sp.col + 1 # create to the right of the subfigure
 
+        self.figure = figure
 
         self._width = self._sp.width * 0.05
         self._height = self._sp.height

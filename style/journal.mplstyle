@@ -15,7 +15,7 @@ legend.fontsize:	medium
 
 #---------------Figure----------------
 # default: 6.4, 4.8  (4/3 ratio)
-figure.figsize:		3, 3  # half the mpl width
+figure.figsize:		2.362, 2.362
 figure.dpi:		200
 figure.facecolor:	white
 

@@ -90,6 +90,9 @@ class Scatter(Layer):
         cmap = mpl.cm.get_cmap()
         self.mpl_map = mpl.cm.ScalarMappable(norm, cmap)
 
+        self.update()
+
+
     @property
     def x(self):
         return self.data.x
@@ -110,7 +113,8 @@ class Scatter(Layer):
             return 
 
         self.data.c = cs
-        self.mpl_scat.set_color(self.map(self.data.c))
+        if self.mpl_scat is not None:
+            self.mpl_scat.set_color(self.map(self.data.c))
 
     @property
     def color(self):

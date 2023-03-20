@@ -41,16 +41,21 @@ class Legend:
         self.mpl_leg.handlelength = 0
         self.mpl_leg.columnspacing = 0
 
-    def color_labels(self):
+    def color_labels(self, alpha=None):
         texts = self.mpl_leg.get_texts()
         for t, c in zip(texts, self.colors):
             t.set_color(c)
 
     @property
     def colors(self):
-        return [h.get_color()[0] for h in self.handles]
+        if len(self.handles[0].get_color()) != 4:
+            return [h.get_color()[0] for h in self.handles]
+        else:
+            return [h.get_color() for h in self.handles]
 
-
-
+    @colors.setter
+    def colors(self, cs):
+        for i in range(len(self.handles)):
+            self.handles[i].set_color(cs[i])
 
 

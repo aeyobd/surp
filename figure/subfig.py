@@ -1,25 +1,35 @@
 from .figbase import FigBase
 from .subplot import Subplot
 from .coord import Length
+from .figure import Figure
 
+import matplotlib.pyplot as plt
 
-class SubFigure(FigBase):
+class SubFigure(Figure):
     children = [[]]
 
-    def __init__(self, fig, n_rows=1, n_cols=1, make_subplots=True, **kwargs):
+    def __init__(self, nrows=1, ncols=1, **kwargs):
+        self.nrows = nrows
+        self.ncols = ncols
+        self.mpl_fig = plt.figure()
+        self.mpl_sfs = self.mpl_fig.subfigures(nrows, ncols, **kwargs)
 
-        self.n_rows = n_rows
-        self.n_cols = n_cols
-        self.fig = fig
+        self.children = [[None]*ncols for _ in range(nrows)]
 
-        if make_subplots:
-            self.make_subplots()
+        if nrows > 1:
+            for i in range(nrows):
+                if ncols > 1:
+                    for j in range(ncols):
+                        self.children[i][j] = Figure(mpl_fig = self.mpl_sfs[i][j])
+                else:
+                    self.children[i][0] = Figure(mpl_fig=self.mpl_sfs[i])
         else:
-            pass
+            if ncols > 1:
+                for j in range(ncols):
+                    self.children[0][j] = Figure(mpl_fig = self.mpl_sfs[j])
+            else:
+                self.children[0][0] = Figure(mpl_fig = self.mpl_sfs)
 
-    def make_subplots(self)
-        subplots = [ [None]*self.n_rows for _ in self.n_cols ]
-        for i in range(rows):
-            for j in range(cols):
-                self.children[i][j] = add_subfig(row=i, col=j)
+        self.h_pad = (Length(0.0), Length(0.0))
+        self.v_pad = (Length(0.0), Length(0.0))
 

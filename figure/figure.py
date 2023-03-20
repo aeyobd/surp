@@ -21,18 +21,20 @@ def save_at(directory: str):
 
 
 class Figure(FigBase):
-
-    def __init__(self, size=(), **kwargs):
-        self.mpl_fig = plt.figure()
-        self._fig = self.mpl_fig
+    def __init__(self, mpl_fig = None, add_subplot=False, size=(), **kwargs):
+        if mpl_fig is None:
+            mpl_fig = plt.figure()
+        self.mpl_fig = mpl_fig
         self.children = [[FigBase()]]
         self.floats = [] # TODO: for legends/etc.
 
-        self.h_pad = (Length(0.0), Length(0.0))
-        self.v_pad = (Length(0.0), Length(0.0))
+        self.h_pad = (Length(0.2), Length(0.2))
+        self.v_pad = (Length(0.2), Length(0.2))
 
-        self.add_subplot()
+        if add_subplot:
+            self.add_subplot()
         self.update()
+
 
     def add_subplot(self, subplot=None, loc=None, row=0, col=0):
         # to add children if not there
@@ -140,9 +142,9 @@ class Figure(FigBase):
     def update(self):
         self.set_div()
 
-        self._fig.set_figwidth(self.width.inch)
-        self._fig.set_figheight(self.height.inch)
-        self._fig.canvas.draw_idle()
+        self.mpl_fig.set_figwidth(self.width.inch)
+        self.mpl_fig.set_figheight(self.height.inch)
+        self.mpl_fig.canvas.draw_idle()
 
 
     def show(self):
