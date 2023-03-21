@@ -6,7 +6,7 @@ from .. import Figure
 class Layer:
     def __init__(self, subplot=None):
         if subplot is None:
-            fig = Figure()
+            fig = Figure(add_subplot=True)
             subplot = fig.children[0][0]
 
         self.subplot = subplot

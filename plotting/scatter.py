@@ -87,7 +87,7 @@ class Scatter(Layer):
         self._clim = clh
 
         norm = mpl.colors.Normalize(*self.clim)
-        cmap = mpl.cm.get_cmap()
+        cmap = mpl.colormaps["plasma"]
         self.mpl_map = mpl.cm.ScalarMappable(norm, cmap)
 
         self.update()

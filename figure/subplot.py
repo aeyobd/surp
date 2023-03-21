@@ -32,13 +32,14 @@ class Subplot():
         self._layers = []
 
         self.lc_cycle = cycle(COLORS)
+        self.ls_cycle = cycle(["-", ":", "--", "--."])
         self.mc_cycle = cycle(COLORS)
         self.ms_cycle = cycle(MARKERS)
 
 
 
     def next_linesty(self):
-        return next(self.lc_cycle)
+        return next(self.lc_cycle), next(self.ls_cycle)
 
     def next_marksty(self):
         return next(self.mc_cycle), next(self.ms_cycle)
@@ -67,11 +68,19 @@ class Subplot():
 
     @property
     def labels(self):
-        return [lay.label for lay in self.layers]
+        ls = []
+        for lay in self.layers:
+            if lay.label != "":
+                ls.append(lay.label)
+        return ls
 
     @property
     def handles(self):
-        return [lay.handle for lay in self.layers]
+        hs = []
+        for lay in self.layers:
+            if lay.label != "":
+                hs.append(lay.handle)
+        return hs
 
     @property
     def figure(self):

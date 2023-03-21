@@ -6,11 +6,14 @@ from ..figure.axis import Axis
 class Colorbar(Subplot):
     cmin = 0
     cmax = 1
-    def __init__(self, layer, figure=None, row=None, col=None):
+    def __init__(self, layer=None, subplot=None, mappable=None, figure=None, 
+                 row=None, col=None, width=None):
 
         self.layer = layer
 
-        self._sp = layer.subplot
+        if subplot is None:
+            subplot = layer.subplot
+        self._sp = subplot
 
         if figure is None:
             figure = self._sp.figure
@@ -21,10 +24,16 @@ class Colorbar(Subplot):
 
         self.figure = figure
 
-        self._width = self._sp.width * 0.05
+        if width is None:
+            self._width = self._sp.width * 0.05
+        else:
+            self._width = width
+
         self._height = self._sp.height
 
-        self.map = self.layer.mpl_map
+        if mappable is None:
+            mappable = self.layer.mpl_map
+        self.map = mappable
 
         self.mpl_ax = self.figure.mpl_fig.add_subplot()
 

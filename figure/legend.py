@@ -1,10 +1,11 @@
 from matplotlib import pyplot as plt
 
 class Legend:
-    def __init__(self, subplot):
+    def __init__(self, subplot, **kwargs):
         self.labels = subplot.labels
+        
 
-        self.mpl_leg = subplot.mpl_ax.legend(subplot.handles, self.labels, frameon=False)
+        self.mpl_leg = subplot.mpl_ax.legend(subplot.handles, self.labels, frameon=False, **kwargs)
         subplot.add_legend(self)
 
     @property
@@ -39,7 +40,7 @@ class Legend:
             h.set_visible(False)
 
         self.mpl_leg.handlelength = 0
-        self.mpl_leg.columnspacing = 0
+        self.mpl_leg.columnspacing = 0.8
 
     def color_labels(self, alpha=None):
         texts = self.mpl_leg.get_texts()
@@ -48,10 +49,19 @@ class Legend:
 
     @property
     def colors(self):
-        if len(self.handles[0].get_color()) != 4:
-            return [h.get_color()[0] for h in self.handles]
-        else:
-            return [h.get_color() for h in self.handles]
+        cs = []
+        for handle in self.handles:
+            c = handle.get_color()
+            if isinstance(c, str):
+                cs.append(c)
+            elif isinstance(c, list):
+                if isinstance(c[0], (str, float)):
+                    cs.append(c)
+                elif isinstance(c, list):
+                    cs.append(c[0])
+                else:
+                    print("not implemented")
+        return cs
 
     @colors.setter
     def colors(self, cs):
