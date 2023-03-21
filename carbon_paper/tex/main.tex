@@ -138,7 +138,9 @@ Need to find some...
 
 
 
-A fundamental question of Galactic Chemical Evolution (GCE) is understanding the physical processes which make each element. Stellar evolution models can be used to predict how much of each element stars with a variety of physical properties produce. However, these models are rife with uncertainties, limited by our understanding of critical physical processes such as nuclear reaction rates, convection, opacity, and mass loss (CITE, e.g. stellar physics reviews). 
+Where does each chemical element come from? 
+
+Stellar evolution models can be used to predict how much of each element stars with a variety of physical properties produce. However, these models are rife with uncertainties, limited by our understanding of critical physical processes such as nuclear reaction rates, convection, opacity, and mass loss (CITE, e.g. stellar physics reviews). 
 
 Carbon and nitrogen are the only lighter elements produced significantly by low mass stars, so*****, reasons WHY this study. 
 
@@ -181,38 +183,42 @@ In Fig. \ref{fig:subgiants} we present a sample of APOGEE subgiants. These subgi
 \end{figure*}
 \section{Nucleosynthesis}
 
-Galactic chemical evolution are fundamentally intertwined with our
-understanding of stellar nucleosynthesis. In this paper, we are concerned with
-three major nucleosynthetic pathways: AGB stars, \CC, and Supernovae type Ia.
-While only AGB stars and \CC are producers of carbon, SNeIa Fe can be used to
-compare with the AGB delayed carbon component. 
+Modern theoretical nucleosynthesis provides our starting point for our models.  We focus on three primary nucleosynthetic pathways: AGB stars, CCSne, and SNeIa. Each process has unique timescales and element production which we can trace through the tools of GCE. While carbon is only known to be produced in AGB stars and CCSNe, comparing carbon to iron production (from SNeIa) adds a valuable constraint to our models and insight into the delay-time production of carbon.
 
-\VICE allows us to explore the nucleosynthesis of various models, as it
-includes AGB tables for C11, et.c
-    
-We discuss carbon nucleosythesis in more detail in the next two sections. We
-assume that the only dominant sources of carbon are from AGB stars and CCSNe/massive star winds. ***JUSTIFY***. Below  is a brief overview of our  nucleosythetic assumptions of other elements.
+After a group of stars are formed, CCSNe from massive stars are the first enrichment, providing light elements such as C, O, and Mg and heavier elements such as Fe and beyond. Importaintly, $\alpha$ elements like O and Mg are only formed in CCSNe (in significant quantities). Next, low mass stars begin to reach the end of their lives. The dying breaths of AGB stars are known to be importaint sources of C, N, and a smattering of heavier elements.  Finally, the white dwarfs, including formation and time to collide/over-eat, explode, releasing much of Fe and nearby elements. 
 
-Let $y_{\rm X}^{\rm proc}(M, Z)$ be the fractional yield of element X by a process proc for stars of a mass $M$ (in solar masses) and at metallicity $Z$ defined as: 
+We focus on O and Mg as $\alpha$ elements only formed in CCSNe, and use Fe to
+trace delayed enrichment from SNeIa. C and N are both formed in AGB and CCSNe.
+
+We use IMF-Integrated yields calculated with \VICE~throughout this paper (see
+section \ref{sec:vice}, \citet{james+21, james+22}). For an element X and star
+with mass $M$, the stellar yield $y$ is defined as the net production of X relative 
+to $M$, or
 \begin{equation}
-    y_{\rm X} = \frac{M_{\rm X,\ ej} - M_{\rm X,\ birth}}{M}   
+    y_{\rm X} = \frac{M_{\rm X,\ ejected} - Z_{0, X} M_{\rm ejected}}{M}   
 \end{equation}
+where we let $M_{\rm ejected}$ and $M_{\rm X, ejected}$ be the total ejected
+stellar mass (through winds and supernovae ejecta) and the ejected mass of X,
+and $Z_{0, X}$ was the birth mass fraction of element X.
 
-Where $M_{\rm X,\ ej}$ and $M_{\rm X,\ birth}$ are the mass of element X ejected and initially present in the star. 
+More useful for GCE are Initial Mass Function (IMF) yields, where we sum up the
+contributions of all stars which produce an element.
 We define the IMF-integrated yield of X with: 
 \begin{equation}
 Y_{\rm X}^{\rm proc}(Z) = \int_{M_{\rm min}}^{M_{\rm max}} y_{\rm X}^{\rm proc}(M, Z)\ \Phi(M)  \ dM
 \end{equation}
 Where $\Phi(M) = \frac{dN}{dM}/ \int_{M_{\rm min}}^{M_{\rm max}} \frac{dN}{dM}\ dM$ is the normalized IMF, $M_{\rm min}$ and $M_{\rm max}$ are the minimum and maximum mass of stars, which we take to be $0.08 M_{\sun}$ and $100 M_{\sun}$ respectively; and $\frac{dN}{dM}$ is the initial mass function, the frequency of stars born between $M$ and $M+dM$.
 
-There are two $\alpha$-elements we care about: Mg and O. Stellar observations of magnesium are more reliable but oxygen abundances are easier to measure in HII regions. We assume that both Mg and O are produced entirely in CCSNe with constant, metallicity-independent yields. Thus $\text{[Mg/H]} = \text{[O/H]} = [\alpha/\text{H}]$ in our models
+There are two $\alpha$-elements we care about: Mg and O. Stellar observations
+of magnesium are more reliable but oxygen abundances are easier to measure in
+HII regions. We assume that both Mg and O are produced entirely in CCSNe with
+constant, metallicity-independent yields. Thus $\text{[Mg/H]} = \text{[O/H]} =
+[\alpha/\text{H}]$ in our models. (Observational validation?)
 
-\begin{itemize}
-    \item observational validation
-\end{itemize}
 For carbon, the dominant producer is from massive stars which eject carbon fused in their cores during CCSNe. 
 
-Taken from J21 and J22, we make the following yield assumptions:
+As we focus on the yields of carbon, we keep yields for other elements fixed in
+most models. Taken from \citet{james+21, james+22}, we let
 \begin{itemize}
     \item $Y_\text{O}^\text{CC} = 0.015$
     \item $Y_\text{O}^\text{Ia} = 0$
@@ -221,20 +227,36 @@ Taken from J21 and J22, we make the following yield assumptions:
     \item $Y_\text{N}^\text{CC} = 0.00036$
     \item $y_\text{N}^\text{AGB}(M, Z) = 9\times 10^{-4} M \left(\frac{Z}{Z_\odot}\right)$
 \end{itemize}
-Also following J21/J22, we take the SNeIa Delay Time distribution to be a $t^{-1.1}$ law based on
-the observations by \citet{maoz+12}.
-
-We leave consistent throughout the paper. While different CCSNe models predict different absolute values for $y_\text{O}^\text{CC}$, they also predict that the yield is metallicity-independent within the uncertainties of the model. 
-
-
-
+Also following \citet{james+21, james+22}, we take the SNeIa Delay Time distribution to be a
+$t^{-1.1}$ law suggested by the observations of \citet{maoz+12}.
 
 
 \subsection{Asymptotic giant branch carbon}
 
-An AGB star is a low mass ($\lesssim 8 M_{\sun}$) star during the final phases of evolution. The star has already completed Hydrogen core burning, Hydrogen shell burning during the red giant branch phase, and Helium core burning. So, the structure consists of an inert core of carbon and oxygen surrounded by a Helium burning shell and a Hydrogen burning shell. The double shell burning leads to thermal instabilities which drive off the outer layers of the star in a series of violent pulsations, ejecting the envelope and leaving behind a C/O white dwarf. 
+\begin{figure*}
+    \centering
+ 	    \includegraphics[scale=1]{agb_yields.pdf}\\
 
-In an AGB star, TDU and HBB are two major processes involved in carbon production and destruction. TDU occurs during thermal pulsations, where the convective layer of the star passes into the inner layers with He-burning products which mixes in C and O into the envelope. In contrast, HBB may happen if the base of the convective envelope reaches about 50MK, initiating the CNO cycle, converting most C12 into N14. 
+    \caption{The net fraction carbon yield ($M_\text{C}$, the amount of carbon produced by the star divided by $M$) plotted as a function of mass, $M$. Lighter colors represent higher values of metalicity ([M/H]). Each panel represents a different AGB model. K10 reports stars at MoverH -3, -2, etc. I can reproduce C11 and K10 but not other V13 and KL16 :(((}
+
+    \label{fig:y_agb}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    
+    \includegraphics[scale=1]{y_agb_vs_z.pdf}
+    \includegraphics[scale=1]{y_agb_vs_t.pdf}
+
+    \caption{On the left, we plot the IMF weighted net fractional carbon yields of each AGB model as a function of metalicity.The right panel plots the normalized net carbon AGB yield as a function of time for a population of stars born at the same time at solar metallicity. We note that for the right panel, the minimum of the DTD for V13 is }
+
+\end{figure*}
+
+An AGB star is a low mass ($\lesssim 8 M_{\sun}$) star during the final phases of evolution. The star has already completed hydrogen core burning, Hydrogen shell burning during the red giant branch phase, and helium core burning. So, the structure consists of an inert core of carbon and oxygen surrounded by a helium burning shell and a hydrogen burning shell. The double shell burning leads to thermal instabilities which drive off the outer layers of the star in a series of violent pulsations, ejecting the envelope and leaving behind a C/O white dwarf. 
+
+In an AGB star, two competing processes determine the outcome of carbon production.
+Third Dredge Up (TDU) is needed to eject carbon from the star, enriching the surface with helium-burning-processed material from the core. But Hot Bottom Burning (HBB) at the base of the convection layer changes carbon into nitrogen. 
+TDU occurs during thermal pulsations, where the convective layer of the star passes into the inner layers with He-burning products which mixes in C and O into the envelope. In contrast, HBB may happen if the base of the convective envelope reaches about 50MK, initiating the CNO cycle, converting most C12 into N14. 
 
 The differences in yields between AGB models depend on the mass loss rate, treatment of convection, and nuclear reaction rates. 
 
@@ -257,47 +279,34 @@ V13 is the only model that stands out, showing a non-monotonic metallicity depen
 
 Another difference is the speed at which equilibrium is reached. K10 and K16 weight carbon production more heavily towards massive stars resulting in a faster time to equilibrium, whereas the C11 and V13 models predict a slightly longer timescale with order 1Gyr, but little to no carbon is produced more than 2Gyr after a star formation event. This is in contrast to iron which is still produced by SNeIa up to 10Gyr after a star formation event. 
 
-\begin{figure*}
-    \centering
- 	    \includegraphics[scale=1]{agb_yields.pdf}\\
-
-    \caption{The net fraction carbon yield ($M_\text{C}$, the amount of carbon produced by the star divided by $M$) plotted as a function of mass, $M$. Lighter colors represent higher values of metalicity ([M/H]). Each panel represents a different AGB model. K10 reports stars at MoverH -3, -2, etc. I can reproduce C11 and K10 but not other V13 and KL16 :(((}
-
-    \label{fig:y_agb}
-\end{figure*}
-
-\begin{figure*}
-    \centering
-    
-    \includegraphics[scale=1]{y_agb_vs_z-1.pdf}
-    \includegraphics[scale=1]{y_agb_vs_t-1.pdf}
-
-    \caption{On the left, we plot the IMF weighted net fractional carbon yields of each AGB model as a function of metalicity.The right panel plots the normalized net carbon AGB yield as a function of time for a population of stars born at the same time at solar metallicity. We note that for the right panel, the minimum of the DTD for V13 is }
-
-\end{figure*}
 
 \subsection{CCSNe carbon}
 
+\begin{figure*}
+    \includegraphics[scale=0.9]{y_c_cc-2.pdf}
+    \includegraphics[scale=0.9]{y_co_cc.pdf}
+    \caption{The fist plot shows IMF-weighted net fractional CCSNe yield of
+        carbon, $y_C^{cc}$ against metalicity, [M/H], for different studies.
+        The right plot instead shows [C/O]$^\text{CC}$, the logarithm of the
+        abundance ratio of carbon to oxygen if CCSNe were the only carbon
+        source, also as a function of metallicity for the same set of studies.
+        The black line represents the carbon yield of the fiducial model,
+        $y_C^{CC} = 0.004? (Z/Z_{\sun})^{0.3}$, and becomes dashed over regions
+        where we have not tested our model.\citep{NKT13}, \citep{LC18},
+        \citep{sukhbold+16}, \citep{WW95}
+ }
+    \label{fig:y_cc}
+\end{figure*}
 
 While there are many stellar models providing predictions of CCSNe yields, the results of these models are highly uncertain due to the many stellar modeling uncertainties. 
 
-We summarise many of the predictions of stellar models in Fig. \ref{fig:y_cc}. Pink squares
-represent \citep{NKT13}, etc. etc.
-\citep{LC18}
-\citep{sukhbold+16}
-\citep{WW95}
-
-On the right, we plot the expected CCSNe abundance ratio of each model as a function of metallicity, defining
+We summarise many of the predictions of stellar models in Fig. \ref{fig:y_cc}. 
 \begin{equation}
     {\rm [C/O]^{CC}} = \log_{10}\left( \frac{y_{\rm C}^{\rm CC}}{y_{\rm O}^{\rm CC}}\right) - \log_{10} \left( \frac{Z_{C, \sun }}{Z_{O, \sun }} \right)
 \end{equation}
 Notice how even these ratios 
-\begin{figure*}
-    \includegraphics[scale=0.9]{y_c_cc-2.pdf}
-    \includegraphics[scale=0.9]{y_co_cc.pdf}
-    \caption{The fist plot shows IMF-weighted net fractional CCSNe yield of carbon, $y_C^{cc}$ against metalicity, [M/H], for different studies. The right plot instead shows [C/O]$^\text{CC}$, the logarithm of the abundance ratio of carbon to oxygen if CCSNe were the only carbon source, also as a function of metallicity for the same set of studies. The black line represents the carbon yield of the fiducial model, $y_C^{CC} = 0.004? (Z/Z_{\sun})^{0.3}$, and becomes dashed over regions where we have not tested our model. }
-    \label{fig:y_cc}
-\end{figure*}
+
+
 
     \begin{itemize}
         \item Wide range in predictions, exacerbated to 1 dex range when including variance in oxygen predictions
@@ -309,7 +318,7 @@ Notice how even these ratios
     \end{itemize}
     
 
-\section{The Multizone Model}
+    \section{The Multizone Model}\label{sec:vice}
 
 To simulate the chemical evolution of a Milky-Way-like galaxy, we use the Versitile Integrator for Chemical Evolution (\VICE\footnote{\VICE~is available at \url{https://github.com/giganano/VICE}}) published in \citet{james+21} and also briefly described in \citet{james+22}.  As a multi-zone model, the galaxy is divided into 200 rings of 0.1kpc, each with separate gas supplies with outflow and inflow rates. 
 
@@ -383,6 +392,17 @@ spread, as in e.g. Fig. \ref{fig:agb_sims}.
 
 \subsection{The Evolution of carbon across the galaxy and through time}
 
+\begin{figure*}
+\label{fig:c_evo}
+\includegraphics{evo_tracks-9.pdf}
+\includegraphics{evo_slices-2.pdf}
+\caption{The top set of panes show the time evolution of the gas phase of our
+    fiducial model, plotted as tracks through \caah and \caafe where each colored line corresponds to the evolution at that galactic radius. 
+The bottom set instead shows the galaxies gas-phase \caah and \caafe trend at 5 different time slices. 
+}
+\end{figure*}
+
+
 The GCE of carbon is complicated by metallicity dependencies and delayed contributions. 
 
 We note the following features of our model:
@@ -408,16 +428,6 @@ Comparing [C/$\alpha$] against [Fe/H] enables us to see late time evolution of c
 This is even more evident in the lower part of Fig. \ref{fig:c_evo}, where we
 instead plot snapshots of the galactic radial trend at different times for our
 model. While the \caah trend reaches almost equilibrium at 5Gyr, the \caafe trend continues to evolve even until the present day, exposing the effect of the delayed contribution from AGB stars on the evolutionary history.
-
-\begin{figure*}
-\label{fig:c_evo}
-\includegraphics{evo_tracks-9.pdf}
-\includegraphics{evo_slices-2.pdf}
-\caption{The top set of panes show the time evolution of the gas phase of our
-    fiducial model, plotted as tracks through \caah and \caafe where each colored line corresponds to the evolution at that galactic radius. 
-The bottom set instead shows the galaxies gas-phase \caah and \caafe trend at 5 different time slices. 
-}
-\end{figure*}
 
 
 
@@ -497,6 +507,14 @@ Our next exploration is to adjust the relative fraction of AGB star yields. To d
 \end{equation}
 
 \subsection{Metallicity dependence and the AGB Fraction}
+
+\begin{figure*}\label{fig:beta_f}
+\includegraphics[scale=0.6]{beta-1.pdf}
+\includegraphics[scale=0.6]{f_agb-1.pdf}
+
+\caption{Similar to \ref{fig:agb_sims} except the top plot shows the fiducial model with lower and higher values of $\beta$, the C-CCSNe metallicity dependence. The bottom plot is the same except shows varying AGB fractions.}
+\end{figure*}
+
 The next question is how does changing the CCSNe carbon yield affect the model?
 We now consider variations of our fiducial model:
 \begin{itemize}
@@ -548,6 +566,12 @@ These models are indistinguishable in the \caah~plane from our adjusted CCSNe mo
 
 \subsection{Star Formation History}
 
+\begin{figure*}
+\includegraphics[scale=0.6]{lateburst_eta-1.pdf}
+
+\caption{Same as Fig. \ref{fig:agb_sims} but comparing the fiducial model to the reduced outlow model and a lateburst model. (okay, need to totally change approach...)}
+\end{figure*}
+
 We consider a simple modification of our SFH described by our lateburst model
 (see Equation \ref{eq:lateburst})
 
@@ -558,39 +582,10 @@ However, we find that the star formation history has a negligable effect on the 
 
 
 
-\begin{figure*}\label{fig:beta_f}
-\includegraphics[scale=0.6]{beta-1.pdf}
-\includegraphics[scale=0.6]{f_agb-1.pdf}
-
-\caption{Similar to \ref{fig:agb_sims} except the top plot shows the fiducial model with lower and higher values of $\beta$, the C-CCSNe metallicity dependence. The bottom plot is the same except shows varying AGB fractions.}
-\end{figure*}
-
-\begin{figure*}
-\includegraphics[scale=0.6]{lateburst_eta-1.pdf}
-
-\caption{Same as Fig. \ref{fig:agb_sims} but comparing the fiducial model to the reduced outlow model and a lateburst model. (okay, need to totally change approach...)}
-\end{figure*}
 
 
-\begin{figure}
-    \includegraphics[scale=0.6]{cooh_scatter.pdf}
-    \caption{The simulated stars of our model at present day plotted on \caah~and colored such that lighter colors represent stars born at greater galactric radii.}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[scale=0.6]{cnoh.pdf}
-    \caption{Caption}
-    \label{fig:cnofe}
-\end{figure}
 
 
-\begin{figure*}
-\centering
-\includegraphics[]{summary-2.pdf}
-\caption{Present-day gas phase tracks of the fiducial model in \caah~space. M101 is valid comparison to MW ...(van Dokkum et al. 2014)}
-\label{fig:gas_phase}
-\end{figure*}
 \subsection{Outflows}
 A common degeneracy in chemical evolution models is the yield-outflow degeneracy. An increase in stellar yields has a near-identical effect as a decrease in outflows. However, reducing the outflows reduces the evolution timescale of the system. 
 
@@ -608,8 +603,31 @@ slope observed in\caafe. However, a pure CCSNe carbon model cannot reproduce the
 We find that we can adjust both the outflows and scale down the yields if we change our model for $y_\text{C}^\text{CC}/y_\text{O}^\text{CC}$. For example, reducing outflows and CCSNe yields by a factor of two requires the modified parameters
 $\alpha = 0.033$ and $\beta = 0.625$, which results in a slightly lower value at solar but nearly a doubling of the metallicity dependence.
 
+\subsection{Understanding Scatter}
+
+\begin{figure}
+    \includegraphics[scale=0.6]{cooh_scatter.pdf}
+    \caption{The simulated stars of our model at present day plotted on \caah~and colored such that lighter colors represent stars born at greater galactric radii.}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.6]{cnoh.pdf}
+    \caption{Caption}
+    \label{fig:cnofe}
+\end{figure}
+
+Beyond simply comparing median trends, we can compare the distribution 
+shape of our distribution to observations. 
 
 \subsection{Comparison to Observations}
+
+\begin{figure*}
+\centering
+\includegraphics[]{summary-2.pdf}
+\caption{Present-day gas phase tracks of the fiducial model in \caah~space. M101 is valid comparison to MW ...(van Dokkum et al. 2014)}
+\label{fig:gas_phase}
+\end{figure*}
 
 Beyond Milky Way stars, astronomers have observed carbon to oxygen ratios in
 HII-regions through either Recombination Lines or (OTHER TEchnique0), enabling

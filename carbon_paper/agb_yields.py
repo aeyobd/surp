@@ -35,7 +35,7 @@ def plot_c_table(study = "cristallo11", ax=None, fig=None, **kwargs):
     return f
 
 
-fig, axs = plt.subplots(2, 2, figsize=(2*plot_style.WIDTH, 4/3*plot_style.WIDTH), sharex=True, sharey=True)
+fig, axs = plt.subplots(2, 2, figsize=((np.sqrt(5) + 1)*plot_style.WIDTH, 2*plot_style.WIDTH), sharex=True, sharey=True)
 plt.subplots_adjust(hspace=0, wspace=0)
 # plt.minorticks_off()
 
