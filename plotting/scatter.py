@@ -6,6 +6,7 @@ import numpy as np
 from ..figure import Figure
 from .data import PlotData
 from .layer import Layer
+from ..style.style import get_cmap
 
 
 class Scatter(Layer):
@@ -87,7 +88,7 @@ class Scatter(Layer):
         self._clim = clh
 
         norm = mpl.colors.Normalize(*self.clim)
-        cmap = mpl.colormaps["plasma"]
+        cmap = get_cmap()
         self.mpl_map = mpl.cm.ScalarMappable(norm, cmap)
 
         self.update()
@@ -119,7 +120,7 @@ class Scatter(Layer):
     @property
     def color(self):
         if self.data.c is None:
-            return self.mpl_scat.get_edgecolor()
+            return self.mpl_scat.get_edgecolor()[0]
         else:
             return (0.0, 0.0, 0.0, 1.0)
 

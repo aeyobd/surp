@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+import numpy as np
 
 class Legend:
     def __init__(self, subplot, **kwargs):
@@ -54,8 +55,8 @@ class Legend:
             c = handle.get_color()
             if isinstance(c, str):
                 cs.append(c)
-            elif isinstance(c, list):
-                if isinstance(c[0], (str, float)):
+            elif isinstance(c, (list, np.ndarray)):
+                if isinstance(c[0], (int, float)):
                     cs.append(c)
                 elif isinstance(c, list):
                     cs.append(c[0])
