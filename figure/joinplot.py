@@ -10,7 +10,7 @@ from ..style.style import FIG_SIZE
 class JoinPlot(Subplot):
     def __init__(self, nrows=1, ncols=1, row=1, col=1, size=None, figure=None, hpad=0, vpad=0):
         if figure is None:
-            figure = Figure()
+            figure = Figure(dpi=1000)
 
         if size is None:
             size = (FIG_SIZE[0]*ncols, FIG_SIZE[1]*nrows)

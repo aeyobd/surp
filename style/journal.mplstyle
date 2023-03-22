@@ -11,6 +11,8 @@ xtick.labelsize:	medium
 ytick.labelsize:	medium
 legend.fontsize:	medium
 
+text.antialiased:   False
+
 
 
 #---------------Figure----------------
