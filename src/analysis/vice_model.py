@@ -12,9 +12,14 @@ from .vice_utils import load_model, show_stars
 from ..simulation import multizone_sim
 from . import apogee_analysis as aah
 from .import gas_phase_data
-from .plotting_utils import legend_outside, fancy_legend, plot_density_line, COLORS, plot_thick_line
+
+
+from .plotting_utils import legend_outside, fancy_legend
 from . import plotting_utils as pluto
 
+from arya.style.style import COLORS
+import arya
+cmap = arya.style.get_cmap()
 
 class vice_model():
     """
@@ -150,36 +155,35 @@ class vice_model():
         ax.set_xlabel(x)
         ax.set_ylabel(y)
 
-    def plot_t_slices(self, x, y, xlim=None, times=[2,5,8,11,13], ax=None, legend=True):
+    def plot_t_slices(self, x, y, xlim=None, times=[13,11,8,5,2], ax=None, legend=True):
         if ax is None:
             ax = plt.gca()
 
-        colors = COLORS[:4] + ["k"]
+        colors = [cmap(i/5) for i in range(5)]
 
         for i in range(len(times)):
             t = times[i]
             c = colors[i]
 
-            self.plot_annulus_at_t(x, y, t, label="%i" % t, ax=ax, color=c)
+            self.plot_annulus_at_t(x, y, t, label="%i Gyr" % t, ax=ax, color=c, zorder=6-i)
         if legend:
-            fancy_legend(title="t/Gyr", ax=ax, colors=colors)
+            fancy_legend(title="", ax=ax, colors=colors)
 
     def plot_R_slices(self, x, y, Rs=[4,6,8,10,12], ax=None, legend=True):
+        colors = [cmap(i/5) for i in range(5)]
+
         if ax is None:
             ax = plt.gca()
+            
         for j in range(5):
             i = (np.array([4, 6, 8, 10, 12])*10)[j]
             j0 = 2
-            if j == j0:
-                c = "k"
-            elif j<j0:
-                c = COLORS[j]
-            else:
-                c = COLORS[j-1]
+            c = colors[j]
+            
             R_min=i/10-0.5
             R_max=i/10+0.5
             self.plot_annulus_history(x, y, R_min=R_min, R_max=R_max,
-                    label=i/10, ax=ax, color=c)
+                    label=f"{i/10:2.0f} kpc", ax=ax, color=c)
 
             # mark points
             ave = self.annulus_average(R_min, R_max)
@@ -189,7 +193,7 @@ class vice_model():
             ax.scatter(x_values, y_values, marker="x", color=c)
 
         if legend:
-            fancy_legend(title="r/kpc", ax=ax, colors=COLORS[:2] + ["k"] + COLORS[2:])
+            fancy_legend(title="", ax=ax, colors=colors)
 
     def annulus_average(self, R_min, R_max):
         """

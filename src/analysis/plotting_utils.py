@@ -332,7 +332,7 @@ def plot_mean_track(x_vals, y_vals, bins=30, xlim=None, shade_width=False,
         if plot_errorbar:
             p = err_scatter(x_bins, means, yerr=dy, ax=ax, **kwargs)
         else:
-            p = ax.plot(x_bins, means, "o", **kwargs)
+            p = ax.plot(x_bins, means, ".", **kwargs)
     else:
         p = ax.plot(x_bins, means, **kwargs)
 
