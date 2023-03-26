@@ -11,6 +11,10 @@ pickles
 *.json
 *.mp4
 
+*.lof
+*.lot
+*.toc
+
 *.swp
 *.fits
 *.fits.1

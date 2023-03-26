@@ -1,59 +1,48 @@
-% mnras_template.tex 
-%
-% LaTeX template for creating an MNRAS paper
-%
-% v3.0 released 14 May 2015
-% (version numbers match those of mnras.cls)
-%
-% Copyright (C) Royal Astronomical Society 2015
-% Authors:
-% Keith T. Smith (Royal Astronomical Society)
+\documentclass[12pt,oneside]{book}
 
-% Change log
-%
-% v3.0 May 2015
-%    Renamed to match the new package name
-%    Version number matches mnras.cls
-%    A few minor tweaks to wording
-% v1.0 September 2013
-%    Beta testing only - never publicly released
-%    First version: a simple (ish) template for creating an MNRAS paper
+% \AddToHook{cmd/section/before}{\clearpage}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Basic setup. Most papers should leave these options alone.
-\documentclass[fleqn,usenatbib]{mnras}
-
-% MNRAS is set in Times font. If you don't have this installed (most LaTeX
-% installations will be fine) or prefer the old Computer Modern fonts, comment
-% out the following line
-\usepackage{newtxtext,newtxmath}
-% Depending on your LaTeX fonts installation, you might get better results with one of these:
-%\usepackage{mathptmx}
-%\usepackage{txfonts}
-
-% Use vector fonts, so it zooms properly in on-screen viewing software
-% Don't change these lines unless you know what you are doing
 \usepackage[T1]{fontenc}
 
-% Allow "Thomas van Noord" and "Simon de Laguarde" and alike to be sorted by "N" and "L" etc. in the bibliography.
-% Write the name in the bibliography as "\VAN{Noord}{Van}{van} Noord, Thomas"
-\DeclareRobustCommand{\VAN}[3]{#2}
-\let\VANthebibliography\thebibliography
-\def\thebibliography{\DeclareRobustCommand{\VAN}[3]{##3}\VANthebibliography}
+\usepackage{aas_macros}
+\usepackage[letterpaper, top=1in]{geometry}
+\usepackage{titlesec}
 
+\titleformat{\chapter}{\normalfont\normalsize\centering}{Chapter \thechapter:}{1em}{}
+\titleformat{\section}{\normalfont\normalsize\centering}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\normalsize\centering}{\thesubsection}{1em}{}
+\titlespacing*{\chapter}{0pt}{-15pt}{40pt} \titlespacing*{\section}{0pt}{0pt}{20pt}
+\renewcommand{\contentsname}{Table of Contents}
 
-%%%%% AUTHORS - PLACE YOUR OWN PACKAGES HERE %%%%%
+\usepackage{setspace}
 
-% Only include extra packages if you really need them. Common packages are:
-\usepackage{graphicx}	% Including figure files
 \usepackage{amsmath}	% Advanced maths commands
-\usepackage{abbrevs}
+\usepackage{txfonts}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=blue,
+    urlcolor=blue,
+    pdftitle={Thesis},
+    pdfpagemode=FullScreen,
+}
 % \usepackage{amssymb}	% Extra maths symbols
+
+\usepackage{graphicx}	% Including figure files
 \graphicspath{{../figures/}}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{natbib}
+\usepackage[nottoc,numbib]{tocbibind}
 
-%%%%% AUTHORS - PLACE YOUR OWN COMMANDS HERE %%%%%
+% \usepackage{fancyhdr}
+% \pagestyle{fancy}
+% \fancyhead{}
+% \fancyhead[RO,RE]{Carbon Galactic Nucleosynthesis}
+\pagestyle{plain}
+
+
+
 \defcitealias{cristallo+11}{C11}
 \defcitealias{cristallo+15}{C15}
 \defcitealias{ventura+13}{V13}
@@ -68,8 +57,6 @@
 \newcommand{\kl}{\citetalias{KL16}+\citetalias{karakas+18}}
 \newcommand{\ventura}{\citetalias{ventura+13}}
 
-\newabbrev\CC{Core Collapse Supernovae (CCSNe)}[CCSNe]
-
 \newcommand{\VICE}{\texttt{VICE}}
 \newcommand{\caah}{[C/Mg]-[Mg/H]}
 \newcommand{\caafe}{[C/Mg]-[Mg/Fe]}
@@ -79,63 +66,81 @@
 \newcommand{\Yct}{\ensuremath{y_{\rm C, 0}^{\rm tot}}}
 \newcommand{\Yoc}{\ensuremath{y_{\rm O}^{\rm cc}}}
 \newcommand{\Ycagb}{\ensuremath{y_{\rm C}^{\rm agb}}}
+\newcommand{\sun}{\ensuremath{\odot}}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%% TITLE PAGE %%%%%%%%%%%%%%%%%%%
 
-% Title of the paper, and the short title which is used in the headers.
-% Keep the title short and informative.
-\title[Constraining carbon yields]{The galactic chemical evolution of carbon: Constraining stellar nucleosynthesis}
-
+\title{Carbon Nucleosynthesis}
 % The list of authors, and the short list which is used in the headers.
 % If you need two or more lines of authors, add an extra line using \newauthor
-\author[D. A. Boyea et al.]{
-Daniel A. Boyea,$^{1}$\
-et al.
-% James W. Johnson,$^{1}$
-% David Weinberg
-% Jack Roberts
-% Jennifer Johnson
-% ?
-\\
-% List of institutions
-$^{1}$Department of Astronomy, The Ohio State University\\
-$^{2}$Department, Institution, Street Address, City Postal Code, Country\\
-$^{3}$Another Department, Different Institution, Street Address, City Postal Code, Country
-}
+\author{Daniel A. Boyea}
 
 % These dates will be filled out by the publisher
-\date{Accepted XXX. Received YYY; in original form ZZZ}
+\date{\today}
 
-% Enter the current year, for the copyright statements etc.
-\pubyear{2023}
+\pagenumbering{roman}
 
-% Don't change these lines
 \begin{document}
-\label{firstpage}
-\pagerange{\pageref{firstpage}--\pageref{lastpage}}
-\maketitle
+
+%\doublespacing
+
+\begin{titlepage}
+   \begin{center}
+       \vfill
+       \textbf{The Galactic Chemical Evolution of Carbon} \\
+        Implications for nucleosynthesis
+        \vfill
+        Research Thesis
+        \vfill
+        Presented in partial fulfillment of the requirements for graduation \textit{with research distinction} in Astronomy and Astrophysics in the College of Arts and Sciences of The Ohio State University.
+        \vfill
+        by 
+        \vfill
+       {Daniel A. Boyea}\\
+       \vfill
+       Department of Astronomy\\
+       The Ohio State University\\
+       \vfill
+       April 2023
+       \vfill
+       Thesis Committee:\\
+       David Weinberg, Advisor \\
+       Jennifer Johnson \\
+       Rolando Vald\'es Aguilar\\
+       \vfill
+            
+   \end{center}
+\end{titlepage}
+
+
 
 % Abstract of the paper
-\begin{abstract}
+\chapter*{Abstract}
+\begin{center}
 Stellar evolution models provide highly uncertain predictions for elemental yields due to our limited understanding of stellar physics. In this paper, we aim to estimate the nucleosynthetic yields of carbon using galactic chemical evolution models. 
 
 We find that the AGB stars make up a fraction $0.20_{-20}^{+80}$ of total carbon production at late times. 
-\end{abstract}
+\end{center}
 
-% Select between one and six entries from the list of approved keywords.
-% Don't make up new ones.
-\begin{keywords}
-Need to find some...
-\end{keywords}
+\chapter*{Acknowledgements}
+
+Many thanks to
+
+
+
+%% Lists
+
+\tableofcontents
+\listoffigures
+\listoftables
+\newpage
+\pagenumbering{arabic}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%% BODY OF PAPER %%%%%%%%%%%%%%%%%%
 
-\section{Introduction}
-
+\chapter{Introduction}
 
 
 Where does each chemical element come from? 
@@ -153,7 +158,7 @@ Additionaly, carbon is extremelt challenging to measure gas-phase abundances for
 
 AGB stars are known to be importaint (cite) from stellar model predictions, previous GCE, and evidence from abundance patterns. (are there detections in PN?)
 
-\CC are also important (.... SN reminant measurments)
+CCSne are also important (.... SN reminant measurments)
 
 We also know that there is evidence for non-monatonic carbon yield patterns. 
 pattern where carbon is more readily produced by both high metallicity and very low metallicity stars (CEMPS, early GCE results), but our picture.
@@ -166,14 +171,14 @@ In Fig. \ref{fig:subgiants} we present a sample of APOGEE subgiants. These subgi
 
 
 
-\begin{figure*}
+\begin{figure}[htp]
     \centering
-    \includegraphics[]{subgiants_mgh.pdf}
-    \includegraphics[]{subgiants_mgfe.pdf}
-    \caption{The [C/Mg] ratio against [Mg/H] (left) and [Mg/Fe] (right). The left panel uses blue and orange to represent high and low $\alpha$ sequences respectively. On the right, we plot more metal rich ([Mh/H]) stars with darker colors.}
+    \includegraphics[scale=0.85]{subgiants_mgh.pdf}
+    \includegraphics[scale=0.85]{subgiants_mgfe.pdf}
+    \caption[APOGEE Subgiants]{The [C/Mg] ratio against [Mg/H] (left) and [Mg/Fe] (right). The left panel uses blue and orange to represent high and low $\alpha$ sequences respectively. On the right, we plot more metal rich ([Mh/H]) stars with darker colors.}
     \label{fig:subgiants}
-\end{figure*}
-\section{Nucleosynthesis}
+\end{figure}
+\chapter{Nucleosynthesis}
 
 Modern theoretical nucleosynthesis provides our starting point for our models.  We focus on three primary nucleosynthetic pathways: AGB stars, CCSne, and SNeIa. Each process has unique timescales and element production which we can trace through the tools of GCE. While carbon is only known to be produced in AGB stars and CCSNe, comparing carbon to iron production (from SNeIa) adds a valuable constraint to our models and insight into the delay-time production of carbon.
 
@@ -204,7 +209,7 @@ Also following \citet{james+21, james+22}, we take the SNeIa Delay Time distribu
 $t^{-1.1}$ law suggested by the observations of \citet{maoz+12}.
 
 
-\subsection{Asymptotic giant branch carbon}
+\section{Asymptotic giant branch carbon}
 
 \begin{figure*}
     \centering
@@ -275,11 +280,11 @@ V13 is the only model that stands out, showing a non-monotonic metallicity depen
 Another difference is the speed at which equilibrium is reached. K10 and K16 weight carbon production more heavily towards massive stars resulting in a faster time to equilibrium, whereas the C11 and V13 models predict a slightly longer timescale with order 1Gyr, but little to no carbon is produced more than 2Gyr after a star formation event. This is in contrast to iron which is still produced by SNeIa up to 10Gyr after a star formation event. 
 
 
-\subsection{CCSNe carbon}
+\section{CCSNe carbon}
 
-\begin{figure*}
-    \includegraphics[scale=0.9]{y_c_cc-2.pdf}
-    \includegraphics[scale=0.9]{y_co_cc.pdf}
+\begin{figure}[htp]
+    \includegraphics[scale=0.8]{y_c_cc-2.pdf}
+    \includegraphics[scale=0.8]{y_co_cc.pdf}
     \caption{The fist plot shows IMF-weighted net fractional CCSNe yield of
         carbon, $y_C^{cc}$ against metalicity, [M/H], for different studies.
         The right plot instead shows [C/O]$^\text{CC}$, the logarithm of the
@@ -291,7 +296,7 @@ Another difference is the speed at which equilibrium is reached. K10 and K16 wei
         \citep{sukhbold+16}, \citep{WW95}
  }
     \label{fig:y_cc}
-\end{figure*}
+\end{figure}
 
 While there are many stellar models providing predictions of CCSNe yields, the results of these models are highly uncertain due to the many stellar modeling uncertainties. 
 
@@ -313,7 +318,7 @@ Notice how even these ratios
     \end{itemize}
     
 
-    \section{The Multizone Model}\label{sec:vice}
+\chapter{The Multizone Model}\label{sec:vice}
 
 To simulate the chemical evolution of a Milky-Way-like galaxy, we use the Versitile Integrator for Chemical Evolution (\VICE\footnote{\VICE~is available at \url{https://github.com/giganano/VICE}}) published in \citet{james+21} and also briefly described in \citet{james+22}.  As a multi-zone model, the galaxy is divided into 200 rings of 0.1kpc, each with separate gas supplies with outflow and inflow rates. 
 
@@ -348,8 +353,8 @@ where we take $n$ to be ****
 
 Salpeter IMF.
 
-\subsection{Model Stellar Yields}
-We define a parameterization of a \CC~yield
+\section{Model Stellar Yields}
+We define a parameterization of a CC~yield
   Because of the large uncertainties in CCSNe carbon yields, we choose to explore an analytic expression of the yield enabling us to easily explore how variations of CCSNe carbon yields affect abundance tracks. We find that a powerlaw yield with a metallicity-dependent constant minimum is able to match the observations well while remaining a simple parameterization (see below). Our expression is:
   \begin{equation}\label{eq:y_yields}
    Y_\text{C}^\text{CC}(Z) =  \alpha\ Z^\beta Y_\text{O}^\text{CC} + Y_\text{C, 0}^\text{CC}
@@ -358,10 +363,8 @@ We define a parameterization of a \CC~yield
     
     As an overall scaling of yields does not significantly affect our models, we choose to fix the total equilibrium value of the total carbon yield at solar at $Y_{\text{C},\ \sun} = 0.005$, and then scale the yields relative to this value. 
 
-\section{Multizone model results}
-
-
-\subsection{Data Selection}
+\chapter{Multizone model results}
+\section{Data Selection}
 
 We use data from APOGEE DR17 \citep{apogee17} processed with APOSCAP. Since subgiant stars have yet to experience FDU, their atmospheric carbon and nitrogen abundances are still reflective of their birth abundances and do not need mixing corrections. 
 
@@ -385,7 +388,7 @@ spread, as in e.g. Fig. \ref{fig:agb_sims}.
 
 
 
-\subsection{The Evolution of carbon across the galaxy and through time}
+\section{The Evolution of carbon across the galaxy and through time}
 
 \begin{figure*}
 \label{fig:c_evo}
@@ -427,10 +430,10 @@ model. While the \caah trend reaches almost equilibrium at 5Gyr, the \caafe tren
 
 
 
-\subsection{Effects of AGB Yields}
+\section{Effects of AGB Yields}
 
 \begin{figure*}
-\includegraphics[]{oob_agb.pdf}
+\includegraphics[scale=0.9]{oob_agb.pdf}
 
 \caption{Left: the \caah~ \textbf{median} present-day stellar tracks for four different
 AGB models (\cristallo, \karakas, \kl, and \ventura ). The median bin [C/Mg] values from \citet{jack_subgiant} are
@@ -452,7 +455,7 @@ $Y_{\rm C}^{\rm CC}$
     Y_{\rm C}^{0}  = 0.005  =  Y_{\rm C}^{\rm cc} + Y_{\rm C}^{\rm agb}
 \Big \rvert_{Z=Z_\odot}
 \end{equation}
-where we are choosing to evaluate the total IMF \CC and AGB yields at solar
+where we are choosing to evaluate the total IMF CC and AGB yields at solar
 metallicity. We show our calculations of $Y_{\rm C}^{\rm agb}(Z=Z_{\sun })$  in
 Table \ref{tab:alpha_agb}. 
 
@@ -464,7 +467,7 @@ at $Z=Z_{\sun }$.
 
 As the highest AGB yield at solar is from our \karakas~model at $Y_{\rm C}^{\rm
 agb} = 0.000585$ is only 11.7 percent of our required total carbon production,
-each of these models is dominated by \CC production of carbon. As a result,
+each of these models is dominated by CC production of carbon. As a result,
 while the metallicity dependence of the \caah may vary, the
 \caafe diagnostic shows how this small AGB fraction makes the details of
 the AGB model and delay-time-distribution unchange the galaxy production of
@@ -501,7 +504,7 @@ Our next exploration is to adjust the relative fraction of AGB star yields. To d
     \alpha_{\rm CC} = (1 - f_{\rm agb}) \frac{\Yct}{\Ycc}
 \end{equation}
 
-\subsection{Metallicity dependence and the AGB Fraction}
+\section{Metallicity dependence and the AGB Fraction}
 
 \begin{figure*}\label{fig:beta_f}
 \includegraphics{beta.pdf}
@@ -544,7 +547,7 @@ the \caafe trend exposes the delayed effect of carbon from AGB contribution.
 
 One caveat is that the slope of this trend is also determined by the ratio of delayed iron to CCSNe iron production as well. If the SNeIa iron fraction is increased, then more iron enters later reducing the slope of the trend as AGB becomes a more rapid mechanism than Fe comparatively. The difference however is that changing the Fe franction mostly affects the tail of the distribution as this controls the speed of descent off the high $\alpha$ sequence, but the AGB fraction even changes the behavior for the low $\alpha$ sequence.
 
-\subsection{The AGB Fraction }
+\section{The AGB Fraction }
 One potential tension with data is our models predict a low value for the AGB fraction of stars. 
 
 Our model with Z-dependent CCSNe yields has $f_\text{agb} = 0.05$ which implies that CCSNe overwhelms AGB production and there should not be a seperation between low and high alpha sequences. However, V21 observes a significant seperation implying a more substantial delayed-time source. 
@@ -560,7 +563,7 @@ These models are indistinguishable in the \caah~plane from our adjusted CCSNe mo
 
 
 
-\subsection{Star Formation History}
+\section{Star Formation History}
 
 \begin{figure*}
 \includegraphics[]{lateburst_eta.pdf}
@@ -582,7 +585,7 @@ However, we find that the star formation history has a negligable effect on the 
 
 
 
-\subsection{Outflows}
+\section{Outflows}
 A common degeneracy in chemical evolution models is the yield-outflow degeneracy. An increase in stellar yields has a near-identical effect as a decrease in outflows. However, reducing the outflows reduces the evolution timescale of the system. 
 
 The theoretical motivation for decreasing outflows is due to the uncertainty in the explodability landscape---if less massive stars explode, then both the yields and outflows will be reduced by some factor. So, when we explore reduced outflow models, we consider models where both the outflows and yields are reduced by approximately the same factor, to leave the equilibrium abundances of a pure CCSNe unchanged. 
@@ -599,7 +602,7 @@ slope observed in\caafe. However, a pure CCSNe carbon model cannot reproduce the
 We find that we can adjust both the outflows and scale down the yields if we change our model for $y_\text{C}^\text{CC}/y_\text{O}^\text{CC}$. For example, reducing outflows and CCSNe yields by a factor of two requires the modified parameters
 $\alpha = 0.033$ and $\beta = 0.625$, which results in a slightly lower value at solar but nearly a doubling of the metallicity dependence.
 
-\subsection{Understanding Scatter}
+\section{Understanding Scatter}
 
 \begin{figure*}
     \includegraphics[scale=0.9]{cooh_scatter.pdf}
@@ -610,7 +613,7 @@ $\alpha = 0.033$ and $\beta = 0.625$, which results in a slightly lower value at
 Beyond simply comparing median trends, we can compare the distribution 
 shape of our distribution to observations. 
 
-\subsection{Comparison to Observations}
+\section{Comparison to Observations}
 
 \begin{figure*}
 \centering
@@ -662,7 +665,7 @@ Bursty SFH may not be needed to explain scatter as the C/O slope + differet evol
 
 While the extragalactic trend appears to be more steeply sloped than our models, this is because of ***e.g. mass-dependent outflow rates/differening SFH between galaxies. 
 
-\section{The Equilibrium Approximation}\label{sec:equilibrium}
+\chapter{The Equilibrium Approximation}\label{sec:equilibrium}
 If we assume that the median track is an equilibrium phenomenon, we can calculate the total carbon to oxygen yield ratio. Additionally, assuming an AGB yield set enables us to predict the CCSNe carbon yield.  
 We begin with the model, which underlies the multizone simulations, that the change in mass of an element is a sum of production, outflows, recycling, and mass left in reminants. We write this as
 \begin{equation}
@@ -718,7 +721,7 @@ This equation corroberates what we have explored earlier in the paper, and provi
     y_C = (0.004 \pm 0.00002) + (0.008 \pm 0.0001) \text{[M/H]} 
 \end{equation}
 
-\subsection{Uncertainties}
+\section{Uncertainties}
 
 We only perform this analysis on the C11/15 yields because the range of metallicities of the data (about [M/H] = -0.4, 0.4) only represents about 2 AGB models, relying heavily on our choice of extrapolation. C11/C15 have a finer model grid, allowing us to have 5 theoretical predicted points within this metallicity range, allowing us to be more certain of our conclusion. 
 
@@ -730,14 +733,13 @@ We do give an estimate of the CCSNe yields, however this is dependent on our cho
 
 
 
-\section{Conclusions}
+\chapter{Conclusions}
 
 Directions-->SneIa/AGB trends as a constraint on DTD.
 Observations of Carbon in metal poor stars, extragalactic (call out any
 existing surveys in e.g. APOGEE/DESI?)
 Abundance ratios (e.g.C12/C13) as additional constraints
 
-\section*{Acknowledgements}
 
 The Acknowledgements section is not numbered. Here you can thank helpful
 colleagues, acknowledge funding agencies, telescopes and facilities used etc.
@@ -749,7 +751,7 @@ Numpy, pandas, scipy, VICE, matplotlib
 \cite{OhioSupercomputerCenter1987}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Data Availability}
+\chapter*{Data Availability}
 
  
 The inclusion of a Data Availability Statement is a requirement for articles published in MNRAS. Data Availability Statements provide a standardised format for readers to understand the availability of data underlying the research results described in the article. The statement may refer to original data generated in the course of the study or to third-party data analysed in the article. The statement should describe and provide means of access, where possible, by linking to the data or providing the required accession numbers for the relevant databases or DOIs.
@@ -761,7 +763,7 @@ The inclusion of a Data Availability Statement is a requirement for articles pub
 
 % The best way to enter references is to use BibTeX:
 
-\bibliographystyle{mnras}
+\bibliographystyle{aasjournal}
 \bibliography{main} % if your bibtex file is called example.bib
 
 
@@ -780,7 +782,7 @@ The inclusion of a Data Availability Statement is a requirement for articles pub
 
 \appendix
 
-\section{Validating the APOGEE Subgiant Sample}\label{sec:jack}
+\chapter{Validating the APOGEE Subgiant Sample}\label{sec:jack}
 Our APOGEE subgiant sample excludes stars marked with the following flags:
 \begin{itemize}
 \item \texttt{ancillary young embedded cluster}
@@ -805,7 +807,7 @@ To select stars only in the subgiant branch, we select stars in a polygon in $\l
 Instead of excluding stars which have experienced FDU and thus modified carbon abundances as JACK's subgiant sample does, another approach to predict the birth abundances of carbon and nitrogen in stars is to model the predicted abundance effects of dredge up and then correct the measured abundances, as is done in V21. 
 
 
-\section{Effects of Alternate AGB Models}\label{sec:alt_agb}
+\chapter{Effects of Alternate AGB Models}\label{sec:alt_agb}
 
 
 While we focus the main discussion of the paper on the C11 model, other AGB models can have notable effects on abundance trends at ***
@@ -826,12 +828,11 @@ Plot of age metallicity relationship?
 \caption{Same as \ref{fig:agb_sims} but comparing our fiducial model to our recommended z-dependent $y_\text{C}^\text{CC}$ model. A plot of the stars of our favored CCSNe model colored by radius. The contours represent the density of V+21 data. The model is given Gaussian scatter equivalent to the mean error in the abundances reported by APOGEE. }
 \end{figure*}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-% Don't change these lines
-\bsp	% typesetting comment
 \label{lastpage}
 \end{document}
 
-% End of mnras_template.tex
+
+
+
