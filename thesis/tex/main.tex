@@ -1,4 +1,4 @@
-\documentclass[12pt,oneside]{book}
+\documentclass[12pt,oneside]{report}
 
 % \AddToHook{cmd/section/before}{\clearpage}
 
@@ -11,10 +11,20 @@
 \titleformat{\chapter}{\normalfont\normalsize\centering}{Chapter \thechapter:}{1em}{}
 \titleformat{\section}{\normalfont\normalsize\centering}{\thesection}{1em}{}
 \titleformat{\subsection}{\normalfont\normalsize\centering}{\thesubsection}{1em}{}
-\titlespacing*{\chapter}{0pt}{-15pt}{40pt} \titlespacing*{\section}{0pt}{0pt}{20pt}
+\titlespacing*{\chapter}{0pt}{0pt}{40pt} \titlespacing*{\section}{0pt}{0pt}{20pt}
 \renewcommand{\contentsname}{Table of Contents}
+\AtBeginDocument{
+      \renewcommand{\bibsection}{\chapter*{\bibname}}
+  }
 
 \usepackage{setspace}
+
+\usepackage{etoolbox}% http://ctan.org/pkg/etoolbox
+\makeatletter
+% \patchcmd{<cmd>}{<search>}{<replace>}{<succes>}{<failure>}
+\patchcmd{\@chapter}{\addtocontents{lof}{\protect\addvspace{10\p@}}}{}{}{}% LoF
+\patchcmd{\@chapter}{\addtocontents{lot}{\protect\addvspace{10\p@}}}{}{}{}% LoT
+\makeatother
 
 \usepackage{amsmath}	% Advanced maths commands
 \usepackage{txfonts}
@@ -24,6 +34,7 @@
     linkcolor=blue,
     filecolor=blue,
     urlcolor=blue,
+    citecolor=blue,
     pdftitle={Thesis},
     pdfpagemode=FullScreen,
 }
@@ -34,12 +45,22 @@
 
 \usepackage{natbib}
 \usepackage[nottoc,numbib]{tocbibind}
+\usepackage[titles]{tocloft} % fig titles
+\renewcommand{\cftfigpresnum}{\figurename\enspace}
+\setlength{\cftfignumwidth}{5em}
+\renewcommand{\cfttabpresnum}{\tablename\enspace}
+\setlength{\cfttabnumwidth}{5em}
+
+
 
 % \usepackage{fancyhdr}
 % \pagestyle{fancy}
 % \fancyhead{}
 % \fancyhead[RO,RE]{Carbon Galactic Nucleosynthesis}
 \pagestyle{plain}
+\counterwithout{figure}{chapter}
+\counterwithout{table}{chapter}
+
 
 
 
@@ -84,6 +105,7 @@
 
 %\doublespacing
 
+
 \begin{titlepage}
    \begin{center}
        \vfill
@@ -96,7 +118,7 @@
         \vfill
         by 
         \vfill
-       {Daniel A. Boyea}\\
+       {Daniel Alexandra Boyea}\\
        \vfill
        Department of Astronomy\\
        The Ohio State University\\
@@ -116,16 +138,21 @@
 
 % Abstract of the paper
 \chapter*{Abstract}
-\begin{center}
+\addcontentsline{toc}{chapter}{Abstract}
 Stellar evolution models provide highly uncertain predictions for elemental yields due to our limited understanding of stellar physics. In this paper, we aim to estimate the nucleosynthetic yields of carbon using galactic chemical evolution models. 
 
 We find that the AGB stars make up a fraction $0.20_{-20}^{+80}$ of total carbon production at late times. 
-\end{center}
 
 \chapter*{Acknowledgements}
+\addcontentsline{toc}{chapter}{Acknowledgements}
 
-Many thanks to
+James Johnson, for guiding me through this project and through my last year of undergraduate.
+Wayne Schlingman, for everything you do for everyone. You are the glue holding together our department.
+David Weinberg and Jennifer Johnson, for listening to my earlier drafts of this work and providing excellent suggestions.
 
+I also would not have made it here without all the additional support from my friends and family. Eric, even across the country, you have always been a point of support and stability, and I am always happy to be around you. Anya, you are a wonderful friend and I cannot thank you enough for your support this year. 
+I love so many people in our department who have just been friends and positive support: Kaia, Maria, Autumn, Simon, Mary, Bailee, Aaliyah, Sanskruti, Alyssa, Harrison, Denis, and so many others. 
+My Family (and Arya, my lovely labrodoodle).
 
 
 %% Lists
@@ -143,13 +170,16 @@ Many thanks to
 \chapter{Introduction}
 
 
-Where does each chemical element come from? 
+Astronomy is unique among sciences in that we can determine the history of chemical elements. While stable on earth, the churning gasses and firery stars can dramatically transform elements into new materials. However, we still have much to learn about how each chemical element is made. In this work, we will hope to clarify how the chemical element carbon, the basis of life, is made in the universe.
 
-Stellar evolution models can be used to predict how much of each element stars with a variety of physical properties produce. However, these models are rife with uncertainties, limited by our understanding of critical physical processes such as nuclear reaction rates, convection, opacity, and mass loss (CITE, e.g. stellar physics reviews). 
+As the universe just began to cool following the big bang, the only elements around were hydrogen, helium, and trace amounts of lithium and berylium. All other elements were formed afterwords with the help of stars. Stars of different masses, ages, and metalicities have substantially different interior stuctures. Different stars produce vastly different amounts of different chemical elements depending on their properties. 
+
+Stellar evolution, at the basis of galactical chemical evolution, predict the elemental production of different stellar processes. 
+However, these models are rife with uncertainties, limited by our understanding of critical physical processes such as nuclear reaction rates, convection, opacity, and mass loss (CITE, e.g. stellar physics reviews). 
 
 Carbon and nitrogen are well studied elements as they are easy to observe (Citations...). Additionally, carbon and nitrogen are used as age indicators for giant branch stars (citations, e.g. \cite{fiorenzo+21}), and are the only light elements known to be produced significantly in Asymptotic Giant Branch Stars (AGB) (cite).
 
-However, theoretical interpretations of the trends of 
+However, our theoretical understanding of the producion sources of carbon are still uncertain.
 
 While easily visible in many stars, determining birth abundances of carbon and nitrogen are 
 
@@ -172,14 +202,14 @@ In Fig. \ref{fig:subgiants} we present a sample of APOGEE subgiants. These subgi
 
 
 \begin{figure}[htp]
-    \centering
-    \includegraphics[scale=0.85]{subgiants_mgh.pdf}
-    \includegraphics[scale=0.85]{subgiants_mgfe.pdf}
-    \caption[APOGEE Subgiants]{The [C/Mg] ratio against [Mg/H] (left) and [Mg/Fe] (right). The left panel uses blue and orange to represent high and low $\alpha$ sequences respectively. On the right, we plot more metal rich ([Mh/H]) stars with darker colors.}
+    \includegraphics{subgiants_mgh.pdf}
+    \includegraphics{subgiants_mgfe.pdf}
+    \caption[APOGEE Subgiants]{The [C/Mg] ratio against [Mg/H] (left) and [Mg/Fe] (right) for the sample of subgiants as in \cite{jack_subgiant}. The left panel uses blue and orange to represent high and low $\alpha$ sequences respectively. On the right, we plot more metal rich ([Mh/H]) stars with darker colors.}
     \label{fig:subgiants}
 \end{figure}
 \chapter{Nucleosynthesis}
 
+Nucleosynthetic predictions 
 Modern theoretical nucleosynthesis provides our starting point for our models.  We focus on three primary nucleosynthetic pathways: AGB stars, CCSne, and SNeIa. Each process has unique timescales and element production which we can trace through the tools of GCE. While carbon is only known to be produced in AGB stars and CCSNe, comparing carbon to iron production (from SNeIa) adds a valuable constraint to our models and insight into the delay-time production of carbon.
 
 After a group of stars are formed, CCSNe from massive stars are the first enrichment, providing light elements such as C, O, and Mg and heavier elements such as Fe and beyond. Importaintly, $\alpha$ elements like O and Mg are only formed in CCSNe (in significant quantities). Next, low mass stars begin to reach the end of their lives. The dying breaths of AGB stars are known to be importaint sources of C, N, and a smattering of heavier elements.  Finally, the white dwarfs, including formation and time to collide/over-eat, explode, releasing much of Fe and nearby elements. 
@@ -215,7 +245,7 @@ $t^{-1.1}$ law suggested by the observations of \citet{maoz+12}.
     \centering
  	    \includegraphics[scale=1]{agb_yields.pdf}\\
 
-    \caption{The net fraction carbon yield ($M_\text{C}$, the amount of carbon produced by the star divided by $M$) plotted as a function of mass, $M$. Lighter colors represent higher values of metalicity ([M/H]). Each panel represents a different AGB model. K10 reports stars at MoverH -3, -2, etc. I can reproduce C11 and K10 but not other V13 and KL16 :(((}
+        \caption[AGB carbon yields]{The net fraction carbon yield ($M_\text{C}$, the amount of carbon produced by the star divided by $M$) plotted as a function of mass, $M$. Lighter colors represent higher values of metalicity ([M/H]). Each panel represents a different AGB model. K10 reports stars at MoverH -3, -2, etc. I can reproduce C11 and K10 but not other V13 and KL16 :(((}
 
     \label{fig:y_agb}
 \end{figure*}
@@ -226,7 +256,7 @@ $t^{-1.1}$ law suggested by the observations of \citet{maoz+12}.
     \includegraphics[scale=1]{y_agb_vs_z.pdf}
     \includegraphics[scale=1]{y_agb_vs_t.pdf}
 
-    \caption{On the left, we plot the IMF weighted net fractional carbon yields of each AGB model as a function of metalicity.The right panel plots the normalized net carbon AGB yield as a function of time for a population of stars born at the same time at solar metallicity. We note that for the right panel, the minimum of the DTD for V13 is }
+    \caption[SSP AGB carbon]{On the left, we plot the IMF weighted net fractional carbon yields of each AGB model as a function of metalicity.The right panel plots the normalized net carbon AGB yield as a function of time for a population of stars born at the same time at solar metallicity. We note that for the right panel, the minimum of the DTD for V13 is }
 
 \end{figure*}
 
@@ -283,9 +313,9 @@ Another difference is the speed at which equilibrium is reached. K10 and K16 wei
 \section{CCSNe carbon}
 
 \begin{figure}[htp]
-    \includegraphics[scale=0.8]{y_c_cc-2.pdf}
-    \includegraphics[scale=0.8]{y_co_cc.pdf}
-    \caption{The fist plot shows IMF-weighted net fractional CCSNe yield of
+    \centering
+    \includegraphics{y_c_cc.pdf}
+    \caption[CCSNe carbon yields]{The fist plot shows IMF-weighted net fractional CCSNe yield of
         carbon, $y_C^{cc}$ against metalicity, [M/H], for different studies.
         The right plot instead shows [C/O]$^\text{CC}$, the logarithm of the
         abundance ratio of carbon to oxygen if CCSNe were the only carbon
@@ -298,6 +328,7 @@ Another difference is the speed at which equilibrium is reached. K10 and K16 wei
     \label{fig:y_cc}
 \end{figure}
 
+Massive stars form $^{12}$C through the triple--$\alpha$ process. However, the carbon has to get out of the star to be useful. 
 While there are many stellar models providing predictions of CCSNe yields, the results of these models are highly uncertain due to the many stellar modeling uncertainties. 
 
 We summarise many of the predictions of stellar models in Fig. \ref{fig:y_cc}. 
@@ -394,7 +425,7 @@ spread, as in e.g. Fig. \ref{fig:agb_sims}.
 \label{fig:c_evo}
 \includegraphics{evo_tracks.pdf}
 \includegraphics{evo_slices.pdf}
-\caption{The top set of panes show the time evolution of the gas phase of our
+\caption[Carbon chemical evolution tracks]{The top set of panes show the time evolution of the gas phase of our
     fiducial model, plotted as tracks through \caah and \caafe where each colored line corresponds to the evolution at that galactic radius. 
 The bottom set instead shows the galaxies gas-phase \caah and \caafe trend at 5 different time slices. 
 }
@@ -432,16 +463,17 @@ model. While the \caah trend reaches almost equilibrium at 5Gyr, the \caafe tren
 
 \section{Effects of AGB Yields}
 
-\begin{figure*}
-\includegraphics[scale=0.9]{oob_agb.pdf}
+\begin{figure}
+\centering
+\includegraphics{oob_agb.pdf}
 
-\caption{Left: the \caah~ \textbf{median} present-day stellar tracks for four different
+\caption[AGB GCE Models]{Left: the \caah~ \textbf{median} present-day stellar tracks for four different
 AGB models (\cristallo, \karakas, \kl, and \ventura ). The median bin [C/Mg] values from \citet{jack_subgiant} are
 plotted as black points with 1-std errors marked by horizontal grey dashes.
 Right: same as left but for \caafe. While each AGB yield model may
 differ in detail, there is minimal effect on the overall [C/Mg] trends. }
 \label{fig:agb_sims}
-\end{figure*}
+\end{figure}
 
 
 What happens as we change our choice of AGB stellar yields? We consider four models
@@ -482,7 +514,7 @@ Our next exploration is to adjust the relative fraction of AGB star yields. To d
 
 \begin{table}
 	\centering
-	\caption{For each AGB yield set, our calculation of the effective SFH- and IMF-weighted carbon AGB yield, along with the multiplicative factor to reach an AGB contribution of 20.}
+    \caption[AGB net solar IMF yields]{For each AGB yield set, our calculation of the effective SFH- and IMF-weighted carbon AGB yield, along with the multiplicative factor to reach an AGB contribution of 20.}
 	\label{tab:alpha_agb}
 	\begin{tabular}{lcr} % four columns, alignment for each
 		\hline
@@ -506,12 +538,13 @@ Our next exploration is to adjust the relative fraction of AGB star yields. To d
 
 \section{Metallicity dependence and the AGB Fraction}
 
-\begin{figure*}\label{fig:beta_f}
+\begin{figure}\label{fig:beta_f}
+\centering
 \includegraphics{beta.pdf}
 \includegraphics{f_agb.pdf}
 
-\caption{Similar to \ref{fig:agb_sims} except the top plot shows the fiducial model with lower and higher values of $\beta$, the C-CCSNe metallicity dependence. The bottom plot is the same except shows varying AGB fractions.}
-\end{figure*}
+\caption[Adjusted yield models]{Similar to \ref{fig:agb_sims} except the top plot shows the fiducial model with lower and higher values of $\beta$, the C-CCSNe metallicity dependence. The bottom plot is the same except shows varying AGB fractions.}
+\end{figure}
 
 The next question is how does changing the CCSNe carbon yield affect the model?
 We now consider variations of our fiducial model:
@@ -565,11 +598,12 @@ These models are indistinguishable in the \caah~plane from our adjusted CCSNe mo
 
 \section{Star Formation History}
 
-\begin{figure*}
+\begin{figure}
+\centering
 \includegraphics[]{lateburst_eta.pdf}
 
-\caption{Same as Fig. \ref{fig:agb_sims} but comparing the fiducial model to the reduced outlow model and a lateburst model. (okay, need to totally change approach...)}
-\end{figure*}
+\caption[Lateburst and reduced-outflow models]{Same as Fig. \ref{fig:agb_sims} but comparing the fiducial model to the reduced outlow model and a lateburst model. (okay, need to totally change approach...)}
+\end{figure}
 
 We consider a simple modification of our SFH described by our lateburst model
 (see Equation \ref{eq:lateburst})
@@ -607,7 +641,7 @@ $\alpha = 0.033$ and $\beta = 0.625$, which results in a slightly lower value at
 \begin{figure*}
     \includegraphics[scale=0.9]{cooh_scatter.pdf}
     \includegraphics[scale=0.9]{cnoh_scatter.pdf}
-    \caption{The simulated stars of our model at present day plotted on \caah~and colored such that lighter colors represent stars born at greater galactric radii.}
+    \caption[Scatter agreement]{The simulated stars of our model at present day plotted on \caah~and colored such that lighter colors represent stars born at greater galactric radii.}
 \end{figure*}
 
 Beyond simply comparing median trends, we can compare the distribution 
@@ -618,7 +652,7 @@ shape of our distribution to observations.
 \begin{figure*}
 \centering
 \includegraphics[]{summary-2.pdf}
-\caption{Present-day gas phase tracks of the fiducial model in \caah~space. M101 is valid comparison to MW ...(van Dokkum et al. 2014)}
+\caption[Gas phase abundances]{Present-day gas phase tracks of the fiducial model in \caah~space. M101 is valid comparison to MW ...(van Dokkum et al. 2014)}
 \label{fig:gas_phase}
 \end{figure*}
 
@@ -713,7 +747,7 @@ This equation corroberates what we have explored earlier in the paper, and provi
 \begin{figure}
     \centering
     \includegraphics[]{analytic.pdf}
-    \caption{Our reverse fitting method to determine total CCSNe contribution}
+    \caption[Reverse fit yields]{Our reverse fitting method to determine total CCSNe contribution}
 \end{figure}
 
 % y_c^cc = (0.0148 +- 0.00016) Z^{0.154 +- 0.0053}
@@ -752,6 +786,7 @@ Numpy, pandas, scipy, VICE, matplotlib
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter*{Data Availability}
+\addcontentsline{toc}{chapter}{Data Availability}
 
  
 The inclusion of a Data Availability Statement is a requirement for articles published in MNRAS. Data Availability Statements provide a standardised format for readers to understand the availability of data underlying the research results described in the article. The statement may refer to original data generated in the course of the study or to third-party data analysed in the article. The statement should describe and provide means of access, where possible, by linking to the data or providing the required accession numbers for the relevant databases or DOIs.
@@ -763,7 +798,9 @@ The inclusion of a Data Availability Statement is a requirement for articles pub
 
 % The best way to enter references is to use BibTeX:
 
+\newpage
 \bibliographystyle{aasjournal}
+\addcontentsline{toc}{chapter}{Bibliography}
 \bibliography{main} % if your bibtex file is called example.bib
 
 
@@ -781,8 +818,15 @@ The inclusion of a Data Availability Statement is a requirement for articles pub
 %%%%%%%%%%%%%%%%% APPENDICES %%%%%%%%%%%%%%%%%%%%%
 
 \appendix
+\chapter*{Appendix}
+\addcontentsline{toc}{chapter}{Appendix}
+\renewcommand{\thesection}{A.\arabic{section}}
+\renewcommand\thefigure{A.\arabic{figure}}    
+\setcounter{figure}{0}
 
-\chapter{Validating the APOGEE Subgiant Sample}\label{sec:jack}
+
+
+\section{Validating the APOGEE Subgiant Sample}\label{sec:jack}
 Our APOGEE subgiant sample excludes stars marked with the following flags:
 \begin{itemize}
 \item \texttt{ancillary young embedded cluster}
@@ -807,7 +851,8 @@ To select stars only in the subgiant branch, we select stars in a polygon in $\l
 Instead of excluding stars which have experienced FDU and thus modified carbon abundances as JACK's subgiant sample does, another approach to predict the birth abundances of carbon and nitrogen in stars is to model the predicted abundance effects of dredge up and then correct the measured abundances, as is done in V21. 
 
 
-\chapter{Effects of Alternate AGB Models}\label{sec:alt_agb}
+\newpage
+\section{Effects of Alternate AGB Models}\label{sec:alt_agb}
 
 
 While we focus the main discussion of the paper on the C11 model, other AGB models can have notable effects on abundance trends at ***
@@ -821,12 +866,13 @@ V13 is also interesting as at high metallicity, the yields quickly become strong
 Plot of age metallicity relationship?
 
 
-\begin{figure*}
+\begin{figure}[htp]
     \includegraphics{coofe_agb_extra.pdf}
     \includegraphics{coofe_agb_extra_0.2.pdf}
 
-\caption{Same as \ref{fig:agb_sims} but comparing our fiducial model to our recommended z-dependent $y_\text{C}^\text{CC}$ model. A plot of the stars of our favored CCSNe model colored by radius. The contours represent the density of V+21 data. The model is given Gaussian scatter equivalent to the mean error in the abundances reported by APOGEE. }
-\end{figure*}
+    \caption[Alternate AGB models]{Same as \ref{fig:agb_sims} but comparing our fiducial model to our recommended z-dependent $y_\text{C}^\text{CC}$ model. A plot of the stars of our favored CCSNe model colored by radius. The contours represent the density of V+21 data. The model is given Gaussian scatter equivalent to the mean error in the abundances reported by APOGEE. }
+\end{figure}
+
 
 
 

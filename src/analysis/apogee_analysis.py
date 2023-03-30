@@ -309,7 +309,7 @@ def plot_contour(x, y, ax=None, bins=50,exclude_high_alpha=True,  **kwargs):
 
     if exclude_high_alpha:
         v21 = v21[~v21["high_alpha"]]
-    sns.kdeplot(v21[x], v21[y], color="black", linewidths=1, **kwargs)
+    sns.kdeplot(v21, x=x, y=y, color="black", linewidths=1, **kwargs)
 
 def plot_cooh():
     df = subgiants
