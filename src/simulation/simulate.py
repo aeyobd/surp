@@ -2,17 +2,16 @@ import sys
 import argparse
 import vice
 
+from surp.src.simulation.multizone_sim import run_model
+from surp import __version__
 
 y_cc_0 = 0.005
-version = "0.1.4_plateu"
+beta_n = 7e-4
+y_cc_n = 9e-4
 
 
 def main():
     args = parse_args()
-
-    # this is horrific but so i can easily read off help
-    from src.simulation.multizone_sim import run_model
-
     f_agb = args.agb_fraction
     beta = args.beta
     agb_model = args.agb_model
@@ -26,7 +25,6 @@ def main():
     print(args)
 
     name = find_name(args)
-
 
     set_yields(args)
 
@@ -89,6 +87,12 @@ def set_yields(args):
         k = 1/(10**(-y_min) - 1)
         return y_cc_0 * alpha_cc * ((z/0.014)**args.beta + k) / (1+k)
 
+    def y_n_agb(m, z):
+        beta_n * z
+
+    vice.yields.ccsne.settings["N"] = y_cc_n
+    vice.yields.agb.settings["N"] = y_n_agb
+
     vice.yields.ccsne.settings["C"] = y_cc
 
 
@@ -107,7 +111,8 @@ def find_name(args):
     else:
         if oob:
             f_agb = "o"
-        name = f"{agb_model}_f{f_agb}_Z{beta}_eta{eta}_v{version}"
+
+        name = f"{agb_model}_f{f_agb}_Z{beta}_eta{eta}"
 
         if A == 1.5:
             pass
@@ -123,6 +128,7 @@ def find_name(args):
         if args.fe_ia_factor:
             name += "_ia%s" % args.fe_ia_factor
 
+        name += f"_v{__version__}"
 
     print(name)
     return name
