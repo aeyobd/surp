@@ -31,6 +31,7 @@ def json_output(file_name, json_name=None, isotopic=False, overwrite=False):
     # TODO add isotopic options
     output = load_model(file_name)
     model = model_json(output)
+    save_result(model, json_name[:-5] + ".csv")
 
     with open(json_name, "w") as f:
         json.dump(model, f)
@@ -66,11 +67,11 @@ def reduce_history(multioutput):
 
         df = pd.DataFrame(zone.history.todict())
         df["R"] = [i/10]*len(df)
-        history = pd.concat(history, df, ignore_index=True)
+        history = pd.concat((history, df), ignore_index=True)
 
         df = pd.DataFrame(zone.mdf.todict())
         df["R"] = [i/10]*len(df)
-        mdf = pd.concat(mdf, df, ignore_index=True)
+        mdf = pd.concat((mdf, df), ignore_index=True)
     
     return history, mdf
 
@@ -129,5 +130,20 @@ def sample_stars(stars, num=1000):
 
     return stars.iloc[index].copy()
 
+
+def save_result(model, filename):
+    dist = pd.DataFrame()
+    s = model["stars"]["solar"]
+
+    dist["MG_H"] = s["[o/h]"]
+    dist["MG_FE"] = s["[o/fe]"]
+    dist["C_MG"] = s["[c/o]"]
+    dist["N_MG"] = s["[n/o]"]
+    dist["C_N"] = s["[c/n]"]
+
+    dist.to_csv(filename)
+
 if __name__ == "__main__":
     json_output(sys.argv[1] + "*", json_name=None, isotopic=False, overwrite=False)
+
+
