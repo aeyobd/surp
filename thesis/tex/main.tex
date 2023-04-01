@@ -31,13 +31,14 @@
 \usepackage{hyperref}
 \hypersetup{
     colorlinks=true,
-    linkcolor=blue,
-    filecolor=blue,
-    urlcolor=blue,
-    citecolor=blue,
+    linkcolor=black,
+    filecolor=black,
+    urlcolor=black,
+    citecolor=black,
     pdftitle={Thesis},
     pdfpagemode=FullScreen,
 }
+\urlstyle{same}
 % \usepackage{amssymb}	% Extra maths symbols
 
 \usepackage{graphicx}	% Including figure files
@@ -45,11 +46,11 @@
 
 \usepackage{natbib}
 \usepackage[nottoc,numbib]{tocbibind}
-\usepackage[titles]{tocloft} % fig titles
-\renewcommand{\cftfigpresnum}{\figurename\enspace}
-\setlength{\cftfignumwidth}{5em}
-\renewcommand{\cfttabpresnum}{\tablename\enspace}
-\setlength{\cfttabnumwidth}{5em}
+% \usepackage[titles]{tocloft} % fig titles
+% \renewcommand{\cftfigpresnum}{\figurename\enspace}
+% \setlength{\cftfignumwidth}{5em}
+% \renewcommand{\cfttabpresnum}{\tablename\enspace}
+% \setlength{\cfttabnumwidth}{5em}
 
 
 
@@ -348,6 +349,84 @@ Notice how even these ratios
         \item NKT and LC agree in positive metallicity depenent yields
     \end{itemize}
     
+
+
+\chapter{The Equilibrium Approximation}\label{sec:equilibrium}
+
+Chemical abundances reach an equilibrium. New elements produced in stars balance the elements lost to galactic winds and inside stellar reminants. At the present day, our galaxy has evolved long enough to be well approximated by the chemical equilibriums. 
+
+In equilibrium, if we know the yields, than the largest uncertainty is the rate of outflows. This determines the final abundances of evolutionary ... \cite{WAF17}. 
+
+If we assume that the median track is an equilibrium phenomenon, we can calculate the total carbon to oxygen yield ratio. Additionally, assuming an AGB yield set enables us to predict the CCSNe carbon yield.  
+We begin with the model, which underlies the multizone simulations, that the change in mass of an element is a sum of production, outflows, recycling, and mass left in reminants. We write this as
+\begin{equation}
+M_\text{C} = y_\text{C} \dot{M}_\star - (1 + \eta - r) Z_\text{C} \dot{M}_\star
+\end{equation}
+
+In the case that carbon
+\begin{equation}
+Z_c^{eq}(R) = \frac{y_c^{cc} + \langle y_c^{agb} \rangle }{1 + \eta(R) - r - \tau_\star / \tau_{sfh}}
+\end{equation}Where
+\begin{equation}
+\langle y_c^{agb} \rangle = \frac{\int_0^T y_c^{agb}(M, Z) \dot{M}_\star(T - t) \frac{dN}{dM} \frac{dM}{dt} dt  }{ \dot{M}_\star \int_0^T \frac{dN}{dM} \frac{dM}{dt} dt}
+\end{equation}
+
+Likewise for oxygen:
+\begin{equation}
+Z_O^{eq}(R) = \frac{y_O^{cc}}{1 + \eta(R) - r - \tau_\star / \tau_{sfh}}
+\end{equation}
+
+However, for the yield ratio, the denominator cancles with that of oxygen, so the ratio is fixed.
+\begin{equation}
+\frac{Z_c^{eq}}{Z_o^{eq}} = \frac{y_c^{cc} + \langle y_c^{agb} \rangle }{y_o^{cc}}
+\end{equation}
+
+For this analysis, we let $y_c^{agb}$ represent the default AGB yields from a given yield set, but add a process factor $\alpha_{agb}$ which multaplicatively increases the AGB fraction. See Table \ref{tab:alpha_agb}.
+
+\begin{equation}
+    y_{\rm C}^{\rm CC} \rightarrow \alpha_{agb}  y_{\rm C}^{\rm CC}
+\end{equation}
+
+With these definitions, we can calculate the core collapse yields of carbon as a function of metallicity:
+\begin{equation}
+    y_\text{C}^\text{CC} =  y_\text{O}^\text{CC} \frac{Z_\text{C,eq}}{Z_\text{O,eq}} - \alpha_{agb} \langle y_c^{agb} \rangle
+\end{equation}
+
+Rewriting in terms of the observed abundance ratio and dividing by
+$y_\text{O}^\text{CC}$. So, given the outflows or CCSNe oxygen yields, the
+carbon AGB yield, and the \caah mean abundance track, we can estimate the CCSNe carbon yield. Written as a relative yield:
+\begin{equation}
+    \frac{y_\text{C}^\text{CC}}{y_\text{O}^\text{CC}} = \frac{Z_{C, \sun}}{Z_{O, \sun}} 10^{[C/O]} - \frac{\alpha_{agb} \langle y_c^{agb} \rangle}{ y_\text{O}^\text{CC}}
+\end{equation}
+
+This equation corroberates what we have explored earlier in the paper, and provides our analytic estimates of the CCSNe carbon yields. Since the AGB term is subtracted, a negative AGB Z-dependence will correspond to a positive CC Z-dependence. And as we reduce outflows, the AGB factor increases, steepening the required slope of the carbon yields. So, while the AGB yields may agree with eachother, the uncertainties in the oxygen CC yields and outflows leads to a substantial uncertainty in the AGB fraction.  
+
+\begin{figure}
+    \centering
+    \includegraphics[]{analytic.pdf}
+    \caption[Reverse fit yields]{Our reverse fitting method to determine total CCSNe contribution}
+\end{figure}
+
+% y_c^cc = (0.0148 +- 0.00016) Z^{0.154 +- 0.0053}
+\begin{equation}
+    y_C = (0.0029 \pm 0.0005) + (0.001 \pm 0.0004) \left(\frac{Z}{Z_\odot}\right)
+\end{equation}
+
+With uncertainties 
+
+
+
+\section{Uncertainties}
+
+We only perform this analysis on the C11/15 yields because the range of metallicities of the data (about [M/H] = -0.4, 0.4) only represents about 2 AGB models, relying heavily on our choice of extrapolation. C11/C15 have a finer model grid, allowing us to have 5 theoretical predicted points within this metallicity range, allowing us to be more certain of our conclusion. 
+
+We do note that this analysis fails to take into account selection effects and biases in APOGEE, and a more robust determination of the carbon yield. 
+
+
+This formulation is degenerate in $\varpi$ until we estimate a better AGB fraction. As the seperation between the low and high alpha sequences can be used to estimate the delayed time contribution to carbon, using the model to estimate this value relies heavaly on the details of the SFH in addition to the 
+We do give an estimate of the CCSNe yields, however this is dependent on our choice of $\eta$. Other choices of $\eta$ vary the value significantly in both magnitude and slope (as AGB contributions increase, we need less CCSNe carbon, however the CCSNe carbon must have a higher metallicity dependence to replicate the V21 data). 
+
+
 
 \chapter{The Multizone Model}\label{sec:vice}
 
@@ -699,73 +778,6 @@ Bursty SFH may not be needed to explain scatter as the C/O slope + differet evol
 
 While the extragalactic trend appears to be more steeply sloped than our models, this is because of ***e.g. mass-dependent outflow rates/differening SFH between galaxies. 
 
-\chapter{The Equilibrium Approximation}\label{sec:equilibrium}
-If we assume that the median track is an equilibrium phenomenon, we can calculate the total carbon to oxygen yield ratio. Additionally, assuming an AGB yield set enables us to predict the CCSNe carbon yield.  
-We begin with the model, which underlies the multizone simulations, that the change in mass of an element is a sum of production, outflows, recycling, and mass left in reminants. We write this as
-\begin{equation}
-M_\text{C} = y_\text{C} \dot{M}_\star - (1 + \eta - r) Z_\text{C} \dot{M}_\star
-\end{equation}
-
-In the case that carbon
-\begin{equation}
-Z_c^{eq}(R) = \frac{y_c^{cc} + \langle y_c^{agb} \rangle }{1 + \eta(R) - r - \tau_\star / \tau_{sfh}}
-\end{equation}Where
-\begin{equation}
-\langle y_c^{agb} \rangle = \frac{\int_0^T y_c^{agb}(M, Z) \dot{M}_\star(T - t) \frac{dN}{dM} \frac{dM}{dt} dt  }{ \dot{M}_\star \int_0^T \frac{dN}{dM} \frac{dM}{dt} dt}
-\end{equation}
-
-Likewise for oxygen:
-\begin{equation}
-Z_O^{eq}(R) = \frac{y_O^{cc}}{1 + \eta(R) - r - \tau_\star / \tau_{sfh}}
-\end{equation}
-
-However, for the yield ratio, the denominator cancles with that of oxygen, so the ratio is fixed.
-\begin{equation}
-\frac{Z_c^{eq}}{Z_o^{eq}} = \frac{y_c^{cc} + \langle y_c^{agb} \rangle }{y_o^{cc}}
-\end{equation}
-
-For this analysis, we let $y_c^{agb}$ represent the default AGB yields from a given yield set, but add a process factor $\alpha_{agb}$ which multaplicatively increases the AGB fraction. See Table \ref{tab:alpha_agb}.
-
-\begin{equation}
-    y_{\rm C}^{\rm CC} \rightarrow \alpha_{agb}  y_{\rm C}^{\rm CC}
-\end{equation}
-
-With these definitions, we can calculate the core collapse yields of carbon as a function of metallicity:
-\begin{equation}
-    y_\text{C}^\text{CC} =  y_\text{O}^\text{CC} \frac{Z_\text{C,eq}}{Z_\text{O,eq}} - \alpha_{agb} \langle y_c^{agb} \rangle
-\end{equation}
-
-Rewriting in terms of the observed abundance ratio and dividing by
-$y_\text{O}^\text{CC}$. So, given the outflows or CCSNe oxygen yields, the
-carbon AGB yield, and the \caah mean abundance track, we can estimate the CCSNe carbon yield. Written as a relative yield:
-\begin{equation}
-    \frac{y_\text{C}^\text{CC}}{y_\text{O}^\text{CC}} = \frac{Z_{C, \sun}}{Z_{O, \sun}} 10^{[C/O]} - \frac{\alpha_{agb} \langle y_c^{agb} \rangle}{ y_\text{O}^\text{CC}}
-\end{equation}
-
-This equation corroberates what we have explored earlier in the paper, and provides our analytic estimates of the CCSNe carbon yields. Since the AGB term is subtracted, a negative AGB Z-dependence will correspond to a positive CC Z-dependence. And as we reduce outflows, the AGB factor increases, steepening the required slope of the carbon yields. So, while the AGB yields may agree with eachother, the uncertainties in the oxygen CC yields and outflows leads to a substantial uncertainty in the AGB fraction.  
-
-\begin{figure}
-    \centering
-    \includegraphics[]{analytic.pdf}
-    \caption[Reverse fit yields]{Our reverse fitting method to determine total CCSNe contribution}
-\end{figure}
-
-% y_c^cc = (0.0148 +- 0.00016) Z^{0.154 +- 0.0053}
-\begin{equation}
-    y_C = (0.004 \pm 0.00002) + (0.008 \pm 0.0001) \text{[M/H]} 
-\end{equation}
-
-\section{Uncertainties}
-
-We only perform this analysis on the C11/15 yields because the range of metallicities of the data (about [M/H] = -0.4, 0.4) only represents about 2 AGB models, relying heavily on our choice of extrapolation. C11/C15 have a finer model grid, allowing us to have 5 theoretical predicted points within this metallicity range, allowing us to be more certain of our conclusion. 
-
-We do note that this analysis fails to take into account selection effects and biases in APOGEE, and a more robust determination of the carbon yield. 
-
-
-This formulation is degenerate in $\varpi$ until we estimate a better AGB fraction. As the seperation between the low and high alpha sequences can be used to estimate the delayed time contribution to carbon, using the model to estimate this value relies heavaly on the details of the SFH in addition to the 
-We do give an estimate of the CCSNe yields, however this is dependent on our choice of $\eta$. Other choices of $\eta$ vary the value significantly in both magnitude and slope (as AGB contributions increase, we need less CCSNe carbon, however the CCSNe carbon must have a higher metallicity dependence to replicate the V21 data). 
-
-
 
 \chapter{Conclusions}
 
@@ -783,15 +795,6 @@ Numpy, pandas, scipy, VICE, matplotlib
 \cite{numpy, matplotlib}
 
 \cite{OhioSupercomputerCenter1987}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter*{Data Availability}
-\addcontentsline{toc}{chapter}{Data Availability}
-
- 
-The inclusion of a Data Availability Statement is a requirement for articles published in MNRAS. Data Availability Statements provide a standardised format for readers to understand the availability of data underlying the research results described in the article. The statement may refer to original data generated in the course of the study or to third-party data analysed in the article. The statement should describe and provide means of access, where possible, by linking to the data or providing the required accession numbers for the relevant databases or DOIs.
-
-
 
 
 %%%%%%%%%%%%%%%%%%%% REFERENCES %%%%%%%%%%%%%%%%%%
