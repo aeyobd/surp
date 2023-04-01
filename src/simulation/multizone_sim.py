@@ -130,20 +130,19 @@ def run_model(name, migration_mode="diffusion", spec="insideout", n_stars=2, agb
     model.mode = "sfr"
 
     # multithreading may or may not work
-    if multithread:
-        model.setup_nthreads = 8
-        model.nthreads = 4
-    else:
-        model.setup_nthreads = 1
-        model.nthreads = 1
+    # if multithread:
+    #     model.setup_nthreads = 8
+    #     model.nthreads = 4
+    # else:
+    #     model.setup_nthreads = 1
+    #     model.nthreads = 1
     model.dt = dt
     model.bins = np.arange(-3, 3, 0.01)
             
 
     model.migration.stars = diskmigration(model.annuli,
             N = Nstars, mode = migration_mode,
-            filename = "%s_analogdata.out" % (prefix + name),
-            seed = seed)
+            filename = "%s_analogdata.out" % (prefix + name))
     if spec == "lateburst":
         model.evolution = star_formation_history(spec = spec,
                 zone_width = zone_width,

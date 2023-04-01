@@ -1,7 +1,7 @@
 import sys
 import os
 
-from src.simulation.vice_to_json import json_output
+from surp.src.simulation.vice_to_json import json_output
 
 
 directory = sys.argv[1]

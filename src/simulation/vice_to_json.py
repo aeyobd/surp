@@ -66,11 +66,11 @@ def reduce_history(multioutput):
 
         df = pd.DataFrame(zone.history.todict())
         df["R"] = [i/10]*len(df)
-        history = history.append(df, ignore_index=True)
+        history = pd.concat(history, df, ignore_index=True)
 
         df = pd.DataFrame(zone.mdf.todict())
         df["R"] = [i/10]*len(df)
-        mdf = mdf.append(df, ignore_index=True)
+        mdf = pd.concat(mdf, df, ignore_index=True)
     
     return history, mdf
 

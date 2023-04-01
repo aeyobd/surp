@@ -13,7 +13,7 @@ do
         echo "beta = $beta"
         echo "model = $model"
 
-        bash simulate.sh -f $f_agb -b $beta -m $model -e $eta
+        bash osc/simulate.sh . -f $f_agb -b $beta -m $model -e $eta
         echo "submitted"
       done
     done

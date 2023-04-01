@@ -2,7 +2,6 @@ import sys
 import argparse
 import vice
 
-from surp.src.simulation.multizone_sim import run_model
 from surp import __version__
 
 y_cc_0 = 0.005
@@ -16,33 +15,18 @@ def main():
     beta = args.beta
     agb_model = args.agb_model
     eta = args.eta
-
     A = args.lateburst_amplitude
     lateburst = args.lateburst
 
-    prefix = args.prefix
-
-    print(args)
 
     name = find_name(args)
-
-    set_yields(args)
-
-    if lateburst:
-        spec = "lateburst"
-    else:
-        spec = "insideout"
-
-    alpha_agb, alpha_cc = calc_alpha(args)
-
-    run_model(name, prefix=prefix, agb_yields=agb_model, agb_factor=alpha_agb,
-            n_yields="J22", eta_factor=eta, spec=spec, burst_size=A, dt=0.5)
-
+    print(name)
+    return name
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Runs a multizone model")
 
-    parser.add_argument("prefix")
+    parser.add_argument("prefix", help = "directory where to put outputs/ in ")
     parser.add_argument("-e", "--eta", help = "outflow factor", type=float, default=1)
     parser.add_argument("-b", "--beta", help = "C CCSNe Z-dependence", type=float, default=0.4)
 
@@ -64,36 +48,6 @@ def parse_args():
     args = parser.parse_args()
 
     return args
-
-
-def set_yields(args):
-    eta = args.eta
-
-    for elem in ["o", "n", "fe"]:
-        vice.yields.ccsne.settings[elem] *= eta
-    vice.yields.sneia.settings["fe"] *= eta
-
-    if args.fe_ia_factor:
-        fe_total = vice.yields.sneia.settings["fe"] + vice.yields.ccsne.settings["fe"]
-        fe_ia = vice.yields.sneia.settings["fe"] * args.fe_ia_factor
-        fe_cc = fe_total - fe_ia
-        vice.yields.ccsne.settings["fe"] = fe_cc
-        vice.yields.sneia.settings["fe"] = fe_ia
-
-    alpha_agb, alpha_cc = calc_alpha(args)
-
-    def y_cc(z):
-        y_min = -0.5
-        k = 1/(10**(-y_min) - 1)
-        return y_cc_0 * alpha_cc * ((z/0.014)**args.beta + k) / (1+k)
-
-    def y_n_agb(m, z):
-        beta_n * z
-
-    vice.yields.ccsne.settings["N"] = y_cc_n
-    vice.yields.agb.settings["N"] = y_n_agb
-
-    vice.yields.ccsne.settings["C"] = y_cc
 
 
 def find_name(args):
@@ -130,44 +84,8 @@ def find_name(args):
 
         name += f"_v{__version__}"
 
-    print(name)
     return name
 
-
-def calc_alpha(args):
-    # these are derived from multizone runs
-
-    agb_model = args.agb_model
-    trad = args.traditional_f
-    if trad:
-        y_agbs = {
-                "cristallo11": 3.47e-4,
-                "karakas10": 5.85e-4,
-                "ventura13": 6.0e-5,
-                "karakas16": 4.21e-4
-        }
-    else:
-        y_agbs = {
-                "cristallo11": 4.04e-4,
-                "karakas10": 6.43e-4,
-                "ventura13": 2.14e-4,
-                "karakas16": 4.04e-4
-        }
-
-    y_agb = y_agbs[agb_model]
-
-    y_c = 0.005*args.eta
-
-    oob = args.out_of_box_agb
-
-    if oob:
-        alpha_agb = 1
-    else:
-        alpha_agb = args.agb_fraction*y_c/y_agb
-
-    alpha_cc = (y_c - alpha_agb*y_agb)/y_cc_0
-
-    return alpha_agb, alpha_cc
 
 if __name__ == "__main__":
     main()
