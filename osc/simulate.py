@@ -1,15 +1,15 @@
 import sys
 import vice
 
+import argparse
 
 from surp.src.simulation.multizone_sim import run_model
 from surp import __version__
-from args import parse_args, find_name
 
 y_c_0 = 0.005
 y_c_cc_0 = 0.0029
 zeta_n = 7e-4
-y_cc_n = 9e-4
+y_cc_n = 7e-4
 
 Z_Sun = 0.014
 
@@ -19,8 +19,14 @@ def main():
     args = parse_args()
     f_agb = args.agb_fraction
     beta = args.beta
-    agb_model = args.agb_model
     eta = args.eta
+
+    args.agb_model = {
+            "C11": "cristallo11",
+            "K10": "karakas10",
+            "V13": "ventura13",
+            "K16": "karakas16"
+            }[args.agb_model]
 
     A = args.lateburst_amplitude
     lateburst = args.lateburst
@@ -29,7 +35,7 @@ def main():
 
     print(args)
 
-    name = find_name(args)
+    name = args.filename
 
     set_yields(args)
 
@@ -42,8 +48,8 @@ def main():
 
     print("configured")
 
-    run_model(name, prefix=prefix, agb_yields=agb_model, agb_factor=alpha_agb,
-            n_yields="J22", eta_factor=eta, spec=spec, burst_size=A, dt=0.5)
+    run_model(name, prefix=prefix, agb_yields=args.agb_model, agb_factor=alpha_agb,
+            n_yields="J22", eta_factor=eta, spec=spec, burst_size=A)
     print("complete")
 
 
@@ -69,9 +75,6 @@ def set_yields(args):
         prefactor = y_c_0 * alpha_cc / (y_c_cc_0 + args.beta)
 
         return prefactor * (y_c_cc_0 + args.beta*(Z/Z_Sun)) 
-
-    def y_n_agb(M, Z):
-        return 
 
     vice.yields.agb.settings["N"] = lambda M, Z: zeta_n * (Z/Z_Sun) * M
     vice.yields.ccsne.settings["C"] = y_c_cc
@@ -103,6 +106,36 @@ def calc_alpha(args):
     alpha_cc = (y_c - alpha_agb*y_agb)/y_c
 
     return alpha_agb, alpha_cc
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Runs a multizone model")
+
+    parser.add_argument("prefix", help = "directory where to put outputs/ in ")
+    parser.add_argument("filename", help = "name of the file")
+    parser.add_argument("-e", "--eta", help = "outflow factor", type=float, default=1)
+    parser.add_argument("-b", "--beta", help = "C CCSNe Z-dependence",
+            type=float, default=0.001)
+
+    parser.add_argument("-l", "--lateburst", help = "sets sfh to lateburst", action="store_true")
+    parser.add_argument("-f", "--agb_fraction", help="The fractional C AGB contribution", type=float, default=0.2)
+
+    parser.add_argument("-o", "--out_of_box_agb", help="Use the published (unamplified) agb table yields. Overrides -f option", action="store_true")
+
+    parser.add_argument("-m", "--agb_model", help="The AGB yield set to use",
+            type=str, default="C11", 
+                        choices=["C11", "K10", "V13", "K16"])
+
+    parser.add_argument("-A", "--lateburst_amplitude", help="The amplitude of the lateburst", type=float, default=1.5)
+
+    parser.add_argument("-i", "--fe_ia_factor", help="The factor by which to chante SneIa Fe contribution", type=float)
+
+    parser.add_argument("-t", "--traditional_f", help="Sets the AGB fraction to only imf averaged as is typical defined", action="store_false")
+
+    args = parser.parse_args()
+
+    return args
+
+
 
 if __name__ == "__main__":
     main()

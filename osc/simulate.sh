@@ -2,24 +2,19 @@
 
 module load miniconda3/4.12.0-py39
 
-OUT_NAME=$(python osc/args.py "$@")
-
-echo $OUT_NAME
-
 # written like this so we can substitute the 
 # name into the file for easier understanding
 echo "Submitting Job"
-rm logs/$OUT_NAME.log
-
+rm -f logs/$1.log
 
 sbatch <<EOT
 #!/bin/bash
 #SBATCH --time=2:00:00
 #SBATCH --ntasks=1
 #SBATCH --mem=32gb
-#SBATCH --job-name=$OUT_NAME
+#SBATCH --job-name=$1
 #SBATCH --mail-type=BEGIN,END,FAIL
-#SBATCH --output=logs/$OUT_NAME.log
+#SBATCH --output=logs/$1
 #SBATCH --account=PAS2232
 
 
@@ -29,10 +24,11 @@ cd $SLURM_SUBMIT_DIR
 module load miniconda3/4.12.0-py39
 
 
-python \$SLURM_SUBMIT_DIR/osc/simulate.py \$TMPDIR/ "\$@"
+python \$SLURM_SUBMIT_DIR/osc/simulate.py \$TMPDIR/ $@
 python \$SLURM_SUBMIT_DIR/osc/json_outputs.py \$TMPDIR/
 
 cp -r -u \$TMPDIR/*.json \$SLURM_SUBMIT_DIR/output
+cp -r -u \$TMPDIR/*.csv \$SLURM_SUBMIT_DIR/results
 
 scontrol show job=\$SLURM_JOB_ID
 

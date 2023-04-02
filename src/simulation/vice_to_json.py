@@ -35,6 +35,7 @@ def json_output(file_name, json_name=None, isotopic=False, overwrite=False):
 
     with open(json_name, "w") as f:
         json.dump(model, f)
+        print("saving to ", json_name)
         
 
 def model_json(multioutput):
@@ -141,6 +142,7 @@ def save_result(model, filename):
     dist["N_MG"] = s["[n/o]"]
     dist["C_N"] = s["[c/n]"]
 
+    print("saving to ", filename)
     dist.to_csv(filename)
 
 if __name__ == "__main__":
