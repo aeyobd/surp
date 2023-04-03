@@ -31,7 +31,7 @@ class fig_saver():
 
 
 def legend_outside(bbox = (1,1), **kwargs):
-    plt.legend(bbox_to_anchor=bbox, loc="upper left", **kwargs)
+    return plt.legend(bbox_to_anchor=bbox, loc="upper left", **kwargs)
 
 def fancy_legend(ax=None, colors=COLORS, **kwargs):
     if ax is None:

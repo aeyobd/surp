@@ -8,8 +8,9 @@ from surp import __version__
 
 y_c_0 = 0.005
 y_c_cc_0 = 0.0029
-zeta_n = 7e-4
-y_cc_n = 7e-4
+zeta_n = 9e-4
+y_cc_n = 3.6e-4
+y_n_0 = 3.6e-4
 
 Z_Sun = 0.014
 
@@ -49,7 +50,7 @@ def main():
     print("configured")
 
     run_model(name, prefix=prefix, agb_yields=args.agb_model, agb_factor=alpha_agb,
-            n_yields="J22", eta_factor=eta, spec=spec, burst_size=A)
+            eta_factor=eta, spec=spec, burst_size=A)
     print("complete")
 
 
@@ -76,7 +77,8 @@ def set_yields(args):
 
         return prefactor * (y_c_cc_0 + args.beta*(Z/Z_Sun)) 
 
-    vice.yields.agb.settings["N"] = lambda M, Z: zeta_n * (Z/Z_Sun) * M
+    vice.yields.agb.settings["N"] = lambda M, Z: (zeta_n * (Z/Z_Sun) * M 
+                                                  + y_n_0 * M)
     vice.yields.ccsne.settings["C"] = y_c_cc
 
 
