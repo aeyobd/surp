@@ -10,7 +10,7 @@ y_c_0 = 0.005
 y_c_cc_0 = 0.0029
 zeta_n = 9e-4
 y_cc_n = 3.6e-4
-y_n_0 = 3.6e-4
+y_n_0 = 9e-4
 
 Z_Sun = 0.014
 
@@ -72,13 +72,14 @@ def set_yields(args):
     alpha_agb, alpha_cc = calc_alpha(args)
 
 
-    def y_c_cc(Z):
-        prefactor = y_c_0 * alpha_cc / (y_c_cc_0 + args.beta)
-
-        return prefactor * (y_c_cc_0 + args.beta*(Z/Z_Sun)) 
 
     vice.yields.agb.settings["N"] = lambda M, Z: (zeta_n * (Z/Z_Sun) * M 
                                                   + y_n_0 * M)
+
+    print("alpha_cc = ", alpha_cc)
+    def y_c_cc(Z):
+        prefactor = y_c_0 * alpha_cc / (y_c_cc_0 + args.beta)
+        return prefactor * (y_c_cc_0 + args.beta*(Z/Z_Sun)) 
     vice.yields.ccsne.settings["C"] = y_c_cc
 
 
@@ -96,7 +97,7 @@ def calc_alpha(args):
     }
     y_agb = y_agbs[agb_model]
 
-    y_c = 0.005*args.eta
+    y_c = y_c_0*args.eta
 
     oob = args.out_of_box_agb
 
@@ -105,7 +106,7 @@ def calc_alpha(args):
     else:
         alpha_agb = args.agb_fraction*y_c/y_agb
 
-    alpha_cc = (y_c - alpha_agb*y_agb)/y_c
+    alpha_cc = args.eta * (1 - args.agb_fraction)
 
     return alpha_agb, alpha_cc
 

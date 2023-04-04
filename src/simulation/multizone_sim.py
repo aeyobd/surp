@@ -17,8 +17,8 @@ MAX_SF_RADIUS = 15.5 #kpc
 END_TIME = 13.2
 
 def run_model(name, migration_mode="diffusion", spec="insideout", n_stars=2, agb_yields="cristallo11", 
-              seed=None, multithread=False, dt=0.01, n_yields=None, burst_size=1.5, eta_factor=1, 
-              isotopic=False, ratio_reduce=False, agb_factor=1, prefix=None):
+              seed=None, multithread=False, dt=0.01, burst_size=1.5, eta_factor=1, 
+              ratio_reduce=False, agb_factor=1, prefix=None):
     """
     This function wraps various settings to make running VICE multizone models
     easier for the carbon paper investigation
@@ -53,9 +53,6 @@ def run_model(name, migration_mode="diffusion", spec="insideout", n_stars=2, agb
         - "karakas16"
         Look at VICE for more details
 
-    seed: ``int?`` [default: None]
-        The seed to use for the model
-
     multithread: ``bool`` [default: False]
         If true, runs the multithreaded version of the model.
         The maximum number of threads is currently 8
@@ -64,11 +61,6 @@ def run_model(name, migration_mode="diffusion", spec="insideout", n_stars=2, agb
     dt: ``float`` [default: 0.01]
         The timestep of the simulation, measured in Gyr.
         Decreasing this value can significantly speed up results
-
-    n_yields: ``str`` [defalt: None]
-        Only acceptable value is "J22", which sets the
-        AGB N yields to the analytic form in
-        Johnson, et. al. 2022 (Emperical constraints of N)
 
     burst_size: ``float`` [default: 1.5]
         The size of the SFH burst for lateburst model.
@@ -122,20 +114,13 @@ def run_model(name, migration_mode="diffusion", spec="insideout", n_stars=2, agb
 
 
     # we use au and ag for c12 and c13 respectively
-    if isotopic:
-        model.elements = ("fe", "o", "n", "au", "ag")
-    else:
-        model.elements = ("fe", "o", "n", "c")
+    # if isotopic:
+    #     model.elements = ("fe", "o", "n", "au", "ag")
+    # else:
+    model.elements = ("fe", "o", "n", "c")
 
     model.mode = "sfr"
 
-    # multithreading may or may not work
-    # if multithread:
-    #     model.setup_nthreads = 8
-    #     model.nthreads = 4
-    # else:
-    #     model.setup_nthreads = 1
-    #     model.nthreads = 1
     model.dt = dt
     model.bins = np.arange(-3, 3, 0.01)
             
@@ -165,16 +150,7 @@ def run_model(name, migration_mode="diffusion", spec="insideout", n_stars=2, agb
         model.mass_loading = lambda R: model.default_mass_loading(R) * eta_factor
 
 
-    if n_yields == "J22":
-        # this is just a coefficient
-        xi = 9e-4
 
-        def y_N_agb(m, z):
-            return xi* m * (z / 0.014)
-        vice.yields.agb.settings["n"] = y_N_agb
-
-
-    # prints out the input parameters of the model
     print_description(model)
 
     model.run(np.arange(0, END_TIME, dt), overwrite=True, pickle=False)
