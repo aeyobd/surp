@@ -62,8 +62,6 @@
 \counterwithout{table}{chapter}
 
 
-
-
 \defcitealias{cristallo+11}{C11}
 \defcitealias{cristallo+15}{C15}
 \defcitealias{ventura+13}{V13}
@@ -118,7 +116,7 @@
         \vfill
         by 
         \vfill
-       {Daniel Alexandra Boyea}\\
+       {Danielle Alexandra Boyea}\\
        \vfill
        Department of Astronomy\\
        The Ohio State University\\
@@ -204,7 +202,7 @@ In Fig. \ref{fig:subgiants} we present a sample of APOGEE subgiants. These subgi
 \begin{figure}[htp]
     \includegraphics{subgiants_mgh.pdf}
     \includegraphics{subgiants_mgfe.pdf}
-    \caption[APOGEE Subgiants]{The [C/Mg] ratio against [Mg/H] (left) and [Mg/Fe] (right) for the sample of subgiants as in \cite{jack_subgiant}. The left panel uses blue and orange to represent high and low $\alpha$ sequences respectively. On the right, we plot more metal rich ([Mh/H]) stars with darker colors.}
+    \caption[APOGEE Subgiants]{The [C/Mg] ratio against [Mg/H] (top) and [Mg/Fe] (bottom) for our sample of APOGEE subgiants. On the top, we plot the high and low $\alpha$ sequences using Eq. \ref{eq:high_alpha} in blue and orange. On the bottom, we show more metal rich ([Mg/H]) stars with lighter colors.}
     \label{fig:subgiants}
 \end{figure}
 \chapter{Nucleosynthesis}
@@ -240,22 +238,24 @@ Also following \citet{james+21, james+22}, we take the SNeIa Delay Time distribu
 $t^{-1.1}$ law suggested by the observations of \citet{maoz+12}.
 
 
-\section{Asymptotic giant branch carbon}
+\section{Asymptotic giant branch carbon}\label{sec:agb}
 
 \begin{figure*}
     \centering
  	    \includegraphics[scale=1]{agb_yields.pdf}\\
 
-        \caption[AGB carbon yields]{The net fraction carbon yield ($M_\text{C}$, the amount of carbon produced by the star divided by $M$) plotted as a function of mass, $M$. Lighter colors represent higher values of metalicity ([M/H]). Each panel represents a different AGB model. K10 reports stars at MoverH -3, -2, etc. I can reproduce C11 and K10 but not other V13 and KL16 :(((}
-
-    \label{fig:y_agb}
+        \caption[AGB carbon yields]{The net fraction AGB carbon yield ($\tilde{y}$) plotted as a function of initial stellar mass $M$. Lighter colors represent higher values of metalicity ([M/H]). Each panel represents yields from one of our 4 AGB models: C11 \citep{cristallo+11, cristallo+15}, K10 \citep{karakas10}, V13 \citep{ventura+13,ventura+14,ventura+18}, and K16 \citep{KL16, karakas+18}.
+            %C11 reports values at metallicities $Z=$ 0.0001, 0.0003, 0.001, 0.002, 0.003, 0.006, 0.008, 0.01, 0.014, 0.02; K10 at $Z=$0.0001, 0.004, 0.008, 0.02; V13 at $Z=$0.0003, 0.001, 0.002, 0.004, 0.008, 0.014, 0.04; and K16 at $Z=$0.0028, 0.007, 0.014, 0.03.
+        }
+            \label{fig:y_agb}
 \end{figure*}
 
 \begin{figure}
     \includegraphics[scale=1]{y_agb_t2.pdf}
 
-    \caption[AGB yields delayed-time-distribution]{
-    The Delay Time Distribution for AGB STars}
+    \caption[AGB yields delay time distribution]{
+        The normalized delay time distribution (DTD) of AGB carbon, plotted as the net carbon enrichment $M(t)$ normalized to the total carbon enrichment mass $M_{\rm tot}$. Left: Each solid curve corresponds to an AGB yield model at solar metallicity (C11, K10, V13, or K16), and the dashed black line represents the delay time distribution of type Ia supernovae ($\propto t^{-1.1}$). Each model has similar DTD, and most AGB enrichment occurs befor 1 Gyr. Right: each curve represents the C11 AGB model at a different metallicities. Higher metallicities cause carbon enrichment to occur earlier and for the DTD to become non-monotonic.
+    }
 
 \end{figure}
 
@@ -264,7 +264,8 @@ $t^{-1.1}$ law suggested by the observations of \citet{maoz+12}.
     
     \includegraphics[scale=1]{y_agb_vs_z.pdf}
 
-    \caption[AGB yield metallicity dependence]{On the left, we plot the IMF weighted net fractional carbon yields of each AGB model as a function of metalicity.The right panel plots the normalized net carbon AGB yield as a function of time for a population of stars born at the same time at solar metallicity. We note that for the right panel, the minimum of the DTD for V13 is }
+    \caption[AGB yield metallicity dependence]{The net fractional IMF-weighted AGB carbon yield $\Ycagb$ as a function of metallicity for each of our AGB yield models.
+    }
 
 \end{figure*}
 
@@ -323,16 +324,10 @@ Another difference is the speed at which equilibrium is reached. K10 and K16 wei
 \begin{figure}[htp]
     \centering
     \includegraphics{y_c_cc.pdf}
-    \caption[CCSNe carbon yields]{The fist plot shows IMF-weighted net fractional CCSNe yield of
-        carbon, $y_C^{cc}$ against metalicity, [M/H], for different studies.
-        The right plot instead shows [C/O]$^\text{CC}$, the logarithm of the
-        abundance ratio of carbon to oxygen if CCSNe were the only carbon
-        source, also as a function of metallicity for the same set of studies.
-        The black line represents the carbon yield of the fiducial model,
-        $y_C^{CC} = 0.004? (Z/Z_{\sun})^{0.3}$, and becomes dashed over regions
-        where we have not tested our model.\citep{NKT13}, \citep{LC18},
-        \citep{sukhbold+16}, \citep{WW95}
- }
+    \caption[CCSNe carbon yields]{Top: The net fractional IMF-weighted CCSNe yield of
+        carbon, $\Ycc$ against metalicity,$\log Z/Z_\odot$, for different studies.
+        The right plot instead shows the CCSNe carbon to magnisium abundance ratio, defined in Eq. \ref{eq:c_mg_cc}. The black line represents the carbon yield of the fiducial model,
+    $\Ycc = 0.0029 + 0.001 (Z/Z_{\odot})$. The pink line represents the C11 AGB model.    We plot yields from \citet{WW95} as red triangles; \citep{sukhbold+16} as orange diamonds, with larger points representing models with higher explodability; \citet{NKT13} as green stars; and \citep{LC18} as blue circles. \citet{LC18} is the only model including rotation. \citet{NKT13} and \citet{WW95} also report Population III yields, plotted with arrows at the very left.}
     \label{fig:y_cc}
 \end{figure}
 
@@ -340,7 +335,7 @@ Massive stars form $^{12}$C through the triple--$\alpha$ process. However, the c
 While there are many stellar models providing predictions of CCSNe yields, the results of these models are highly uncertain due to the many stellar modeling uncertainties. 
 
 We summarise many of the predictions of stellar models in Fig. \ref{fig:y_cc}. 
-\begin{equation}
+\begin{equation}\label{eq:c_mg_cc}
     {\rm [C/O]^{CC}} = \log_{10}\left( \frac{y_{\rm C}^{\rm CC}}{y_{\rm O}^{\rm CC}}\right) - \log_{10} \left( \frac{Z_{C, \sun }}{Z_{O, \sun }} \right)
 \end{equation}
 Notice how even these ratios 
@@ -361,10 +356,12 @@ Notice how even these ratios
 \chapter{The Equilibrium Approximation}\label{sec:equilibrium}
 
 Chemical abundances reach an equilibrium. At least with simple enough assumptions. The new elements synthesized in stars balance against elements lost to galactic winds and locked in stellar reminants. While our galaxy is likely not in perfect equilibrium or described by a single, homogenous chemical region, we can still use an equilibrium approximation to understand total yields. 
-\cite{WAF17}. \cite{james_dwarf}, \cite{james+22}
 
-Here, we assume a simple one-zone chemical evolution model. A one zone model is essentially zero-dimensional---the gas and stars are considered to be homogenously mixed, so we can represent all quantaties as scalars.
-We use $M_{X}$ to represent the mass of element X
+\cite{james_dwarf}, \cite{james+22}
+
+Following \citet{WAF17}, we assume a simple one-zone chemical evolution model. A one zone model is essentially zero-dimensional---the gas and stars are considered to be homogenously mixed, so we can represent all quantaties as scalars.
+
+We define $M_{X}$ to be the mass of element X in the gas phase, $\dot{M}_\star$ to be the star fomation rate (in M$_\odot$ yr$^{-1}$).
 
 If we assume that the median track is an equilibrium phenomenon, we can calculate the total carbon to oxygen yield ratio. Additionally, assuming an AGB yield set enables us to predict the CCSNe carbon yield.  
 We begin with the model, which underlies the multizone simulations, that the change in mass of an element is a sum of production, outflows, recycling, and mass left in reminants. We write this as
@@ -413,7 +410,7 @@ This equation corroberates what we have explored earlier in the paper, and provi
 \begin{figure}
     \centering
     \includegraphics[]{analytic.pdf}
-    \caption[Reverse fit yields]{Our reverse fitting method to determine total CCSNe contribution}
+    \caption[Reverse fit yields]{Inferred $\Ycc$ against [Mg/H], assuming equilibrium and 3$\times$C11 AGB yields. Blue points are meadians of each metallicity bin with errorbars as the median standard deviation. The orange curve is our best fit model.}
 \end{figure}
 
 % y_c^cc = (0.0148 +- 0.00016) Z^{0.154 +- 0.0053}
@@ -503,7 +500,7 @@ comparison to \citet{fiorenzo+21} in Appendix \ref{sec:jack}.
 
 Because the star formation history is left in a simple inside-out form, this multizone model does not reproduce the high-$\alpha$ sequence, therefore we make the following cut to the V21 data to remove the high alpha sequence.
 
-\begin{equation}
+\begin{equation}\label{eq:high_alpha}
 \begin{cases}
 \text{[Mg/Fe]} >0.12-0.13\text{[Fe/H]}, & \text{[Fe/H]}<0\\
 \text{[Mg/Fe]} >0.12, & \text{[Fe/H]}>0\\
@@ -515,15 +512,16 @@ Because the star formation history is left in a simple inside-out form, this mul
 
 \section{The Evolution of carbon across the galaxy and through time}
 
-\begin{figure*}
-\label{fig:c_evo}
+\begin{figure}
+\centering
 \includegraphics{evo_tracks.pdf}
 \includegraphics{evo_slices.pdf}
-\caption[Carbon chemical evolution tracks]{The top set of panes show the time evolution of the gas phase of our
-    fiducial model, plotted as tracks through \caah and \caafe where each colored line corresponds to the evolution at that galactic radius. 
-The bottom set instead shows the galaxies gas-phase \caah and \caafe trend at 5 different time slices. 
+\caption[Carbon chemical evolution tracks]{Top: the time evolution of the gas phase of our
+    fiducial model, plotted as tracks through \caah~and \caafe~where each colored line corresponds to the evolution at that galactic radius. 
+    Bottom: snapshots of the gas-phase \caah~and \caafe~trend, each line a different time.
 }
-\end{figure*}
+\label{fig:c_evo}
+\end{figure}
 
 Here, we present our fiducial model which we will later show aggrees well with APOGEE. We will later investigate the effects of alterations to this model. 
 
@@ -560,17 +558,10 @@ This is even more evident in the lower part of Fig. \ref{fig:c_evo}. While the \
 \begin{figure}
 \centering
 \includegraphics{oob_agb.pdf}
-
-\caption[AGB GCE Models]{Left: the \caah~ \textbf{median} present-day stellar tracks for four different
-AGB models (\cristallo, \karakas, \kl, and \ventura ). The median bin [C/Mg] values from \citet{jack_subgiant} are
-plotted as black points with 1-std errors marked by horizontal grey dashes.
-Right: same as left but for \caafe. While each AGB yield model may
-differ in detail, there is minimal effect on the overall [C/Mg] trends.
-
-While we show the entire dataset in Fig. \ref{fig:subgiants}, we chose to compare the
-binned data to our models as black points with dashes representing the 1-sigma
-spread, as in e.g. Fig. \ref{fig:agb_sims}. \label{fig:agb_sims}
+\caption[AGB GCE Models]{Left: the \caah~median present-day stellar tracks for four different AGB models (C11, K10, V13, K16) with a metallicity-independent $\Ycc$. Right: same except [C/Mg] against [Mg/Fe] for the bin $-0.15<\text{[Mg/H]}<-0.05$. The median bin [C/Mg] values from \citet{jack_subgiant} are plotted as black points with standard median deviations plotted as grey dashes.
+ While each AGB yield model may differ in detail, there is minimal effect on the overall [C/Mg] trends.
 }
+\label{fig:agb_sims}
 \end{figure}
 
 \section{Alternate Models}
@@ -641,7 +632,7 @@ Our next exploration is to adjust the relative fraction of AGB star yields. To d
 \includegraphics{beta.pdf}
 \includegraphics{f_agb.pdf}
 
-\caption[Adjusted yield models]{Similar to \ref{fig:agb_sims} except the top plot shows the fiducial model with lower and higher values of $\beta$, the C-CCSNe metallicity dependence. The bottom plot is the same except shows varying AGB fractions.}
+\caption[Adjusted yield models]{Similar to \ref{fig:agb_sims} except the top plot shows the fiducial model with lower and higher values of $\zeta$, the C-CCSNe metallicity dependence. The bottom plot is the same except shows models with $f_{\rm AGB}=$0.1, 0.2, and 0.4. Both the $f_{\rm AGB}$ and $\zeta$ influence \caah, but only $f_{\rm AGB}$ has a significant impact on \caafe.}
 \end{figure}
 
 The next question is how does changing the CCSNe carbon yield affect the model?
@@ -696,9 +687,10 @@ These models are indistinguishable in the \caah~plane from our adjusted CCSNe mo
 
 \begin{figure}
 \centering
-\includegraphics[]{lateburst_eta.pdf}
+\includegraphics{lateburst_eta.pdf}
+\includegraphics{eta.pdf}
 
-\caption[Lateburst and reduced-outflow models]{Same as Fig. \ref{fig:agb_sims} but comparing the fiducial model to the reduced outlow model and a lateburst model. (okay, need to totally change approach...)}
+\caption[Lateburst and reduced-outflow models]{Same as Fig. \ref{fig:agb_sims} but comparing the fiducial model to two lateburst models (top), and two reduced outflow models (bottom).}
 \end{figure}
 
 We consider a simple modification of our SFH described by our lateburst model
@@ -742,7 +734,7 @@ $\alpha = 0.033$ and $\beta = 0.625$, which results in a slightly lower value at
 \begin{figure*}
     \centering
     \includegraphics[scale=0.9]{cooh_scatter.pdf}
-    \caption[Scatter agreement]{The simulated stars of our model at present day plotted on \caah~and colored such that lighter colors represent stars born at greater galactric radii.}
+    \caption[Scatter agreement]{The simulated stars of our model at present day plotted on \caah~and colored such that lighter colors represent stars born at greater galactric radii. Our model is able to explain the scatter and shape, relying on a combination of artificial measurment errors and radial migration.}
 \end{figure*}
 
 Beyond simply comparing median trends, we can compare the distribution 
@@ -750,10 +742,19 @@ shape of our distribution to observations.
 
 \section{Comparison to Observations}
 
+\begin{figure}
+    \includegraphics{nitrogen.pdf}
+    \includegraphics{c_n.pdf}
+    \caption{Nitrogen almost works?}
+\end{figure}
+
 \begin{figure*}
 \centering
 \includegraphics[]{summary.pdf}
-\caption[Gas phase abundances]{Present-day gas phase tracks of the fiducial model in \caah~space. M101 is valid comparison to MW ...(van Dokkum et al. 2014)}
+\caption[Gas phase abundances]{Present-day gas phase tracks of the fiducial model in \caah~space. M101 is valid comparison to MW ...(van Dokkum et al. 2014)
+
+    \citep{cooke+17}, \citet{nissen+14}, \citet{fabbian+09}, \citet{berg+19}, \citet{esteban+02}, \citet{esteban+09}, \citet{esteban+14}, \citet{esteban+19},
+}
 \label{fig:gas_phase}
 \end{figure*}
 
@@ -885,6 +886,11 @@ We use the criteria outlined in \cite{jack_subgiant} to create a sample of subgi
 \end{cases}
 \end{equation}
 
+\begin{figure}
+    \centering
+    \includegraphics{logg_jack.pdf}
+\end{figure}
+
 This cut isolates a clean sample of subgiants. As First Dredge Up, which affects carbon and nitrogen abundances, only occurs during the ascent onto the red giant branch, subgiant stars are unaffected by this enrichment. 
 
 Additionally, we exclued stars in APOGEE marked by the following flags.
@@ -917,8 +923,8 @@ Plot of age metallicity relationship?
 
 
 \begin{figure}[htp]
-    \includegraphics{coofe_agb_extra.pdf}
-    \includegraphics{coofe_agb_extra_0.2.pdf}
+    \centering
+    \includegraphics{agb2.pdf}
 
     \caption[Alternate AGB models]{Comparisons of our 4 different AGB models except with $f_{\rm agb} = 0.2$, and a metallicity dependent CCSNe yield. Both panels plot [C/Mg]-[Mg/Fe], except the left has a bin centered at 0, and the right at [Mg/H]$=0.2$. The higher metallicity bin exposes how many of the AGB models predict downturns near solar metallicity which are not present in our data.}
 \end{figure}
