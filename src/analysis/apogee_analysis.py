@@ -347,7 +347,7 @@ def plot_coofe_contour(c=-0.1, w=0.05):
     filt = v21["MG_H"] > c - w
     filt &= v21["MG_H"] < c + w
     df=  v21[filt]
-    sns.kdeplot(df["MG_FE"], df["C_MG"], color="black", linewidths=1)
+    sns.kdeplot(df, x="MG_FE", y="C_MG", color="black", linewidths=1)
 
 
 
@@ -363,7 +363,7 @@ def plot_v21_contour(x, y, bins=50,exclude_high_alpha=True,  **kwargs):
     v21 = vincenzo2021()
     if exclude_high_alpha:
         v21 = v21[~v21["high_alpha"]]
-    sns.kdeplot(v21[x], v21[y], color="black", linewidths=1, **kwargs)#, label="V+21")
+    sns.kdeplot(v21, x=x, y=y, color="black", linewidths=1, **kwargs)#, label="V+21")
 
 def plot_v21_coofe(c=-0.1, w=0.05):
     v21 = vincenzo2021()
@@ -372,7 +372,7 @@ def plot_v21_coofe(c=-0.1, w=0.05):
     filt &= v21["[o/h]"] < c + w
     df = v21[filt]
     df["[o/fe]"] = df["[o/h]"] - df["[fe/h]"]
-    sns.kdeplot(df["[o/fe]"], df["[c/o]"], color="black", linewidths=1)
+    sns.kdeplot(df, x="[o/fe]", y="[c/o]", color="black", linewidths=1)
 
 def plot_v21_cofeo(c=-0.1, w=0.05):
     v21 = vincenzo2021()

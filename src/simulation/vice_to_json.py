@@ -136,10 +136,10 @@ def save_result(model, filename):
     dist = pd.DataFrame()
     s = model["stars"]["solar"]
 
-    dist["MG_H"] = s["[o/h]"]
-    dist["MG_FE"] = s["[o/fe]"]
-    dist["C_MG"] = s["[c/o]"]
-    dist["N_MG"] = s["[n/o]"]
+    dist["MG_H"] = s["[mg/h]"]
+    dist["MG_FE"] = s["[mg/fe]"]
+    dist["C_MG"] = s["[c/mg]"]
+    dist["N_MG"] = s["[n/mg]"]
     dist["C_N"] = s["[c/n]"]
 
     print("saving to ", filename)

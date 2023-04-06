@@ -14,9 +14,7 @@ if vice.version[:2] < (1, 2):
 	raise RuntimeError("""VICE version >= 1.2.0 is required to produce \
 Johnson et al. (2021) figures. Current: %s""" % (vice.__version__))
 else: pass
-from vice.yields.presets import JW20
 from vice.toolkit import hydrodisk
-vice.yields.sneia.settings['fe'] *= 10**0.1
 from .._globals import END_TIME, MAX_SF_RADIUS, ZONE_WIDTH
 from . import migration
 from . import models
@@ -46,6 +44,7 @@ class diskmodel(vice.milkyway):
 		- "insideout"
 		- "lateburst"
 		- "outerburst"
+        - "twoexp"
 
 	verbose : ``bool`` [default : True]
 		Whether or not the run the models with verbose output.
@@ -147,7 +146,7 @@ class star_formation_history:
 			Simulation time in Gyr.
 	"""
 
-	def __init__(self, spec = "static", zone_width = 0.1, burst_size=1.5):
+	def __init__(self, spec = "static", zone_width = 0.1, **kwargs):
 		self._radii = []
 		self._evol = []
 		i = 0
@@ -158,8 +157,9 @@ class star_formation_history:
 					"static":		models.static,
 					"insideout":	models.insideout,
 					"lateburst":	models.lateburst,
-					"outerburst":	models.outerburst
-				}[spec.lower()]((i + 0.5) * zone_width, burst_size=burst_size))
+					"outerburst":	models.outerburst,
+					"twoexp":	models.twoexp
+				}[spec.lower()]((i + 0.5) * zone_width, **kwargs))
 			i += 1
 
 	def __call__(self, radius, time):

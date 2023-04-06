@@ -12,9 +12,9 @@ from .src.simulations.disks import star_formation_history
 MAX_SF_RADIUS = 15.5 #kpc
 END_TIME = 13.2
 
-def run_model(name, migration_mode="diffusion", spec="insideout", n_stars=2, 
+def run_model(name, prefix=None, migration_mode="diffusion", spec="insideout", n_stars=2, 
               seed=None, multithread=False, dt=0.01, burst_size=1.5, eta_factor=1, 
-              ratio_reduce=False,prefix=None ):
+              ratio_reduce=False):
     """
     This function wraps various settings to make running VICE multizone models
     easier for the carbon paper investigation
@@ -87,11 +87,7 @@ def run_model(name, migration_mode="diffusion", spec="insideout", n_stars=2,
             )
 
 
-    # we use au and ag for c12 and c13 respectively
-    # if isotopic:
-    #     model.elements = ("fe", "o", "n", "au", "ag")
-    # else:
-    model.elements = ("fe", "o", "n", "c")
+    model.elements = ("fe", "o", "mg", "n", "c", "au", "ag")
 
     model.mode = "sfr"
 
@@ -106,6 +102,9 @@ def run_model(name, migration_mode="diffusion", spec="insideout", n_stars=2,
         model.evolution = star_formation_history(spec = spec,
                 zone_width = zone_width,
                 burst_size = burst_size)
+    elif spec == "twoexp":
+        model.evolution = star_formation_history(spec = spec,
+                zone_width = zone_width, tau=1, amplitude=burst_size, t1=5)
     else:
         model.evolution = star_formation_history(spec = spec,
                 zone_width = zone_width)
@@ -125,19 +124,10 @@ def run_model(name, migration_mode="diffusion", spec="insideout", n_stars=2,
 
 
 
-    print_description(model)
+    print(model)
 
     model.run(np.arange(0, END_TIME, dt), overwrite=True, pickle=False)
 
-    del model
-    gc.collect()
     print("finished")
-
-
-def print_description(model):
-    """
-    Prints out the element yield settings in the given model
-    """
-    print(model)
 
 
