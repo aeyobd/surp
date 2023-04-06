@@ -8,17 +8,13 @@ import os
 
 from .src.simulations.migration import diskmigration
 from .src.simulations.disks import star_formation_history
-from .. import yields
-from ..yields import amplified_yields
-
-# modify yields
 
 MAX_SF_RADIUS = 15.5 #kpc
 END_TIME = 13.2
 
-def run_model(name, migration_mode="diffusion", spec="insideout", n_stars=2, agb_yields="cristallo11", 
+def run_model(name, migration_mode="diffusion", spec="insideout", n_stars=2, 
               seed=None, multithread=False, dt=0.01, burst_size=1.5, eta_factor=1, 
-              ratio_reduce=False, agb_factor=1, prefix=None):
+              ratio_reduce=False,prefix=None ):
     """
     This function wraps various settings to make running VICE multizone models
     easier for the carbon paper investigation
@@ -45,14 +41,6 @@ def run_model(name, migration_mode="diffusion", spec="insideout", n_stars=2, agb
     n_stars: ``int`` [default: 2]
         The number of stars to create during each timestep of the model.
 
-    agb_yields: ``str`` [default: "cristallo11"]
-        The yield set to use for AGB carbon produciton. Acceptable values are
-        - "cristallo11"
-        - "karakas10"
-        - "ventura13"
-        - "karakas16"
-        Look at VICE for more details
-
     multithread: ``bool`` [default: False]
         If true, runs the multithreaded version of the model.
         The maximum number of threads is currently 8
@@ -68,7 +56,6 @@ def run_model(name, migration_mode="diffusion", spec="insideout", n_stars=2, agb
 
     eta_factor: ``float`` [default: 1]
         A factor by which to reduce the model's outflows. 
-        Does not reduce CCSNe yields
 
     ratio_reduce: ``bool``
         
@@ -89,19 +76,6 @@ def run_model(name, migration_mode="diffusion", spec="insideout", n_stars=2, agb
     Nstars = min(2*MAX_SF_RADIUS/zone_width * END_TIME/dt * n_stars, 3102519)
     print("Nstars = %i" % Nstars)
 
-    # we use the nitrogen yields in each study
-    if type(agb_yields) == str:
-        for elem in ["c", "n", "o", "fe"]:
-            if elem == "fe" and agb_yields == "ventura13":
-                if agb_factor == 1:
-                    vice.yields.agb.settings[elem] = "cristallo11"
-                else:
-                    vice.yields.agb.settings[elem] = amplified_yields(elem, "cristallo11", agb_factor)
-            else:
-                if agb_factor == 1:
-                    vice.yields.agb.settings[elem] = agb_yields
-                else:
-                    vice.yields.agb.settings[elem] = amplified_yields(elem, agb_yields, agb_factor)
 
     
     model = vice.milkyway(zone_width=zone_width,
@@ -165,14 +139,5 @@ def print_description(model):
     Prints out the element yield settings in the given model
     """
     print(model)
-    print("Yield settings")
-    for elem in model.elements:
-        print(elem)
-        print("CCSNE")
-        print(vice.yields.ccsne.settings[elem])
-        print("AGB")
-        print(vice.yields.agb.settings[elem])
-        print("SNIa")
-        print(vice.yields.sneia.settings[elem])
 
 

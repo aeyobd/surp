@@ -4,6 +4,9 @@ module load miniconda3/4.12.0-py39
 
 # written like this so we can substitute the 
 # name into the file for easier understanding
+
+# first argument is filename
+# second argument is the python call
 echo "Submitting Job"
 rm -f logs/$1.log
 
@@ -24,7 +27,10 @@ cd $SLURM_SUBMIT_DIR
 module load miniconda3/4.12.0-py39
 
 
-python \$SLURM_SUBMIT_DIR/osc/simulate.py \$TMPDIR/ $@
+python -c "
+$2
+" \$TMPDIR/
+
 python \$SLURM_SUBMIT_DIR/osc/json_outputs.py \$TMPDIR/
 
 cp -r -u \$TMPDIR/*.json \$SLURM_SUBMIT_DIR/output

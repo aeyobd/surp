@@ -6,7 +6,7 @@ do
   do
     for model in "C11"  #"K10" "V13" "K16"
     do
-      for eta in 0.6 0.3 # 1
+      for eta in 1
       do
         bash osc/run.sh -f $f_agb -b $beta -m $model -e $eta
       done
