@@ -3,7 +3,7 @@ This file declares the time-dependence of the star formation history at a
 given radius in the fiducial inside-out model from Johnson et al. (2021).
 """
 
-from .utils import modified_exponential, get_bin_number, interpolate, double_exponential
+from .utils import modified_exponential, get_bin_number, interpolate, triple_exponential
 from .normalize import normalize
 from .gradient import gradient
 import math as m
@@ -12,7 +12,7 @@ from .insideout import insideout
 
 
 
-class twoexp(double_exponential):
+class threeexp(triple_exponential):
 
 	r"""
 	The inside-out SFH model from Johnson et al. (2021).
@@ -38,7 +38,8 @@ class twoexp(double_exponential):
 			amplitude=1, timescale2=1, t1=5,
 			amplitude3=0.3, timescale3=1, t2=10):
 		super().__init__(timescale = insideout.timescale(radius),
-                	amplitude=amplitude, timescale2=timescale2, t1=t1, rise=2)
+                	amplitude=amplitude, timescale2=timescale2, t1=t1, rise=2,
+			amplitude3=amplitude3, timescale3=timescale3, t2=t2)
 		self.norm *= normalize(self, gradient, radius, dt = dt, dr = dr)
 
 	@staticmethod

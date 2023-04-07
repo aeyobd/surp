@@ -50,9 +50,12 @@ function generate_filename {
   local dt="$9"
 
   # Generate filename
-  local filename="${agb_model}_f${agb_fraction}"
+  local filename="${agb_model}"
+
   if [ "$out_of_box_agb" = true ]; then
     filename="${filename}_OOB"
+  else 
+    filename="${filename}_f${agb_fraction}"
   fi
   filename="${filename}_eta${eta}_beta${beta}"
   if [ "$spec" != "insideout" ]; then

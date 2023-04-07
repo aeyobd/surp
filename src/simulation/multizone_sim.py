@@ -36,6 +36,8 @@ def run_model(name, prefix=None, migration_mode="diffusion", spec="insideout", n
         - "constant"
         - "lateburst"
         - "outerburst"
+        - "twoexp"
+        - "threeexp"
         see vice.migration.src.simulation.disks.star_formation_history
 
     n_stars: ``int`` [default: 2]
@@ -104,7 +106,11 @@ def run_model(name, prefix=None, migration_mode="diffusion", spec="insideout", n
                 burst_size = burst_size)
     elif spec == "twoexp":
         model.evolution = star_formation_history(spec = spec,
-                zone_width = zone_width, tau=1, amplitude=burst_size, t1=5)
+                zone_width = zone_width, timescale2=1, amplitude=burst_size, t1=5)
+    elif spec == "threeexp":
+        model.evolution = star_formation_history(spec = spec,
+                zone_width = zone_width, timescale2=1, amplitude=burst_size, 
+                t1=5, amplitude3=0.2, t2=12)
     else:
         model.evolution = star_formation_history(spec = spec,
                 zone_width = zone_width)

@@ -7,7 +7,7 @@ from vice.yields import ccsne, sneia, agb
 Z_Sun = 0.014
 y_c_0 = 0.005
 y_c_cc_0=0.0028
-y_n_flat = 7.1e-4
+y_n_flat = 7.2e-4
 
 YC_AGB0 = {
         "cristallo11": 3.47e-4,
@@ -47,7 +47,7 @@ def set_defaults():
 
     ccsne.settings["fe"] = 0.0012
     sneia.settings["fe"] = 0.0017
-    sneia.settings["fe"] *= 10**0.1 # correction for mdf, used in
+    # sneia.settings["fe"] *= 10**0.1 # correction for mdf, used in
 
     ccsne.settings["sr"] = 3.5e-8
     sneia.settings["sr"] = 0
@@ -55,6 +55,7 @@ def set_defaults():
     ccsne.settings["n"] = 3.6e-4
 
     sneia.settings["c"] = 0
+    sneia.settings["n"] = 0
 
     ccsne.settings["mg"] = 0.00185
     sneia.settings["mg"] = 0
@@ -73,7 +74,7 @@ def set_agb_elem(elem, study, factor):
         agb.settings[elem] = amplified_yields(elem, study, factor)
 
 def set_agb(study="cristallo11", factor=1):
-    for elem in ["c", "sr", "o", "mg"]:
+    for elem in ["c", "o", "mg"]:
         set_agb_elem(elem, study, factor)
 
 
@@ -135,6 +136,7 @@ def calc_alpha(agb_model="cristallo11" , eta=1, oob=False, f_agb=0.2):
 
     if oob:
         alpha_agb = 1
+        f_agb = YC_AGB0[agb_model]/y_c_0
     else:
         alpha_agb = f_agb*y_c/y_agb
 

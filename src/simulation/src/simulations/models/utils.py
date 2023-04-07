@@ -299,6 +299,54 @@ class double_exponential(modified_exponential):
 	def __call__(self, time):
 		return  super().__call__(time) + (time>self.t1)*self.amplitude * m.exp(-(time-self.t1)/self.timescale2)
 
+class triple_exponential(modified_exponential):
+
+	r"""
+	The modified exponential evolution employed by the fiducial inside-out
+	models in Johnson et al. (2021), defined in the following manner:
+
+	.. math:: f(t) \sim (1 - e^{-t/\tau_\text{rise}})e^{-t/\tau}
+
+	Inherits from ``exponential``.
+
+	Parameters
+	----------
+	**kwargs : real numbers
+		All attributes can be assigned via keyword arguments on initialization.
+
+	Attributes
+	----------
+	rise : real number [default : 1]
+		The rise time :math:`\tau_\text{rise}` of the modified exponential.
+
+	Other attributes are inherited from the ``exponential`` object.
+
+	Calling
+	-------
+	This object can be called with only the time coordinate in the same units
+	as the attribute ``timescale``. The result will be in the units of the
+	attribute ``norm``.
+	"""
+
+	def __init__(self, norm=1, timescale=2, timescale2=1, amplitude=1,
+			timescale3=1, amplitude3=0.5, t1=5, t2=10, rise=1):
+		super().__init__(norm = norm, timescale = timescale, rise=rise)
+		self.timescale2 = timescale2
+		self.amplitude = amplitude
+		self.t1 = t1
+		self.timescale3 = timescale3
+		self.t2 = t2
+		self.amplitude3 = amplitude3
+
+
+	def __call__(self, time):
+		return  (super().__call__(time)
+			+ (time>self.t1) * self.amplitude 
+			* m.exp(-(time-self.t1)/self.timescale2)  
+			+ (time>self.t2) * self.amplitude3 
+			* m.exp(-(time-self.t2)/self.timescale3) 
+			)
+
 class gaussian:
 
 	r"""

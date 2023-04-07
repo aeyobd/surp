@@ -45,6 +45,7 @@ class diskmodel(vice.milkyway):
 		- "lateburst"
 		- "outerburst"
         - "twoexp"
+        - "threeexp"
 
 	verbose : ``bool`` [default : True]
 		Whether or not the run the models with verbose output.
@@ -158,7 +159,8 @@ class star_formation_history:
 					"insideout":	models.insideout,
 					"lateburst":	models.lateburst,
 					"outerburst":	models.outerburst,
-					"twoexp":	models.twoexp
+					"twoexp":	models.twoexp,
+					"threeexp":	models.threeexp,
 				}[spec.lower()]((i + 0.5) * zone_width, **kwargs))
 			i += 1
 
