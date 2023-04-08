@@ -8,7 +8,7 @@
 \usepackage[letterpaper, top=1in]{geometry}
 \usepackage{titlesec}
 
-\titleformat{\chapter}{\normalfont\normalsize\centering}{Chapter \thechapter:}{1em}{}
+\titleformat{\chapter}{\normalfont\normalsize\centering}{\thechapter.}{1em}{}
 \titleformat{\section}{\normalfont\normalsize\centering}{\thesection}{1em}{}
 \titleformat{\subsection}{\normalfont\normalsize\centering}{\thesubsection}{1em}{}
 % \titlespacing*{\chapter}{0pt}{0pt}{40pt} 
@@ -45,7 +45,8 @@
 % \usepackage{amssymb}	% Extra maths symbols
 
 \usepackage{graphicx}	% Including figure files
-\graphicspath{{../figures/}} \usepackage{natbib}
+\graphicspath{{../figures/}} 
+\usepackage{natbib}
 \usepackage[nottoc,numbib]{tocbibind}
 % \usepackage[titles]{tocloft} % fig titles
 % \renewcommand{\cftfigpresnum}{\figurename\enspace}
@@ -119,19 +120,20 @@
 
 \begin{titlepage}
    \begin{center}
-       \vfill
+       \vspace*{5\baselineskip}
        \textbf{The Galactic Chemical Evolution of Carbon} \\
-       [3\baselineskip]
+       \vspace*{3\baselineskip}
         Undergraduate Research Thesis\\
-       [3\baselineskip]
+       \vspace*{3\baselineskip}
     Presented in partial fulfillment of the requirements for graduation \textit{with research distinction in Astronomy and Astrophysics} in the College of Arts and Sciences of The Ohio State University \\
-       [3\baselineskip]
+       \vspace*{3\baselineskip}
         by \\
+       \vspace*{3\baselineskip}
        {Daniel Alexander Boyea}\\
-       [3\baselineskip]
+       \vspace*{3\baselineskip}
        The Ohio State University\\
        April 2023\\
-       [3\baselineskip]
+       \vspace*{3\baselineskip}
        Project Advisor: David Weinberg, Department of Astronomy
        % Rolando Vald\'es Aguilar\\
        \vfill
@@ -172,7 +174,7 @@ My Family (and Arya, our lovely doodle).
 
 \chapter{Introduction}
 
-Galactic chemical evolution (GCE) aims to understand the chemical and star formation history of galaxies. At the core of GCE models are stellar yields---the amount of each chemical element stars produce (or destroy). Different chemical elements are produced in different sites, so stars leave traces of the Galaxy's chemical history. Through \textit{Galactic Archeology}, I can reconstruct the history of our galaxy by investigating the clues left in the remains---stars from the early universe \citep{Weinberg+22, emily+19}.
+Galactic chemical evolution (GCE) aims to understand the chemical and star formation history of galaxies. At the core of GCE models are stellar yields---the amount of each chemical element stars produce (or destroy). Different chemical elements are produced in different sites, so stars leave traces of the Galaxy's chemical history. Through \textit{Galactic Archeology}, we can reconstruct the history of our galaxy by investigating the clues left in the remains---stars from the early universe \citep{Weinberg+22, emily+19}.
 
 I aim to understand the GCE of carbon, where the element is produced and how the abundances of this element evolve over time. Why stuy carbon? Carbon is unique nucleosynthetically, one of few light elements (along with nitrogen) which are produced in Asymptotic Giant Branch (AGB) stars \citep[for example,][]{jennifer19, KL14}. Carbon and nitrogen are well studied elements as they are easy to observe in stellar spectra, even at the lowest metallicities \citep{FN15} SOMETHING ELSE?. Additionally, carbon and nitrogen are used as age indicators in red giant branch stars \citep[e.g.][]{martig16, MG15, fiorenzo+21}.
 While we know carbon is produced in AGB stars and core collapse supernovae (CCSNe), we still have limited understanding of the importaince and metallicity-dependence of each process.
