@@ -19,8 +19,7 @@
   }
 
 \usepackage{setspace}
-\usepackage{array}
-\setlength\extrarowheight{5pt}
+\usepackage{booktabs}
 
 \usepackage{etoolbox}% http://ctan.org/pkg/etoolbox
 \makeatletter
@@ -28,6 +27,7 @@
 \patchcmd{\@chapter}{\addtocontents{lof}{\protect\addvspace{10\p@}}}{}{}{}% LoF
 \patchcmd{\@chapter}{\addtocontents{lot}{\protect\addvspace{10\p@}}}{}{}{}% LoT
 \makeatother
+\usepackage[tableposition=above]{caption}
 
 \usepackage{amsmath}	% Advanced maths commands
 \usepackage{txfonts}
@@ -48,6 +48,8 @@
 \graphicspath{{../figures/}} 
 \usepackage{natbib}
 \usepackage[nottoc,numbib]{tocbibind}
+
+\usepackage{isotope}
 % \usepackage[titles]{tocloft} % fig titles
 % \renewcommand{\cftfigpresnum}{\figurename\enspace}
 % \setlength{\cftfignumwidth}{5em}
@@ -97,6 +99,7 @@
 \newcommand\T{\rule{0pt}{2.6ex}}       % Top strut
 \newcommand\B{\rule[-1.2ex]{0pt}{0pt}} % Bottom strut
 \newcommand{\possesivecite}[1]{\citeauthor{#1}'s \citeyearpar{#1}}
+\newcommand{\alp}{$\alpha$}
 
 \setcitestyle{aysep={}} 
 \setcitestyle{notesep={; }} 
@@ -145,9 +148,9 @@
 % Abstract of the paper
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
-Stellar evolution models provide highly uncertain predictions for elemental yields due to our limited understanding of stellar physics. In this paper, I aim to estimate the nucleosynthetic yields of carbon using galactic chemical evolution models. 
+Stellar evolution models provide highly uncertain predictions for elemental yields due to our limited understanding of stellar physics. In this paper, I aim to estimate the nucleosynthetic yields of C using galactic chemical evolution models. 
 
-I find that the AGB stars make up a fraction $0.20_{-20}^{+80}$ of total carbon production at late times. 
+I find that the AGB stars make up a fraction $0.20_{-20}^{+80}$ of total C production at late times. 
 
 \chapter*{Acknowledgements}
 \addcontentsline{toc}{chapter}{Acknowledgements}
@@ -174,60 +177,57 @@ My Family (and Arya, our lovely doodle).
 
 \chapter{Introduction}
 
-Galactic chemical evolution (GCE) aims to understand the chemical and star formation history of galaxies. At the core of GCE models are stellar yields---the amount of each chemical element stars produce (or destroy). Different chemical elements are produced in different sites, so stars leave traces of the Galaxy's chemical history. Through \textit{Galactic Archeology}, we can reconstruct the history of our galaxy by investigating the clues left in the remains---stars from the early universe \citep{Weinberg+22, emily+19}.
+Galactic chemical evolution (GCE) aims to understand the chemical and star formation histories of galaxies. At the core of GCE models are stellar yields---the amount of each chemical element stars produce (or destroy). The chemical elements are produced in different amounts by different stars, leaving Galaxy's evolutionary history. Through \textit{Galactic Archeology}, we can reconstruct the history of our galaxy by investigating the clues left in reminants from the past \citep{Weinberg+22, emily+19}.
 
-I aim to understand the GCE of carbon, where the element is produced and how the abundances of this element evolve over time. Why stuy carbon? Carbon is unique nucleosynthetically, one of few light elements (along with nitrogen) which are produced in Asymptotic Giant Branch (AGB) stars \citep[for example,][]{jennifer19, KL14}. Carbon and nitrogen are well studied elements as they are easy to observe in stellar spectra, even at the lowest metallicities \citep{FN15} SOMETHING ELSE?. Additionally, carbon and nitrogen are used as age indicators in red giant branch stars \citep[e.g.][]{martig16, MG15, fiorenzo+21}.
-While we know carbon is produced in AGB stars and core collapse supernovae (CCSNe), we still have limited understanding of the importaince and metallicity-dependence of each process.
+Here, I aim to understand C enrichment---where it is produced and how its abundances evolve over time. Why study C? C is unique nucleosynthetically, one of few light elements (along with N) produced in Asymptotic Giant Branch (AGB) stars \citep[e.g.][]{jennifer19, KL14}. C and N are well studied elements as they are easy to observe in stellar spectra, even at the lowest metallicities \citep{FN15} SOMETHING ELSE?. Additionally, C and N are used as age indicators in red giant branch stars \citep[e.g.][]{martig16, MG15, fiorenzo+21}.
+While we know C is produced in AGB stars and core collapse supernovae (CCSNe), we still have limited understanding of the importaince and metallicity-dependence of each process.
 
+Empirically, gas-phase [C/O] ratios decrease with increasing [O/H] at the lowest metallicitis---in high redshift damped Lyman-alpha systems (DLAs)---and then [C/O] increases above $\rm [O/H] \approx 1$ (\citealt{berg+19,cooke+17}; see discussion in SECTION).
 
-We also know that there is evidence for non-monatonic carbon yield patterns. 
-pattern where carbon is more readily produced by both high metallicity and very low metallicity stars (CEMPS, early GCE results), but our picture. \citep{FN15,cooke+17,berg+19}.
+\cite{james+22} examend GCE models of N, an elements whose production is closely related to C. \cite{james+22} found trends in N and O abundances can be explained by the metallicity dependence of relatice N and O yields. Here, I extend their models to C and show that similar constraints on C and O relative yields can be obtained from observed abundance ratios.
 
-Stellar evolution models predict stellary yields, playing a crucial role in GCE.  However, these models are rife with uncertainties, limited by our understanding of critical physical processes such as nuclear reaction rates, convection, rotational mixing, opacity, and mass loss CITATIONS. Changes in opacity, rotation, reaction rates, and explodability can substantially affect carbon yields \citep{KL14,V13, LC18, emily+21}.
+We also know that there is evidence for non-monatonic C yield patterns. 
+pattern where C is more readily produced by both high metallicity and very low metallicity stars (CEMPS, early GCE results), but our picture. \citep{FN15,cooke+17,berg+19}.
+
+Despite their centrol role in GCE models, nucleosynthetic yields predicted by stellar evolution models are rife with uncertainties. Poorly understood processes, including mass loss, opacity, nuclear reaction rates, rotational mixing, and convection/convective boundaries each shape the production rates of atomic nuclei in stellar interios \citep{KL14,V13, LC18, emily+21}.
+Additionally, changes in massive star's explodabinitily can introduce a factor of \~2 change in population averaged-yields \citep{emily+21}.
+
+Stellar evolution models predict stellary yields, playing a crucial role in GCE.  However, these models are rife with uncertainties, limited by our understanding of critical physical processes such as nuclear reaction rates, convection, rotational mixing, opacity, and mass loss CITATIONS. Changes in opacity, rotation, reaction rates, and explodability can substantially affect C yields 
 
 GCE models typically use unmodified nucleosythetic predictions and attempt to create models matching observaions by varying star formation history and other parameters. I instead use the observations as a constraint, determining which yield assuptions are consistant with galactic abundance trends. 
 
-While there are many stellar measurments of carbon, accurately determining the birth abundance is more challenging. For example, when a star becomes a RGB star, material from the CNO-processed core \citep{fiorenzo+21,KL14}. Since this core-processed material is now carbon depleted and nitrogen enhanced, measurments of this star's atmosphere will no longer reflect the birth abundances of the star.  Additionaly, carbon is faint in HII regions and determining gas-phase abundances is challenging \citet{skillman+20}.
-Other surveys, such as GALAH, have unreliable carbon measurments with low detection rates \citep{emily+19}.
+While there are many stellar measurments of C, accurately determining the birth abundance is more challenging. For example, when a star becomes a RGB star, material from the CNO-processed core is mixed with the envelope in First Dredge Up (FDU) \citep{fiorenzo+21,KL14}. Since this core-processed material is now C depleted and N enhanced, measurments of this star's atmosphere will no longer reflect the birth abundances of the star.  Additionaly, C is faint in HII regions and determining gas-phase abundances is challenging \citet{skillman+20}.
+Other surveys, such as GALAH, have unreliable C measurments with low detection rates \citep{emily+19}.
 
 AGB stars are known to be importaint (cite) from stellar model predictions, previous GCE, and evidence from abundance patterns. (are there detections in PN?)
 
 CCSne are also important (.... SN reminant measurments)
 
-
-In Fig. \ref{fig:subgiants}, I present a sample of APOGEE subgiants. These subgiants were chosen based on their location in the HR diagram based on the criteria in \citet{jack_subgiant} also replicated in Appendix \ref{sec:jack}. Because subgiants have not undergone FDU, their surface abundances are an accurate reflection of the birth abundances (CITATION).  
-
-
+To this end, I use a sample of subgiant stars from APOGEE \citep{apogee17}. According to stellar evolution models (CITES), these stars have not yet experienced dredge-up. Their photospheric abundances should thus represent their birth composition.  In Fig. \ref{fig:subgiants}, I plot this sample, selected by criteria in \citet[see Appendix \ref{sec:jack}]{jack_subgiant}. These emperical resolults contain information on the relative C and O yields, which I use later in this work.
 
 
 \begin{figure}[htp]
     \includegraphics{subgiants_mgh.pdf}
     \includegraphics{subgiants_mgfe.pdf}
-    \caption[APOGEE Subgiants]{The [C/Mg] ratio against [Mg/H] (top) and [Mg/Fe] (bottom) for our sample of APOGEE subgiants. On the top, I plot high-$\alpha$ stars in blue and low-$\alpha$ stars in orange using the seperation defined in Equation \ref{eq:high_alpha}. On the bottom, I colorcode stars according to their [Mg/H] abundance.}
+    \caption[APOGEE Subgiants]{The [C/Mg] ratio against [Mg/H] (top) and [Mg/Fe] (bottom) for the \citet{jack_subgiant} sample of APOGEE subgiants. On the top, I plot high-$\alpha$ stars in blue and low-$\alpha$ stars in orange using the seperation defined in Equation \ref{eq:high_alpha}. On the bottom, I colorcode stars according to their [Mg/H] abundance.}
     \label{fig:subgiants}
 \end{figure}
 \chapter{Nucleosynthesis}
 
-Modern theoretical nucleosynthesis provides the starting point for our models.  I focus on three primary nucleosynthetic pathways: AGB stars, CCSne, and SNeIa. Each process has unique timescales and element production which I can trace through the tools of GCE. While carbon is only known to be produced in AGB stars and CCSNe, comparing carbon to iron production (from SNeIa) adds a valuable constraint to our models and insight into the delay-time production of carbon.
+Theoretical models of stellar nucleosynthesis provide the starting point of this investigation. I focus on three primary nucleosynthetic pathways: Asymptotic Giant Branch (AGB) stars, Core Collapse Supernovae (CCSNe), and Type Ia Supernovae (SNe Ia). Each process has unique timescales and yields, tracable through the tools of GCE. While C is only produced in AGB stars and CCSNe, comparing C to Fe, which is produced in SNe Ia, adds a valuable constraint on the delay-time distribution (DTD) of C enrichment.
 
-After a group of stars are formed, CCSNe from massive stars are the first enrichment, providing light elements such as C, O, and Mg and heavier elements such as Fe and beyond. Importaintly, $\alpha$ elements like O and Mg are only formed in CCSNe (in significant quantities). Next, low mass stars begin to reach the end of their lives. The dying breaths of AGB stars are known to be importaint sources of C, N, and a smattering of heavier elements.  Finally, the white dwarfs, including formation and time to collide/over-eat, explode, releasing much of Fe and nearby elements. 
+When a Single Stellar Population (SSP) forms, CCSNe are the first enrichment events. CCSNe provide light elements such as C, O, and Mg and heavier elements such as Fe and beyond. Metallicity-independent yields from CCSNe are the only statisticly significant source of O and Mg ($\alpha$ elements). Next, low mass stars begin to reach the end of their lives. The dying breaths of AGB stars are known to be importaint sources of C, N, and neutron capture elements.  Finally, white dwarfs explode, releasing Fe and other iron-peak elements.
 
-I focus on O and Mg as $\alpha$ elements only formed in CCSNe, and use Fe to
-trace delayed enrichment from SNeIa. C and N are both formed in AGB and CCSNe.
+Stellar measurments of Mg are more reliable, but O abundances are easier to measure in HII regions. 
+I therefore use Mg abundances from the \citet{jack_subgiant} subgiant sample as my primary emperical constraint. However, I use O abundances for gas-sphase measurments and low-metallicity stars (\S \ref{sec:gas}). I model both Mg and O as metallicity-independent population-averaged yields dominated by massive stars. ${\rm [O/Mg]}\approx 0$ across a wide range of metallicities in APOGEE \citep{Weinberg+19, Weinberg+22}. 
+I adopt O and Mg relative yields given by the solar mixture of \cite{asplund+09} <MATH>.
 
-There are two $\alpha$-elements I care about: Mg and O. Stellar observations
-of magnesium are more reliable but oxygen abundances are easier to measure in
-HII regions. I assume that both Mg and O are produced entirely in CCSNe with
-constant, metallicity-independent yields. Thus $\text{[Mg/H]} = \text{[O/H]} =
-[\alpha/\text{H}]$ in our models. (Observational validation?)
+To calculate the IMF-weighted\footnote{IMF: Initial Mass Function} net yields of C, I use the Versatile Integrator for Chemical Evolution code (\VICE\footnote{\VICE~is available at \url{https://github.com/giganano/VICE}}).
+As stellar evolution models predict per-star yields of a given mass, I need to integrate over the IMF to determine the total yields in terms of star formation.
 
-For carbon, the dominant producer is from massive stars which eject carbon fused in their cores during CCSNe. 
-
-To calculate the net initial mass function (IMF)-weighted yields, I use the \citet{james+21} model (hereafter \JJ) with the Versatile Integrator for Chemical Evolution code (\VICE).
-As stellar evolution models predict per-star yields for stars of each mass, we need to integrate over the IMF to determine the total yields in terms of star formation.
-
-As the focus of this work is on carbon yields, I keep all other yields fixed. The yields I use are based on \citet{james+21, james+22}. 
-
+In the interest of focusing on carbon yields, I hold yields of other elements fixed. 
+I adopt yields from \citet{james+21, james+22}.
+In Table \ref{tab:fiducial_mod}, I tabulate yield values, in units of a stellar population's birth mass.
 Also following \citet{james+21, james+22}, I take the SNeIa Delay Time distribution to be a
 $t^{-1.1}$ law suggested by the observations of \citet{maoz+12}.
 
@@ -236,130 +236,145 @@ $t^{-1.1}$ law suggested by the observations of \citet{maoz+12}.
 	\centering
     \caption[Fiducial Model]{Yields for the fiducial model}
 	\label{tab:fiducial_mod}
+
 	\begin{tabular}{l l l l}
-		\hline
+		\toprule
         Element & $\Ycc$ & $\tilde{y}^{\rm AGB}$ & $y^{\rm SNe Ia}$ \\
-		\hline
+		\midrule
         C & $0.0028 + 0.001(Z/Z_\odot)$ & $2.9\times{\rm C11}$ &  0 \\
         Mg & 0.00185 & 0 & 0 \\
         Fe & 0.0012 & 0 & 0.00214 \\
         N & 0.00072 & $9\times10^{-4}(Z/Z_\odot)M$ & 0\\
-		\hline
+		\bottomrule
 	\end{tabular}
 \end{table}
 
 \section{Asymptotic giant branch stars}\label{sec:agb}
 
 
-An AGB star is a low mass ($\lesssim 8 M_{\sun}$) star during the final phases of evolution.  In an AGB star, two competing processes determine the outcome of carbon production.
-Third Dredge Up (TDU) is needed to eject carbon from the star, enriching the surface with helium-burning-processed material from the core. But Hot Bottom Burning (HBB) at the base of the convection layer changes carbon into nitrogen. 
-TDU occurs during thermal pulsations, where the convective layer of the star passes into the inner layers with He-burning products which mixes in C and O into the envelope. In contrast, HBB may happen if the base of the convective envelope reaches about 50MK, initiating the CNO cycle, converting most C12 into N14. 
+An AGB star is a low mass ($\lesssim 8 M_{\sun}$) star during its final phase of evolution.  In an AGB star, two competing processes determine the outcome of C production: Third Drege Up (TDU) and Hot Bottom Burning (HBB).  DU accompianies thermal puslations in AGB stars. Durring a TDU event, material from the CO core is mixed with material exposed to partial He-shell burning, increasing C and O abundances in the envelope \citep{KL14}.
+HBB is the activation of proton capture reactions, and the CNO cycle%
+\footnote{The CNO (I) cycle is
+\isotope[12]{C}(p, $\gamma$)
+\isotope[13]{N}($\beta^+ \nu_e$)
+\isotope[13]{C}(p, $\gamma$)
+\isotope[14]{N}(p, $\gamma$)
+\isotope[15]{O}($\beta^{+}\nu_e$)
+\isotope[15]{N}(p, \alp)
+\isotope[12]{C}.
+ Other minor branches of the CNO cycle are not relevant here.
+ \citep{solar-fusion}.
+}
+at the base of the convective envelope. Because the $^{14}$N(p, $\alpha$) proton capture is the slowest component of the CNO cycle \citep{solar-fusion}, the CNO cycle converts nearly all \isotope[12]{C} into \isotope[14]{N}.
+As a result, when both TDU and HBB occur, \isotope[12]{C} yields are lowered (see discussion in \citealt{james+22} and \citealt{ventura+13}).
 
-Carbon abundances are strongly affected by CNO cycle processing in stars. The CNO cycle is one of two series of nuclear reactions( $^{12}$C(p, $\gamma$)$^{13}$N($\beta^+ \nu_e$)$^{14}$N(p, $\gamma$)$^{15}$O($\beta^+\nu_e$)$^{15}$N(p,$\alpha$)$^{12}$C
-
-Because the $^{14}$N(p, $\alpha$) proton capture is the slowest component of the CNO cycle ****, the CNO cycle, to first order, converts all $^{12}$C into $^{14}N$. 
-
-The differences in yields between AGB models depend on the mass loss rate, treatment of convection, and nuclear reaction rates. 
-
-In this work, I explore four different sets of AGB star yields representative of the variety of options which also provide reasonably well sampled grids in metallicity and mass necessary for chemical evolution studies.
+In this work, I explore four different sets of AGB star yield tables from literature, providing well sampled grids in metallicity and mass for use in chemical evolution models. 
 \begin{itemize}
     \item C11: \citet{cristallo+11} and \citet{cristallo+15}
     \item K10: \citet{karakas10}
     \item V13: \citet{ventura+13}
     \item K16: \citet{KL16} \citet{karakas+18}
 \end{itemize}
-Unless otherwise noted, C11 is the model I choose as our fiducial AGB yield. 
-
-I use IMF-Integrated yields calculated with \VICE~throughout this paper (see
-section \ref{sec:vice}, \citet{james+21, james+22}). For an element X and star
-with mass $M$, the stellar yield $y$ is defined as the net production of X relative 
-to $M$, or
+I use C11 as the fiducial AGB yield.
+For an element X and star with mass $M$, the stellar yield $\tilde{y}$ is defined as the net production of X relative to $M$, or
 \begin{equation}
-    y_{\rm X} = \frac{M_{\rm X,\ ejected} - Z_{0, X} M_{\rm ejected}}{M}   
+    \tilde{y}_{\rm X} = \frac{M_{\rm X,\ ejected} - Z_{0, X} M_{\rm ejected}}{M}   
 \end{equation}
-where I let $M_{\rm ejected}$ and $M_{\rm X, ejected}$ be the total ejected
-stellar mass (through winds and supernovae ejecta) and the ejected mass of X,
-and $Z_{0, X}$ was the birth mass fraction of element X.
-
-More useful for GCE are Initial Mass Function (IMF) yields, where I sum up the
-contributions of all stars which produce an element.
-I define the IMF-integrated yield of X with: 
-\begin{equation}
-Y_{\rm X}^{\rm proc}(Z) = \int_{M_{\rm min}}^{M_{\rm max}} y_{\rm X}^{\rm proc}(M, Z)\ \Phi(M)  \ dM
-\end{equation}
-Where $\Phi(M) = \frac{dN}{dM}/ \int_{M_{\rm min}}^{M_{\rm max}} \frac{dN}{dM}\ dM$ is the normalized IMF, $M_{\rm min}$ and $M_{\rm max}$ are the minimum and maximum mass of stars, which I take to be $0.08 M_{\sun}$ and $100 M_{\sun}$ respectively; and $\frac{dN}{dM}$ is the initial mass function, the frequency of stars born between $M$ and $M+dM$.
+where $M_{\rm ejected}$ and $M_{\rm X, ejected}$  are the total ejected mass of the envelope and the element X, respectively. 
 
 
-Fig. \ref{fig:y_agb} compares the net fractional AGB carbon yield, $m_\text{C}^\text{AGB}(M, Z)$ for each AGB model I consider. Note that the yields may be negative when the birth abundance is higher than the carbon abundance of the material ejected back to the ISM. 
 
-Most models agree on the qualitative shape of the net fractional AGB carbon yield. The stars with the highest fractional carbon yields are between 2 to 4 solar masses, depending on the metallicity and model. Both lower and higher mass stars produce less carbon, and high mass stars may even destroy carbon at high metallicity due to highly efficient HBB. And all models agree that the carbon yield generally decreases with metallicity. 
+Fig. \ref{fig:y_agb} compares the AGB C yield $\tilde{y}_\text{C}^\text{AGB}(M, Z)$ for each model I consider. 
+The yields may be negative when the birth abundance is higher than the C abundance of the material ejected back to the ISM. 
+Most models agree on the qualitative shape of the net fractional AGB C yield---% 
+stars with mass $\sim 2--4 M_\odot$ have highest fractional C yields, with the mass of the peak increasing and overal yields decreasing with increasing $Z$.  High mass, high $Z$ stars destroy \isotope[12]{C} due to HBB.
 
+In Fig. \ref{fig:agb-ssp}, we plot the total production of C by AGB stars as a function of SSP age.
+Effectively, this is equivalent to integrating Eq. \ref{eq:imf-yield} down to $M_{to}$, the turnoff mass for time $t$. 
+\footnote{In our model, the mass-lifetime relation is
+$\log \tau_M = 1.02 - 3.57\log M + 0.90 \left(\log M\right)^2$,
+where $\tau_M$ is in Gyr,
+from \citet{larson74}.}
+As the mass range $2\lesssim M \lesssim 4$ is most important for C production, the characteristic delay time is $\sim 1$Gyr. In contrast, Fe from SNeIa (plotted as the dashed black line in Fig \ref{fig:agb-ssp}) has a longer characteristic delay time.
 
-Metallicity dependence:
-V13 is the only model that stands out, showing a non-monotonic metallicity dependence, however this effect is only for models with [M/H]$\leq -1$. Otherwise the major differences between the models are the precise amount of carbon and the slope of the metallicity dependence. For example, the three models C11, K10, and K16 predict $y_\text{C}^\text{AGB}$ to be between 0.006 and 0.008 at solar metallicity, but C11 has a much shallower metallicity dependence than the K10 and K16 models. And at solar, V13 predicts a value at around 0.004 so the models are all within about a factor of 2. 
+K10 and K16 weight C production more heavily towards massive stars resulting in a faster enrichment delay time, whereas the C11 and V13 models predict a slightly longer timescale with order 1Gyr, but little to no C is produced more than 2Gyr after a star formation event. This is in contrast to iron which is still produced by SNeIa up to 10Gyr after a star formation event. 
+As shown in the right panel of Fig. \ref{fig:agb-ssp}, with increasing $Z$, C enrichment occurs earlier, and C destruction in low mass stars leads to a declining C abundance at late times.
+    
 
-Another difference is the speed at which equilibrium is reached. K10 and K16 weight carbon production more heavily towards massive stars resulting in a faster time to equilibrium, whereas the C11 and V13 models predict a slightly longer timescale with order 1Gyr, but little to no carbon is produced more than 2Gyr after a star formation event. This is in contrast to iron which is still produced by SNeIa up to 10Gyr after a star formation event. 
-
-\begin{figure*}
+\begin{figure}
     \centering
- 	    \includegraphics[scale=1]{agb_yields.pdf}\\
-
-        \caption[AGB carbon yields]{The net fractional AGB carbon yield ($\tilde{y}$) plotted as a function of initial stellar mass $M$. Metallicity is colorcoded according to the colorbar. I plot $\tilde{y}=0$ for reference. Each panel represents yields from one of four AGB models: C11 \citep{cristallo+11, cristallo+15}, K10 \citep{karakas10}, V13 \citep{ventura+13,ventura+14,ventura+18}, and K16 \citep{KL16, karakas+18}.
-            %C11 reports values at metallicities $Z=$ 0.0001, 0.0003, 0.001, 0.002, 0.003, 0.006, 0.008, 0.01, 0.014, 0.02; K10 at $Z=$0.0001, 0.004, 0.008, 0.02; V13 at $Z=$0.0003, 0.001, 0.002, 0.004, 0.008, 0.014, 0.04; and K16 at $Z=$0.0028, 0.007, 0.014, 0.03.
+ 	    \includegraphics[scale=1]{agb_yields.pdf}
+        \caption[AGB C yields]{The net fractional AGB C yield ($\tilde{y}$) plotted as a function of initial stellar mass $M$. Metallicity is colorcoded according to the colorbar. I plot $\tilde{y}=0$ for reference. Each panel represents yields from one of four AGB models: C11 \citep{cristallo+11, cristallo+15}, K10 \citep{karakas10}, V13 \citep{ventura+13,ventura+14,ventura+18}, and K16 \citep{KL16, karakas+18}.
         }
-            \label{fig:y_agb}
-\end{figure*}
-
+        \label{fig:y_agb}
+\end{figure}
 \begin{figure}
     \includegraphics[scale=1]{y_agb_t2.pdf}
 
     \caption[AGB yields delay time distribution]{
-        Carbon production by AGB stars as a function of SSP age, normalized to the total mass $M_{\rm tot}$ produced at $t=10$ Gyr. Left: The four AGB yield models from liturature  at solar metallicity (C11, K10, V13, or K16). The delay time distribution of type Ia supernovae ($\propto t^{-1.1}$) is plotted as a dashed black line for comparison. Each model has a similarly shaped DTD, and most AGB enrichment occurs before 1 Gyr. Right: The C11 AGB model at different metallicities. With increasing metallicity, carbon enrichment occurs earlier, and the DTD eventually becomes non-monotonic.
-    }
-
+        C production by AGB stars as a function of SSP age, normalized to the total mass $M_{\rm tot}$ produced at $t=10$ Gyr. Left: The four AGB yield models from literature at solar metallicity (C11, K10, V13, or K16). The delay time distribution of type Ia supernovae ($\propto t^{-1.1}$) is plotted as a dashed black line for comparison. Right: The C11 AGB model at different metallicities. }
+    \label{fig:agb-ssp}
 \end{figure}
 
-\begin{figure*}
+Though per-star yieldds are necessary to compute AGB star enrichment rates in GCE models, IMF-averaged yields are useful in interpreting their predictions. For a yield $y$ from a star of mass M and initial metallicity $Z$, the IMF-averaged yield is given by 
+More useful for GCE are Initial Mass Function (IMF) yields, where I sum up the
+contributions of all stars which produce an element.
+I define the IMF-integrated yield of X with: 
+
+
+\begin{equation} \label{eq:imf-yield}
+    y_{\rm X}^{\rm proc}(Z) = 
+    \int_{M_{\rm min}}^{M_{\rm max}} 
+    \tilde{y}_{\rm X}^{\rm proc}(M, Z)
+    \frac{dN}{dM}  \ dM
+\end{equation}
+
+where $\frac{dN}{dM}$ is the normalized IMF, $M_{\rm min}$ and $M_{\rm max}$ are the minimum and maximum mass of stars, which I take to be $0.08 M_{\sun}$ and $100 M_{\sun}$ respectively. For AGB stars, the yields are truncated above 8 $M_{\odot}$. 
+
+In Fig. \ref{fig:yagb-z}, I plot the IMF-averaged C yields for each AGB model as a function of metallicity $Z$.
+V13 differs that it shows a non-monotonic metallicity dependence. However, this effect is only form models with $\log Z/Z_\odot \lesssim -1$.
+Otherwise, models only differ in the yield normalization and strength of metallicity dependence. All models predict yields within a factor of $\sim 2$.
+For example, the three models C11, K10, and K16 predict $y_\text{C}^\text{AGB}$ to be between 0.006 and 0.008 at solar metallicity, but C11 has a much shallower metallicity dependence than the K10 and K16 models. V13 instead predicts a yield $\sim 0.004$.
+
+\begin{figure}
     \centering
-    
     \includegraphics[scale=1]{y_agb_vs_z.pdf}
 
-    \caption[AGB yield metallicity dependence]{The net fractional IMF-weighted AGB carbon yield $\Ycagb$ as a function of metallicity for each of our AGB yield models.
+    \caption[AGB yield metallicity dependence]{The net fractional IMF-weighted AGB C yield $\Ycagb$ as a function of metallicity for each of our AGB yield models.
     }
-
-\end{figure*}
+    \label{fig:yagb-z}
+\end{figure}
 
 \section{Core collapse supernovae}
 
 
-Massive stars form $^{12}$C through the triple--$\alpha$ process. However, the carbon has to get out of the star to be useful. 
+Massive stars form $^{12}$C in their cores through the triple--$\alpha$ process. However, only C ejected through supernovae and stellar winds contributes to the yield. 
 While there are many stellar models providing predictions of CCSNe yields, the results of these models are highly uncertain due to the many stellar modeling uncertainties. 
 
-I summarise many of the predictions of stellar models in Fig. \ref{fig:y_cc}. 
+In Fig. \ref{fig:y_cc}, I plot calculations of the IMF-integrated yields, using Eq. \ref{eq:imf-yield} (computed using \VICE's \texttt{vice.yields.ccsne.fractional} function). On the right, I also show the CCSNe-[C/Mg] ratio, defined by
 \begin{equation}\label{eq:c_mg_cc}
-    {\rm [C/O]^{CC}} = \log_{10}\left( \frac{y_{\rm C}^{\rm CC}}{y_{\rm O}^{\rm CC}}\right) - \log_{10} \left( \frac{Z_{C, \sun }}{Z_{O, \sun }} \right)
+    {\rm [C/Mg]^{CC}} = \log_{10}\left( \frac{\Ycc}{\Yoc}\right) - \log_{10} \left( \frac{Z_{{\rm C},\ \sun }}{Z_{{\rm Mg},\ \sun }} \right).
 \end{equation}
-Notice how even these ratios 
-
-
+In other words, ${\rm [C/Mg]^{CC}}$ describes what [C/Mg] would be if CCSNe were the only process producing C.
+Notice that even at $Z=Z_\odot$, there is a wide range ($\sim 1$ dex) in predicted $\Ycc$. 
 
     \begin{itemize}
-        \item Wide range in predictions, exacerbated to 1 dex range when including variance in oxygen predictions
-        \item (explain) most models have a near-metallicity independent oxygen yield, so I choose the fiducial value of 0.015 despite varience in $y_O^{cc}$
-        \item The fiducial value, where I choose the carbon yield from Sukhbold+16, may be above most predictions of carbon yields but is within the range of yield ratios
-        \item the fiducial value would reach an equilibrium carbon yield of -0.1 without AGB stars
-        \item Rotation in LC18 appears to increase metallicity dependence of carbon production (read this paper more carefully)
-        \item NKT and LC agree in positive metallicity depenent yields
+        \item Massive stars should dominate C yields, GCE models indicate similar results \citep[e.g.][]{prantzos+18,rybizki+17}.  
+        \item Rotation in LC18 appears to increase metallicity dependence of C production (read this paper more carefully)
+        \item NKT and LC (with rotation)agree in positive metallicity depenent yields
+        \item [C/Mg]
+        \item The fiducial value, where I choose the C yield from Sukhbold+16, may be above most predictions of C yields but is within the range of yield ratios
+        \item the fiducial value would reach an equilibrium C yield of -0.1 without AGB stars
     \end{itemize}
     
 
 \begin{figure}[htp]
     \centering
     \includegraphics{y_c_cc.pdf}
-    \caption[CCSNe carbon yields]{
-        Carbon yields from massive stars.
-        Top: The net fractional IMF-weighted CCSNe yield of carbon (computed using \VICE's \texttt{vice.yields.ccsne.fractional} function) as a function of metallicity.
-        Bottom: The CCSNe carbon to magnisium abundance ratio, defined in Equasion \ref{eq:c_mg_cc}. The black line represents the carbon yield of the fiducial model,
+    \caption[CCSNe C yields]{
+        C yields from massive stars.
+        Top: The IMF-weighted CCSNe yield of C a function of metallicity.
+        Bottom: The CCSNe [C/Mg] abundance ratio, defined in Eq. \ref{eq:c_mg_cc}. The black line represents the C yield of the fiducial model,
     $\Ycc = 0.0028 + 0.001 (Z/Z_{\odot})$. 
     \citet[red triangles]{WW95}, \citet[orange squares and diamonds]{sukhbold+16}, 
     \citet[green stars]{NKT13}, and \citet[blue circles]{LC18}. \citet{sukhbold+16} report yields for different black hole landscales, while \citet{LC18} provide yields at different roational velocities.
@@ -370,20 +385,22 @@ The pink line represents the C11 AGB model.
 
 \chapter{The Equilibrium Approximation}\label{sec:equilibrium}
 
-Chemical abundances reach an equilibrium. At least with simple enough assumptions. The new elements synthesized in stars balance against elements lost to galactic winds and locked in stellar reminants. While our galaxy is likely not in perfect equilibrium or described by a single, homogenous chemical region, I can still use an equilibrium approximation to understand total yields \citep[e.g.][]{james_dwarf,james+22,WAF17}. 
+In the presence of metal-poor gas accretion and feedback-driven outflows, galaxies reach an equilibrium abundance in which production of new metals is balanced by losses to new stars and outflows \citep{larson72, dalcanton07, FD08, PS11, lilly13}.
+While our galaxy is likely not in perfect equilibrium or described by a single, homogenous chemical region, the equilibrium approximation is nevertheless useful in understanding yields and metallicity dependence \citep[e.g.][]{james_dwarf,james+22,WAF17}. 
 
-Following the formalism of \citet{WAF17}, I assume a simple one-zone chemical evolution model. The gas and stars are considered to be homogenously and instantaneusly mixed, so I can represent all quantaties as scalars.
-I define $M_{X}$ to be the mass of element X in the gas phase, $\dot{M}_\star$ to be the star fomation rate (in M$_\odot$ yr$^{-1}$). $\eta$ is the mass loading factor, $\eta=\dot{M}_{\rm outflow}/\dot{M}_\star$, representing the strength of outflows. $r$ is the recycling fraction, i.e. the net fraction of new star formation which will be returned to the ISM. 
+I assume a simple ``one-zone'' chemical evolution model \cite[e.g.][]{tinsley80, pagel09, matteucci21}.  The gas and stars are homogenously and instantaneusly mixed, so spacial dependence is neglected.
 
-Given the total IMF-weighted yield of magnesium, $y_{\rm Mg}$, I can write the change in the ISM mass of magnesium, $\dot{M}_{\rm Mg}$ as the sum of newly produced elements, elements lost inside stellar remanents, and elements lost to galactic outflows.
+I define $M_{X}$ to be the mass of element X in the gas phase, $\dot{M}_\star$ to be the star fomation rate (in M$_\odot$ yr$^{-1}$), and $\eta$ to be the mass loading factor $\eta\equiv\dot{M}_{\rm outflow}/\dot{M}_\star$ representing the strength of outflows. 
+SSPs return a fraction $r$ of their birth mass back to the ISM, due to ejected stellar envelopes. $r\approx0.4$ for a \citet{kroupa01} IMF.
+Given the IMF-weighted yield of Mg $y_{\rm Mg}$, the rate of change in the ISM mass of Mg $\dot{M}_{\rm Mg}$ is a simple sum of sources and sinks,
 \begin{equation}
-    \frac{d{M}_{\rm Mg}}{dt} = \dot{M}_{\rm Mg,~new} - \dot{M}_{\rm Mg~reminants} - \dot{M}_{\rm Mg,~outflows}
+    \dot{M}_{\rm Mg} = \dot{M}_{\rm Mg,~new} - \dot{M}_{\rm Mg~remnants} - \dot{M}_{\rm Mg,~outflows},
 \end{equation}
-The newly produced mass can be written in terms of the yield, $\dot{M}_{X,\rm~new}=y_X\dot{M}_\star$. In terms of the return mass fraction of stars $r$, the mass lost to reminants is $Z_X (1-r)\dot{M}_\star$.  And, the outflows deplete a mass $Z_X \eta\dot{M}_\star$. Substituting, 
+where the first term on the right-hand side describes CCSNe enrichment. 
+In terms of the return mass fraction of stars $r$, the mass lost to remnants is $Z_X (1-r)\dot{M}_\star$.  And, the outflows deplete a mass $Z_X \eta\dot{M}_\star$. Substituting, 
 \begin{equation}
-    \frac{d{M}_{X}}{dt} = y_{X} \dot{M}_\star - (1 + \eta - r) Z_{X} \dot{M}_\star
+    \dot{M}_{\rm Mg}= y_{X} \dot{M}_\star - (1 + \eta - r) Z_{X} \dot{M}_\star.
 \end{equation}
-\citep{WAF17}.
 Assuming an exponentially declining star formation history, $\dot{M}_\star \propto e^{-t/\tau_{\rm sfh}}$, this equation can be solved analytically. 
 To find equilibrium, set $\dot{M}_X=0$, and now
 \begin{equation}\label{eq:z_eq}
@@ -391,11 +408,11 @@ To find equilibrium, set $\dot{M}_X=0$, and now
 \end{equation}
 For constant star formation, $\tau_\star/\tau_{\rm sfh} \rightarrow 0$
 
-While Equation \ref{eq:z_eq} can be applied to CCSNe carbon, the delayed time contribution of AGB carbon can complicate the result. Instead, using an effective or DTD-integrated yield, $\langle \Ycagb \rangle$
+While Equation \ref{eq:z_eq} can be applied to CCSNe C, the delayed time contribution of AGB C can complicate the result. Instead, using an effective or DTD-integrated yield, $\langle \Ycagb \rangle$
 \begin{equation}
     \langle \Ycagb\rangle = \frac{\int_0^T \tilde{y}_{\rm C}^{\rm agb}(M, Z) \dot{M}_\star(T - t) \frac{dN}{dM} \frac{dM}{dt} dt  }{ \dot{M}_\star \int_0^T \frac{dN}{dM} \frac{dM}{dt} dt}
 \end{equation}
-So, for carbon, Equation \ref{eq:z_eq} becomes
+So, for C, Equation \ref{eq:z_eq} becomes
 \begin{equation}
     Z_{\rm C}^{\rm eq}(R) = \frac{\Ycc + \langle\Ycagb\rangle}{1 + \eta(R) - r - \tau_\star / \tau_{sfh}}
 \end{equation}
@@ -404,14 +421,14 @@ Taking the ratio of $Z_{\rm C}$ and $Z_{\rm Mg}$,
     \frac{Z_{\rm C}^{\rm eq}}{Z_{\rm Mg}^{\rm eq}} = \frac{\Ycc + \langle \Ycagb \rangle }{\Yoc}
 \end{equation}
 
-With these definitions, I can calculate the core collapse yields of carbon as a function of metallicity:
+With these definitions, I can calculate the core collapse yields of C as a function of metallicity:
 \begin{equation}
     y_\text{C}^\text{CC} =  y_\text{Mg}^\text{CC} \frac{Z_\text{C,~eq}}{Z_\text{Mg,~eq}} - \langle y_c^{agb} \rangle
 \end{equation}
 
 Rewriting in terms of the observed abundance ratio and dividing by
-$y_\text{Mg}^\text{CC}$. So, given the outflows or CCSNe oxygen yields, the
-carbon AGB yield, and the \caah mean abundance track, I can estimate the CCSNe carbon yield. Written as a relative yield:
+$y_\text{Mg}^\text{CC}$. So, given the outflows or CCSNe O yields, the
+C AGB yield, and the \caah mean abundance track, I can estimate the CCSNe C yield. Written as a relative yield:
 \begin{equation}
     \frac{\Ycc}{\Yoc} = \frac{Z_{\text{C},~\sun}}{Z_{\text{Mg},~\sun}} 10^{[C/Mg]} - \frac{\langle \Ycagb \rangle}{\Yoc}
 \end{equation}
@@ -421,7 +438,7 @@ Fitting this relationship to data (figure \ref{fig:analytic}).
 \begin{figure}
     \centering
     \includegraphics[]{analytic.pdf}
-    \caption[Reverse fit yields]{Inferred massive star carbon yields as a function of metallicity. I assume equilibrium and $3\times {\rm C11}$ AGB yields (orange curve, see discussion in Section \ref{sec:equilibrium}). The binned medians and median absolute devation (divided by $\sqrt{N}$) are blue points.
+    \caption[Reverse fit yields]{Inferred massive star C yields as a function of metallicity. I assume equilibrium and $3\times {\rm C11}$ AGB yields (orange curve, see discussion in Section \ref{sec:equilibrium}). The binned medians and median absolute devation (divided by $\sqrt{N}$) are blue points.
     }
 \end{figure}
 
@@ -430,7 +447,7 @@ Fitting this relationship to data (figure \ref{fig:analytic}).
 
 Outflow yield degeneracy.
 One challenge of chemical evolution models is that outflows and yields are degenerate. To avoid this degeneracy, I instead constrain relative yields. As Equation \ref{eq:z_co} shows, the yield ratios are independent of $\eta$, and independent of the SFH (ignoring the DTD term).
-As such, I set the total carbon yields to 
+As such, I set the total C yields to 
 \begin{equation}
     \Yct = \Ycc + \Ycagb = 0.005 \frac{\Yoc}{0.00185}
 \end{equation}
@@ -439,7 +456,7 @@ is reasonably consistant with the value in \citet{asplund+09} of $Z_{\rm
 C}/Z_{\rm O}=0.413$ and was chosen as to match the median value of our sample
 at $Z=Z_{\sun }$. 
 
-Additionally, each AGB yield set (C11, K10, V13, K16), fails to produce enough AGB carbon for our fiducial model (see REF). So, I introduce a process factor, $\alpha_{\rm AGB}$, which represents the multiplicative increase in $\Ycagb$ from the published yields.
+Additionally, each AGB yield set (C11, K10, V13, K16), fails to produce enough AGB C for our fiducial model (see REF). So, I introduce a process factor, $\alpha_{\rm AGB}$, which represents the multiplicative increase in $\Ycagb$ from the published yields.
 \begin{equation}
     \Ycagb \rightarrow \alpha_{\rm agb}  \Ycagb.
 \end{equation}
@@ -451,23 +468,22 @@ Additionally, each AGB yield set (C11, K10, V13, K16), fails to produce enough A
     \alpha_{\rm CC} = (1 - f_{\rm agb}) \frac{\Yct}{\Ycc}
 \end{equation}
 
-I have investigated uniform increases in carbon yields and have found these changes make little effect on the resulting trends. Fixing the total carbon yield at solar reduces the number of free parameters and keeps the model reasonably consistant with observations, and enables us to more consistantly explore differen AGB models. 
+I have investigated uniform increases in C yields and have found these changes make little effect on the resulting trends. Fixing the total C yield at solar reduces the number of free parameters and keeps the model reasonably consistant with observations, and enables us to more consistantly explore differen AGB models. 
 
 
 \begin{table}
 	\centering
-    \caption[AGB net solar IMF yields]{For each AGB yield set, our calculation of the effective SFH- and IMF-weighted carbon AGB yield, along with the multiplicative factor to reach an AGB contribution of 20.}
+    \caption[AGB net solar IMF yields]{For each AGB yield set, our calculation of the effective SFH- and IMF-weighted C AGB yield, along with the multiplicative factor to reach an AGB contribution of 20.}
 	\label{tab:alpha_agb}
 	\begin{tabular}{lcr} % four columns, alignment for each
-		\hline 
+		\toprule 
 		AGB Model & $y_{\rm C, 0}^{\rm AGB}$ & $\alpha_{\rm AGB, 20}$\\
-        \hline
-        \hline
+        \midrule
 		C11 & 0.000347 & 2.9\\
 		K10 & 0.000585 & 1.7\\
 		V13 & 0.000060 & 16.5\\
 		K16 & 0.000421 & 2.4\\
-		\hline
+		\bottomrule
 	\end{tabular}
 \end{table}
 
@@ -476,17 +492,17 @@ I have investigated uniform increases in carbon yields and have found these chan
 
 I only perform this analysis on the C11 yields because the range of metallicities of the data (about [M/H] = -0.4, 0.4) only represents about 2 AGB models, relying heavily on our choice of extrapolation. C11 have a finer model grid, allowing us to have 5 theoretical predicted points within this metallicity range, allowing us to be more certain of our conclusion. 
 
-I do note that this analysis fails to take into account selection effects and biases in APOGEE, and a more robust determination of the carbon yield. 
+I do note that this analysis fails to take into account selection effects and biases in APOGEE, and a more robust determination of the C yield. 
 
 
-This formulation is degenerate in $\varpi$ until I estimate a better AGB fraction. As the seperation between the low and high alpha sequences can be used to estimate the delayed time contribution to carbon, using the model to estimate this value relies heavaly on the details of the SFH in addition to the 
-I do give an estimate of the CCSNe yields, however this is dependent on our choice of $\eta$. Other choices of $\eta$ vary the value significantly in both magnitude and slope (as AGB contributions increase, I need less CCSNe carbon, however the CCSNe carbon must have a higher metallicity dependence to replicate the V21 data). 
+This formulation is degenerate in $\varpi$ until I estimate a better AGB fraction. As the seperation between the low and high alpha sequences can be used to estimate the delayed time contribution to C, using the model to estimate this value relies heavaly on the details of the SFH in addition to the 
+I do give an estimate of the CCSNe yields, however this is dependent on our choice of $\eta$. Other choices of $\eta$ vary the value significantly in both magnitude and slope (as AGB contributions increase, I need less CCSNe C, however the CCSNe C must have a higher metallicity dependence to replicate the V21 data). 
 
 
 
 \chapter{The Multizone Model}\label{sec:vice}
 
-Classical, ``one-zone'' models of chemical evolution assume instantanius mixing of metals in the star forming ISM \citep[e.g.][]{matteucci21}. This simple framework is a poor approximation for the Milky Way.  The Galaxy evolves ``inside out''---where star formation is higher towards the center and in the early universe \citep{bird+13}. Additionally, stars can migrate several kpc over their lifetimes, mixing together different chemical environments across the galaxy \citep{bird+12,sellwood+binney02}. For the rest of this paper, I focus on multizone models, which discretize the Galaxy into concentric annuli and allow stare to move between rings.  Specifically, I make use of the \citet{james+21} (hereaafter \JJ) model for the Milky Way, which runs using the publicaly available Versatile Integrator for Chemical Evolution (\VICE\footnote{\VICE~is available at \url{https://github.com/giganano/VICE}}). This model is described extensively in \JJ~and consicely summarized  in \citet{james+22}. Here, I provide a prief overiview of the relevant model components.
+Classical, ``one-zone'' models of chemical evolution assume instantanius mixing of metals in the star forming ISM \citep[e.g.][]{matteucci21}. This simple framework is a poor approximation for the Milky Way.  The Galaxy evolves ``inside out''---where star formation is higher towards the center and in the early universe \citep{bird+13}. Additionally, stars can migrate several kpc over their lifetimes, mixing together different chemical environments across the galaxy \citep{bird+12,sellwood+binney02}. For the rest of this paper, I focus on multizone models, which discretize the Galaxy into concentric annuli and allow stare to move between rings.  Specifically, I make use of the \citet{james+21} (hereaafter \JJ) model for the Milky Way, which runs using the publicaly available Versatile Integrator for Chemical Evolution (\VICE). This model is described extensively in \JJ~and consicely summarized  in \citet{james+22}. Here, I provide a prief overiview of the relevant model components.
 
 In the model, the Galaxy is divided into 200 rings, each 100 pc wide. Each ring has a seperate stellar population and gas supply. Star formation ends beyond a radius $R=15.5$ kpc. I initially assume an ``inside-out'' Star Formation History (SFH), where the star formation surface density $\Sigma_\star$ is given by 
 \begin{equation}
@@ -531,7 +547,7 @@ I explore uniformly scaling yields and outflows in Section REF. While I can cons
 \chapter{Multizone model results}
 \section{Data Selection}
 
-I use data from APOGEE DR17 \citep{apogee17} processed with APOSCAP. Since subgiant stars have yet to experience FDU, their atmospheric carbon and nitrogen abundances are still reflective of their birth abundances and do not need mixing corrections. 
+I use data from APOGEE DR17 \citep{apogee17} processed with APOSCAP. Since subgiant stars have yet to experience FDU, their atmospheric C and N abundances are still reflective of their birth abundances and do not need mixing corrections. 
 
 To select for subgiants, I use the following cut in $\log g$ and $T_{\rm eff}$
 which selects stars at the base of the red giant turnoff (FIGURE and
@@ -551,32 +567,32 @@ Because the star formation history is left in a simple inside-out form, this mul
 
 
 
-\section{The Evolution of carbon across the galaxy and through time}
+\section{The Evolution of C across the galaxy and through time}
 
 
 Here, I present the time evolution of our fiducial model. In the next sections, I will discuss the choice of parameters and agreement with observations. Our fiducial model uses the C11 AGB yield set (see section \ref{sec:agb}). I amplify the C11 yields by a factor of 2.9, so that $\Ycagb = 0.2y_{\rm C}$, agb
 
 In this model, I use the following yields:
 
-The GCE of carbon is complicated by metallicity dependencies and delayed contributions. 
+The GCE of C is complicated by metallicity dependencies and delayed contributions. 
 
 Note the following features of our model:
 
 \begin{enumerate}
-    \item Carbon comes predominantly ($\sim80\%$) from CCSNe but the rest is from AGB stars
-    \item The CCSNe carbon production is more efficient at higher metallicities
-    \item AGB stars produce less carbon at higher metallicities.
+    \item C comes predominantly ($\sim80\%$) from CCSNe but the rest is from AGB stars
+    \item The CCSNe C production is more efficient at higher metallicities
+    \item AGB stars produce less C at higher metallicities.
 \end{enumerate}
 
 
 The combination of these features leads to an evolution that proceeds as follows
 \begin{enumerate}
     \item Initially, CCSNe dominate production before AGB stars can contribute their enrichment, but because CCSNe is highly metalliticy dependent, the C/$\alpha$ ratio increases with time.
-    \item AGB stars begin contributing their carbon, increasing the $C/\alpha$ ratio more steeply as the gas begins to reach its equilibrium metallicity
-    \item When $Z$ reaches equilibrium, the $C/\alpha$ ratio stops increasing or may even decline, as AGB stars formed at higher metallicities reduce the net carbon yields.
+    \item AGB stars begin contributing their C, increasing the $C/\alpha$ ratio more steeply as the gas begins to reach its equilibrium metallicity
+    \item When $Z$ reaches equilibrium, the $C/\alpha$ ratio stops increasing or may even decline, as AGB stars formed at higher metallicities reduce the net C yields.
 \end{enumerate}
 
-I plot time evolution tracks in Fig. \ref{fig:c_evo} for \caah and \caafe for our fiducial model. Comparing [C/$\alpha$] against [Fe/H] enables us to see late time evolution of carbon more clearly. Because [Fe/H] takes longer to reach equilibrium as half of iron production comes from type-Ia supernovae, the late time evolution is not clustered as tightly horizontally as for [$\alpha$/H].
+I plot time evolution tracks in Fig. \ref{fig:c_evo} for \caah and \caafe for our fiducial model. Comparing [C/$\alpha$] against [Fe/H] enables us to see late time evolution of C more clearly. Because [Fe/H] takes longer to reach equilibrium as half of iron production comes from type-Ia supernovae, the late time evolution is not clustered as tightly horizontally as for [$\alpha$/H].
 This is even more evident in the lower part of Fig. \ref{fig:c_evo}. While the \caah trend reaches almost equilibrium at 5Gyr, the \caafe trend continues to evolve even until the present day, exposing the effect of the delayed contribution from AGB stars on the evolutionary history.
 
 \begin{itemize}
@@ -589,8 +605,8 @@ This is even more evident in the lower part of Fig. \ref{fig:c_evo}. While the \
 \centering
 \includegraphics{evo_tracks.pdf}
 \includegraphics{evo_slices.pdf}
-\caption[Carbon chemical evolution tracks]{
-    Time evolution of gas phase carbon abundances in our fiducial model.
+\caption[C chemical evolution tracks]{
+    Time evolution of gas phase C abundances in our fiducial model.
 
     Top: Evolutionary tracks parameterized by time at fixed Galactocentric radius in the \caah and \caafe planes. 
 
@@ -607,18 +623,18 @@ using the published yields in \cristallo, \karakas, \kl, and \ventura~in Fig.
 
 
 As the highest AGB yield at solar is from our \karakas~model at $Y_{\rm C}^{\rm
-agb} = 0.000585$ is only 11.7 percent of our required total carbon production,
-each of these models is dominated by CC production of carbon. As a result,
+agb} = 0.000585$ is only 11.7 percent of our required total C production,
+each of these models is dominated by CC production of C. As a result,
 while the metallicity dependence of the \caah may vary, the
 \caafe diagnostic shows how this small AGB fraction makes the details of
 the AGB model and delay-time-distribution unchange the galaxy production of
-carbon. 
+C. 
 
 Appendix \ref{sec:alt_agb} describes the effects of increasing the AGB model on
 resulting abundance trends. However, I use the \cristallo AGB yields for the
 rest of the main discussion.
 
-Our next exploration is to adjust the relative fraction of AGB star yields. To do this, I hold the total carbon yield at solar metallicity fixed, so for a desired AGB fraction (assuming equilibrium), 
+Our next exploration is to adjust the relative fraction of AGB star yields. To do this, I hold the total C yield at solar metallicity fixed, so for a desired AGB fraction (assuming equilibrium), 
 
 
 \begin{figure}
@@ -638,7 +654,7 @@ Our next exploration is to adjust the relative fraction of AGB star yields. To d
 \caption[Adjusted yield models]{Similar to Figure \ref{fig:agb_sims} except the top plot shows the fiducial model with lower and higher values of $\zeta$, the C-CCSNe metallicity dependence. The bottom plot shows models with $f_{\rm AGB}=$0.1, 0.2, and 0.4. Both the $f_{\rm AGB}$ and $\zeta$ influence \caah, but only $f_{\rm AGB}$ has a significant impact on \caafe.}
 \end{figure}
 
-The next question is how does changing the CCSNe carbon yield affect the model?
+The next question is how does changing the CCSNe C yield affect the model?
 I now consider variations of our fiducial mode/
 
 
@@ -647,15 +663,15 @@ approprietly reflected in the resulting \caah~trend. As the metallicity
 dependence steepens with higher $\beta$, the [C/Mg] ratio becomes
 correspondingly more dependent on [Mg/H].
 
-Carbon as an equilibrium phenominon. See section \ref{sec:equilibrium} Importantly, the \caafe trend is mostly unaffected by choosing a different
+C as an equilibrium phenominon. See section \ref{sec:equilibrium} Importantly, the \caafe trend is mostly unaffected by choosing a different
 CCSNe yield. As all CCSNe enrichment happens at the same, rapid timescale, by
 taking a slice in [Mg/H], this metallicity dependence is effectively ignored as
 the only effect can be a vertical offset if the slice is narrow enough. 
 
-So, the scaling of the trend and metallicity dependence of carbon (as seen in
-the \caah~trend) gives information on the total carbon yield and the behavior
-of CCSNe (as the dominating producer of carbon);
-the \caafe trend exposes the delayed effect of carbon from AGB contribution.
+So, the scaling of the trend and metallicity dependence of C (as seen in
+the \caah~trend) gives information on the total C yield and the behavior
+of CCSNe (as the dominating producer of C);
+the \caafe trend exposes the delayed effect of C from AGB contribution.
 
 One caveat is that the slope of this trend is also determined by the ratio of delayed iron to CCSNe iron production as well. If the SNeIa iron fraction is increased, then more iron enters later reducing the slope of the trend as AGB becomes a more rapid mechanism than Fe comparatively. The difference however is that changing the Fe franction mostly affects the tail of the distribution as this controls the speed of descent off the high $\alpha$ sequence, but the AGB fraction even changes the behavior for the low $\alpha$ sequence.
 
@@ -668,9 +684,9 @@ Even changing the AGB model does not affect the conclusion significantly.
 An alternate solution is to reduce the outflows and core collapse yields similarly, consistent with a model where more large stars collapse directly into black holes. This leaves the $y_\text{C}^\text{CC}/y_\text{O}^\text{CC}$ ratio unchanged, but because $y_\text{C}^\text{CC}$ is unchanged, the relative size of the AGB contribution is larger. 
 
 
-Increasing the relative AGB production lowers the magnitude of  $y_\text{C}^\text{CC}/y_\text{O}^\text{CC}$, but the metallicity dependence of the ratio must increase to compensate for the inverse metallicity dependence of AGB carbon yields. 
+Increasing the relative AGB production lowers the magnitude of  $y_\text{C}^\text{CC}/y_\text{O}^\text{CC}$, but the metallicity dependence of the ratio must increase to compensate for the inverse metallicity dependence of AGB C yields. 
 
-These models are indistinguishable in the \caah~plane from our adjusted CCSNe model, so future work investigating the SFH and carbon isotopic ratios in more depth may be able to provide more insight. In the next section, I develop the analytic tools to explore this problem in more depth. 
+These models are indistinguishable in the \caah~plane from our adjusted CCSNe model, so future work investigating the SFH and C isotopic ratios in more depth may be able to provide more insight. In the next section, I develop the analytic tools to explore this problem in more depth. 
 
 \section{Star Formation History} \label{sec:sfh}
 
@@ -716,13 +732,13 @@ While my model requires high yields and significant mass loading, other approach
 
 The theoretical motivation for decreasing outflows is due to the uncertainty in the explodability landscape---if less massive stars explode, then both the yields and outflows will be reduced by some factor. So, when I explore reduced outflow models, I consider models where both the outflows and yields are reduced by approximately the same factor, to leave the equilibrium abundances of a pure CCSNe unchanged. 
 
-The effect of reducing outflows is then increasing the relative contributions of non-CCSNe processes. For carbon, this increases the AGB fraction.
+The effect of reducing outflows is then increasing the relative contributions of non-CCSNe processes. For C, this increases the AGB fraction.
 
-I find that the \caah~relationship may provide insight into this issue. [O/Fe] is a tracer of the relative contributions of CCSNe and delayed-time sources in chemical evolution. So, the appearance of a slope in [O/Fe] implies that there is a substantial delay-time process in carbon evolution. 
-The metallicity-dependence of carbon yields complicates this picture because
+I find that the \caah~relationship may provide insight into this issue. [O/Fe] is a tracer of the relative contributions of CCSNe and delayed-time sources in chemical evolution. So, the appearance of a slope in [O/Fe] implies that there is a substantial delay-time process in C evolution. 
+The metallicity-dependence of C yields complicates this picture because
 younger stars have higher [O/Fe] as the SNeIa contributions take up to 10Gyr,
 so metal-poor young stars will naturally have lower [C/O], agreeing with the
-slope observed in\caafe. However, a pure CCSNe carbon model cannot reproduce the slope accurately as  
+slope observed in\caafe. However, a pure CCSNe C model cannot reproduce the slope accurately as  
 
 
 I find that I can adjust both the outflows and scale down the yields if I change our model for $y_\text{C}^\text{CC}/y_\text{O}^\text{CC}$. For example, reducing outflows and CCSNe yields by a factor of two requires the modified parameters
@@ -735,21 +751,21 @@ $\alpha = 0.033$ and $\beta = 0.625$, which results in a slightly lower value at
 \end{figure}
 
 
-\section{Comparison to Observations}
+\section{Comparison to Observations}\label{sec:gas}
 
 
 Beyond simply comparing median trends, I can compare the distribution 
 shape of our distribution to observations. 
 
-Carbon measurments in stars are difficult. There are measurments which can however be used to test. 
+C measurments in stars are difficult. There are measurments which can however be used to test. 
 
 I don't predict low metallicity but I are in agreement, substantial error bars.
 
 Pop III stars from Cooke++. 
 
-Beyond Milky Way stars, astronomers have observed carbon to oxygen ratios in
+Beyond Milky Way stars, astronomers have observed C to O ratios in
 HII-regions through either Recombination Lines or (OTHER TEchnique0), enabling
-us to probe gas-phase abundances of carbon in our galaxy and other types of
+us to probe gas-phase abundances of C in our galaxy and other types of
 galaxies from dwarf to elliptical. 
 
 In Fig. \ref{fig:gas_phase}, I plot our fiducial model's gas phase abundances
@@ -761,7 +777,7 @@ Our model appears to be broadly consistant with the gas phase data, however thes
 
 Are HII regions a good approximation?
 
-Measuring carbon in the gas phase is challenging. Carbon emission lines are
+Measuring C in the gas phase is challenging. C emission lines are
 very weak compared to other common lines, (visible/etc.).
 Temperature/modelining limitations. Lack of strong HII calibration. 
 
@@ -770,15 +786,15 @@ Short discussion of measurment challenges in extragalactic galaxies, how other g
 Our model fails to capture the trend past [$\alpha$/H]$=-1$. As our knowledge
 of stellar evolution is limited, our knowledge of extremely metal poor stellar
 evolution is extremely limited. (despite a pure H/He born star appearing
-simpler lolol). A variety of explanation for the increasing relative carbon
+simpler lolol). A variety of explanation for the increasing relative C
 enrichments for metal-poor stars have been proposed (e.g. ...). The likely case
-that Population III star supernovae produced high abundances of carbon seems
-most plausable, especially given our uncertainty in the carbon yields and the
+that Population III star supernovae produced high abundances of C seems
+most plausable, especially given our uncertainty in the C yields and the
 short timescales required to create this enhancement (e.g. $z\sim 2$ DLA,
 dwarfs, etc.) make it unlikely that AGB stars could be the culprit. 
 
 As any constraints in this regieme are poor, I choose to only qualitatively
-conclude that CCSNe carbon production increases at extremely low metallicity
+conclude that CCSNe C production increases at extremely low metallicity
 but the details of this remains an open question.
 
 
@@ -807,7 +823,7 @@ While the extragalactic trend appears to be more steeply sloped than our models,
 \begin{figure*}
 \centering
 \includegraphics[]{summary.pdf}
-\caption[Gas phase abundances]{Gas-phase carbon abundances. We plot our model at $t=2$Gyr and present day as thick solid lines. Points represent measurments in 
+\caption[Gas phase abundances]{Gas-phase C abundances. We plot our model at $t=2$Gyr and present day as thick solid lines. Points represent measurments in 
     HII regions    \citep[pink circles;][]{skillman+20, esteban+02, esteban+09, esteban+14, esteban+19}
     Damped Lynman-$\alpha$ (DLA) systems \citep[blue triangles;][]{cooke+17} 
     Milky Way halo and thick disk stars \citep[green stars;][]{nissen+14, fabbian+09}. 
@@ -820,20 +836,20 @@ While the extragalactic trend appears to be more steeply sloped than our models,
 
 \chapter{Conclusions}
 
-In this work, I investigate the role of carbon yields on the predictions of multizone GCE models. \citet{james+22} performed a similar analysis, except focusing on nitrogen. \citet{james+22} found, to match APOGEE/\citet{fiorenzo+21}'s observations, nitrogen yields ratios relative to oxygen needed to be about triple what AGB models suggested.
+In this work, I investigate the role of C yields on the predictions of multizone GCE models. \citet{james+22} performed a similar analysis, except focusing on N. \citet{james+22} found, to match APOGEE/\citet{fiorenzo+21}'s observations, N yields ratios relative to O needed to be about triple what AGB models suggested.
 
-Here, I perform a similar analysis on carbon. I summarize the current theoretical nucleosynthetic predictions of carbon. Because CCSNe carbon yields are poorly understood, I adopt an equilibrium approximation and determine that a functional form of $\Ycc/\Yoc=1.51 + 0.54 (Z/Z_\odot)$ approximately matches trends in APOGEE subgiants. Variations of the metallicity dependence of this CCSNe yield affect trends in \caah but do not affect trends in \caafe when taking a slice in [Mg/H]. As all theoretical AGB carbon yields decrease with increasing metallicity, increasing the AGB fraction causes the \caah trend to flatten. However, the \caafe trend is sensitive to the AGB fraction. 
-I estimate that $f_{\rm AGB} = 0.2$ using the C11 yield model. This requires about 3x more AGB carbon production than most nucleosynthetic models predict.
+Here, I perform a similar analysis on C. I summarize the current theoretical nucleosynthetic predictions of C. Because CCSNe C yields are poorly understood, I adopt an equilibrium approximation and determine that a functional form of $\Ycc/\Yoc=1.51 + 0.54 (Z/Z_\odot)$ approximately matches trends in APOGEE subgiants. Variations of the metallicity dependence of this CCSNe yield affect trends in \caah but do not affect trends in \caafe when taking a slice in [Mg/H]. As all theoretical AGB C yields decrease with increasing metallicity, increasing the AGB fraction causes the \caah trend to flatten. However, the \caafe trend is sensitive to the AGB fraction. 
+I estimate that $f_{\rm AGB} = 0.2$ using the C11 yield model. This requires about 3x more AGB C production than most nucleosynthetic models predict.
 
 Evolutionary history
 
-Finally, I compare my model against gas phase and metal-poor stellar measurments. While my model was built on data near solar metallicity, by including heightened carbon production from population III stars, I can create a self consistant picture of carbon evolution.
+Finally, I compare my model against gas phase and metal-poor stellar measurments. While my model was built on data near solar metallicity, by including heightened C production from population III stars, I can create a self consistant picture of C evolution.
 
-Observations of Carbon in metal poor stars, extragalactic (call out any
+Observations of C in metal poor stars, extragalactic (call out any
 
 Implications in Stellar evolution
 
-These carbon yield constraints provide a test for stellar evolution models. Carbon yields are sensitive to mass loss treatment, explodability, nuclear cross sections, convection, and stellar structure. 
+These C yield constraints provide a test for stellar evolution models. C yields are sensitive to mass loss treatment, explodability, nuclear cross sections, convection, and stellar structure. 
 
 Future surveys such as the Milky Way Mapper will enable further refinement of galactic trends, placing yet more stringent constrants on stellar evolution models.
 MWM and value of this work
@@ -895,11 +911,11 @@ I use the criteria outlined in \cite{jack_subgiant} to create a sample of subgia
     \centering
     \includegraphics{logg_jack.pdf}
     \caption[Subgiant selection]{
-        A Kiel diagram of APOGEE stars. Following \citet{jack_subgiant}, we select subgiants in the orange polygon (see Equation \ref{eq:subgiant_selection}). These stars have not yet experienced first dredge-up, so their photospheric carbon and nitrogen abundances should reflect their birth mixture.
+        A Kiel diagram of APOGEE stars. Following \citet{jack_subgiant}, we select subgiants in the orange polygon (see Equation \ref{eq:subgiant_selection}). These stars have not yet experienced first dredge-up, so their photospheric C and N abundances should reflect their birth mixture.
     }
 \end{figure}
 
-This cut isolates a clean sample of subgiants. As First Dredge Up, which affects carbon and nitrogen abundances, only occurs during the ascent onto the red giant branch, subgiant stars are unaffected by this enrichment. 
+This cut isolates a clean sample of subgiants. As First Dredge Up, which affects C and N abundances, only occurs during the ascent onto the red giant branch, subgiant stars are unaffected by this enrichment. 
 
 Additionally, I exclued stars in APOGEE marked by the following flags.
 \begin{itemize}
@@ -922,11 +938,11 @@ I choose to use \cite{jack_subgiant}'s sample as this does not rely on additiona
 While I focus the main discussion of the paper on the C11 model, other AGB models can have notable effects on abundance trends at ***
 
 Because the predictions of the AGB yield models I consider are dwarfed by the
-required CCSNe carbon production to match observations (see Fig. ***), I briefly explore here the effects of variations in AGB models affect abundance trend predictions when these models are amplified to match observational [C/MG]-[Mg/Fe] trends. 
+required CCSNe C production to match observations (see Fig. ***), I briefly explore here the effects of variations in AGB models affect abundance trend predictions when these models are amplified to match observational [C/MG]-[Mg/Fe] trends. 
 
 While most models are well represented by our AGB-fraction formalism, V13 presents a challenge as the predicted solar yield is much lower than the lower metallicity predictions, requiring the solar value to be a certain fraction forces us to amplify the yields by an unreasonable about (of order 10-30times) to reach the same $f_{\rm AGB}$ as other models. Thus, I instead calculate $f_{\rm AGB}$ at a metallicity of ... for this model. 
 
-V13 is also interesting as at high metallicity, the yields quickly become strongly negative. This causes a reversal of the [C/Mg]-[Mg/Fe] trend at high [Mg/H] slices (figure ...). As our set of observations do not appear to reverse, this indicates that carbon yields likely stay positive even at slightly super-solar, so models like V13 are a poor match to observations. 
+V13 is also interesting as at high metallicity, the yields quickly become strongly negative. This causes a reversal of the [C/Mg]-[Mg/Fe] trend at high [Mg/H] slices (figure ...). As our set of observations do not appear to reverse, this indicates that C yields likely stay positive even at slightly super-solar, so models like V13 are a poor match to observations. 
 Plot of age metallicity relationship?
 
 
@@ -941,7 +957,7 @@ Plot of age metallicity relationship?
 \begin{figure}
     \centering
     \includegraphics{y_mg.pdf}
-    \caption[Magnesium CCSNe yields]{Same as the top panel of Figure \ref{fig:y_cc}, but for magnesium. Our magnesium yield choice is shown as a dashed line at the top
+    \caption[Magnesium CCSNe yields]{Same as the top panel of Figure \ref{fig:y_cc}, but for Mg. Our Mg yield choice is shown as a dashed line at the top
     }
 \end{figure}
 
