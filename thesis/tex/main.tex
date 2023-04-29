@@ -1,11 +1,7 @@
 %! tex program = lualatex
-\DocumentMetadata{testphase=phase-II,
-testphase=math,
-lang=en-US
-}
+\DocumentMetadata{testphase=phase-III, lang=en-US}
 
 \documentclass[12pt,oneside,letterpaper]{report}
-
 
 \tagpdfsetup
 {
@@ -16,15 +12,14 @@ lang=en-US
 
 \usepackage[T1]{fontenc}
 \usepackage{txfonts}
-% \input{glyphtounicode}
 
 \usepackage{hyperref}
 \hypersetup{
     colorlinks=true,
-    linkcolor=black,
+    linkcolor=magenta,
     filecolor=black,
-    urlcolor=black,
-    citecolor=black,
+    urlcolor=blue,
+    citecolor=blue,
     pdftitle={The Galactic Chemical Evolution of Carbon},
 }
 
@@ -75,51 +70,54 @@ lang=en-US
 
 % accessibility
 % \usepackage{tagpdf}
+
 % \usepackage[tagpdf]{axessibility}
 
 
 
 %%%%%%%%%%%%%%% Acronyms %%%%%%%%%%%%%%%%%%
-\usepackage[automake,symbols,nogroupskip,counter=section]{glossaries-extra}
+\usepackage[acronym,automake,symbols,nogroupskip,counter=section]{glossaries-extra}
+\newglossary*{models}{Stellar Yield Models}
 \makeglossaries
-\MakeAcronymsAbbreviations
 
-\setabbreviationstyle{long-short-sc-desc}
-\newabbreviation
-[description={massive star explosions}]
+
+\setabbreviationstyle[acronym]{long-short-sc}
+
+% \newabbreviation
+% [description={massive star explosions}]
+% {cc}{ccsne}{core collapse supernovae}
+
+\newacronym
+[ description={heelloo}, seealso={ccg} ]
 {cc}{ccsne}{core collapse supernovae}
 
-\newabbreviation
-[description={Exploding white dwarfs, produces Fe-peak elements}]
-{ia}{sne ia}{supernovae type Ia}
-
-\newabbreviation
+\newacronym
 [description={Dying low-mass stars. Produces C, N, and heavy s-process elements.}]
 {agb}{agb}{asymptotic giant branch}
 
-\newabbreviation
-[description={}]
+\newacronym
+[description={Exploding white dwarfs, produces Fe-peak elements}]
+{ia}{sne ia}{supernovae type Ia}
+
+
+\newacronym
 {gce}{gce}{galactic chemical evolution}
 
-\newabbreviation
-[description={}]
+\newacronym
 {sfh}{sfh}{star formation history}
 
-\newabbreviation
-[description={}]
+\newacronym
 {ssp}{ssp}{single stellar population}
 
-\newabbreviation
-[description={}]
+\newacronym
 {imf}{imf}{initial mass function}
 
-\newabbreviation
-[description={}]
+\newacronym
 {apogee}{apogee}{Apache Point Observatory Galactic Evolution Experiment}
 
-\newabbreviation
-[description={}]
+\newacronym
 {dla}{dla}{damped Lyman-alpha systems}
+
 
 
 \newcommand{\cc}{\gls{cc}}
@@ -133,6 +131,7 @@ lang=en-US
 \newcommand{\gce}{\gls{gce}}
 \newcommand{\Gce}{\Gls{gce}}
 \newcommand{\apogee}{\gls{apogee}}
+
 
 
 
@@ -153,22 +152,100 @@ lang=en-US
 {sun}{\ensuremath{\odot}}
 
 \glsxtrnewsymbol
-[description = {The metal fraction (by weight), i.e. the fraction of material that is not hydrogen or helium}]
+[description = {The metallicity fraction}]
 {Z}{\ensuremath{Z}}
 
-\newglossaryentry{mtly}{name={metallicity},
+\glsxtrnewsymbol
+[description = {The massive star carbon yield metallicity dependence}]
+{zeta}{\ensuremath{\zeta}}
+
+\glsxtrnewsymbol
+[description = {The mass outflow loading factor}]
+{eta}{\ensuremath{\eta}}
+
+\glsxtrnewsymbol
+[description = {The rate of star formation}]
+{sfr}{\ensuremath{\dot{M}_\star}}
+
+\newcommand{\et}{\gls{eta}}
+\newcommand{\zet}{\gls{zeta}}
+\newcommand{\sfr}{\gls{sfr}}
+
+
+\newglossaryentry{metallicity}{name={metallicity},
     description={the (mass) fraction of a star or gass which is not made of either hydrogen or helium. For the sun, the metallicity is $\Zo = 0.014$}
 }
 
-\newcommand{\zoo}{\ensuremath{Z/Z_{\sun }}}
+
+\newglossaryentry{alpha}{name={$\alpha$-elements},
+    description={Elements which are made up of $\alpha$-particles (two protons, two neutronns). Essentially light, even-numbered elements like O, Mg, and Na.}
+}
+
+\newglossaryentry{fepeak}{name={Fe-peak elements},
+    description={Fe and nearby elements, produced in \cc\ and \sneia.}
+}
+
+\newglossaryentry{sproc}{name={s-process elements},
+    description={Elements produced through slow neutron captures, typically in \agb\ stars.}
+}
+
+\newglossaryentry{rproc}{name={r-process elements},
+    description={Elements produced through rapid neutron capture process, though to occur in the collision of two neutron stars.}
+}
+
+
+\newglossaryentry{ccg}
+{
+    name={core collapse supernovae},
+    description ={massive star explosions. core collapse supernovae (\textcs{ccsne}) produce many elements including $\alpha$-elements, Fe-peak elements, and r and s-process elements.}
+}
+
+\newglossaryentry{c11}
+{
+    name={C11},
+    type={models},
+    description={the yield set from \citet{cristallo+11,cristallo+15}. The models were run at $m= (1.3, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0)$ and $Z=(0.0001, 0.0003, 0.001, 0.002, 0.003, 0.006, 0.008, 0.01, 0.014, 0.02)$. },
+}
+\newglossaryentry{k10}
+{
+    name={K10},
+    type={models},
+    description={the yield set from \citet{karakas10}. Includes models run at 
+    $M=(1.0, 1.25, 1.5, 1.75, 1.9, 2.25, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0)$ and $Z=(0.0001, 0.004, 0.008, 0.02)$},
+}
+\newglossaryentry{v13}
+{
+    name={V13},
+    type={models},
+    description={the \agb\ yield set from \citet{ventura+13,ventura+14,ventura+18,ventura+20}. Includes models with masses $m=(1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 6.5, 7.0)$ and with metallicities $Z=(0.0003, 0.001, 0.002, 0.004, 0.008, 0.014, 0.04)$},
+}
+\newglossaryentry{k16}
+{
+    name={K16},
+    type={models},
+    description={The yield set from \citet{KL16, karakas+18}. The model is sampled at 
+        $M=(0.0003, 0.001, 0.002, 0.004, 0.008, 0.014, 0.04)$
+        and $Z=(0.0003, 0.001, 0.002, 0.004, 0.008, 0.014, 0.04)$
+    },
+}
+
+
+\newcommand{\cxi}{\gls{c11}}
+\newcommand{\kx}{\gls{k10}}
+\newcommand{\kxvi}{\gls{k16}}
+\newcommand{\vviii}{\gls{v13}}
+
 \newcommand{\Ycc}{\gls{ycc}}
-\newcommand{\Yct}{\ensuremath{y_{\rm C}}}
 \newcommand{\Yoc}{\gls{ymg}}
 \newcommand{\Ycagb}{\gls{ycagb}}
 \newcommand{\sun}{\gls{sun}}
 \newcommand{\Z}{\gls{Z}}
-\newcommand{\Zo}{\gls{Z}_\gls{sun}}
+\newcommand{\Zo}{\gls{Z}_{\gls{sun}}}
+
 \newcommand{\abund}[2]{\ensuremath{\[{\rm #1}/{\rm #2}\]}}
+
+\newcommand{\zoo}{\ensuremath{Z/Z_{\sun }}}
+\newcommand{\Yct}{\ensuremath{y_{\rm C}}}
 
 
 
@@ -218,6 +295,8 @@ lang=en-US
 
 \begin{document}
 
+\linespread{1.25}
+
 \pagenumbering{roman}
 
 \begin{titlepage}
@@ -231,7 +310,7 @@ lang=en-US
        \vspace*{3\baselineskip}
         by\\
        \vspace*{3\baselineskip}
-       {Daniel Alexander Boyea}\\
+       {Daniel Alexander Boyea\\
        \vspace*{3\baselineskip}
        The Ohio State University\\
        April 2023\\
@@ -268,12 +347,17 @@ Due to the degeneracy between the normalization of elemental yields and the stre
 \chapter*{Acknowledgements}
 \addcontentsline{toc}{chapter}{Acknowledgements}
 
-James Johnson, for guiding me through this project and through my last year of undergraduate. Your feedback at every step of the process has been invaluable.
-Wayne Schlingman, for everything you do for everyone. You are the glue holding together our department. David Weinberg and Jennifer Johnson, for listening to my earlier drafts of this work and providing excellent suggestions.
+I know I am guilty of skimming the acknowledgements of many works, but I dearly hope that the people who helped me complete this project will appriciate how much they have helped me. This year has been an incredibly challenging journey---and perhaps I am not open enough about what it has been like. I genuinly would have not made it to this day without everyones help, one way or another.
 
-I also would not have made it here without all the support of my friends and family. Eric, even across the country, you have always been a point of support and stability, and I am always happy to be around you. Anya, you are a wonderful friend and I cannot thank you enough for your support this year. 
-I love so many people in our department who have just been friends and have positive support: Kaia, Maria, Autumn, Simon, Mary, Aaliyah, Sanskruti, Alyssa, Harrison, Denis, and so many others. 
-Finally, I thank my family for supporting me through a challenging year, and Arya for being such a loveable doodle.
+James Johnson---your mentorship and guidance throughout this project was critical. 
+You helped me learn an incredible amount about being an astronomer, and I am forever greatful for how you have guided this project, through late nights and last minute comments.  Wayne, for everything you do for everyone---you are the glue holding together our department and nobody can say thank you enough. 
+David and Jennifer for helping this project move forward, by providing guidance at critical junctions and being part of my committee. Rolando, for being the non-astronomer thrown into this work, and pointing out the flaw of incomprehensability in this work.
+
+Even though you may have not been able to help me with the science, dear friends and family, you have been no less importaint in the completion of this work. 
+Eric, even across the country, you have always been a point of support and stability, and I am always happy to be around you. Anya, you are a wonderful friend and I cannot thank you enough for your unconditional support this year, 
+All my friends who are just wonderful, inspiring, and incredible people---Kaia, Maria, Autumn, Simon, Bary, Aaliyah, Sanskruti, Alyssa, Harrison, Denis, Keith, and so many others. 
+And my family (including Arya, my most lovable doodle)---I can not eveen being to thank you enough for simply helping me recover my health and make it to graduation. 
+
 
 
 
@@ -309,7 +393,7 @@ Gas-phase [C/O] ratios%
 %
 \footnote{In this paper, I use the standard notation for chemical abundances. $[A/B] = \log_{10}\left(A/B\right) - \log_{10}\left(A_{\sun}/B_{\sun}\right)$, i.e. $[A/B]$ is the logarithm of the ratio between A and B, scales such that $[A/B]=0$ for the sun. Solar abundances are as measured in \citet{asplund+09}}%
 %
----observed in very low \gls{mtly}, high redshift \dla---decrease with increasing [O/H] \citep{FN15, cooke+17}. Then, [C/O] increases above $\rm [O/H] \approx -1$ (\citealt{berg+19}; see discussion in \S\ref{sec:gas}).
+---observed in very low \gls{metallicity}, high redshift \dla---decrease with increasing [O/H] \citep{FN15, cooke+17}. Then, [C/O] increases above $\rm [O/H] \approx -1$ (\citealt{berg+19}; see discussion in \S\ref{sec:gas}).
 While we know C is produced in \agb{} stars and \cc{}, we still have a limited understanding of the magnitude and metallicity-dependence of each process.
 
 
@@ -349,7 +433,7 @@ For an element X and star with mass $M$, the stellar yield $\tilde{y}$ is define
     \tilde{y}_{\rm X} = \frac{M_{\rm X,\ ejected} - Z_{0, X} M_{\rm ejected}}{M}   
 \end{equation}
 where $M_{\rm ejected}$ and $M_{\rm X, ejected}$  are the total ejected mass of the envelope and the element X, respectively. For example, if a 1 $M_\odot$ star has $\tilde{y}_{\rm C} = 10^{-3}$, then the star will add $10^{-3}\ M_\odot$ of C to the interstellar medium. 
-Although per-star yields are necessary to compute \agb{} star enrichment rates in \gce{}  models, \imf-averaged\footnote{IMF: Initial Mass Function} yields are useful in interpreting their predictions. For a yield $y$ from a star of mass M and initial metallicity $Z$, the \imf-averaged yield is given by 
+Although per-star yields are necessary to compute \agb{} star enrichment rates in \gce{}  models, \imf-averaged yields are useful in interpreting their predictions. For a yield $y$ from a star of mass M and initial metallicity $Z$, the \imf-averaged yield is given by 
 \begin{equation} \label{eq:imf-yield}
     y_{\rm X}(Z) = 
     \int_{M_{\rm min}}^{M_{\rm max}} 
@@ -367,7 +451,7 @@ $t^{-1.1}$ power-law suggested by the observations of \citet{maoz+12}.
 
 \begin{table}
 	\centering
-    \caption[Fiducial Model]{Yields for the fiducial model in units of \ssp~birth mass. See \S\ref{sec:agb} for the definition of C11.}
+    \caption[Fiducial Model]{Yields for the fiducial model in units of \ssp~birth mass. See \S\ref{sec:agb} for the definition of \cxi.}
 	\label{tab:fiducial_mod}
 
 	\begin{tabular}{l l l l}
@@ -403,12 +487,12 @@ As a result, when both third dredge up and Hot bottom burning occur, \isotope[12
 
 In this work, I explore four different sets of \agb\ star yield tables from literature, providing well-sampled grids in metallicity and mass for use in chemical evolution models. 
 \begin{itemize}
-    \item C11: \citet{cristallo+11, cristallo+15}
+    \item \cxi \citet{cristallo+11, cristallo+15}
     \item K10: \citet{karakas10}
     \item V13: \citet{ventura+13,ventura+14,ventura+18, ventura+20}
     \item K16: \citet{KL16} \citet{karakas+18}
 \end{itemize}
-I use C11 table, amplified by a factor of 2.9, as the fiducial \agb\ yield.
+I use \cxi table, amplified by a factor of 2.9, as the fiducial \agb\ yield.
 
 Fig.~\ref{fig:y_agb} compares the \agb\ C yield $\tilde{y}_\text{C}^\text{AGB}(M, Z)$ for each model I consider. 
 The yields may be negative if a star ejects material with a lower average C abundance than the material the star was formed from.
@@ -422,13 +506,13 @@ $\log \tau_M = 1.02 - 3.57\log M + 0.90 \left(\log M\right)^2$,
 where $\tau_M$ is in Gyr,
 from \citealt{larson74}.})
 As the mass range $2\lesssim M \lesssim 4$ is most important for C production, about half of C production occurs before \about{1} Gyr, similar to \ia\ Fe. 
-K10 and K16 weight C production more heavily towards massive stars resulting in a faster enrichment delay time, whereas the C11 and V13 models predict a slightly longer timescale of \about{1} Gyr, but little to no C is produced more than 2 Gyr after a star formation event. This is in contrast to Fe whos production lasts up to 10 Gyr after a star formation event. As shown in the right panel of Fig.~\ref{fig:agb-ssp}, with increasing $Z$, C enrichment occurs earlier, and C destruction in low-mass stars leads to a declining C abundance at late times.
+K10 and K16 weight C production more heavily towards massive stars resulting in a faster enrichment delay time, whereas the \cxi\ and V13 models predict a slightly longer timescale of \about{1} Gyr, but little to no C is produced more than 2 Gyr after a star formation event. This is in contrast to Fe whos production lasts up to 10 Gyr after a star formation event. As shown in the right panel of Fig.~\ref{fig:agb-ssp}, with increasing $Z$, C enrichment occurs earlier, and C destruction in low-mass stars leads to a declining C abundance at late times.
     
 
 \begin{figure}
     \centering
  	    \includegraphics[scale=1]{agb_yields.pdf}
-        \caption[Low mass C yields]{The net fractional \agb\ C yield  plotted as a function of initial stellar mass $M$ and color-coded according to metallicity. The black dashed line shows $\tilde{y}=0$ for reference. Each panel represents yields from one of four \agb\ models: C11, K10, V13, K16 (see \S \ref{sec:agb}). }
+        \caption[Low mass C yields]{The net fractional \agb\ C yield  plotted as a function of initial stellar mass $M$ and color-coded according to metallicity. The black dashed line shows $\tilde{y}=0$ for reference. Each panel represents yields from one of four \agb\ models: \cxi, K10, V13, K16 (see \S \ref{sec:agb}). }
         \label{fig:y_agb}
 \end{figure}
 \begin{figure}
@@ -963,7 +1047,9 @@ Software that has contributed to this work:
 
 \glsaddall
 
+\printglossary[type=\acronymtype,nonumberlist]
 \printglossary[type=symbols,nonumberlist]
+\printglossary[type=models]
 
 \printglossary
 
