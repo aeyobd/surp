@@ -5,7 +5,6 @@ __pycache__
 pickles
 results
 
-*.pdf
 *.jpeg
 *.vice
 *.gif
@@ -44,6 +43,8 @@ karakas16_yields
 
 subgiants.csv
 
+
+# latex
 *.out
 *.dvi
 *.fdb_latexmk
@@ -61,3 +62,16 @@ subgiants.csv
 *.blg
 *.bbl
 *.aux
+*.acn
+*.acr
+*.alg
+*.glg
+*.glo
+*.ist
+*.models-glg
+*.models-glo
+*.models-gls
+*.slg
+*.slo
+*.sls
+*.gls
