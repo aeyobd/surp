@@ -8,10 +8,9 @@ import os.path
 from os.path import exists
 import json
 
-from .vice_utils import load_model, show_stars
-from ..simulation import multizone_sim
+from .vice_utils import load_model
 from . import apogee_analysis as aah
-from .import gas_phase_data
+from . import gas_phase_data
 
 
 from .plotting_utils import legend_outside, fancy_legend
@@ -269,4 +268,78 @@ class vice_model():
         pluto.plot_mean_track(df["[fe/o]"], df["[c/o]"], xlim=xlim, **kwargs)
         plt.xlabel("[fe/o]")
         plt.ylabel("[c/o]")
+
+
+def show_at_R_z(stars, x="[fe/h]", y=None, c=None, xlim=None, ylim=None, **kwargs):
+    r"""Creates a grid of plots at different R and z of show_stars
+
+    Parameters
+    ----------
+
+    
+
+    """
+    fig, axs = plt.subplots(5, 3, sharex=True, sharey=True, figsize=(15,15), squeeze=True)
+    # fig.supxlabel(x)
+    # fig.supylabel(y)
+
+    vmin = None
+    vmax = None
+    if c is not None:
+        vmin = min(stars[c])
+        vmax = max(stars[c])
+
+    for j in range(5):
+        R_min, R_max = [(3,5), (5,7), (7,9), (9,11), (11,13)][j]
+
+        for i in range(3):
+            z_min, z_max = [(0, 0.5), (0.5, 1), (1, 1.5)][i]
+            filtered = sample_stars(filter_stars(stars, R_min, R_max, z_min, z_max), num=1000)
+
+            ax = axs[j][i]
+            im = show_stars(filtered, x, y, c=c, colorbar=False, fig=fig, ax=ax, vmin=vmin, vmax=vmax, **kwargs)
+            ax.set(xlim=xlim,
+                   ylim=ylim,
+                   xlabel="",
+                   ylabel=""
+                  )
+            if i == 0:
+                ax.set(ylabel="R = %i - %i kpc" %(R_min, R_max))
+            if j == 4:
+                ax.set(xlabel="|z| = %1.1f - %1.1f" % (z_min, z_max))
+
+    if c is not None:
+        fig.colorbar(im, ax=axs.ravel().tolist(), label=c)
+
+
+
+def show_stars(stars, x="[fe/h]", y=None, c=None, c_label=None, s=1, alpha=1, kde=False, ax=None, fig=None, colorbar=None,vmin=None, vmax=None, x_err=0.03, y_err=0.03, **args):
+    if ax is None or fig is None:
+        ax = plt.gca()
+        fig = plt.gcf()
+        
+    if kde:
+        im = sns.kdeplot(stars[x]+ np.random.normal(0, x_err, len(stars[x])), ax=ax, **args)
+    elif y is None:
+        im = ax.hist(stars[x]+ np.random.normal(0, x_err, len(stars[x])), **args)
+        ax.set_ylabel("count")
+    else:
+        if c is None:
+            im = ax.scatter(stars[x] + np.random.normal(0, x_err, len(stars[x])), stars[y] + np.random.normal(0, y_err, len(stars[x])), s=s, vmin=vmin, vmax=vmax, alpha=alpha, **args)
+
+        else:
+            im = ax.scatter(stars[x] + np.random.normal(0, x_err, len(stars[x])), stars[y] + np.random.normal(0, y_err, len(stars[x])), c=stars[c], s=s, alpha=alpha, vmin=vmin, vmax=vmax, **args)
+            if colorbar is None:
+                colorbar = True
+        
+        ax.set_ylabel(y)
+    ax.set_xlabel(x)
+    
+    if colorbar:
+        if c_label is None:
+            c_label = c
+        # alt_colorbar(im, label=c_label)
+        fig.colorbar(im, ax = ax, label=c_label)
+
+    return im
 

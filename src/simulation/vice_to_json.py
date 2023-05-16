@@ -6,8 +6,9 @@ import os.path
 from os.path import exists
 import json
 
-from . import multizone_sim
-from ..analysis.vice_utils import load_model, show_stars
+from .vice_utils import load_model
+
+
 
 def json_output(file_name, json_name=None, isotopic=False, overwrite=False):
     """
@@ -38,6 +39,7 @@ def json_output(file_name, json_name=None, isotopic=False, overwrite=False):
         print("saving to ", json_name)
         
 
+
 def model_json(multioutput):
     unsampled_stars = pd.DataFrame(multioutput.stars.todict())
     history, mdf = reduce_history(multioutput)
@@ -51,6 +53,7 @@ def model_json(multioutput):
         "stars_unsampled": unsampled_stars.to_dict(),
         "stars": stars
     }
+
 
 def reduce_history(multioutput):
     """
@@ -144,6 +147,8 @@ def save_result(model, filename):
 
     print("saving to ", filename)
     dist.to_csv(filename)
+
+
 
 if __name__ == "__main__":
     json_output(sys.argv[1] + "*", json_name=None, isotopic=False, overwrite=False)

@@ -1,16 +1,18 @@
-import vice
-import numpy as np
-from vice.toolkit.gaussian_stars.gaussian_stars import gaussian_stars
-from vice.toolkit.hydrodisk.hydrodiskstars import hydrodiskstars
-
 import sys
 import gc
 import os
 
-from .simulations.disks import star_formation_history
-from . import yields
-from .yields import set_yields
-from ._globals import MAX_SF_RADIUS, END_TIME, N_MAX, ZONE_WIDTH
+import numpy as np
+
+import vice
+from vice.toolkit.gaussian_stars.gaussian_stars import gaussian_stars
+from vice.toolkit.hydrodisk.hydrodiskstars import hydrodiskstars
+
+
+from .star_formation_history import star_formation_history
+from .. import yields
+from ..yields import set_yields
+from .._globals import MAX_SF_RADIUS, END_TIME, N_MAX, ZONE_WIDTH
 
 
 def run_model(filename, prefix=None, 
@@ -26,7 +28,7 @@ def run_model(filename, prefix=None,
               timestep=0.01,
               n_stars=2,
               alpha_n=0,
-              test=False, # these are not used
+              test=False, # these are not used yet...
               seed=None, 
               ratio_reduce=False):
     """

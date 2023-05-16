@@ -7,6 +7,9 @@ def main():
     args = parse_args()
     filename = args.filename
 
+    for d in ["logs", "out", "results"]:
+        mkdirs(d, exists_ok=True)
+
     if not filename:
         filename = generate_filename(args)
 
@@ -16,15 +19,8 @@ def main():
     print(pycall)
 
     if args.test_run:
-        from src.multizone_sim import run_model
-        path = "./out/"
-        eval(pycall)
+        subprocess.call(["bash", "local_run.sh", filename, pycall])
     else:
-        pycall = """
-path = None
-from VICE.carbon.src.multizone_sim import run_model
-""" + pycall
-
         subprocess.call(["bash", "submit.sh", filename, pycall])
 
 
@@ -96,6 +92,9 @@ def generate_filename(args):
 def create_pycall(filename, args):
     # create call to python script
     pycall = f"""\
+path = None
+from surp.src.simulation.multizone_sim import run_model
+
 run_model(
      filename='{filename}',
      prefix=path,

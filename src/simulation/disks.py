@@ -14,6 +14,8 @@ if vice.version[:2] < (1, 2):
 	raise RuntimeError("""VICE version >= 1.2.0 is required to produce \
 Johnson et al. (2021) figures. Current: %s""" % (vice.__version__))
 else: pass
+
+
 from vice.toolkit import hydrodisk
 from .._globals import END_TIME, MAX_SF_RADIUS, ZONE_WIDTH
 from . import migration
@@ -122,68 +124,3 @@ class diskmodel(vice.milkyway):
 		model.nthreads = config.nthreads
 		model.calculate_nstars()
 		return model
-
-
-class star_formation_history:
-
-	r"""
-	The star formation history (SFH) of the model galaxy. This object will be
-	used as the ``evolution`` attribute of the ``diskmodel``.
-
-	Parameters
-	----------
-	spec : ``str`` [default : "static"]
-		A keyword denoting the time-dependence of the SFH.
-	zone_width : ``float`` [default : 0.1]
-		The width of each annulus in kpc.
-
-	Calling
-	-------
-	- Parameters
-
-		radius : ``float``
-			Galactocentric radius in kpc.
-		time : ``float``
-			Simulation time in Gyr.
-	"""
-
-	def __init__(self, spec = "static", zone_width = 0.1, **kwargs):
-		self._radii = []
-		self._evol = []
-		i = 0
-		self._spec = spec
-		max_radius = 20 # kpc, defined by ``vice.milkyway`` object.
-		while (i + 1) * zone_width < max_radius:
-			self._radii.append((i + 0.5) * zone_width)
-			self._evol.append({
-					"static":		models.static,
-					"insideout":	models.insideout,
-					"lateburst":	models.lateburst,
-					"outerburst":	models.outerburst,
-					"twoexp":	models.twoexp,
-					"threeexp":	models.threeexp,
-				}[spec.lower()]((i + 0.5) * zone_width, **kwargs))
-			i += 1
-
-	def __call__(self, radius, time):
-		# The milkyway object will always call this with a radius in the
-		# self._radii array, but this ensures a continuous function of radius
-		if radius > MAX_SF_RADIUS:
-			return 0
-		else:
-			idx = get_bin_number(self._radii, radius)
-			if idx != -1:
-				return gradient(radius) * interpolate(self._radii[idx],
-					self._evol[idx](time), self._radii[idx + 1],
-					self._evol[idx + 1](time), radius)
-			else:
-				return gradient(radius) * interpolate(self._radii[-2],
-					self._evol[-2](time), self._radii[-1], self._evol[-1](time),
-					radius)
-	
-	def __str__(self):
-		return f"{self._spec}"
-
-	def __repr__(self):
-		return str(self)
-
