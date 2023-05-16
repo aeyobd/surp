@@ -298,7 +298,7 @@ def plot_stars(x, y, ax=None, exclude_high_alpha=True, c="black", s=1,**kwargs):
     y = convert_name(y)
     ax.scatter(v21[x], v21[y], s=s, c=c, **kwargs)#, label="V+21")
 
-def plot_contour(x, y, ax=None, bins=50,exclude_high_alpha=True,  **kwargs):
+def plot_contour(x, y, ax=None, bins=50, color="black", exclude_high_alpha=True,  **kwargs):
     v21 = subgiants
     if exclude_high_alpha:
         v21 = v21[~v21["high_alpha"]]
@@ -309,7 +309,7 @@ def plot_contour(x, y, ax=None, bins=50,exclude_high_alpha=True,  **kwargs):
 
     if exclude_high_alpha:
         v21 = v21[~v21["high_alpha"]]
-    sns.kdeplot(v21, x=x, y=y, color="black", linewidths=1, **kwargs)
+    sns.kdeplot(v21, x=x, y=y, color=color, linewidths=1, **kwargs)
 
 def plot_cooh():
     df = subgiants

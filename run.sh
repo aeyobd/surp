@@ -14,6 +14,7 @@ dt=0.01
 Nstars=2
 alpha_n=0
 test_run=false
+post_process=false
 
 
 function display_help {
@@ -31,6 +32,7 @@ function display_help {
   echo "  -d, --timestep         the size of the time step (default: 0.01)"
   echo "  -a, --alpha_n          the agb fraction of primary N (0.0)"
   echo "  -p, --c_plateau        the amount of plateau carbon"
+  echo "  -P, --post_process     use the vice post-process migration model"
   echo "  -t, --test             only run a test"
   echo "  -h, --help             display this help message"
 }
@@ -48,6 +50,8 @@ function generate_filename {
   local lateburst_amplitude="$7"
   local fe_ia_factor="$8"
   local dt="$9"
+  local alpha_n="${10}"
+  local pp="${11}"
 
   # Generate filename
   local filename="${agb_model}"
@@ -70,6 +74,10 @@ function generate_filename {
   if [ "$alpha_n" != 0 ]; then
     filename="${filename}_an${alpha_n}"
   fi
+  if [ "$pp" = true ]; then
+    filename="${filename}_pp"
+  fi
+
   filename="${filename}"
 
   # Return filename
@@ -140,6 +148,10 @@ do
       shift
       shift
       ;;
+    -P|--post_process)
+      post_process=true
+      shift
+      ;;
     -t|--test)
       test_run=true
       shift
@@ -157,7 +169,7 @@ done
 
 # Generate filename
 if [ "$filename" = "" ]; then
-    filename=$(generate_filename "$eta" "$beta" "$spec" "$agb_fraction" "$out_of_box_agb" "$agb_model" "$lateburst_amplitude" "$fe_ia_factor" "$dt")
+    filename=$(generate_filename "$eta" "$beta" "$spec" "$agb_fraction" "$out_of_box_agb" "$agb_model" "$lateburst_amplitude" "$fe_ia_factor" "$dt" "$alpha_n" "$post_process")
 fi
 
 echo "Filename: $filename"
@@ -181,7 +193,8 @@ main(path, '${filename}',
      fe_ia_factor=${fe_ia_factor},
      dt=${dt},
      n_stars=${Nstars},
-     alpha_n=${alpha_n}
+     alpha_n=${alpha_n},
+     post_process=${post_process},
     )
 EOT
 
