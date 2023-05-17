@@ -24,3 +24,14 @@ AGB_MODELS = ["cristallo11", "karakas10", "ventura13", "karakas16"]
 # just define shorthands
 C11, K10, V13, K16 = AGB_MODELS
 
+
+def find_data_dir():
+    import os
+    script_dir = os.path.dirname(__file__)
+    rel_path = "../data/"
+    abs_path = os.path.join(script_dir, rel_path)
+    return abs_path
+
+
+DATA_DIR = find_data_dir()
+

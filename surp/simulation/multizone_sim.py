@@ -100,7 +100,7 @@ def run_model(filename, prefix=None,
                          migration_mode=migration_mode, 
                          lateburst_amplitude=lateburst_amplitude, spec=spec)
     print(model)
-    model.run(np.arange(0, END_TIME, timestep), overwrite=True, pickle=False)
+    model.run(np.arange(0, END_TIME, timestep), overwrite=True, pickle=True)
 
     print("finished")
 
@@ -129,7 +129,7 @@ def create_model(prefix, filename, n_stars,
             simple=simple
             )
 
-    model.elements = ("fe", "o", "mg", "n", "c", "au", "ag", "ne")
+    model.elements = ("fe", "o", "mg", "n", "c")
     model.mode = "sfr"
     model.dt = timestep
     model.bins = np.arange(-3, 3, 0.01)

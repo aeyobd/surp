@@ -5,7 +5,7 @@
 
 # first argument is filename
 # second argument is the python call
-echo "Submitting Job"
+echo "Running Script"
 rm -f logs/$1.log
 export SLURM_SUBMIT_DIR=.
 export TMPDIR=./temp
@@ -32,7 +32,7 @@ python -c "
 $2
 " \$TMPDIR/
 
-python \$SLURM_SUBMIT_DIR/src/simulation/json_outputs.py \$TMPDIR/
+python \$SLURM_SUBMIT_DIR/surp/simulation/json_outputs.py \$TMPDIR/
 
 # cp -r -u \$TMPDIR/*.vice \$SLURM_SUBMIT_DIR/out
 # cp -r -u \$TMPDIR/*.json \$SLURM_SUBMIT_DIR/out

@@ -94,7 +94,7 @@ def create_pycall(filename, args):
     # create call to python script
     pycall = f"""\
 path = None
-from surp.src.simulation.multizone_sim import run_model
+from surp.simulation.multizone_sim import run_model
 
 run_model(
      filename='{filename}',

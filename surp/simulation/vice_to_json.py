@@ -2,37 +2,40 @@ import vice
 import pandas as pd
 import numpy as np
 import random
-import os.path
-from os.path import exists
+from os import path
 import json
+from .._globals import MAX_SF_RADIUS, DATA_DIR
 
-from .vice_utils import load_model
+from .vice_utils import load_model, zone_to_R
+
+# these are not used but pickles
+# won't behave otherwise
+import surp
+from surp.simulation import multizone_sim
+from surp import yields
 
 
 
-def json_output(file_name, json_name=None, isotopic=False, overwrite=False):
+def json_output(file_name, isotopic=False, overwrite=False):
     """
     Creates a vice_model object from the given vice_file and then pickles this object
     to store model information in a single file
 
-    """
-    if json_name is None:
-        ext_loc = file_name.rfind(".")
-        # these should use os.path isntead
-        dir_loc = file_name.rfind("/") + 1
-        name = file_name[dir_loc:ext_loc]
-        json_name = "%s.json" % name
+    TODO: Implement isotopic handling
 
-    if exists(json_name) and not overwrite:
-        # raise ValueError("file %s exists and overwrite is not set" % json_name)
+    """
+    name = path.splitext(file_name)[0]
+    json_name = f"{name}.json"
+
+    if path.exists(json_name) and not overwrite:
         print("skipping %s, file exists" % json_name)
         return 0
 
 
-    # TODO add isotopic options
     output = load_model(file_name)
-    model = model_json(output)
-    save_result(model, json_name[:-5] + ".csv")
+    model = out_to_dict(output)
+
+    # save_result(model, f"{name}.csv")
 
     with open(json_name, "w") as f:
         json.dump(model, f)
@@ -40,18 +43,17 @@ def json_output(file_name, json_name=None, isotopic=False, overwrite=False):
         
 
 
-def model_json(multioutput):
-    unsampled_stars = pd.DataFrame(multioutput.stars.todict())
+
+def out_to_dict(multioutput):
     history, mdf = reduce_history(multioutput)
-    unsampled_stars, stars = reduce_stars(multioutput)
-    
-    stars = {key: value.to_dict() for key, value in stars.items()}
+    stars = pd.DataFrame(multioutput.stars.todict())
+    sampled_stars = create_star_sample(stars)
     
     return {
         "history": history.to_dict(),
         "mdf": mdf.to_dict(),
-        "stars_unsampled": unsampled_stars.to_dict(),
-        "stars": stars
+        "stars_unsampled": stars.to_dict(),
+        "stars": sampled_stars.to_dict()
     }
 
 
@@ -70,16 +72,18 @@ def reduce_history(multioutput):
         zone = multioutput.zones["zone%i" % i]
 
         df = pd.DataFrame(zone.history.todict())
-        df["R"] = [i/10]*len(df)
+        df["R"] = zone_to_R(i)*len(df)
         history = pd.concat((history, df), ignore_index=True)
 
         df = pd.DataFrame(zone.mdf.todict())
-        df["R"] = [i/10]*len(df)
+        df["R"] = zone_to_R(i)*len(df)
         mdf = pd.concat((mdf, df), ignore_index=True)
     
     return history, mdf
 
-def reduce_stars(multioutput):
+
+
+def filt_stars(multioutput):
     """
     Helper function which both
     converts stars from vice.multioutput to 
@@ -90,7 +94,6 @@ def reduce_stars(multioutput):
     unsampled_stars = pd.DataFrame(multioutput.stars.todict())
 
     # filter out numerical artifacts
-    max_zone = 155
     s = unsampled_stars[unsampled_stars["zone_origin"] < max_zone]
     stars = {}
     stars["all"]= sample_stars(s, n_stars)
@@ -110,29 +113,39 @@ def reduce_stars(multioutput):
     return unsampled_stars, stars
 
 
-def sample_stars(stars, num=1000):
-    r"""
-    Samples a population of stars while respecting mass weights
+def create_star_sample(stars, num=12000):
+    cdf = load_cdf()
+    sample = pd.DataFrame(columns=stars.columns)
 
-    Parameters
-    ----------
-    stars: ``pd.DataFrame``
-        A dataframe containing stars
-        Must have properties ``mass``
-    num: ``int`` [default: 1000]
-        The number of stars to sample
+    for _ in range(num):
+        sample = pd.concat((sample, rand_star(stars, cdf)), ignore_index=True)
 
-    Returns
-    -------
-    A np.array of the sampled parameter from stars
-    """
+    return sample
+
+
+
+
+def load_cdf():
+    return pd.read_csv(path.join(DATA_DIR, "R_subgiants_cdf.csv"))
+
+
+def rand_zone(cdf):
+    p = np.random.rand()
+    return cdf.zone.loc[cdf.cdf > p].iloc[0]
+
+def rand_star(stars, cdf):
+    return rand_star_in_zone(stars, rand_zone(cdf))
+
+def rand_star_in_zone(stars, zone):
+    df = stars.loc[stars.zone_final == zone]
 
     size = len(stars)
-    result = {key: np.zeros(num) for key in stars.keys()}
+    index = random.choices(np.arange(size), weights=stars["mass"], k=1)
 
-    index = random.choices(np.arange(size), weights=stars["mass"], k=num)
+    return stars.iloc[index]
 
-    return stars.iloc[index].copy()
+
+
 
 
 def save_result(model, filename):
@@ -152,5 +165,4 @@ def save_result(model, filename):
 
 if __name__ == "__main__":
     json_output(sys.argv[1] + "*", json_name=None, isotopic=False, overwrite=False)
-
 
