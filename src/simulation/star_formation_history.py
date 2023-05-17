@@ -1,5 +1,8 @@
 from . import models
-from .._globals import ZONE_WIDTH
+from .._globals import ZONE_WIDTH, MAX_SF_RADIUS
+from .models.utils import get_bin_number, interpolate
+from .models.gradient import gradient
+
 
 
 

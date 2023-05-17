@@ -1,6 +1,7 @@
 import argparse
 import subprocess
 import sys
+import os
 
 
 def main():
@@ -8,7 +9,7 @@ def main():
     filename = args.filename
 
     for d in ["logs", "out", "results"]:
-        mkdirs(d, exists_ok=True)
+        os.makedirs(d, exist_ok=True)
 
     if not filename:
         filename = generate_filename(args)

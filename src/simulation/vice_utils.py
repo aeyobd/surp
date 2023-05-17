@@ -20,7 +20,7 @@ def load_model(name, isotopic=False, hydrodisk=False):
     if hydrodisk:
         milkyway.stars["abs_z"] = calculate_z(milkyway)
     else:
-        milkyway.stars["abs_z"] = 0
+        milkyway.stars["abs_z"] = [0 for _ in milkyway.stars["zone_origin"]]
 
     milkyway.stars["R_origin"] = zone_to_R(np.array(milkyway.stars["zone_origin"]))
     milkyway.stars["R_final"] = zone_to_R(np.array(milkyway.stars["zone_final"]))
@@ -81,6 +81,10 @@ def sample_stars(stars, num=1000):
         for key in stars.keys():
             result[key][i] = stars[key][index[i]]
     return vice.dataframe(result)
+
+
+def sample_apogee_style(stars, num=1000):
+    pass
 
 
 

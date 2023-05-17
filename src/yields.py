@@ -38,11 +38,20 @@ def set_yields(eta=1, beta=0.001, fe_ia_factor=None,
 
     set_eta(eta)
 
+    set_isotopic()
+
     print_yields()
 
 
 
 
+def set_isotopic():
+    vice.yields.sneia.settings["au"] = 0
+    vice.yields.ccsne.settings["au"] = 0
+    vice.yields.agb.settings["au"] = lambda m, z: 0
+    vice.yields.sneia.settings["ag"] = 0
+    vice.yields.ccsne.settings["ag"] = 0
+    vice.yields.agb.settings["ag"] = lambda m, z: 0
 
 class LinAGB:
     def __init__(self, zeta, y0):

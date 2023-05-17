@@ -35,9 +35,9 @@ def retrieve_apogee():
 
         i = 0
         with open(abs_path, "wb") as f:
-            for chunk in file.iter_content(chunk_size=4096):
+            for chunk in file.iter_content(chunk_size=2**20):
                 f.write(chunk)
-                print("%i\r" % i, end="") 
+                print("%i MiB / 3.7 GiB \r" % i, end="") 
                 i += 1
         print("file saved!")
 
@@ -47,13 +47,8 @@ def retrieve_apogee():
 
     return da
 
-def find_subgiants():
-    """
-    This returns a pd.dataframe of 
-    a subgiant sample of APOGEE c.o. Jack Roberts
-    
-    """
 
+def filtered_apogee():
     da = retrieve_apogee()
     
     # read in the fits file
@@ -81,13 +76,22 @@ def find_subgiants():
     mask &= logg >= 0.0012*teff - 2.8
     
     filtered = da[mask]
-    df = pd.DataFrame(filtered.tolist(), columns = [c.name for c in filtered.columns])
+    return pd.DataFrame(filtered.tolist(), columns = [c.name for c in filtered.columns])
+
+
+def find_subgiants():
+    """
+    This returns a pd.dataframe of 
+    a subgiant sample of APOGEE c.o. Jack Roberts
     
-    # calculate galacteocentric coordinates (not super useful but here for fun)
-    c = coord.SkyCoord(ra = df["RA"] * u.degree,
-                               dec = df["DEC"] * u.degree,
-                               distance = df["GAIAEDR3_R_MED_GEO"] * u.pc,
-                               frame="icrs")
+    """
+    df = filtered_apogee()
+    
+    c = coord.SkyCoord(ra = np.array(df["RA"]) * u.deg,
+                       dec = np.array(df["DEC"]) * u.deg,
+                       distance = np.array(df["GAIAEDR3_R_MED_GEO"]) * u.pc,
+                       frame="icrs")
+
     gc_c = c.transform_to(coord.Galactocentric)
     df["R_gal"] = np.array(np.sqrt(gc_c.x**2 + gc_c.y**2) / 1e3)
     df["th_gal"] = np.array(np.arctan(gc_c.y/gc_c.x))
@@ -111,6 +115,7 @@ def find_subgiants():
     
     return df
 
+
 def read_subgiants():
     """
     Either reads in the subgiants from a csv file or
@@ -118,7 +123,7 @@ def read_subgiants():
     a file if the file does not yet exist
     """
     script_dir = os.path.dirname(__file__)
-    rel_path = "../data/subgiants.csv"
+    rel_path = "../../data/subgiants.csv"
     abs_path = os.path.join(script_dir, rel_path)
 
     if not os.path.exists(abs_path):
@@ -544,4 +549,4 @@ mm_of_elements = {'h': 1.00794, 'he': 4.002602, 'li': 6.941, 'be': 9.012182,
                   'og': 294,
                   '': 0}
 
-subgiants = find_subgiants()
+subgiants = read_subgiants()

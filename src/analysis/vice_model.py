@@ -8,7 +8,6 @@ import os.path
 from os.path import exists
 import json
 
-from .vice_utils import load_model
 from . import apogee_analysis as aah
 from . import gas_phase_data
 
@@ -16,8 +15,8 @@ from . import gas_phase_data
 from .plotting_utils import legend_outside, fancy_legend
 from . import plotting_utils as pluto
 
-from arya.style.style import COLORS
 import arya
+COLORS = arya.style.COLORS
 cmap = arya.style.get_cmap()
 
 class vice_model():

@@ -147,11 +147,9 @@ def create_model(prefix, filename, n_stars,
 def create_evolution(spec, burst_size):
     if spec == "lateburst":
         evolution = star_formation_history(spec = spec,
-                zone_width = ZONE_WIDTH,
                 burst_size = burst_size)
     elif spec == "twoexp":
         evolution = star_formation_history(spec = spec,
-                zone_width = ZONE_WIDTH, 
                 timescale2 = 1,
                 amplitude = burst_size, 
                 t1=5)
@@ -159,16 +157,13 @@ def create_evolution(spec, burst_size):
     elif spec == "threeexp":
         evolution = star_formation_history(
                 spec = spec,
-                zone_width = ZONE_WIDTH, 
                 timescale2 = 1, 
                 amplitude = burst_size, 
                 t1 = 5, 
                 amplitude3=0.2, 
                 t2=12)
     else:
-        evolution = star_formation_history(
-                spec=spec,
-                zone_width=ZONE_WIDTH)
+        evolution = star_formation_history(spec=spec)
 
     return evolution
 
