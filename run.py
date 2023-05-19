@@ -20,9 +20,9 @@ def main():
     print(pycall)
 
     if args.test_run:
-        subprocess.call(["bash", "local_run.sh", filename, pycall])
+        subprocess.call(["bash", "local_run.sh", filename, pycall, args.threads])
     else:
-        subprocess.call(["bash", "submit.sh", filename, pycall])
+        subprocess.call(["bash", "submit.sh", filename, pycall, args.threads])
 
 
 
@@ -57,6 +57,8 @@ def parse_args():
                         help="the agb fraction of primary N (0.0)")
     parser.add_argument("-t", "--test_run", action="store_true", 
                         help="only run a test")
+    parser.add_argument("-T", "--threads", default=1,
+                        help="number of threads to run. default=1")
     return parser.parse_args()
 
 
@@ -87,6 +89,9 @@ def generate_filename(args):
     if args.n_stars != 2:
         filename += "_nstars" + str(args.n_stars)
 
+    if args.threads != 1:
+        filename += "_nthreads" + str(args.threads)
+
     return filename
 
 
@@ -111,6 +116,7 @@ run_model(
      n_stars={args.n_stars},
      alpha_n={args.alpha_n},
      migration_mode='{args.migration_mode}',
+     n_threads={args.threads}
     )
 """
     return pycall

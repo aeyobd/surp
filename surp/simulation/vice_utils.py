@@ -83,10 +83,6 @@ def sample_stars(stars, num=1000):
     return vice.dataframe(result)
 
 
-def sample_apogee_style(stars, num=1000):
-    pass
-
-
 
 def filter_stars(stars, R_min, R_max, z_min=0, z_max=2):
     return stars.filter("zone_final", ">", R_to_zone(R_min)).filter(

@@ -18,7 +18,7 @@ from surp import yields
 
 def json_output(file_name, isotopic=False, overwrite=False):
     """
-    Creates a vice_model object from the given vice_file and then pickles this object
+    Creates a json object from the given vice_file and then pickles this object
     to store model information in a single file
 
     TODO: Implement isotopic handling
@@ -83,35 +83,6 @@ def reduce_history(multioutput):
 
 
 
-def filt_stars(multioutput):
-    """
-    Helper function which both
-    converts stars from vice.multioutput to 
-    a pandas dataframe and samples the stars
-    to weight by mass correctly"""
-
-    n_stars = 10_000
-    unsampled_stars = pd.DataFrame(multioutput.stars.todict())
-
-    # filter out numerical artifacts
-    s = unsampled_stars[unsampled_stars["zone_origin"] < max_zone]
-    stars = {}
-    stars["all"]= sample_stars(s, n_stars)
-
-    solar_filter = s["r_final"] > 7
-    solar_filter &= s["r_final"] < 9
-    solar_filter &= s["abs_z"] > 0
-    solar_filter &= s["abs_z"] < 0.5
-    stars["solar"] = sample_stars(s[solar_filter], n_stars)
-
-    apogee_filter = s["r_final"] > 7
-    apogee_filter &= s["r_final"] < 9
-    apogee_filter &= s["abs_z"] > 0
-    apogee_filter &= s["abs_z"] < 1
-    stars["apogee"] = sample_stars(s[apogee_filter], n_stars)
-    
-    return unsampled_stars, stars
-
 
 def create_star_sample(stars, num=12000):
     cdf = load_cdf()
@@ -121,7 +92,6 @@ def create_star_sample(stars, num=12000):
         sample = pd.concat((sample, rand_star(stars, cdf)), ignore_index=True)
 
     return sample
-
 
 
 
@@ -139,10 +109,10 @@ def rand_star(stars, cdf):
 def rand_star_in_zone(stars, zone):
     df = stars.loc[stars.zone_final == zone]
 
-    size = len(stars)
-    index = random.choices(np.arange(size), weights=stars["mass"], k=1)
+    size = len(df)
+    index = random.choices(np.arange(size), weights=df["mass"], k=1)
 
-    return stars.iloc[index]
+    return df.iloc[index]
 
 
 

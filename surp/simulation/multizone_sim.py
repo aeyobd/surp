@@ -30,7 +30,8 @@ def run_model(filename, prefix=None,
               alpha_n=0,
               test=False, # these are not used yet...
               seed=None, 
-              ratio_reduce=False):
+              ratio_reduce=False,
+              n_threads=1):
     """
     This function wraps various settings to make running VICE multizone models
     easier for the carbon paper investigation
@@ -98,7 +99,8 @@ def run_model(filename, prefix=None,
                          n_stars=n_stars, timestep=timestep,
                          ratio_reduce=ratio_reduce, eta=eta,
                          migration_mode=migration_mode, 
-                         lateburst_amplitude=lateburst_amplitude, spec=spec)
+                         lateburst_amplitude=lateburst_amplitude, spec=spec,
+                         n_threads=n_threads)
     print(model)
     model.run(np.arange(0, END_TIME, timestep), overwrite=True, pickle=True)
 
@@ -108,7 +110,8 @@ def run_model(filename, prefix=None,
 
 def create_model(prefix, filename, n_stars, 
                  timestep, spec, ratio_reduce,
-                 eta, migration_mode, lateburst_amplitude):
+                 eta, migration_mode, lateburst_amplitude,
+                 n_threads):
 
     simple = migration_mode == "post-process"
     if simple:
@@ -133,6 +136,8 @@ def create_model(prefix, filename, n_stars,
     model.mode = "sfr"
     model.dt = timestep
     model.bins = np.arange(-3, 3, 0.01)
+    model.setup_nthreads = n_threads
+    model.nthreads = min(len(model.elements), n_threads)
             
     model.evolution = create_evolution(spec=spec, burst_size=lateburst_amplitude)
 

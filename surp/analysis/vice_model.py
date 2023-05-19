@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 import os.path
 from os.path import exists
 import json
+import seaborn as sns
+
 
 from . import apogee_analysis as aah
 from . import gas_phase_data
@@ -57,9 +59,8 @@ class vice_model():
         with open(filename, "r") as f:
             d = json.load(f)
 
-        self.stars = d["stars"]
-        for name, val in self.stars.items():
-            self.stars[name] = pd.DataFrame(val)
+        self.stars = pd.DataFrame(d["stars"])
+        self.stars_unsampled = pd.DataFrame(d["stars_unsampled"])
 
         self.history = pd.DataFrame(d["history"])
 
@@ -77,6 +78,7 @@ class vice_model():
 
         if xlim is not None:
             plt.xlim(xlim)
+
 
     def plot_mean_stars(self, x, y, plot_data=True, xlim=None,
             star_group="solar", ax=None, s=1, **kwargs):

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-module load miniconda3/4.12.0-py39
+# module load miniconda3/4.12.0-py39
 
 # written like this so we can substitute the 
 # name into the file for easier understanding
@@ -12,8 +12,8 @@ rm -f logs/$1.log
 
 sbatch <<EOT
 #!/bin/bash
-#SBATCH --time=2:00:00
-#SBATCH --ntasks=1
+#SBATCH --time=8:00:00
+#SBATCH --ntasks=$3
 #SBATCH --mem=32gb
 #SBATCH --job-name=$1
 #SBATCH --mail-type=BEGIN,END,FAIL
@@ -22,6 +22,7 @@ sbatch <<EOT
 
 
 set -x
+exoprt OMP_NUM_THREADS=1
 
 cd $SLURM_SUBMIT_DIR
 # # miniconda is specificed in bashrc
@@ -30,14 +31,16 @@ cd $SLURM_SUBMIT_DIR
 python --version
 
 
+exoprt OMP_NUM_THREADS=$3
 python -c "
 $2
 " \$TMPDIR/
 
-python \$SLURM_SUBMIT_DIR/src/json_outputs.py \$TMPDIR/
+exoprt OMP_NUM_THREADS=1
+python \$SLURM_SUBMIT_DIR/surp/simulation/json_outputs.py \$TMPDIR/
 
 cp -r -u \$TMPDIR/*.vice \$SLURM_SUBMIT_DIR/out
-# cp -r -u \$TMPDIR/*.json \$SLURM_SUBMIT_DIR/out
+cp -r -u \$TMPDIR/*.json \$SLURM_SUBMIT_DIR/out
 # cp -r -u \$TMPDIR/*.csv \$SLURM_SUBMIT_DIR/results
 
 scontrol show job=\$SLURM_JOB_ID
