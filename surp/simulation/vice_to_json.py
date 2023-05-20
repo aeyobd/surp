@@ -48,6 +48,12 @@ def out_to_dict(multioutput):
     history, mdf = reduce_history(multioutput)
     stars = pd.DataFrame(multioutput.stars.todict())
     sampled_stars = create_star_sample(stars)
+
+    sampled_stars["MG_H"] = sampled_stars["[mg/h]"]
+    sampled_stars["MG_FE"] = sampled_stars["[mg/fe]"]
+    sampled_stars["C_MG"] = sampled_stars["[c/mg]"]
+    sampled_stars["N_MG"] = sampled_stars["[n/mg]"]
+    sampled_stars["C_N"] = sampled_stars["[c/n]"]
     
     return {
         "history": history.to_dict(),
@@ -122,11 +128,6 @@ def save_result(model, filename):
     dist = pd.DataFrame()
     s = model["stars"]["solar"]
 
-    dist["MG_H"] = s["[mg/h]"]
-    dist["MG_FE"] = s["[mg/fe]"]
-    dist["C_MG"] = s["[c/mg]"]
-    dist["N_MG"] = s["[n/mg]"]
-    dist["C_N"] = s["[c/n]"]
 
     print("saving to ", filename)
     dist.to_csv(filename)

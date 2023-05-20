@@ -16,7 +16,8 @@ YC_AGB0 = {
         "cristallo11": 3.47e-4,
         "karakas10": 5.85e-4,
         "ventura13": 6.0e-5,
-        "karakas16": 4.21e-4
+        "karakas16": 4.21e-4,
+        "A": 1e-3
 }
 
 # default settings
@@ -24,12 +25,18 @@ YC_AGB0 = {
 
 def set_yields(eta=1, beta=0.001, fe_ia_factor=None,
                agb_model="cristallo11", oob=False, f_agb=0.2,
-               alpha_n=0.5, ):
+               alpha_n=0.5, m_low=1.3, m_mid=2.3, m_high=4,
+               mz_agb=7e-4, 
+              ):
 
     set_fe(fe_ia_factor)
 
     alpha_agb, alpha_cc = calc_alpha(agb_model, eta, oob, f_agb)
-    set_agb(agb_model, alpha_agb)
+    set_agb(agb_model, alpha_agb,
+            m_low=m_low,
+            m_mid=m_mid,
+            m_high=m_high,
+            mz_agb=mz_agb)
 
     set_n(eta, alpha_n)
     
@@ -103,7 +110,10 @@ set_defaults()
 
 
 
-def set_agb_elem(elem, study, factor):
+def set_agb_elem(elem, study, factor, m_low=1.3, m_mid=2.3, m_high=4, mz_agb=7e-4):
+    if study == "A":
+        agb.settings["c"] = a_agb(m0=m_low, m1=m_mid, m2=m_high, mz=mz_agb)
+        study = "cristallo11"
     if elem == "fe" and agb_model == "ventura13":
         study = "cristallo11"
 
@@ -111,9 +121,9 @@ def set_agb_elem(elem, study, factor):
 
 
 
-def set_agb(study="cristallo11", factor=1):
+def set_agb(study="cristallo11", factor=1, **kwargs):
     for elem in ["c", "o", "mg"]:
-        set_agb_elem(elem, study, factor)
+        set_agb_elem(elem, study, factor, **kwargs)
 
 
 def set_fe(fe_ia_factor):
@@ -165,7 +175,40 @@ def calc_alpha(agb_model="cristallo11" , eta=1, oob=False, f_agb=0.2):
     return alpha_agb, alpha_cc
 
 
+def a_agb(m0=1.3, m1=2.3, m2=4, y0=1e-4, mz=0.0007):
 
+    def inner(m, z):
+        d = spline(m, [m0, m1, m2], [0, 1, 0]) / (m2-m0) 
+        m_over_h = np.log10(z/Z_Sun)
+        c = m_over_h * mz + y0
+        
+        return c*d
+    return inner
+
+
+
+def sspline(x):
+    if x < 0 or 1 < x:
+        return 0
+    return 3*x**2 - 2*x**3
+
+def pspline(x, x0, y0):
+    m = y0[1] - y0[0]
+    if x0[0] < x < x0[1]:
+        return y0[0] + m*sspline( (x-x0[0])/(x0[1] - x0[0]) )
+    else:
+        return 0
+
+
+def spline(x, xs, ys):
+    s = 0
+
+    for i in range(len(xs) - 1):
+        x0 = (xs[i], xs[i+1])
+        y0 = (ys[i], ys[i+1])
+        s += pspline(x, x0, y0)
+        
+    return s
 
 
 def print_yields():

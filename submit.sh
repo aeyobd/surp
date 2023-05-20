@@ -22,7 +22,7 @@ sbatch <<EOT
 
 
 set -x
-exoprt OMP_NUM_THREADS=1
+export OMP_NUM_THREADS=1
 
 cd $SLURM_SUBMIT_DIR
 # # miniconda is specificed in bashrc
@@ -31,15 +31,15 @@ cd $SLURM_SUBMIT_DIR
 python --version
 
 
-exoprt OMP_NUM_THREADS=$3
+export OMP_NUM_THREADS=$3
 python -c "
 $2
 " \$TMPDIR/
 
-exoprt OMP_NUM_THREADS=1
+export OMP_NUM_THREADS=1
 python \$SLURM_SUBMIT_DIR/surp/simulation/json_outputs.py \$TMPDIR/
 
-cp -r -u \$TMPDIR/*.vice \$SLURM_SUBMIT_DIR/out
+# cp -r -u \$TMPDIR/*.vice \$SLURM_SUBMIT_DIR/out
 cp -r -u \$TMPDIR/*.json \$SLURM_SUBMIT_DIR/out
 # cp -r -u \$TMPDIR/*.csv \$SLURM_SUBMIT_DIR/results
 

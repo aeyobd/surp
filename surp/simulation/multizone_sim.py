@@ -31,7 +31,12 @@ def run_model(filename, prefix=None,
               test=False, # these are not used yet...
               seed=None, 
               ratio_reduce=False,
-              n_threads=1):
+              n_threads=1,
+              m_low=1.3,
+              m_mid=2.3,
+              m_high=4,
+              mz_agb=7e-4,
+     ):
     """
     This function wraps various settings to make running VICE multizone models
     easier for the carbon paper investigation
@@ -85,12 +90,17 @@ def run_model(filename, prefix=None,
             "C11": "cristallo11",
             "K10": "karakas10",
             "V13": "ventura13",
-            "K16": "karakas16"
+            "K16": "karakas16",
+            "A": "A"
             }[agb_model]
 
     set_yields(eta=eta, beta=beta, fe_ia_factor=fe_ia_factor,
                agb_model=agb_model, oob=out_of_box_agb, f_agb=agb_fraction, 
-               alpha_n=alpha_n)
+               alpha_n=alpha_n,
+               m_low=m_low,
+               m_mid=m_mid,
+               m_high=m_high,
+               mz_agb=mz_agb)
 
     print("configured yields")
 
