@@ -155,7 +155,7 @@ class vice_model():
         ax.set_xlabel(x)
         ax.set_ylabel(y)
 
-    def plot_t_slices(self, x, y, xlim=None, times=[13,11,8,5,2], ax=None, legend=True):
+    def plot_t_slices(self, x, y, xlim=None, times=[13,11,8,5,2], smooth=0.1, ax=None, legend=True):
         if ax is None:
             ax = plt.gca()
 
@@ -169,7 +169,7 @@ class vice_model():
         if legend:
             fancy_legend(title="", ax=ax, colors=colors)
 
-    def plot_R_slices(self, x, y, Rs=[4,6,8,10,12], ax=None, legend=True):
+    def plot_R_slices(self, x, y, Rs=[4,6,8,10,12], ax=None, t_min=0.1, legend=True):
         colors = [cmap(i/5) for i in range(5)]
 
         if ax is None:
@@ -186,8 +186,8 @@ class vice_model():
                     label=f"{i/10:2.0f} kpc", ax=ax, color=c)
 
             # mark points
-            ave = self.annulus_average(R_min, R_max)
-            t = np.arange(0.2, 13.21, 1)
+            ave = self.annulus_average(R_min, R_max, t_min=t_min)
+            t = np.round(np.arange(0.2, 13.21, 1), 2)
             x_values = ave[x][t]
             y_values = ave[y][t]
             ax.scatter(x_values, y_values, marker="x", color=c)
@@ -195,7 +195,7 @@ class vice_model():
         if legend:
             fancy_legend(title="", ax=ax, colors=colors)
 
-    def annulus_average(self, R_min, R_max):
+    def annulus_average(self, R_min, R_max, t_min=0.1):
         """
         Computes the average values of self.history
         for each timestep for zones between R_min and R_max
@@ -206,6 +206,7 @@ class vice_model():
             The name of the"""
         filt = self.history["R"] > R_min
         filt &= self.history["R"] < R_max
+        filt &= self.history["time"] > t_min
         df = self.history[filt]
         return df.groupby("time").mean()
 

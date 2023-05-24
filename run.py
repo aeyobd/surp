@@ -34,7 +34,7 @@ def parse_args():
     parser.add_argument("-e", "--eta", type=float, default=1,
                         help="the efficiency multiplier of the supernova feedback")
     parser.add_argument("-b", "--beta", type=float, default=0.001, 
-                        help="the power-law index of the star formation law")
+                        help="the power-law index of the star formation law, default=0.001")
     parser.add_argument("-s", "--spec", default="insideout", 
                         help="""star formation specification. Options include
                         [insideout, constant, lateburst, outerburst, 

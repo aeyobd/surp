@@ -78,11 +78,11 @@ def reduce_history(multioutput):
         zone = multioutput.zones["zone%i" % i]
 
         df = pd.DataFrame(zone.history.todict())
-        df["R"] = zone_to_R(i)*len(df)
+        df["R"] = np.repeat(zone_to_R(i), len(df))
         history = pd.concat((history, df), ignore_index=True)
 
         df = pd.DataFrame(zone.mdf.todict())
-        df["R"] = zone_to_R(i)*len(df)
+        df["R"] = np.repeat(zone_to_R(i), len(df))
         mdf = pd.concat((mdf, df), ignore_index=True)
     
     return history, mdf

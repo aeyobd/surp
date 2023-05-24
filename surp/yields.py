@@ -17,7 +17,7 @@ YC_AGB0 = {
         "karakas10": 5.85e-4,
         "ventura13": 6.0e-5,
         "karakas16": 4.21e-4,
-        "A": 1e-3
+        "A": 5e-4,
 }
 
 # default settings
@@ -175,14 +175,19 @@ def calc_alpha(agb_model="cristallo11" , eta=1, oob=False, f_agb=0.2):
     return alpha_agb, alpha_cc
 
 
-def a_agb(m0=1.3, m1=2.3, m2=4, y0=1e-4, mz=0.0007):
+def a_agb(m0=1.3, m1=2.3, m2=4, y0=5e-4, mz=-5e-4):
+
+    def f(m):
+        return m * vice.imf.kroupa(m) * spline(m, [m0, m1, m2], [0, 1, 0])
+
+    A_agb = quad(f, m0, m2)[0]/quad(lambda m: m*vice.imf.kroupa(m), 0.08, 100)[0]
 
     def inner(m, z):
-        d = spline(m, [m0, m1, m2], [0, 1, 0]) / (m2-m0) 
+        d = spline(m, [m0, m1, m2], [0, 1, 0]) 
         m_over_h = np.log10(z/Z_Sun)
         c = m_over_h * mz + y0
         
-        return c*d
+        return c*d/A_agb
     return inner
 
 
