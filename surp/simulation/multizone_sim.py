@@ -123,9 +123,12 @@ def create_model(prefix, filename, n_stars,
                  eta, migration_mode, lateburst_amplitude,
                  n_threads):
 
-    simple = migration_mode == "post-process"
-    if simple:
+    if migration_mode == "post-process":
+        simple = True
         migration_mode = "diffusion"
+    else:
+        simple = False
+
 
     Nstars = 2*MAX_SF_RADIUS/ZONE_WIDTH * END_TIME/timestep * n_stars
     if migration_mode != "gaussian" and Nstars > N_MAX:
