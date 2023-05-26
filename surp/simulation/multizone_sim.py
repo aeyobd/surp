@@ -142,7 +142,8 @@ def create_model(prefix, filename, n_stars,
             n_stars=n_stars,
             verbose=False,
             N = Nstars,
-            simple=simple
+            simple=simple,
+            migration_mode=migration_mode
             )
 
     model.elements = ("fe", "o", "mg", "n", "c")
