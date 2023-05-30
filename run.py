@@ -73,6 +73,10 @@ def parse_args():
                         help="lower mass of AGB C")
     parser.add_argument("--mz_agb", default=7e-4,
                         help="metallicity dependence of agb carbon")
+    parser.add_argument("--yl_agb", default=0, 
+                        help="agb yield at m0")
+    parser.add_argument("--yh_agb", default=0, 
+                        help="agb yield at m0")
     return parser.parse_args()
 
 
@@ -80,6 +84,10 @@ def generate_filename(args):
     filename = args.agb_model
     if args.agb_model == "A":
         filename += f"_{args.m_low}_{args.m_mid}_{args.m_high}_z{args.mz_agb}"
+        if args.yl_agb != 0:
+            filename += f"_y0{args.yl_agb}"
+        if args.yh_agb != 0:
+            filename += f"_y0{args.yh_agb}"
 
     if args.out_of_box_agb:
         filename += "_oob"
@@ -107,6 +115,7 @@ def generate_filename(args):
 
     if args.threads != 8:
         filename += "_nthreads" + str(args.threads)
+
 
     return filename
 
@@ -137,6 +146,9 @@ run_model(
      m_mid={args.m_mid},
      m_high={args.m_high},
      mz_agb={args.mz_agb},
+     y0_agb={args.yl_agb},
+     y2_agb={args.yh_agb},
+     verbose={args.test_run},
     )
 """
     return pycall

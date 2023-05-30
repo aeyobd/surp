@@ -25,18 +25,14 @@ YC_AGB0 = {
 
 def set_yields(eta=1, beta=0.001, fe_ia_factor=None,
                agb_model="cristallo11", oob=False, f_agb=0.2,
-               alpha_n=0.5, m_low=1.3, m_mid=2.3, m_high=4,
-               mz_agb=7e-4, 
+               alpha_n=0, 
+               **kwargs
               ):
 
     set_fe(fe_ia_factor)
 
     alpha_agb, alpha_cc = calc_alpha(agb_model, eta, oob, f_agb)
-    set_agb(agb_model, alpha_agb,
-            m_low=m_low,
-            m_mid=m_mid,
-            m_high=m_high,
-            mz_agb=mz_agb)
+    set_agb(agb_model, alpha_agb, **kwargs)
 
     set_n(eta, alpha_n)
     
@@ -110,9 +106,12 @@ set_defaults()
 
 
 
-def set_agb_elem(elem, study, factor, m_low=1.3, m_mid=2.3, m_high=4, mz_agb=7e-4):
+def set_agb_elem(elem, study, factor, m_low=1.3, m_mid=2.3, m_high=4,
+        mz_agb=7e-4,
+        y0_agb=0, y2_agb=0):
     if study == "A":
-        agb.settings["c"] = a_agb(m0=m_low, m1=m_mid, m2=m_high, mz=mz_agb)
+        agb.settings["c"] = a_agb(m0=m_low, m1=m_mid, m2=m_high, mz=mz_agb,
+                y0=y0_agb, y2=y2_agb)
         study = "cristallo11"
     if elem == "fe" and agb_model == "ventura13":
         study = "cristallo11"
@@ -175,19 +174,36 @@ def calc_alpha(agb_model="cristallo11" , eta=1, oob=False, f_agb=0.2):
     return alpha_agb, alpha_cc
 
 
-def a_agb(m0=1.3, m1=2.3, m2=4, y0=5e-4, mz=-5e-4):
+def a_agb(m0=1.3, m1=None, m2=4, y0=0, y1=5e-4, y2=0, mz=-4e-4):
+    """
+    An analytic version of AGB yields.
+
+    Parameters
+    ----------
+    m0: the beginning of the cubic spline.
+    m1: the peak mass. If None, defaults to the average of m0 and m2
+    m2: the end of the cubic spline. 
+    y0: the yield at m0
+    y1: the total yield
+    y2: the yield at m2 
+    mz: the metallicity dependent part of the yield at y1
+    """
+    if m1 is None:
+        m1 = (m0 + m2)/2
+
+    def y_spline(m, z=0.014):
+        m_h = np.log10(z/Z_Sun)
+        return spline(m, [m0, m1, m2], [y0, y1 + mz*m_h, y2])
+
+    imf_norm = quad(lambda m: m*vice.imf.kroupa(m), 0.08, 100)[0]
 
     def f(m):
-        return m * vice.imf.kroupa(m) * spline(m, [m0, m1, m2], [0, 1, 0])
+        return m * vice.imf.kroupa(m)/imf_norm * y_spline(m)
 
-    A_agb = quad(f, m0, m2)[0]/quad(lambda m: m*vice.imf.kroupa(m), 0.08, 100)[0]
+    A_agb = y1 / quad(f, m0, m2)[0]
 
     def inner(m, z):
-        d = spline(m, [m0, m1, m2], [0, 1, 0]) 
-        m_over_h = np.log10(z/Z_Sun)
-        c = m_over_h * mz + y0
-        
-        return c*d/A_agb
+        return A_agb * y_spline(m, z)
     return inner
 
 
@@ -199,7 +215,7 @@ def sspline(x):
 
 def pspline(x, x0, y0):
     m = y0[1] - y0[0]
-    if x0[0] < x < x0[1]:
+    if x0[0] <= x <= x0[1]:
         return y0[0] + m*sspline( (x-x0[0])/(x0[1] - x0[0]) )
     else:
         return 0
@@ -207,6 +223,11 @@ def pspline(x, x0, y0):
 
 def spline(x, xs, ys):
     s = 0
+
+    if x < xs[0]:
+        return ys[0]
+    if x > xs[-1]:
+        return ys[-1]
 
     for i in range(len(xs) - 1):
         x0 = (xs[i], xs[i+1])

@@ -36,6 +36,9 @@ def run_model(filename, prefix=None,
               m_mid=2.3,
               m_high=4,
               mz_agb=7e-4,
+              y0_agb=0,
+              y2_agb=0,
+              verbose=False
      ):
     """
     This function wraps various settings to make running VICE multizone models
@@ -100,7 +103,8 @@ def run_model(filename, prefix=None,
                m_low=m_low,
                m_mid=m_mid,
                m_high=m_high,
-               mz_agb=mz_agb)
+               mz_agb=mz_agb,
+               y0_agb=y0_agb, y2_agb=y2_agb)
 
     print("configured yields")
 
@@ -110,7 +114,7 @@ def run_model(filename, prefix=None,
                          ratio_reduce=ratio_reduce, eta=eta,
                          migration_mode=migration_mode, 
                          lateburst_amplitude=lateburst_amplitude, spec=spec,
-                         n_threads=n_threads)
+                         n_threads=n_threads, verbose=verbose)
     print(model)
     model.run(np.arange(0, END_TIME, timestep), overwrite=True, pickle=True)
 
@@ -121,7 +125,7 @@ def run_model(filename, prefix=None,
 def create_model(prefix, filename, n_stars, 
                  timestep, spec, ratio_reduce,
                  eta, migration_mode, lateburst_amplitude,
-                 n_threads):
+                 n_threads, verbose=False):
 
     if migration_mode == "post-process":
         simple = True
@@ -140,7 +144,7 @@ def create_model(prefix, filename, n_stars,
     model = vice.milkyway(zone_width=ZONE_WIDTH,
             name=prefix + filename,
             n_stars=n_stars,
-            verbose=False,
+            verbose=verbose,
             N = Nstars,
             simple=simple,
             migration_mode=migration_mode
