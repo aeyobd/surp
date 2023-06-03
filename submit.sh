@@ -39,9 +39,9 @@ $2
 export OMP_NUM_THREADS=1
 python \$SLURM_SUBMIT_DIR/surp/simulation/json_outputs.py \$TMPDIR/
 
-cp -r -u \$TMPDIR/*.vice \$SLURM_SUBMIT_DIR/out
+# cp -r -u \$TMPDIR/*.vice \$SLURM_SUBMIT_DIR/out
 cp -r -u \$TMPDIR/*.json \$SLURM_SUBMIT_DIR/out
-# cp \$TMPDIR/*.vice/*.txt \$SLURM_SUBMIT_DIR/out
+cp \$TMPDIR/*.txt \$SLURM_SUBMIT_DIR/out
 # cp -r -u \$TMPDIR/*.csv \$SLURM_SUBMIT_DIR/results
 
 scontrol show job=\$SLURM_JOB_ID

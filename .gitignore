@@ -75,3 +75,6 @@ subgiants.csv
 *.slo
 *.sls
 *.gls
+
+*.pdf
+temp

@@ -49,6 +49,8 @@ def parse_args():
                         help="""The migration mode. Default is diffusion.
                         Acceptable options include post-process, linear, 
                         sudden, and gaussian""")
+    parser.add_argument("-S", "--sigma_R", default=1.27, type=float,
+                        help="migration strength in kpc/Gyr^0.5")
     parser.add_argument("-F", "--filename", default=None,
                         help="the name of the output file ")
     parser.add_argument("-A", "--lateburst_amplitude", type=float, default=1.5, 
@@ -63,7 +65,7 @@ def parse_args():
                         help="the agb fraction of primary N (0.0)")
     parser.add_argument("-t", "--test_run", action="store_true", 
                         help="only run a test")
-    parser.add_argument("-T", "--threads", default=8,
+    parser.add_argument("-T", "--threads", default=1,
                         help="number of threads to run. default=1")
     parser.add_argument("--m_low", default=1.3,
                         help="lower mass of AGB C")
@@ -94,12 +96,18 @@ def generate_filename(args):
     else:
         filename += "_f" + str(args.agb_fraction)
 
-    filename += "_eta" + str(args.eta) + "_beta" + str(args.beta)
+    if args.eta != 1:
+        filename += "_eta" + str(args.eta) 
+        
+    filename += "_beta" + str(args.beta)
 
     if args.spec != "insideout":
         filename += "_" + args.spec + str(args.lateburst_amplitude)
+
     if args.migration_mode != "diffusion":
         filename += "_" + args.migration_mode
+    if args.migration_mode == "gaussian":
+        filename += str(args.sigma_R)
 
     if args.fe_ia_factor != "None":
         filename += "_Fe" + str(args.fe_ia_factor)
@@ -113,7 +121,7 @@ def generate_filename(args):
     if args.n_stars != 2:
         filename += "_nstars" + str(args.n_stars)
 
-    if args.threads != 8:
+    if args.threads != 1:
         filename += "_nthreads" + str(args.threads)
 
 
@@ -149,6 +157,7 @@ run_model(
      y0_agb={args.yl_agb},
      y2_agb={args.yh_agb},
      verbose={args.test_run},
+     sigma_R={args.sigma_R},
     )
 """
     return pycall

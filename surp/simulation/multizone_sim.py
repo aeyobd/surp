@@ -7,6 +7,7 @@ import numpy as np
 import vice
 from vice.toolkit.gaussian_stars.gaussian_stars import gaussian_stars
 from vice.toolkit.hydrodisk.hydrodiskstars import hydrodiskstars
+from vice.milkyway.milkyway import _get_radial_bins
 
 
 from .star_formation_history import star_formation_history
@@ -38,7 +39,8 @@ def run_model(filename, prefix=None,
               mz_agb=7e-4,
               y0_agb=0,
               y2_agb=0,
-              verbose=False
+              verbose=False,
+              sigma_R=1.27,
      ):
     """
     This function wraps various settings to make running VICE multizone models
@@ -114,7 +116,7 @@ def run_model(filename, prefix=None,
                          ratio_reduce=ratio_reduce, eta=eta,
                          migration_mode=migration_mode, 
                          lateburst_amplitude=lateburst_amplitude, spec=spec,
-                         n_threads=n_threads, verbose=verbose)
+                         n_threads=n_threads, verbose=verbose, sigma_R=sigma_R)
     print(model)
     model.run(np.arange(0, END_TIME, timestep), overwrite=True, pickle=True)
 
@@ -125,7 +127,7 @@ def run_model(filename, prefix=None,
 def create_model(prefix, filename, n_stars, 
                  timestep, spec, ratio_reduce,
                  eta, migration_mode, lateburst_amplitude,
-                 n_threads, verbose=False):
+                 n_threads, sigma_R, verbose=False):
 
     if migration_mode == "post-process":
         simple = True
@@ -158,6 +160,14 @@ def create_model(prefix, filename, n_stars,
     model.nthreads = min(len(model.elements), n_threads)
             
     model.evolution = create_evolution(spec=spec, burst_size=lateburst_amplitude)
+
+    if migration_mode == "gaussian":
+        model.migration.stars = vice.toolkit.gaussian_stars.gaussian_stars(
+                _get_radial_bins(ZONE_WIDTH),
+                n_stars=n_stars, 
+                dt=timestep, 
+                name=model.name, 
+                sigma_R=sigma_R)
 
     model.mass_loading = create_mass_loading(eta_factor=eta, 
                                              ratio_reduce=ratio_reduce)
