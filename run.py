@@ -48,7 +48,7 @@ def parse_args():
     parser.add_argument("-M", "--migration_mode", default="diffusion", 
                         help="""The migration mode. Default is diffusion.
                         Acceptable options include post-process, linear, 
-                        sudden, and gaussian""")
+                        sudden, and rand_walk""")
     parser.add_argument("-S", "--sigma_R", default=1.27, type=float,
                         help="migration strength in kpc/Gyr^0.5")
     parser.add_argument("-F", "--filename", default=None,
@@ -106,7 +106,7 @@ def generate_filename(args):
 
     if args.migration_mode != "diffusion":
         filename += "_" + args.migration_mode
-    if args.migration_mode == "gaussian":
+    if args.migration_mode == "rand_walk":
         filename += str(args.sigma_R)
 
     if args.fe_ia_factor != "None":
@@ -134,30 +134,37 @@ def create_pycall(filename, args):
 path = None
 from surp.simulation.multizone_sim import run_model
 
-run_model(
-     filename='{filename}',
-     prefix=path,
-     eta={args.eta}, 
-     beta={args.beta}, 
-     spec='{args.spec}',
-     agb_fraction={args.agb_fraction},
-     out_of_box_agb={args.out_of_box_agb},
+yield_kwargs = {{
+     'oob': {args.out_of_box_agb},
+     'f_agb': {args.agb_fraction},
+     'beta': {args.beta}, 
+     'fe_ia_factor': {args.fe_ia_factor},
+     'm_low': {args.m_low},
+     'm_mid': {args.m_mid},
+     'm_high': {args.m_high},
+     'mz_agb': {args.mz_agb},
+     'y0_agb': {args.yl_agb},
+     'y2_agb': {args.yh_agb},
+     'alpha_n': {args.alpha_n},
+}}
+
+kwargs = {{
+     'n_stars': {args.n_stars},
+     'migration_mode': '{args.migration_mode}',
+     'n_threads': {args.threads},
+     'verbose': {args.test_run},
+     'sigma_R': {args.sigma_R},
+     'spec': '{args.spec}',
+     'lateburst_amplitude': {args.lateburst_amplitude},
+}}
+
+run_model('{filename}',
+     save_dir=path,
      agb_model='{args.agb_model}',
-     lateburst_amplitude={args.lateburst_amplitude},
-     fe_ia_factor={args.fe_ia_factor},
+     eta={args.eta}, 
      timestep={args.timestep},
-     n_stars={args.n_stars},
-     alpha_n={args.alpha_n},
-     migration_mode='{args.migration_mode}',
-     n_threads={args.threads},
-     m_low={args.m_low},
-     m_mid={args.m_mid},
-     m_high={args.m_high},
-     mz_agb={args.mz_agb},
-     y0_agb={args.yl_agb},
-     y2_agb={args.yh_agb},
-     verbose={args.test_run},
-     sigma_R={args.sigma_R},
+     yield_kwargs=yield_kwargs,
+     **kwargs
     )
 """
     return pycall

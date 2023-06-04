@@ -5,7 +5,7 @@ import os
 import numpy as np
 
 import vice
-from vice.toolkit.gaussian_stars.gaussian_stars import gaussian_stars
+from vice.toolkit.rand_walk.rand_walk_stars import rand_walk_stars
 from vice.toolkit.hydrodisk.hydrodiskstars import hydrodiskstars
 from vice.milkyway.milkyway import _get_radial_bins
 
@@ -16,31 +16,13 @@ from ..yields import set_yields
 from .._globals import MAX_SF_RADIUS, END_TIME, N_MAX, ZONE_WIDTH
 
 
-def run_model(filename, prefix=None, 
+def run_model(filename, save_dir=None, 
               eta=1,
-              beta=0.001,
-              spec="insideout",
-              agb_fraction=0.2,
-              out_of_box_agb=False,
-              migration_mode="diffusion",
               agb_model="C11",
-              lateburst_amplitude=1.5,
-              fe_ia_factor=1,
               timestep=0.01,
-              n_stars=2,
-              alpha_n=0,
-              test=False, # these are not used yet...
-              seed=None, 
-              ratio_reduce=False,
-              n_threads=1,
-              m_low=1.3,
-              m_mid=2.3,
-              m_high=4,
-              mz_agb=7e-4,
-              y0_agb=0,
-              y2_agb=0,
-              verbose=False,
-              sigma_R=1.27,
+              seed=None, # needs implemented
+              yield_kwargs={},
+              **kwargs
      ):
     """
     This function wraps various settings to make running VICE multizone models
@@ -48,9 +30,31 @@ def run_model(filename, prefix=None,
     
     Parameters
     ----------
-    name: ``str``
+    filename: ``str``
         The name of the model
+
+    save_dir: ``str`` [default: None]
+        The directory to save the model in
+        If None, then use the argument passed to this script
+
+    eta: ``float`` [default: 1]
+        The prefactor for mass-loading strength
+
+    agb_model: ``str`` [default: C11]
+        The AGB model to use for yields. 
+        - C11
+        - K10 
+        - V13
+        - K16
+        - A: Custom analytic model, see ``surp/yields.py``
         
+    timestep: ``float`` [default: 0.01]
+        The timestep of the simulation, measured in Gyr.
+        Decreasing this value can significantly speed up results
+
+    yield_kwargs: dict 
+        kwargs passed to set_yields in ``surp/yields.py``
+
     migration_mode: ``str``
         Default value: diffusion
         The migration mode for the simulation. 
@@ -70,9 +74,6 @@ def run_model(filename, prefix=None,
     n_stars: ``int`` [default: 2]
         The number of stars to create during each timestep of the model.
 
-    dt: ``float`` [default: 0.01]
-        The timestep of the simulation, measured in Gyr.
-        Decreasing this value can significantly speed up results
 
     burst_size: ``float`` [default: 1.5]
         The size of the SFH burst for lateburst model.
@@ -88,8 +89,8 @@ def run_model(filename, prefix=None,
     # collects the first argument of the command as the directory to write
     # the simulation output to
     # this allows OSC to use the temperary directory
-    if prefix is None:
-        prefix = sys.argv[1]
+    if save_dir is None:
+        save_dir = sys.argv[1]
 
     agb_model = {
             "C11": "cristallo11",
@@ -99,35 +100,31 @@ def run_model(filename, prefix=None,
             "A": "A"
             }[agb_model]
 
-    set_yields(eta=eta, beta=beta, fe_ia_factor=fe_ia_factor,
-               agb_model=agb_model, oob=out_of_box_agb, f_agb=agb_fraction, 
-               alpha_n=alpha_n,
-               m_low=m_low,
-               m_mid=m_mid,
-               m_high=m_high,
-               mz_agb=mz_agb,
-               y0_agb=y0_agb, y2_agb=y2_agb)
+    set_yields(eta=eta, agb_model=agb_model, **yield_kwargs)
 
     print("configured yields")
 
-    
-    model = create_model(prefix=prefix, filename=filename,
-                         n_stars=n_stars, timestep=timestep,
-                         ratio_reduce=ratio_reduce, eta=eta,
-                         migration_mode=migration_mode, 
-                         lateburst_amplitude=lateburst_amplitude, spec=spec,
-                         n_threads=n_threads, verbose=verbose, sigma_R=sigma_R)
+    model = create_model(save_dir=save_dir, filename=filename, 
+            timestep=timestep, eta=eta, **kwargs)
+
     print(model)
+
     model.run(np.arange(0, END_TIME, timestep), overwrite=True, pickle=True)
 
     print("finished")
 
 
 
-def create_model(prefix, filename, n_stars, 
-                 timestep, spec, ratio_reduce,
-                 eta, migration_mode, lateburst_amplitude,
-                 n_threads, sigma_R, verbose=False):
+def create_model(save_dir, filename, timestep,
+        n_stars=2, 
+        spec="insideout",
+        ratio_reduce=False,
+        eta=1, 
+        migration_mode="diffusion", 
+        lateburst_amplitude=1.5,
+        n_threads=1, 
+        sigma_R=1.27, 
+        verbose=False):
 
     if migration_mode == "post-process":
         simple = True
@@ -137,14 +134,14 @@ def create_model(prefix, filename, n_stars,
 
 
     Nstars = 2*MAX_SF_RADIUS/ZONE_WIDTH * END_TIME/timestep * n_stars
-    if migration_mode != "gaussian" and Nstars > N_MAX:
+    if migration_mode != "rand_walk" and Nstars > N_MAX:
         Nstars = N_MAX
 
     print("using %i stars particles" % Nstars)
 
 
     model = vice.milkyway(zone_width=ZONE_WIDTH,
-            name=prefix + filename,
+            name=save_dir + filename,
             n_stars=n_stars,
             verbose=verbose,
             N = Nstars,
@@ -161,8 +158,8 @@ def create_model(prefix, filename, n_stars,
             
     model.evolution = create_evolution(spec=spec, burst_size=lateburst_amplitude)
 
-    if migration_mode == "gaussian":
-        model.migration.stars = vice.toolkit.gaussian_stars.gaussian_stars(
+    if migration_mode == "rand_walk":
+        model.migration.stars = rand_walk_stars(
                 _get_radial_bins(ZONE_WIDTH),
                 n_stars=n_stars, 
                 dt=timestep, 
