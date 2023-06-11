@@ -106,13 +106,10 @@ set_defaults()
 
 
 
-def set_agb_elem(elem, study, factor, m_low=1.3, m_mid=2.3, m_high=4,
-        mz_agb=7e-4,
-        y0_agb=0, y2_agb=0):
+def set_agb_elem(elem, study, factor, **kwargs):
     if study == "A":
-        agb.settings["c"] = a_agb(m0=m_low, m1=m_mid, m2=m_high, mz=mz_agb,
-                y0=y0_agb, y2=y2_agb)
         study = "cristallo11"
+
     if elem == "fe" and agb_model == "ventura13":
         study = "cristallo11"
 
@@ -123,6 +120,9 @@ def set_agb_elem(elem, study, factor, m_low=1.3, m_mid=2.3, m_high=4,
 def set_agb(study="cristallo11", factor=1, **kwargs):
     for elem in ["c", "o", "mg"]:
         set_agb_elem(elem, study, factor, **kwargs)
+
+    if study == "A":
+        agb.settings["c"] = lambda m, z: factor * a_agb(**kwargs)(m, z)
 
 
 def set_fe(fe_ia_factor):
@@ -174,33 +174,39 @@ def calc_alpha(agb_model="cristallo11" , eta=1, oob=False, f_agb=0.2):
     return alpha_agb, alpha_cc
 
 
-def a_agb(m0=1.3, m1=None, m2=4, y0=0, y1=5e-4, y2=0, mz=-4e-4):
+def a_agb(m_low=1.3, m_mid=None, m_high=4, yl_agb=0, ym_agb=5e-4, yh_agb=0,
+        mz_agb=-4e-4):
     """
     An analytic version of AGB yields.
 
     Parameters
     ----------
-    m0: the beginning of the cubic spline.
-    m1: the peak mass. If None, defaults to the average of m0 and m2
-    m2: the end of the cubic spline. 
-    y0: the yield at m0
-    y1: the total yield
-    y2: the yield at m2 
-    mz: the metallicity dependent part of the yield at y1
+    m_low: the beginning of the cubic spline.
+    m_mid: the peak mass. If None, defaults to the average of m_low and m_high
+    m_high: the end of the cubic spline. 
+    yl_agb: the yield at m_low
+    ym_agb: the total yield
+    yh_agb: the yield at m_high 
+    mz_agb: the metallicity dependent part of the yield at ym_agb
     """
-    if m1 is None:
-        m1 = (m0 + m2)/2
+    if m_mid is None:
+        m_mid = (m_low + m_high)/2
 
     def y_spline(m, z=0.014):
-        m_h = np.log10(z/Z_Sun)
-        return spline(m, [m0, m1, m2], [y0, y1 + mz*m_h, y2])
+        if z > 0:
+            m_h = np.log10(z/Z_Sun)
+        else:
+            m_h = -8
+            print("warning, nonpositive z, z=", z)
+
+        return spline(m, [m_low, m_mid, m_high], [yl_agb, ym_agb + mz_agb*m_h, yh_agb])
 
     imf_norm = quad(lambda m: m*vice.imf.kroupa(m), 0.08, 100)[0]
 
     def f(m):
         return m * vice.imf.kroupa(m)/imf_norm * y_spline(m)
 
-    A_agb = y1 / quad(f, m0, m2)[0]
+    A_agb = ym_agb / quad(f, m_low, m_high)[0]
 
     def inner(m, z):
         return A_agb * y_spline(m, z)
