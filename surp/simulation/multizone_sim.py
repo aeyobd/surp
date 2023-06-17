@@ -121,7 +121,7 @@ def create_model(save_dir, filename, timestep,
         ratio_reduce=False,
         eta=1, 
         migration_mode="diffusion", 
-        lateburst_amplitude=1.5,
+        lateburst_amplitude=1,
         n_threads=1, 
         sigma_R=1.27, 
         verbose=False):
@@ -177,18 +177,18 @@ def create_model(save_dir, filename, timestep,
 def create_evolution(spec, burst_size):
     if spec == "lateburst":
         evolution = star_formation_history(spec = spec,
-                burst_size = burst_size)
+                burst_size = 1.5*burst_size)
     elif spec == "twoexp":
         evolution = star_formation_history(spec = spec,
-                timescale2 = 1,
-                amplitude = burst_size, 
-                t1=5)
+                tau1=0.3,
+                A21 = 3.47 * burst_size,
+                )
 
     elif spec == "threeexp":
         evolution = star_formation_history(
                 spec = spec,
                 timescale2 = 1, 
-                amplitude = burst_size, 
+                amplitude = 0.5*burst_size, 
                 t1 = 5, 
                 amplitude3=0.2, 
                 t2=12)

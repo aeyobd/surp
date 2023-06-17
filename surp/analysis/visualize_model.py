@@ -14,72 +14,47 @@ import arya
 
 
 def main():
-    arya.style.init()
-    filenames = get_args()
-    for f in filenames:
-        plot_model(f)
-
-def plot_model(filename):
+    filename = get_args()
     directory = make_dir(filename)
-    if not directory:
-        print("skipping ", filename)
-        return
+    print("created dir ", directory)
 
     print("loading model")
     model = vice_model(filename)
 
-    pwd = os.getcwd()
-    print("cd ", directory)
     os.chdir(directory)
-
     print("plotting")
-
     plot_mdf(model)
     plt.savefig("mdf.pdf")
-    plt.close()
 
     plot_cooh_tracks(model)
     plt.savefig("cooh_gas.pdf")
-    plt.close()
 
     plot_coofe_tracks(model)
     plt.savefig("coofe_gas.pdf")
-    plt.close()
 
     plot_cooh(model)
     plt.savefig("cooh.pdf")
-    plt.close()
 
     plot_coofe(model)
     plt.savefig("coofe.pdf")
-    plt.close()
-
-    print("cd ", pwd)
-    os.chdir(pwd)
+    os.chdir("..")
 
 
 def get_args():
-    if len(sys.argv) < 2:
-        raise RuntimeError("requires at least 1 arg, name of model")
-    filenames = sys.argv[1:]
+    if len(sys.argv) != 2:
+        raise RuntimeError("requires 1 arg, name of model")
+    filename = sys.argv[1]
     
-    for filename in filenames:
-        if not os.path.exists(filename):
-            raise RuntimeError("file not found ", filename)
-    return filenames
+    if not os.path.exists(filename):
+        raise RuntimeError("file not found ", filename)
+    return filename
 
 
 def make_dir(filename):
     dirname, _ = os.path.splitext(os.path.basename(filename))
-    dirname = os.path.join("figures/", dirname)
     if os.path.exists(dirname):
-        print("directory already exits: ", dirname)
-        overwrite = input("overwrite? (y/N)")
-        if overwrite != "y":
-            return False
-    else:
-        print("creating ", dirname)
-        os.mkdir(dirname)
+        raise RuntimeError("directory already exists")
+    os.mkdir(dirname)
     return dirname
 
 
@@ -106,9 +81,9 @@ def plot_cooh_tracks(model):
         plt.plot(df["[o/h]"], df["[c/o]"], color="k")
 
     sns.scatterplot(h, x="[o/h]", y="[c/o]", hue="time", s=0.3, alpha=1,
-            legend=False, edgecolor="none", palette="arya_r")
+            legend=False, edgecolor="none")
     plt.xlim(-0.8, 0.8)
-    plt.ylim(-0.4, 0.2)
+    plt.ylim(-0.3, 0.13)
     plt.xlabel("[Mg/H]")
     plt.ylabel("[C/Mg]")
     arya.Colorbar(clim=(0, 13.2), label="t (Gyr)", cmap="arya_r")
@@ -121,9 +96,9 @@ def plot_coofe_tracks(model):
         plt.plot(df["[o/fe]"], df["[c/o]"], color="k")
 
     sns.scatterplot(h, x="[o/fe]", y="[c/o]", hue="time", s=0.3, alpha=1,
-            legend=False, edgecolor="none", palette="arya_r")
-    plt.xlim(-0.1, 0.5)
-    plt.ylim(-0.4, 0.2)
+            legend=False, edgecolor="none")
+    plt.xlim(-0.05, 0.4)
+    plt.ylim(-0.2, 0.1)
     plt.xlabel("[Mg/Fe]")
     plt.ylabel("[C/Mg]")
     arya.Colorbar(clim=(0, 13.2), label="t (Gyr)", cmap="arya_r")
@@ -143,7 +118,7 @@ def plot_cooh(model):
             c=s["r_origin"], s=0.3, zorder=2)
 
     plt.xlim(-0.8, 0.8)
-    plt.ylim(-0.4, 0.2)
+    plt.ylim(-0.3, 0.13)
 
     plt.xlabel("[Mg/H]")
     plt.ylabel("[C/Mg]")
@@ -153,27 +128,27 @@ def plot_coofe(model):
     oo = -0.1
     do = 0.05
 
-    filt = model.stars["[o/h]"] > oo - do
-    filt &= model.stars["[o/h]"] < oo + do
+    filt = model.stars > oo - do
+    filt &= model.stars < oo + do
     s = model.stars[filt]
 
 
-    filt = aah.subgiants["MG_H"] > oo - do
-    filt &= aah.subgiants["MG_H"] < oo + do
+    filt = aah.subgiants > oo - do
+    filt &= aah.subgiants < oo + do
     df = aah.subgiants[filt]
 
     dx = 0.03
     dy = 0.03
     N = len(s)
 
-    aah.plot_coofe_contour(oo, do)
+    sns.contourplot(df, x="[mg/fe]", y="[c/mg]", color="k")
 
     plt.scatter(s["[mg/fe]"] + np.random.normal(0, dx, N),
             s["[c/mg]"] + np.random.normal(0, dx, N),
             c=s["r_origin"], s=0.3, zorder=2)
 
-    plt.xlim(-0.1, 0.5)
-    plt.ylim(-0.4, 0.2)
+    plt.xlim(-0.8, 0.8)
+    plt.ylim(-0.3, 0.13)
 
     plt.xlabel("[Mg/Fe]")
     plt.ylabel("[C/Mg]")

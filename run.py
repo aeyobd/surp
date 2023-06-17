@@ -53,11 +53,11 @@ def parse_args():
                         help="migration strength in kpc/Gyr^0.5")
     parser.add_argument("-F", "--filename", default=None,
                         help="the name of the output file ")
-    parser.add_argument("-A", "--lateburst_amplitude", type=float, default=1.5, 
+    parser.add_argument("-A", "--lateburst_amplitude", type=float, default=1, 
                         help="the amplitude of the late burst")
     parser.add_argument("-i", "--fe_ia_factor", default="None", 
                         help="the iron yield factor of type Ia supernovae ")
-    parser.add_argument("-d", "--timestep", type=float, default=0.01, 
+    parser.add_argument("-d", "--timestep", type=float, default=0.05, 
                         help="the size of the time step ")
     parser.add_argument("-n", "--n_stars", type=int, default=2, 
                         help="the number of stars")
@@ -65,7 +65,7 @@ def parse_args():
                         help="the agb fraction of primary N (0.0)")
     parser.add_argument("-t", "--test_run", action="store_true", 
                         help="only run a test")
-    parser.add_argument("-T", "--threads", default=1,
+    parser.add_argument("-T", "--threads", default=8,
                         help="number of threads to run. default=1")
     parser.add_argument("--m_low", default=1.3,
                         help="lower mass of AGB C")
@@ -79,6 +79,8 @@ def parse_args():
                         help="agb yield at m0")
     parser.add_argument("--yh_agb", default=0, 
                         help="agb yield at m0")
+    parser.add_argument("--m_factor", 
+            help="mass factor for agb stars", default=1, type=float)
     return parser.parse_args()
 
 
@@ -90,6 +92,9 @@ def generate_filename(args):
             filename += f"_y0{args.yl_agb}"
         if args.yh_agb != 0:
             filename += f"_y2{args.yh_agb}"
+
+    if args.m_factor != 1:
+        filename += f"_m{args.m_factor}"
 
     if args.out_of_box_agb:
         filename += "_oob"
@@ -146,6 +151,7 @@ yield_kwargs = {{
      'yl_agb': {args.yl_agb},
      'yh_agb': {args.yh_agb},
      'alpha_n': {args.alpha_n},
+     'mass_factor': {args.m_factor},
 }}
 
 kwargs = {{

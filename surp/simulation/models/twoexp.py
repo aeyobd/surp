@@ -13,9 +13,9 @@ from .insideout import insideout
 
 
 class twoexp(double_exponential):
-
 	r"""
-	The inside-out SFH model from Johnson et al. (2021).
+	A double exponential star formation history mimicing the two infall
+	model. 
 
 	Parameters
 	----------
@@ -26,95 +26,25 @@ class twoexp(double_exponential):
 	dr : float [default : 0.1]
 		The width of the annulus in kpc.
 
-	Functions
-	---------
-	- timescale [staticmethod]
+	** kwargs passeed to ```.utils.double_exponential.__init__```
+	-------------------------------------------------------------
+	t1 : float [default 4.1]
+		The time of the thick disk formation
+	t2 : float [default 13.2]
+		The present-day time
+	tau1 : float [default 0.103]
+	tau2 : float [set from insideout.timescale]
+		The decay timescale for the thin disk
+	A21 : float [default 3.47]
+		The ratio between thin and thick disk populations
 
-	Other atributes and functionality are inherited from
-	``modified_exponential`` declared in ``src/simulations/models/utils.py``.
 	"""
 
 	def __init__(self, radius, dt = 0.01, dr = 0.1, 
-			amplitude=1, timescale2=1, t1=5,
-			amplitude3=0.3, timescale3=1, t2=10):
-		super().__init__(timescale = insideout.timescale(radius),
-                	amplitude=amplitude, timescale2=timescale2, t1=t1, rise=2)
-		self.norm *= normalize(self, gradient, radius, dt = dt, dr = dr)
+			**kwargs):
 
-	@staticmethod
-	def timescale(radius, Re = 5):
-		r"""
-		Determine the timescale of star formation at a given radius reported
-		by Sanchez (2020) [1]_.
+		kwargs["tau2"] = insideout.timescale(radius)
 
-		Parameters
-		----------
-		radius : real number
-			Galactocentric radius in kpc.
-		Re : real number [default : 5]
-			The effective radius (i.e. half-mass radius) of the galaxy in kpc.
+		super().__init__(**kwargs)
 
-		Returns
-		-------
-		tau_sfh : real number
-			The e-folding timescale of the star formation history at that
-			radius. The detailed time-dependence on the star formation history
-			has the following form:
-
-			.. math:: \dot{M}_\star \sim
-				(1 - e^{-t / \tau_\text{rise}})e^{-t / \tau_\text{sfh}}
-
-			where :math:`\tau_\text{rise}` = 2 Gyr and :math:`\tau_\text{sfh}`
-			is the value returned by this function.
-
-		.. [1] Sanchez (2020), ARA&A, 58, 99
-		"""
-		radius /= Re # convert to units of Re
-		radii, timescales = _read_sanchez_data()
-		idx = get_bin_number(radii, radius)
-		if idx != -1:
-			return interpolate(radii[idx], timescales[idx], radii[idx + 1],
-				timescales[idx + 1], radius) 
-		else:
-			return interpolate(radii[-2], timescales[-2], radii[-1],
-				timescales[-1], radius) 
-
-
-def _read_sanchez_data():
-	r"""
-	Reads the Sanchez (2020) [1]_ star formation timescale data.
-
-	Returns
-	-------
-	radii : list
-		Radius in units of the effective radius :math:`R_e` (i.e. the
-		half-mass radius).
-	timescales : list
-		The star formation timescales in Gyr associated with each effective
-		radius.
-
-	.. [1] Sanchez (2020), ARA&A, 58, 99
-	"""
-	radii = []
-	timescales = []
-
-	# This function likely won't be called from this directory -> full path
-	with open("%s/sanchez_tau_sfh.dat" % (
-		os.path.abspath(os.path.dirname(__file__))), 'r') as f:
-
-		line = f.readline()
-		
-		# read past the header
-		while line[0] == '#':
-			line = f.readline()
-
-		# pull in each line until end of file is reached
-		while line != "":
-			line = [float(i) for i in line.split()]
-			radii.append(line[0])
-			timescales.append(line[1])
-			line = f.readline()
-
-		f.close()
-	return [radii, timescales]
-
+		self.norm *= normalize(self, gradient, radius, dt=dt, dr=dr)

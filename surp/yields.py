@@ -106,14 +106,20 @@ set_defaults()
 
 
 
-def set_agb_elem(elem, study, factor, **kwargs):
+def set_agb_elem(elem, study, factor, mass_factor=1, **kwargs):
     if study == "A":
         study = "cristallo11"
 
     if elem == "fe" and agb_model == "ventura13":
         study = "cristallo11"
 
-    agb.settings[elem] = interpolator(elem, study, prefactor=factor)
+    if mass_factor != 1:
+        agb.settings[elem] = (lambda m, z: 
+                interpolator(elem, study, prefactor=factor)(
+                    m*mass_factor, z)
+                )
+    else:
+        agb.settings[elem] = interpolator(elem, study, prefactor=factor)
 
 
 
@@ -195,9 +201,10 @@ def a_agb(m_low=1.3, m_mid=None, m_high=4, yl_agb=0, ym_agb=5e-4, yh_agb=0,
     def y_spline(m, z=0.014):
         if z > 0:
             m_h = np.log10(z/Z_Sun)
-        else:
+        elif z == 0:
             m_h = -8
-            print("warning, nonpositive z, z=", z)
+        else:
+            print("warning, negative z, z=", z)
 
         return spline(m, [m_low, m_mid, m_high], [yl_agb, ym_agb + mz_agb*m_h, yh_agb])
 
