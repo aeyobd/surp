@@ -124,7 +124,8 @@ def create_model(save_dir, filename, timestep,
         lateburst_amplitude=1,
         n_threads=1, 
         sigma_R=1.27, 
-        verbose=False):
+        verbose=False,
+        conroy_sf=False):
 
     if migration_mode == "post-process":
         simple = True
@@ -157,6 +158,8 @@ def create_model(save_dir, filename, timestep,
     model.nthreads = min(len(model.elements), n_threads)
             
     model.evolution = create_evolution(spec=spec, burst_size=lateburst_amplitude)
+
+    create_sf_law(model, conroy_sf=conroy_sf)
 
     if migration_mode == "rand_walk":
         model.migration.stars = rand_walk_stars(
@@ -197,6 +200,33 @@ def create_evolution(spec, burst_size):
 
     return evolution
 
+
+def create_sf_law(model, conroy_sf=False):
+    if not conroy_sf:
+        return
+    for i in range(model.n_zones):
+        R1 = model.annuli[i]
+        R2 = model.annuli[i+1]
+        R = (R1 + R2)/2
+        if R <= MAX_SF_RADIUS:
+            area = np.pi * (R2**2 - R1**2)
+            model.zones[i].tau_star = conroy_sf_law(area)
+
+def conroy_sf_law(area=None):
+
+    def inner(t, m):
+        if t < 2.5:
+            tau_st = 50
+        elif 2.5 <= t < 3.7:
+            tau_st = 50/(1+3*(t-2.5))^2
+        else:
+            tau_st = 2.36
+
+        return vice.toolkit.J21_sf_law(area, t, present_day_molecular=tau_st)(t, m)
+
+    return inner
+
+    
 
 def create_mass_loading(eta_factor, ratio_reduce=False):
     # for changing value of eta

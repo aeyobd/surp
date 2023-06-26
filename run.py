@@ -43,6 +43,8 @@ def parse_args():
                         help="the mass fraction of AGB stars in the initial mass function ")
     parser.add_argument("-o", "--out_of_box_agb", action="store_true", 
                         help="use an out-of-box AGB model ")
+    parser.add_argument("-c", "--conroy_sf", action="store_true", 
+                        help="use the conroy ++ 2022 sfe law")
     parser.add_argument("-m", "--agb_model", default="C11", 
                         help="the name of the AGB model to use ")
     parser.add_argument("-M", "--migration_mode", default="diffusion", 
@@ -117,6 +119,9 @@ def generate_filename(args):
     if args.fe_ia_factor != "None":
         filename += "_Fe" + str(args.fe_ia_factor)
 
+    if args.conroy_sf:
+        filename += "_c22"
+
     if args.timestep != 0.01:
         filename += "_dt" + str(args.timestep)
 
@@ -162,6 +167,7 @@ kwargs = {{
      'sigma_R': {args.sigma_R},
      'spec': '{args.spec}',
      'lateburst_amplitude': {args.lateburst_amplitude},
+     'conroy_sf': {args.conroy_sf},
 }}
 
 run_model('{filename}',

@@ -26,13 +26,14 @@ YC_AGB0 = {
 def set_yields(eta=1, beta=0.001, fe_ia_factor=None,
                agb_model="cristallo11", oob=False, f_agb=0.2,
                alpha_n=0, 
+               mass_factor=1,
                **kwargs
               ):
 
     set_fe(fe_ia_factor)
 
     alpha_agb, alpha_cc = calc_alpha(agb_model, eta, oob, f_agb)
-    set_agb(agb_model, alpha_agb, **kwargs)
+    set_agb(agb_model, alpha_agb, mass_factor)
 
     set_n(eta, alpha_n)
     
@@ -106,26 +107,20 @@ set_defaults()
 
 
 
-def set_agb_elem(elem, study, factor, mass_factor=1, **kwargs):
+def set_agb_elem(elem, study, factor, **kwargs):
     if study == "A":
         study = "cristallo11"
 
     if elem == "fe" and agb_model == "ventura13":
         study = "cristallo11"
 
-    if mass_factor != 1:
-        agb.settings[elem] = (lambda m, z: 
-                interpolator(elem, study, prefactor=factor)(
-                    m*mass_factor, z)
-                )
-    else:
-        agb.settings[elem] = interpolator(elem, study, prefactor=factor)
+    agb.settings[elem] = interpolator(elem, study, prefactor=factor, **kwargs)
 
 
 
-def set_agb(study="cristallo11", factor=1, **kwargs):
+def set_agb(study="cristallo11", factor=1, mass_factor=1, **kwargs):
     for elem in ["c", "o", "mg"]:
-        set_agb_elem(elem, study, factor, **kwargs)
+        set_agb_elem(elem, study, factor, mass_factor=mass_factor)
 
     if study == "A":
         agb.settings["c"] = lambda m, z: factor * a_agb(**kwargs)(m, z)
@@ -197,26 +192,27 @@ def a_agb(m_low=1.3, m_mid=None, m_high=4, yl_agb=0, ym_agb=5e-4, yh_agb=0,
     """
     if m_mid is None:
         m_mid = (m_low + m_high)/2
+    if z > 0:
+        m_h = np.log10(z/Z_Sun)
+    elif z == 0:
+        m_h = -8
+    else:
+        print("warning, negative z, z=", z)
 
-    def y_spline(m, z=0.014):
-        if z > 0:
-            m_h = np.log10(z/Z_Sun)
-        elif z == 0:
-            m_h = -8
-        else:
-            print("warning, negative z, z=", z)
+    def y_spline(m):
+        return spline(m, [m_low, m_mid, m_high], [yl_agb, ym_agb, yh_agb])
 
-        return spline(m, [m_low, m_mid, m_high], [yl_agb, ym_agb + mz_agb*m_h, yh_agb])
 
     imf_norm = quad(lambda m: m*vice.imf.kroupa(m), 0.08, 100)[0]
 
     def f(m):
         return m * vice.imf.kroupa(m)/imf_norm * y_spline(m)
 
-    A_agb = ym_agb / quad(f, m_low, m_high)[0]
+    A_agb = 1 / quad(f, m_low, m_high)[0]
 
     def inner(m, z):
-        return A_agb * y_spline(m, z)
+        m_h = np.log10(z/0.014)
+        return A_agb * y_spline(m) * (ym_agb + mz_agb * m_h)
     return inner
 
 
