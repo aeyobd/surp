@@ -115,6 +115,7 @@ def find_subgiants():
     # add high/low alpha column
     df["high_alpha"] = df["MG_FE"] > mg_fe_cutoff(df["FE_H"])
     
+    # df.drop(columns=["X_M_SPEC", "X_H_SPEC"], inplace=True)
     return df
 
 
@@ -132,7 +133,7 @@ def read_subgiants():
         subgiants = find_subgiants()
         subgiants.to_csv(abs_path)
     else:
-        subgiants = pd.read_csv(abs_path)
+        subgiants = pd.read_csv(abs_path, index_col=0, dtype={"MEMBER": str})
 
     return subgiants
 

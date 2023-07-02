@@ -10,14 +10,13 @@ header-includes: |
 The equation
 ============
 
-Defining a succinct, minimal-parameter representation of AGB C behavior is challenging. 
-AGB yields generally have the following properties: 
+Literature AGB yields generally have the following properties: 
 
 - a peak yield at mass between 2 and $3\,M_\odot$
 - asymmetric peak
 - near zero yield at both $1\,M_\odot$ and $8\,M_\odot$
-- metallicity dependent total yield
-- metallicity dependent peak location
+- total yield with decreases with metallicity
+- peak mass which increases with metallicity
 - negative yields at lowest and highest masses at high metallicity
 
 
