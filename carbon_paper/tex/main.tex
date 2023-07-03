@@ -64,6 +64,22 @@
 % overwriting existing commands. Example:
 %\newcommand{\pcm}{\,cm$^{-2}$}	% per cm-squared
 
+
+% citations
+\defcitealias{james+21}{J21}
+\newcommand{\JJ}{\citetalias{james+21}}
+\newcommand{\VICE}{\textsc{vice}}
+\newcommand{\citetjack}{Roberts et al.~(2023, in prep.)}
+\newcommand{\citepjack}{(Roberts et al.~2023, in prep.)}
+\newcommand{\citealtjack}{Robert et al.~2023, in prep.}
+\newcommand{\cxi}{\texttt{\hyperlink{C11}{C11}}}
+\newcommand{\kx}{\texttt{\hyperlink{K10}{K10}}}
+\newcommand{\kxvi}{\texttt{\hyperlink{K16}{K16}}}
+\newcommand{\vxiii}{\texttt{\hyperlink{V13}{V13}}}
+
+
+
+% Acronyms
 \newcommand{\cc}{CCSNe}
 \newcommand{\agb}{AGB}
 \newcommand{\ia}{SNe Ia}
@@ -74,47 +90,42 @@
 \newcommand{\gce}{GCE}
 \newcommand{\apogee}{APOGEE}
 
+% internal abbreviations
 \newcommand{\lims}{lower-intermediate mass stars}
 \newcommand{\hms}{high-mass stars}
-
-
-
-
-\defcitealias{james+21}{J21}
-\newcommand{\citetjack}{Roberts et al.~(2023, in prep.)}
-\newcommand{\citepjack}{(Roberts et al.~2023, in prep.)}
-\newcommand{\citealtjack}{Robert et al.~2023, in prep.}
-
-\newcommand{\cxi}{\texttt{\hyperlink{C11}{C11}}}
-\newcommand{\kx}{\texttt{\hyperlink{K10}{K10}}}
-\newcommand{\kxvi}{\texttt{\hyperlink{K16}{K16}}}
-\newcommand{\vxiii}{\texttt{\hyperlink{V13}{V13}}}
-
-\newcommand{\JJ}{\citetalias{james+21}}
-\newcommand{\VICE}{\texttt{VICE}}
 \newcommand{\caah}{[C/Mg]-[Mg/H]}
 \newcommand{\caafe}{[C/Mg]-[Mg/Fe]}
 
-\newcommand{\alp}{$\alpha$}
+% other
+\makeatletter
+\newcommand{\C}[1][\@nil]{
+    \def\tmp{#1}%
+    \ifx\tmp\@nnil%
+        \ensuremath{\rm C}%
+    \else%
+        \ifmmode ^{#1}{\rm C}%
+        \else $^{#1}$C%
+        \fi%
+\fi }
+\makeatother
+
+\newcommand{\proton}{\isotope[1][1]{p}}
+\newcommand{\Yct}{\ensuremath{y_{\rm C}}}
 \newcommand{\Ycc}{\ensuremath{y_{\rm C}^{\rm cc}}}
 \newcommand{\Yoc}{\ensuremath{y_{\rm Mg}^{\rm cc}}}
 \newcommand{\Ycagb}{\ensuremath{y_{\rm C}^{\rm agb}}}
-\newcommand{\Z}{Z}
-\newcommand{\Zo}{%
-    \ifmmode Z_{\sun}%
-    \else $Z_{\sun}$%
-    \fi}
+
+    \newcommand{\y}{\ensuremath{\rotatebox[origin=B,y=0.5ex]{180}{y}}}
 \newcommand{\Mo}{%
     \ifmmode {\rm M}_{\sun}%
     \else M$_{\sun}$
     \fi}
+\newcommand{\Zo}{%
+    \ifmmode Z_{\sun}%
+    \else $Z_{\sun}$%
+    \fi}
+
 \newcommand{\about}[1]{${\sim} #1$}
-
-\newcommand{\proton}{\isotope[1][1]{p}}
-\newcommand{\zoo}{\ensuremath{Z/Z_{\sun }}}
-\newcommand{\Yct}{\ensuremath{y_{\rm C}}}
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -229,6 +240,9 @@ According to stellar evolution theory and observations \citep{gilroy89, korn+07,
 Fig.~\ref{fig:subgiants} shows the subgiant sample plotted in \caah\ and \caafe{}. [C/Mg] increases with metallicity, and [C/Mg] decreases with [Mg/Fe] at fixed [Mg/H]. 
 Using these trends, we will develop a model of the enrichment sources and evolution of C.
 
+\citet{james+23} compare their model against the \cite{vincenzo+21} sample of \apogee{} \citep{apogee17} RGB stars. \citet{vincenzo+21} use \textsc{mesa} stellar evolution models \citep{mesa} to correct for the effects of First Dredge Up (FDU). 
+We instead use the \citetjack~sample of \apogee{} subgiants. Subgiant stars have not undergone FDU but have well-mixed atmospheres, so their atmospheric C and N abundances are still reflective of their birth abundances and do not need mixing corrections. We only compare the models to the low-$\alpha$ sequence unless otherwise specified.  The selection criteria and differences between the samples are described in more detail in Appendix \ref{sec:jack}.
+
 
 
 
@@ -265,19 +279,25 @@ After a single stellar population (SSP)\footnotemark{} forms, \cc{} are the firs
 
 
 To quantify yields, we define the stellar yield to be the fraction of a stars initial mass which is newly synthesized and released as a given element. 
-For an element $X$ and star with mass $M$, the net-fractional stellar yield $\tilde{y}$ is 
+For an element $X$ and star with mass $M$, the net-fractional stellar yield $\y$ is 
 \begin{equation}
-\tilde{y}_{X} = \frac{M_{\rm ejected}}{M_{\rm birth}} (Z_{f, X} -  Z_{0, X})
+\y_{X} = \frac{M_{\rm ejected}}{M_{\rm birth}} \Delta Z_X
 \end{equation}
-where $M_{\rm ejected}$ and $M_{\rm birth}$  are the total ejected mass and the birth mass of the star, and $Z_{f, X}$ and $Z_{0, X}$ are the initial birth abundance and final abundance of the ejected envelop respectably. For example, if a 1\,\Mo\ star has $\tilde{y}_{\rm C} = 10^{-3}$, then the star will add $10^{-3}\,\Mo$ of new C to the interstellar medium. 
-Although per-star yields are necessary to compute \agb{} star enrichment rates in \gce{}  models, \imf-averaged yields are useful in interpreting their predictions. For a yield $y$ from a star of mass M and initial metallicity $Z$, the \imf-averaged yield is given by 
+where $M_{\rm ejected}$ and $M_{\rm birth}$  are the total ejected mass and the birth mass of the star, and $\Delta Z_X$ is the change in mass fraction of abundance X from birth to ejected. For example, if a 1\,\Mo\ star has $\y_{\C} = 10^{-3}$, then the star will add $10^{-3}\,\Mo$ of new C to the interstellar medium. 
+Although per-star yields are necessary to compute \agb{} star enrichment rates in \gce{}  models, \imf-averaged yields are useful in interpreting their predictions. 
+Given the fractional yield $\y(M, Z)$ as a function of initial stellar mass $M$ and metallicity $Z$, the \imf-averaged yield is given by 
 \begin{equation} \label{eq:imf-yield}
     y_{\rm X}(Z,t) = 
+    \frac{
     \int_{M_{\rm min}(t)}^{M_{\rm max}} 
-    \tilde{y}_{\rm X}(M, Z)
-    \frac{dN}{dM}  \ dM
+    \y_{\rm X}(M, Z)
+    \frac{dN}{dM}\ M\ dM
+}
+{
+    \int \frac{dN}{dM}\ M\ dM
+}
 \end{equation}
-where ${dN}/{dM}$ is the normalized \imf, $M_{\rm max}=100\,\Mo$ is the maximum stellar mass, and $M_{\rm min}(t)$ is the mass of stars with lifetime $t$.\footnotemark{}
+where ${dN}/{dM}$ is the \imf, $M_{\rm max}=100\,\Mo$ is the maximum stellar mass, and $M_{\rm min}(t)$ is the mass of stars with lifetime $t$.\footnotemark{}
 We use $t=10\,$Gyr for total yields when $t$ is not used.
 To calculate the \imf-averaged net yields, we use the Versatile Integrator for Chemical Evolution code (\VICE\footnotemark{}). 
 
@@ -299,7 +319,7 @@ where $\tau_M$ is in Gyr, from \citealt{larson74}}
 
 	\begin{tabular}{l l l l}
 		\hline
-        Element & $\Ycc$ & $\tilde{y}^{\rm AGB}$ & $y^{\rm SNe Ia}$ \\
+        Element & $\Ycc$ & $\y^{\rm AGB}$ & $y^{\rm SNe Ia}$ \\
 		\hline
         C & $0.0028 + 0.001\,(Z/Z_\odot)$ & $2.9\times{\rm C11}$ &  0 \\
         Mg & 0.00185 & 0 & 0 \\
@@ -316,16 +336,26 @@ An \agb\ star is a low-mass star ($\lesssim 8 M_{\sun}$) during its final phase 
 In an \agb\ star, two competing processes determine the outcome of C production: \textit{third dredge up} and \textit{hot bottom burning}.  
 Third dredge up accompanies thermal pulses in \agb\ stars, where material from the CO core is mixed with the envelope, increasing surface C abundances \citep{KL14}. The C yields of the star are increased as this C-enhanced envelope is released to the interstellar medium. 
 Hot bottom burning is the activation of the CNO cycle\footnotemark{}
-at the bottom of the convective envelope when $T\gtrsim 50\,{\rm MK}$. Because the $^{14}$N proton capture is the slowest component of the CNO cycle, the CNO cycle converts nearly all \isotope[12]{C} into \isotope[14]{N} \citep{solar-fusion}.
+at the bottom of the convective envelope when $T\gtrsim 50\,{\rm MK}$. Because the $^{14}$N proton capture is the slowest component of the CNO cycle, the CNO cycle converts nearly all \C[12] into $^{14}$N \citep{solar-fusion}.
+
+\footnotetext{
+    The CNO cycle is a series of proton-capture reactions with CNO elements resulting in energy generation and the creation of an $\alpha$ particle. $\C[12]({\rm p}, \gamma)
+    ^{13}{\rm N}(\beta^+, \nu_{\rm e})
+    ^{13}{\rm C}({\rm p}, \gamma)\allowbreak
+    ^{14}{\rm N}({\rm p}, \gamma)\allowbreak
+    ^{15}{\rm O}(\beta^+, \nu_{\rm e})\allowbreak
+    ^{15}{\rm N}({\rm p}, \alpha)
+    \C[12]$. 
+There are other less important minor branches of the CNO cycle
+ \citep{solar-fusion}.
+}
+
 
 Hot bottom burning and third dredge-up result in mass-dependent C yields. 
 Stars less than about??2\,\Mo do not experience third dredge-up. As a result, these stars C abundances are only affected by first dredge-up, resulting in little change to C yields or slight destruction of C.
 In 2?? to 4?? \Mo stars, third dredge up becomes important, enriching the outer layers with C, making these stars the most important producers of C. 
-In massive, high-metallicity \agb\ stars, both hot bottom burning and third dredge up occur; however, third dredge up is much more efficient, resulting in significant \isotope[12]{C} destruction.
+In massive, high-metallicity \agb\ stars, both hot bottom burning and third dredge up occur; however, third dredge up is much more efficient, resulting in significant \C[12] destruction.
 
-\footnotetext{
-    The CNO cycle and the details of AGB evolution are described in appendix \ref{sec:stel_evo}.
-}
 
     In this work, we explore four different sets of \agb\ star yield tables from literature,
     providing necessary well-sampled grids in mass and metallicity. We refer to the yields from the following studies as the following.
@@ -335,6 +365,7 @@ In massive, high-metallicity \agb\ stars, both hot bottom burning and third dred
     \item \vxiii: \citet{ventura+13,ventura+14,ventura+18, ventura+20}
     \item \kxvi: \citet{KL16, karakas+18}
 \end{itemize}
+In Appendix~\ref{sec:oob_models}, the masses, metallicites, and notable differences between each yield set are briefly described. 
 For our models to match observations, we find that need to uniformly amplify these yield tables. We use \cxi\ table, amplified by a factor of 2.9, as the fiducial \agb\ yield.
 
 Fig.~\ref{fig:y_agb} compares the stellar \agb\ C yield for these four models.
@@ -342,7 +373,7 @@ Note that the net yields may be negative if a star ejects material with a lower 
 Most models agree on the qualitative shape of the net fractional \agb\ C yield---% 
 stars with masses between about 2--4\,\Mo have the highest fractional C yields. As metallicity increases, the total AGB C yield decreases and the mass of the peak increases.
 
-Fig.~\ref{fig:agb-ssp}, on the left, shows the total production of C by \agb\ stars in a \ssp{} at an age $t$, i.e. $\tilde{y}_{\rm C}(Z_\odot, t)$. 
+Fig.~\ref{fig:agb-ssp}, on the left, shows the total production of C by \agb\ stars in a \ssp{} at an age $t$, i.e. $\y_{\rm C}(Z_\odot, t)$. 
 As the mass range $2\,\Mo\lesssim M \lesssim 4\,\Mo$ is most important for C production, about half of C production occurs before \about{1}\,Gyr, similar to \ia\ Fe. 
 \kx{} and \kxvi{} weight C production more heavily towards high-mass AGB stars resulting in a faster enrichment delay time, whereas the \cxi\ and \vxiii\ models predict a slightly longer timescale of \about{1}\,Gyr. In any case, little to no C is produced more than 2\,Gyr after a star formation event. In contrast, Fe production continues steadily for 10\,Gyr. 
 
@@ -358,7 +389,7 @@ For example, the three models \cxi, \kx{}, and \kxvi{} predict $y_\text{C}^\text
 \begin{figure*}
     \centering
  	    \includegraphics[scale=1]{agb_yields.pdf}
-        \caption[]{The net fractional \agb\ C yield  plotted as a function of initial stellar mass $M$ and colour-coded according to metallicity. The black dashed line shows $\tilde{y}=0$ for reference. Each panel represents yields from one of four \agb\ models: \cxi, \kx{}, \vxiii{}, \kxvi{} (see Section \ref{sec:agb} and  Appendix \ref{sec:oob_models}). }
+        \caption[]{The net fractional \agb\ C yield  plotted as a function of initial stellar mass $M$ and colour-coded according to metallicity. The black dashed line shows $\y=0$ for reference. Each panel represents yields from one of four \agb\ models: \cxi, \kx{}, \vxiii{}, \kxvi{} (see Section \ref{sec:agb} and  Appendix \ref{sec:oob_models}). }
         \label{fig:y_agb}
 \end{figure*}
 
@@ -378,7 +409,7 @@ For example, the three models \cxi, \kx{}, and \kxvi{} predict $y_\text{C}^\text
 \subsection{Core Collapse Supernovae}
 
 
-Massive stars form $^{12}$C in their cores through the triple--$\alpha$ process (see Appendix \ref{sec:stel_evo}). However, only C ejected through supernovae and stellar winds contributes to the yield. 
+Massive stars form $^{12}$C in their cores through the triple--$\alpha$ process. However, only C ejected through supernovae and stellar winds contributes to the yield. 
 While there are many stellar models providing predictions of \cc{} yields, the results of these models are highly uncertain due to the many stellar modeling uncertainties. 
 
 Fig.~\ref{fig:y_cc} plots calculations of the \imf-integrated yields, defined with Eq.~\ref{eq:imf-yield} (computed using \VICE's \texttt{vice.yields.ccsne.fractional} function). 
@@ -397,7 +428,10 @@ we chose to instead parameterize $\Ycc$ to enable agreement with observations, a
 Assumptions about the explodability landscape affect C and Mg production. Increasing the fraction of stars that explode increases $\Ycc$, as stars that directly collapse do not contribute to explosive yields \citep{emily+21}. However, C is relatively unaffected by the black-hole landscape, as very massive stars contribute C through enriched winds. Since Mg is formed deeper in the core of \hms, the Mg yield drops much more steeply, so models where few stars explode (S16/W18) have higher [C/Mg].
 
 \cc\ models do not reach [O/Mg] due to overproduction of O or underproduction of Mg, or both \citep{emily+21}. Here, we assume ${\rm [O/Mg]} = 0$, which is not compatible with \cc\ models but is consistent with \apogee{} observations \citep{weinberg+19, weinberg+22}.
+
 Out model predictions of [C/Mg] and [C/H] are identical. There is a slight slope in [O/Mg] with metallicity, so this could add a systematic to our model.
+
+As we focus on constraining relative yields, we neglect O and Mg yield variations in the main text (excluding the uniform scaling of yields and massloading in Section~\ref{sec:outflows}). There is substantial variation in predicted Mg yields. Most models predict relatively flat trends metallicity (even with rotation as in \citealt{LC18}). However, the variation is significant and our adopted $\Yoc$ yield is much higher than most models. This is a known problem (see \citealt{emily+21}). \cc\ models underpredict $[{\rm Mg}/{\rm O}]$, and the reason why is unknown. 
     
 
 \begin{figure*}
@@ -424,18 +458,19 @@ metallicity dependence of solar neighborhood stars \citep[e.g.][]{james_dwarf,ja
 
 We assume a simple \textit{one-zone} chemical evolution model \cite[e.g.][]{tinsley80, pagel09, matteucci21}.  Newly produced metals are homogeneously and instantaneously mixed, so spatial dependence is neglected.
 We define $M_{X}$ to be the mass of element $X$ in the gas-phase, $\dot{M}_\star$ to be the star formation rate (in $\Mo\,{\rm yr}^{-1}$), and $\eta$ to be the mass loading factor $\eta\equiv\dot{M}_{\rm outflow}/\dot{M}_\star$ (representing the strength of outflows). A \ssp\ returns a fraction $r$ of their birth mass to the interstellar medium, due to ejected stellar envelopes.\footnotemark{} 
-Given the \imf-averaged yield of Mg $y_{\rm Mg}$, the rate of change in the gas-phase mass of Mg is a simple sum of sources and sinks,
+Here, we will use $\alpha$ as a representative $\alpha$-element, such as O or Mg. 
+Given the \imf-averaged yield $y_\alpha$, the rate of change in the gas-phase mass of $\alpha$ is a simple sum of sources and sinks,
 \begin{equation}
-    \dot{M}_{\rm Mg} =  y_{\rm Mg}\,\dot{M}_\star - \dot{M}_{\rm Mg,remnants} - \dot{M}_{\rm Mg,outflows},
+    \dot{M}_\alpha =  y_\alpha\,\dot{M}_\star - \dot{M}_{\alpha,\,\text{remnants}} - \dot{M}_{\alpha,\,\text{outflows}}
 \end{equation}
-where $y_{\rm Mg} \dot{M}_{\star}$ describes \cc\ enrichment. 
-In terms of the return mass fraction of stars $r$, the mass lost to remnants is $Z_{\rm Mg}\,\dot{M}_\star\,(1-r)$.  And, the outflows deplete mass at a rate $Z_{\rm Mg} \,\dot{M}_\star\,\eta$. (We assume the composition of outflows is the same as the interstellar medium.) Substituting for $\eta$ and $r$,  
+where $y_\alpha\,\dot{M}_{\star}$ describes \cc\ enrichment. 
+In terms of the return mass fraction of stars $r$, the mass lost to remnants is $Z_\alpha\,\dot{M}_\star\,(1-r)$.  And, the outflows deplete mass at a rate $Z_\alpha \,\dot{M}_\star\,\eta$. (We assume the composition of outflows is the same as the interstellar medium.) Substituting for $\eta$ and $r$,  
 \begin{equation}
-    \dot{M}_{\rm Mg}= y_{Mg}\,\dot{M}_\star - (1 + \eta - r)\,Z_{Mg}\,\dot{M}_\star.
+    \dot{M}_\alpha= y_\alpha\,\dot{M}_\star - (1 + \eta - r)\,Z_\alpha\,\dot{M}_\star.
 \end{equation}
-Assuming an exponentially declining star formation history $\dot{M}_\star \propto e^{-t/\tau_{\rm sfh}}$, the equilibrium abundance is derived analytically by setting $\dot{Z}_{Mg}=0$.
+Assuming an exponentially declining star formation history $\dot{M}_\star \propto e^{-t/\tau_{\rm sfh}}$, the equilibrium abundance is derived analytically by setting $\dot{Z}_\alpha=0$.
 \begin{equation}\label{eq:z_eq}
-    Z_{\rm Mg}^{\rm eq}(R) = \frac{y_{\rm Mg}}{1 + \eta(R) - r - \tau_\star / \tau_{sfh}},
+    Z_\alpha^{\rm eq}(R) = \frac{y_\alpha}{1 + \eta(R) - r - \tau_\star / \tau_{\rm sfh}},
 \end{equation}
 where $\tau_{\star}$ is the star formation rate. ($\eta$ depends on $R$ to create a metallicity gradient. See also Section \ref{sec:vice} and Eq.~\ref{eq:eta_r}.)
 In the special case of constant star formation, $\tau_{\rm sfh}\to\infty$, the denominator simplifies to $1+\eta-r$.
@@ -446,18 +481,18 @@ Eq.~\ref{eq:z_eq} then becomes
 \begin{equation}
     Z_{\rm C}^{\rm eq}(R) = \frac{\Ycc + \Ycagb}{1 + \eta(R) - r - \tau_\star / \tau_{\rm sfh}}
 \end{equation}
-And the equilibrium C/Mg abundance ratio is
+And the equilibrium C/$\alpha$ abundance ratio is
 \begin{equation}\label{eq:z_co}
-    \frac{Z_{\rm C}^{\rm eq}}{Z_{\rm Mg}^{\rm eq}} = \frac{\Ycc + \Ycagb }{\Yoc}.
+    \frac{Z_{\rm C}^{\rm eq}}{Z_\alpha^{\rm eq}} = \frac{\Ycc + \Ycagb }{y_\alpha}.
 \end{equation}
 Analogous to \cite{james+23} arguments about N, the trends in abundance ratios are set by yield ratios in these \gce{} models. The effect of other \gce{} parameters (most importantly $\eta$) cancels. As a consequence, yield ratios should establish abundance ratio trends in models which assume a different normalization of element yields and mass-loading (see discussion below).
-This argument can also be inverted to infer  yields from abundance ratio trends. To the extent that observed C and Mg trends reflect the equilibrium abundances in different Galactic regions, we can infer the \cc\ yield given an assumed \agb\ star yield (or vice versa). Inferring $\Ycc$ from $\Ycagb$, 
+This argument can also be inverted to infer  yields from abundance ratio trends. To the extent that observed C and $\alpha$ trends reflect the equilibrium abundances in different Galactic regions, we can infer the \cc\ yield given an assumed \agb\ star yield (or vice versa). Inferring $\Ycc$ from $\Ycagb$, 
 \begin{equation}
-    y_\text{C}^\text{CC} =  y_\text{Mg}^\text{CC} \frac{Z_\text{C,~eq}}{Z_\text{Mg,~eq}} - \langle y_c^{agb} \rangle
+    y_\text{C}^\alpha =  y_\alpha^\text{CC} \frac{Z_\text{C,\,eq}}{Z_{\alpha,\,{\rm eq}}} - \Ycagb
 \end{equation}
 Rewriting this expression as a relative yield of C and Mg,
 \begin{equation}\label{eq:y_c_eq}
-    \frac{\Ycc}{\Yoc} = \frac{Z_{\text{C},~\odot}}{Z_{\text{Mg},~\odot}} 10^{\rm [C/Mg]} - \frac{\Ycagb}{\Yoc}.
+    \frac{\Ycc}{y_\alpha} = \left(\frac{Z_{\text{C}}}{Z_{\alpha}}\right)_\odot 10^{[{\rm C}/\alpha]} - \frac{\Ycagb}{y_\alpha}.
 \end{equation}
 
 \footnotetext{$r\approx0.4$ for a \citealt{kroupa01} \imf.}
@@ -468,8 +503,8 @@ Rewriting this expression as a relative yield of C and Mg,
 As we will discuss in Section \ref{sec:outflows}, the normalization of yields and $\eta$ is degenerate. This can be observed in Eq.~\ref{eq:z_co}, where changes in $\eta$ or the scaling of $y_{\rm C}/y_{\rm Mg}$ would not affect equilibrium trends. Furthermore, in Eq.~\ref{eq:z_eq}, an increase in both $y_{\rm Mg}$ and $\eta$ would leave $Z_{\rm Mg}^{\rm eq}$ unchanged. Our models here are unable to distinguish the overall scaling of yields and outflow mass loading. Choosing to keep $y_{\rm C}$ fixed reduces unnecessary free parameters. So, at solar metallicity, we set
 \begin{subequations}
     \begin{align}
-        \Yct~\big\vert_{Z=Z_\odot} &= \Ycc + \Ycagb = 0.005 \\
-        \Yct/\Yoc~\big\vert_{Z=Z_\odot} &= 2.7.
+        \Yct(\Zo) &= \Ycc + \Ycagb = 0.005 \\
+        \left(\frac{\Yct}{\Yoc}\right)_{\Zo} &= 2.7.
     \end{align}
 \end{subequations}
 This ratio results in an equilibrium abundance ${\rm [C/Mg]} = -0.09$, which is consistent with the subgiant sample and is within \about{20\%} of the solar C/Mg mixture from \citet{asplund+09}.
@@ -477,14 +512,14 @@ This ratio results in an equilibrium abundance ${\rm [C/Mg]} = -0.09$, which is 
 In Section \ref{sec:f-z-models}, we will show that none of the four \agb\ yield sets (\cxi{}, \kx{}, \vxiii{}, \kxvi{}) produce enough C relative to this $\Ycc$ value. So, we introduce normalization factors, $\alpha_{\rm AGB}$, and $\alpha_{\rm CC}$ which denote a multiplicative scaling of $\Ycc$ and $\Ycagb$ respectively. 
 \begin{subequations} \label{eq:alpha}
     \begin{align}
-        \Ycagb &\rightarrow \alpha_{\rm AGB}\ \Ycagb \\
-        \Ycc &\rightarrow \alpha_{\rm CC}\ \Ycc\\
-        \alpha_{\rm CC} &= \frac{\Yct - \alpha_{\rm AGB}\ \Ycagb}{\Ycc}
+        \Ycagb &\rightarrow \alpha_{\rm agb}\ \Ycagb \\
+        \Ycc &\rightarrow \alpha_{\rm cc}\ \Ycc\\
+        \alpha_{\rm CC} &= \frac{\Yct - \alpha_{\rm agb}\ \Ycagb}{\Ycc}
     \end{align}
 \end{subequations}
-Above, $\alpha_{\rm CC}$ is dependent on the choice of $\alpha_{\rm AGB}$ to keep the total C yield constant. 
+Above, $\alpha_{\rm cc}$ is dependent on the choice of $\alpha_{\rm agb}$ to keep the total C yield constant. 
 
-In Section \ref{sec:f-z-models}, we find that $\alpha_{\rm AGB}\approx 2.9$ for the \cxi{} yield model. Using this \agb\ yield, we can now use Eq.~\ref{eq:y_c_eq} to find an estimate of $\Ycc$ as a function of metallicity. We show the values of $\Ycc$ we obtain from the subgiant sample in Fig.~\ref{fig:analytic}. From a regression analysis, we suggest here that
+In Section \ref{sec:f-z-models}, we find that $\alpha_{\rm agb}\approx 2.9$ for the \cxi{} yield model. Using this \agb\ yield, we can now use Eq.~\ref{eq:y_c_eq} to find an estimate of $\Ycc$ as a function of metallicity. We show the values of $\Ycc$ we obtain from the subgiant sample in Fig.~\ref{fig:analytic}. From a regression analysis, we suggest here that
 \begin{equation}\label{eq:zeta}
     \Ycc = 0.0028 + \zeta\left(\frac{Z}{Z_\odot}\right),
 \end{equation}
@@ -513,15 +548,15 @@ Additionally, these yields will be systematically biased if the galaxy is out of
 
 \section{The Multi-zone Model}\label{sec:vice}
 
-Classical, \textit{one-zone} models of chemical evolution assume instantaneous mixing of metals in the star-forming interstellar medium \citep[e.g.][]{matteucci21}. This simple framework is a poor approximation of the Milky Way.  The Galaxy evolves insideout---where star formation is higher towards the center and in the early universe \citep{bird+13}. Additionally, stars can migrate several kpcs over their lifetimes, mixing different chemical environments across the galaxy \citep{bird+12,sellwood+binney02}. For the rest of this paper, we focus on multi-zone models, which discretize the Galaxy into concentric rings in which stars move between.  
-Our models extends the \citet{james+21} (hereafter \JJ) Milky Way model, run with the publicly available Versatile Integrator for Chemical Evolution (\VICE). 
+Classical, \textit{one-zone} models of chemical evolution assume instantaneous mixing of metals in the star-forming interstellar medium \citep[e.g.][]{matteucci21}. This simple framework is a poor approximation of the Milky Way.  The Galaxy evolves \textit{inside-out}---where star formation is higher towards the center and in the early universe \citep{bird+13}. Additionally, stars can migrate several kpc over their lifetimes, mixing different chemical environments across the galaxy \citep{bird+12,sellwood+binney02}. For the rest of this paper, we focus on multi-zone models, which discretize the Galaxy into concentric rings in which stars move between.  
+Our models extends the \citet[hereafter \JJ]{james+21} Milky Way model, run with the publicly available Versatile Integrator for Chemical Evolution (\VICE). 
 This model is described extensively in \JJ~and concisely summarized  in \citet{james+23}. Here, we provide a brief overview of the relevant model components.
 
-In the model, the Galaxy is divided into 200 rings, each 100\,pc wide. Each ring has a separate stellar population and gas supply. Star formation ends beyond a radius $R=15.5\,$kpc. We initially assume an insideout \sfh{}, where the star formation surface density $\Sigma_\star$ is given by 
+Our model is as follows. The Galaxy is divided into 200 rings, each 100\,pc wide. Each ring has a separate stellar population and gas supply. We initially assume an inside-out \sfh{}, where the star formation surface density $\Sigma_\star$ is given by 
 \begin{equation}\label{eq:inside_out}
     \dot{\Sigma}_\star \propto \left(1-e^{-t/\tau_{\rm rise}}\right) e^{-t/\tau_{\rm sfh}}.
 \end{equation}
-$\tau_\text{rise}=2$\,Gyr describes when the star formation rate reaches a maximum, and $\tau_{\rm sfh}$ describes the decay timescale of star formation as a function of radius $R$. \JJ~derives $\tau_{\rm sfh}(R)$ through analysis of four integral field spectroscopy surveys in \cite{sanches20}. The star formation history is normalized such that the total stellar mass reaches $5.17\times10^{10}\,\Mo$ \citep{LM15} and at each $R$ to match the stellar surface density gradient \citep{BHG16}.
+$\tau_\text{rise}=2$\,Gyr describes when the star formation rate reaches a maximum, and $\tau_{\rm sfh}$ describes the decay timescale of star formation as a function of radius $R$. \JJ~derives $\tau_{\rm sfh}(R)$ through analysis of four integral field spectroscopy surveys in \cite{sanches20}. At each $R$, the star formation history is normalized to match the stellar surface density gradient \citep{BHG16} and the total stellar mass reaches $5.17\times10^{10}\,\Mo$ \citep{LM15}. Star formation ends beyond a radius $R=15.5\,$kpc. 
 The gas inflow is calculated to maintain our chosen \sfh{} for each radius and time, using an extension of a Kennicutt-Schmidt law \citep{kennicutt98},
 \begin{equation}
 \dot{\Sigma}_{\star} \propto 
@@ -530,22 +565,22 @@ The gas inflow is calculated to maintain our chosen \sfh{} for each radius and t
     {(\Sigma}_{\rm gas})^{3.6} & 5\times 10^6 \leq \Sigma_{\rm gas} < 2\times10^7 \\ 
     {(\Sigma}_{\rm gas})^{1.7} & \Sigma_{\rm gas} < 5\times10^6 \\ 
 \end{cases}
-\end{equation} UNITS.
+\end{equation} 
+where $\Sigma_{\rm gas}$ is measured in \Mo\,kpc$^{-2}$. 
 The scaling of this relationship varies with time due to the redshift dependence of $\tau_\star$ in molecular gas observed by \citet{tacconi18}. We assume a \citet{kroupa01} \imf.
 
 
-\JJ\ accounts for radial migration by using the results of the \texttt{h277} hydrodynamical
-simulation \citep{christensen12, zolotov12, loebman12, BZ14}, with simulation parameters described
-in \citet{bird+21}. Each \VICE\ single stellar population (SSP) is matched to an \textit{analog} in
-\texttt{H277}, chosen to form at a similar time and radius $R$. By taking the change in radius
-$\Delta R$ of the analogs, the SSPs move to their final radii with a $\sqrt{\text{time}}$ dependence.
-This relationship between displacement and time arises when migration proceeds as a consequence of the diffusion of angular momentum \citep{frankel18, frankel20}.
+To account for radial migration, \JJ\ used the \texttt{h277} hydrodynamical
+simulation results \citep{christensen12, zolotov12, loebman12, BZ14}. Simulation parameters are described in \citet{bird+21}. 
+Each \VICE\ single stellar population (SSP) is matched to an \textit{analog} in \texttt{H277}, chosen to form at a similar time and radius $R$. By taking the change in radius $\Delta R$ of the analogs, the SSPs move to their final radii with a $\sqrt{\text{time}}$ dependence.
+The $\Delta R \propto \sqrt{\rm time}$ dependence arises when migration proceeds as a consequence of the diffusion of angular momentum \citep{frankel18, frankel20}.
 We do not account for radial gas flows.
-Using the results of a hydrodynamical simulation without modification limits the free parameters in the model; however, we am limited to one dynamical history. The impact of the details of a galaxy's dynamical history on its chemical evolution is still unknown.
+Using the results of a hydrodynamical simulation without modification limits the free parameters in the model; however, we am limited to one dynamical history. 
+We do explore a normal-distribution random walk migration based on \citet{frankel18}, without noticeable impacts on our results. All models shown here use the \texttt{h277}-based migration. The full impact of the details of a galaxy's dynamical history on its chemical evolution is still unknown.
 
-As the strength of outflows controls the resulting $\alpha$ abundances, \JJ~create a metallicity gradient by defining
+As the strength of outflows controls the resulting $\alpha$-element abundances, \JJ~create a metallicity gradient by defining
 \begin{equation}\label{eq:eta_r}
-\eta(R) = \frac{y_{\alpha}^{\rm CC}}{Z_{\alpha, \odot}} 10^{(-0.08\,\text{kpc}^{-1})(R-4\,\text{kpc})+0.3} + r - 1.
+\eta(R) = r - 1 + \frac{y_{\alpha}^{\rm CC}}{Z_{\alpha, \odot}} 10^{(-0.08\,\text{kpc}^{-1})(R-4\,\text{kpc})+0.3}.
 \end{equation}
 This choice of $\eta(R)$ results in a [$\alpha$/H] gradient consistent with Milky Way observations \citep[e.g.][]{hayden+14, weinberg+19, frinchaboy+13}.
 
@@ -553,12 +588,12 @@ This choice of $\eta(R)$ results in a [$\alpha$/H] gradient consistent with Milk
 \section{Results}
 \subsection{Data Selection}
 
-\citet{james+23} compare their model against the \cite{vincenzo+21} sample of \apogee{} \citep{apogee17} RGB stars. \citet{vincenzo+21} use \textsc{mesa} stellar evolution models \citep{mesa} to correct for the effects of First Dredge Up (FDU). 
-We instead use the \citetjack~sample of \apogee{} subgiants. Subgiant stars have not undergone FDU but have well-mixed atmospheres, so their atmospheric C and N abundances are still reflective of their birth abundances and do not need mixing corrections. We only compare the models to the low-$\alpha$ sequence unless otherwise specified.  The selection criteria and differences between the samples are described in more detail in Appendix \ref{sec:jack}.
+We use the \citetjack~sample of \apogee{} subgiants. Subgiant stars have not undergone FDU but have well-mixed atmospheres, so their atmospheric C and N abundances are still reflective of their birth abundances and do not need mixing corrections. We only compare the models to the low-$\alpha$ sequence unless otherwise specified.  The selection criteria and differences between the samples are described in more detail in Appendix \ref{sec:jack}.
 
 
 
-\subsection{The Evolution of Carbon Abundances in the Galaxy}
+
+\subsection{Evolution of Carbon Abundances}
 
 Here, we present the time evolution of our fiducial model. In the next Sections, we will discuss the choice of parameters and agreement with observations. 
 The fiducial model has the following qualitative characteristics of its C yields: (a) C is predominantly produced in \cc, (b) \cc\ produce more C at higher metallicities, and (c) \agb\ stars produce less C at higher metallicities. The fiducial model uses the \cxi{} \agb\ yield tables (see Section \ref{sec:agb}, and Table \ref{tab:fiducial_mod}), and we amplify the \cxi{} yields by a factor of 2.9 such that \agb\ stars account for 20\% of C at $Z=Z_\odot$. 
@@ -648,15 +683,15 @@ the \caah\ trend) gives information on the total C yield and the behavior of \cc
 
 
 
-Here, we consider a \textit{lateburst} model, created by multiplying our fiducial insideout \sfh{} with a Gaussian.
+Here, we consider a \textit{lateburst} model, created by multiplying our fiducial inside-out \sfh{} with a Gaussian.
 \begin{equation}\label{eq:lateburst}
-    \dot{\Sigma}_{\rm lateburst} \propto \dot{\Sigma}_{\rm insideout} \left(1 + A\,e^{-(t-\tau_{\rm burst})^2/2\sigma^2_{\rm burst}} \right)
+    \dot{\Sigma}_{\rm lateburst} \propto \dot{\Sigma}_{\rm inside-out} \left(1 + A\,e^{-(t-\tau_{\rm burst})^2/2\sigma^2_{\rm burst}} \right)
 \end{equation}
 
 $A=1.5$ represents the amplitude of the birth, $\tau_\text{burst}=10.8$\,Gyr is the time where the burst is strongest, and $\sigma_\text{burst}=1$\,Gyr is the width of the burst.
 We also consider an \textit{earlyburst} model as a slight variation of the lateburst, where the burst is instead exponential and placed at $t_1=5$\,Gyr. 
 \begin{equation}\label{eq:twoinfall}
-    \dot{\Sigma}_{\rm earlyburst} \propto \dot{\Sigma}_{\rm insideout} + 
+    \dot{\Sigma}_{\rm earlyburst} \propto \dot{\Sigma}_{\rm inside-out} + 
 \begin{cases}
     A\,e^{-(t-t_1)/\tau_{\rm burst}} & t_1 < t \\
       0 & t<t_1
@@ -854,163 +889,33 @@ The low-$\alpha$ sequence is better reproduced by this model, so we use this cut
 
 
 
+\section{\agb\ Yield Models} \label{sec:oob_models}
+A brief summary of the four \agb\ models we consider, the masses and metallicites of each yield set, and differences between the models.
 
+\hypertarget{C11}{\texttt{C11}}. 
+Yields from \citet{cristallo+11,cristallo+15}. 
+Models include masses 1.3, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, and 6.0 \Mo; and 
+metallicities $Z = $ 0.0001, 0.0003, 0.001, 0.002, 0.003, 0.006, 0.008, 0.01, 0.014, 0.02. 
 
-
-
-
-
-
-
-
-\newpage
-\section{Low-Mass Stellar Evolution}\label{sec:stel_evo}
-For reference, we include here a brief summary of the physics behind carbon production in lowmass.
-lowmass ($\lesssim 8 \Mo$, like our sun), are born when they are fusing H into He. Typically, the dominant process is through the aptly named \textit{pp chain}, which takes four protons $\proton$ and releases a He nucleus $\alpha$, positrons $\beta^{+}$, photons $\gamma$, and electron neutrinos $\nu_{\rm e}$.
-\begin{subequations}
-    \begin{align}
-        \proton + \proton &\longrightarrow \isotope[2][1]{H} + \beta^+ + \nu_{\rm e} \\
-        \proton + \isotope[2][1]{H} &\longrightarrow \isotope[3][2]{He} + \gamma\\
-        \proton + \isotope[3][2]{He} &\longrightarrow \isotope[4][2]{He} + \beta^+ + \nu_{\rm e}.
-    \end{align}
-\end{subequations}
-However, when the core temperature becomes high enough, the cno begins to activate. Starting with \isotope[12]{C}, the cno is a series of proton captures that result in the creation of a new He nucleus.
-\begin{subequations}\label{eq:cno_cycle}
-\begin{align}
-    \proton + \isotope[12]{C} &\longrightarrow \isotope[13]{N} + \gamma \\
-    \isotope[13]{N} &\longrightarrow  \isotope[13]{C} + \beta^+ + \nu_{\rm e}  \\
-    \proton + \isotope[13]{C}  &\longrightarrow \isotope[14]{N} + \gamma\\
-    \proton + \isotope[14]{N}  &\longrightarrow \isotope[15]{O} + \gamma \label{eq:n14}\\
-    \isotope[15]{O} &\longrightarrow  \isotope[15]{N} + \beta^{+} + \nu_{\rm e} \\
-    \proton + \isotope[15]{N} &\longrightarrow \isotope[12]{C} + \alpha
-\end{align}
-\end{subequations}
-(There are other less important minor branches of the cno cycle
- \citep{solar-fusion}.)
-The cno is more intense at high metallicities, as the abundance of \isotope[12]{C} is higher. Since the slowest reaction in the cno is the \isotope[14]{N} proton capture (Eq.~\ref{eq:n14}; also see \citealt{solar-fusion}), the net effect is to convert \isotope[12]{C} into \isotope[14]{N}. 
-
-After the end of the main sequence (core H burning), a star begins to ascend the RGB. The star first becomes a subgiant, slightly more luminous and redder than the main sequence. Then, FDU occurs when the contracting core drives convection currents through, bringing processed material from the core to the surface. Because of the cno, the surface abundances of C will be lowered and N enhanced.
-
-Stars with masses $\gtrsim 0.6\,\Mo$ build up a large He core during the RGB. Eventually, conditions are dense and hot enough for He to being to fuse, and the star now enters the He-burning phase. (Second dredge-up occurs during this transition.) As the next (accessible) stable isotope after He is C, the primary process to fuse He is through the triple-$\alpha$ process, where three He nuclei are combined to form \isotope[12]{C}.
-\begin{subequations} \label{eq:triple_alpha}
-\begin{align}
-    \alpha + \alpha &\longrightarrow \isotope[8][4]{Be} \\ 
-    \alpha + \isotope[8][4]{Be} &\longrightarrow \isotope[12][6]{C} + 2\gamma \\ 
-\end{align}
-Additionally, some \isotope[12][6]{C} may furthermore fuse into O through $\alpha + \isotope[12][6]{C} \longrightarrow \isotope[16][8]{O} + \gamma$.
-
-When the star's core becomes full of C and O, the star finally enters the asymptotic giant branch phase (\agb). (Only the most massive low-mass stars burn further than O, creating some Mg, but these stars are a small fraction of low-mass stars.) An \agb\ star has a more complex structure, with an inert core, a He-burning shell, and an outer H-burning shell. The double shell structure causes instabilities towards the end of the \agb\ phase. In this thermally pulsating phase, each pulse begins with a He-flash (where the He-shell becomes much more luminous). This flash causes the star to expand, driving convective currents that dredge up material from the CO core (third dredge up), and fusion stops temporarily. The star settles again and stays stable for several Myrs until the cycle repeats. During each He-flash, some material from the stellar surface is lost. This mass-loss is the source of \agb\ enrichment. Finally, the star losses enough mass such that the thermal pulses stop. The star becomes a white dwarf, left to cool for eternity.
-
-
-\end{subequations}
-
-\section{Other Observational and Theoretical Challenges}
-
-Oxygen Magnesium problem. As we focus on constraining relative yields, we neglect O and Mg yield variations in the main text (excluding the uniform scaling of yields and massloading in Section~\ref{sec:outflows}). There is substantial variation in predicted Mg yields. Most models predict relatively flat trends metallicity (even with rotation as in \citealt{LC18}). However, the variation is significant and our adopted $\Yoc$ yield is much higher than most models. This is a known problem (see \citealt{emily+21}). cc models underpredict $[{\rm Mg}/{\rm O}]$, and the reason why is unknown. Our results are independent of the choice of \cc\ element as we assume $[{\rm Mg}/{\rm O}]=0$.
-
-Carbonn abundance measurments. E.g. 
-
-
-
-
-
-
-
-\section{Low-Mass Stellar Yield Models} \label{sec:oob_models}
-
-\hypertarget{C11}{\texttt{C11}}. Yields from \citet{cristallo+11,cristallo+15}. 
-\begin{itemize}
-    \item 
-        masses 1.3, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, and 6.0 M$_{\odot}$ 
-    \item metallicities $Z = $ 0.0001, 0.0003, 0.001, 0.002, 0.003, 0.006, 0.008, 0.01, 0.014, 0.02. 
-\end{itemize}
-
-\hypertarget{K10}{\texttt{K10}} ,
-     \kx{} from \citet{karakas10}, and 
-1.0, 1.25, 1.5, 1.75, 1.9, 2.25, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0 
-,  0.0001, 0.004, 0.008, 0.02. 
+\hypertarget{K10}{\texttt{K10}}.
+Yields are published in \citet{karakas10}. 
+Models include masses  1.0, 1.25, 1.5, 1.75, 1.9, 2.25, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0 \Mo;
+and metallicities $Z=$ 0.0001, 0.004, 0.008, 0.02. 
 
 \hypertarget{V13}{\texttt{V13}} 
-     \vxiii{} from \cite{ventura+13,ventura+14,ventura+18,vincenzo+21}, 
-, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 6.5, 7.0
-, 0.0003, 0.001, 0.002, 0.004, 0.008, 0.014, 0.04 
+Yields are published in \citet{ventura+13,ventura+14,ventura+18,vincenzo+21}, 
+Models include masses 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 6.5, 7.0 \Mo; 
+and metallicities $Z=$ 0.0003, 0.001, 0.002, 0.004, 0.008, 0.014, 0.04.
+\vxiii is evololved with DHFJKSLDF,
+\vxiii is unusual in that hot bottom burning is much stronger than other models, resulting in much lower stellar yields and negative yields above solar metallicities.
+
 
 \hypertarget{K16}{\texttt{K16}} 
- , 1.0, 1.25, 1.5, 1.75, 2.25, 2.5, 2.75, 3.0, 3.25, 3.5, 3.75, 4.0, 4.5, 5.0, 5.5, 6.0, 7.0
- , 0.0003, 0.001, 0.002, 0.004, 0.008, 0.014, 0.04 
-    \kxvi{} from \cite{KL16,karakas+18}
-    
+Yields are published in \citet{KL16,karakas+18}
+Models include masses 1.0, 1.25, 1.5, 1.75, 2.25, 2.5, 2.75, 3.0, 3.25, 3.5, 3.75, 4.0, 4.5, 5.0, 5.5, 6.0, 7.0 \Mo; 
+and metallicities $Z=$ 0.0003, 0.001, 0.002, 0.004, 0.008, 0.014, 0.04.
+This yield set was extended up to metallicities of 0.1 in DFJSD; however, we do not consider this range here.
 
-
-\section{Symbols}
-
-
-\setlength{\tabcolsep}{0pt}
-\begin{tabular}{p{0.2\columnwidth} p{0.6\columnwidth}}
-    $[A/B]$ & 
-    The abundance ratio between elements $A$ and $B$. $[A/B] =
-    \log_{10}\left(A/B\right) - \log_{10}\left(A_{\sun}/B_{\sun}\right)$, i.e.
-    $[A/B]$ is the logarithm of the ratio between A and B, scales such that
-    $[A/B]=0$ for the sun. Solar abundances are as measured in
-    \citet{asplund+09}. \\
-    
-$\alpha_{\rm AGB}$ & 
-The multiplicative increase in \agb\ C production. See Eq.~\ref{eq:alpha}. \\
-
-
-$\alpha_{\rm CC}$ &
-The multiplicative increase in \cc\ C production. See Eq.~\ref{eq:alpha}. \\
-
-$\eta$ & 
-The mass outflow loading factor. $\eta$ is the ratio between ejected gas from the galaxy and star formation, i.e. $\eta = \dot{M}_{\rm outflow}/\dot{M}_\star$. \\
-
-$\zeta$ & 
-{The high-mass star carbon yield metallicity dependence. See Eq.~\ref{eq:zeta}}. \\
-
-$\ensuremath{\dot{\Sigma}}$ & 
-The surface mass density of star formation. \\
-
-$M$ &
-The mass of a star, in units of \Mo \\
-
-
-$\dot{M}_\star$ & 
-The rate of star formation (mass of new stars per time interval). \\
-
-$\dot{M}_{\rm X}$ &
-The rate of change of the mass of element $X$. \\
-
-$f_{\rm AGB}$ &
-The fractional contribution of \agb\ stars to the total \imf-averaged carbon yield at solar metallicity. See Eq.~\ref{eq:f_agb} \\ 
-
-$R$ &
-The galactocentric radius (distance from the galactic center) in kpc. \\ 
-
-$\tilde{y}_{\rm C}^{\rm AGB}$ &
-The per-star yield of C from lowmass of a given mass. In other words, the amount of new C an \agb\ star ejects divided by the initial mass of the star. \\ 
-
-$y_{\rm C}^{\rm AGB}$ &
-The \imf-averaged yield of C from low-mass stars. \\ 
-
-$y_{\rm C}^{\rm CC}$ &
-The \imf-averaged yield of C from high-mass stars. \\ 
-
-$y_{\rm Mg}^{\rm CC}$ &
-The \imf-averaged yield of Mg. \\ 
-
-$Z_\odot$ &
-The metallicity for the sun. $Z_\odot=0.014$.  \\ 
-
-$Z$ &
-The metallicity fraction, i.e. the mass fraction of all elements which are not H or He.  \\ 
-
-$Z_X$ &
-The mass fraction of element $X$. \\
-
-\end{tabular}
-
-\setlength{\tabcolsep}{6pt}
-\renewcommand*{\arraystretch}{1}
 
 \bsp	% typesetting comment
 \label{lastpage}
