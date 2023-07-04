@@ -33,8 +33,8 @@ def parse_args():
 
     parser.add_argument("-e", "--eta", type=float, default=1,
                         help="the efficiency multiplier of the supernova feedback")
-    parser.add_argument("-b", "--beta", type=float, default=0.001, 
-                        help="the power-law index of the star formation law, default=0.001")
+    parser.add_argument("-z", "--zeta", type=float, default=0.7, 
+                        help="the solar fraction of CCSNe secondary C, default=0.7")
     parser.add_argument("-s", "--spec", default="insideout", 
                         help="""star formation specification. Options include
                         [insideout, constant, lateburst, outerburst, 
@@ -106,7 +106,7 @@ def generate_filename(args):
     if args.eta != 1:
         filename += "_eta" + str(args.eta) 
         
-    filename += "_beta" + str(args.beta)
+    filename += "_zeta" + str(args.zeta)
 
     if args.spec != "insideout":
         filename += "_" + args.spec + str(args.lateburst_amplitude)
@@ -147,7 +147,7 @@ from surp.simulation.multizone_sim import run_model
 yield_kwargs = {{
      'oob': {args.out_of_box_agb},
      'f_agb': {args.agb_fraction},
-     'beta': {args.beta}, 
+     'beta': {args.zeta}, 
      'fe_ia_factor': {args.fe_ia_factor},
      'm_low': {args.m_low},
      'm_mid': {args.m_mid},

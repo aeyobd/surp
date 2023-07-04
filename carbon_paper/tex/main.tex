@@ -277,7 +277,7 @@ After a single stellar population (SSP)\footnotemark{} forms, \cc{} are the firs
 To quantify yields, we define the stellar yield to be the fraction of a stars initial mass which is newly synthesized and released as a given element. 
 For an element $X$ and star with mass $M$, the net-fractional stellar yield $\y$ is 
 \begin{equation}
-\y_{X} = \frac{M_{\rm ejected}}{M_{\rm birth}} \Delta Z_X
+\y_{X} =  \Delta Z_X \frac{M_{\rm ejected}}{M_{\rm birth}}
 \end{equation}
 where $M_{\rm ejected}$ and $M_{\rm birth}$  are the total ejected mass and the birth mass of the star, and $\Delta Z_X$ is the change in mass fraction of abundance X from birth to ejected. For example, if a 1\,\Mo\ star has $\y_{\C} = 10^{-3}$, then the star will add $10^{-3}\,\Mo$ of new C to the interstellar medium. 
 Although per-star yields are necessary to compute \agb{} star enrichment rates in \gce{}  models, \imf-averaged yields are useful in interpreting their predictions. 
@@ -315,12 +315,12 @@ where $\tau_M$ is in Gyr, from \citealt{larson74}}
 
 	\begin{tabular}{l l l l}
 		\hline
-        Element & $\Ycc$ & $\y^{\rm AGB}$ & $y^{\rm SNe Ia}$ \\
+        Element & $y^{\rm cc}$ & $\y^{\rm agb}$ & $y^{\rm ia}$ \\
 		\hline
-        C & $0.0028 + 0.001\,(Z/Z_\odot)$ & $2.9\times{\rm C11}$ &  0 \\
+        C & Eq.~\ref{eq:zeta} & $2.9\times{\rm C11}$ &  0 \\
         Mg & 0.00185 & 0 & 0 \\
         Fe & 0.0012 & 0 & 0.00214 \\
-        N & 0.00072 & 0.0009$(Z/Z_\odot)\,M$ & 0\\
+        N & 0.00072 & 0.0009$M\left(\frac{Z}{Z_\odot}\right)$ & 0\\
 		\hline
 	\end{tabular}
 \end{table}
@@ -390,14 +390,24 @@ And the resulting equation (excepting a prefactor)
 y(m) = 
 \begin{cases}
 y_0 & m \leq m_0 - \delta m_- \\
-y_1 + (y_0 - y_1) \left(3 (\frac{m_0 - m}{\delta m_-})^2 - 
-2 (\frac{m_0 - m}{\delta m_-})^3\right) 
+y_1 + (y_0 - y_1)\; f\!\left(\frac{m_0 - m}{\delta m_-}\right) 
     & m_0 - \delta m_- < m \leq m_0 \\
-y_1 + (y_2 - y_1) \left(3 (\frac{m - m_0}{\delta m_+})^2 - 
-2 (\frac{m-m_0}{\delta m_+})^3\right) 
+    y_1 + (y_2 - y_1)\; f\!\left(\frac{m - m_0}{\delta m_+}\right)
     & m_0 < m \leq m_0 + \delta m_+ \\
 y_2 & m_0 + \delta m_+ \leq m
 \end{cases}
+\end{equation}
+
+where 
+\begin{equation}
+    f(x) = 3x^2 - 2x^3
+\end{equation}
+
+For the full equation, we take the above functional form multiplied by a
+metallicity dependent term, so 
+
+\begin{equation}
+\Ycagb(m, Z) = \frac{y(m) \left[y_1 + \zeta \log_{10}(Z/Z_\odot) \right]}{\int_1^8 m\,y(m)\,{\rm IMF}(m)\;dm}
 \end{equation}
 
 
@@ -536,7 +546,7 @@ Above, $\alpha_{\rm cc}$ is dependent on the choice of $\alpha_{\rm agb}$ to kee
 
 In Section \ref{sec:f-z-models}, we find that $\alpha_{\rm agb}\approx 2.9$ for the \cxi{} yield model. Using this \agb\ yield, we can now use Eq.~\ref{eq:y_c_eq} to find an estimate of $\Ycc$ as a function of metallicity. We show the values of $\Ycc$ we obtain from the subgiant sample in Fig.~\ref{fig:analytic}. From a regression analysis, we suggest here that
 \begin{equation}\label{eq:zeta}
-    \Ycc = 0.0028 + \zeta\left(\frac{Z}{Z_\odot}\right),
+    \Ycc = 0.004 \left(1 - \zeta + \zeta\,\frac{2Z}{Z + Z_\odot} + \frac{2\xi}{1 + Z/Z_{\rm III}}\right),
 \end{equation}
 where $\zeta\approx0.001$ describes the metallicity dependence.
 
