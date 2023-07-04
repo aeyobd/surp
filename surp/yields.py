@@ -7,7 +7,7 @@ from vice.yields import ccsne, sneia, agb
 
 Z_Sun = 0.014
 y_c_0 = 0.005
-y_c_cc_0=0.0028
+y_c_cc_0=0.004
 y_n_flat = 7.2e-4
 
 
@@ -23,7 +23,7 @@ YC_AGB0 = {
 # default settings
 
 
-def set_yields(eta=1, beta=0.001, fe_ia_factor=None,
+def set_yields(eta=1, beta=0.7, fe_ia_factor=None,
                agb_model="cristallo11", oob=False, f_agb=0.2,
                alpha_n=0, 
                mass_factor=1,
@@ -37,7 +37,7 @@ def set_yields(eta=1, beta=0.001, fe_ia_factor=None,
 
     set_n(eta, alpha_n)
     
-    prefactor = y_c_0 * alpha_cc / (y_c_cc_0 + beta)
+    prefactor = y_c_0 * alpha_cc / y_c_cc_0
     vice.yields.ccsne.settings["c"] = LinCC(zeta=beta*prefactor, y0=prefactor*y_c_cc_0)
 
     set_eta(eta)
@@ -72,15 +72,24 @@ class LinAGB:
 
 
 class LinCC:
-    def __init__(self, zeta, y0):
-        self.zeta = zeta
+    def __init__(self, zeta, y0, pop_iii=0.2, Z_iii=10**(-5.5)):
+        # defaults
+        # zeta = 0.70
+        # y0 = 0.004
+        # Z_iii = 10**-5.5
+        # pop_iii = 0.005
         self.y0 = y0
+        self.zeta = zeta
+        self.pop_iii = pop_iii
+        self.Z_iii = Z_iii
 
     def __call__(self, Z):
-        return self.y0 + self.zeta*(Z/Z_Sun) 
+        return self.y0*(1 - self.zeta 
+                        + self.zeta * Z*2/(Z + Z_Sun) 
+                        + self.pop_iii*2/(1 + Z/self.Z_iii))
 
     def __str__(self):
-        return f"{self.y0:0.2e} + {self.zeta:0.2e} Z/Z0"
+        return f"{self.y0:0.2e} + {self.zeta:0.2e} Z/Z0 + {self.pop_iii} 1/(1+Z/Z1)"
 
 
 def set_defaults():
