@@ -11,6 +11,11 @@ def main():
     for d in ["logs", "out", "results"]:
         os.makedirs(d, exist_ok=True)
 
+    if args.test_run and args.threads is None:
+        args.threads = 1
+    elif args.threads is None:
+        args.threads = 8
+
     if not filename:
         filename = generate_filename(args)
 
@@ -33,7 +38,7 @@ def parse_args():
 
     parser.add_argument("-e", "--eta", type=float, default=1,
                         help="the efficiency multiplier of the supernova feedback")
-    parser.add_argument("-z", "--zeta", type=float, default=0.7, 
+    parser.add_argument("-z", "--zeta", type=float, default=None, 
                         help="the solar fraction of CCSNe secondary C, default=0.7")
     parser.add_argument("-s", "--spec", default="insideout", 
                         help="""star formation specification. Options include
@@ -55,7 +60,7 @@ def parse_args():
                         help="migration strength in kpc/Gyr^0.5")
     parser.add_argument("-F", "--filename", default=None,
                         help="the name of the output file ")
-    parser.add_argument("-A", "--lateburst_amplitude", type=float, default=1, 
+    parser.add_argument("-A", "--burst_amplitude", type=float, default=1, 
                         help="the amplitude of the late burst")
     parser.add_argument("-i", "--fe_ia_factor", default="None", 
                         help="the iron yield factor of type Ia supernovae ")
@@ -67,7 +72,7 @@ def parse_args():
                         help="the agb fraction of primary N (0.0)")
     parser.add_argument("-t", "--test_run", action="store_true", 
                         help="only run a test")
-    parser.add_argument("-T", "--threads", default=8,
+    parser.add_argument("-j", "--threads", default=None, type=int,
                         help="number of threads to run. default=1")
     parser.add_argument("--m_low", default=1.3,
                         help="lower mass of AGB C")
@@ -106,10 +111,11 @@ def generate_filename(args):
     if args.eta != 1:
         filename += "_eta" + str(args.eta) 
         
-    filename += "_zeta" + str(args.zeta)
+    if args.zeta is not None:
+        filename += "_zeta" + str(args.zeta)
 
     if args.spec != "insideout":
-        filename += "_" + args.spec + str(args.lateburst_amplitude)
+        filename += "_" + args.spec + str(args.burst_amplitude)
 
     if args.migration_mode != "diffusion":
         filename += "_" + args.migration_mode
@@ -132,7 +138,7 @@ def generate_filename(args):
         filename += "_nstars" + str(args.n_stars)
 
     if args.threads != 1:
-        filename += "_nthreads" + str(args.threads)
+        filename += "_j" + str(args.threads)
 
 
     return filename
@@ -142,12 +148,14 @@ def create_pycall(filename, args):
     # create call to python script
     pycall = f"""\
 path = None
+import surp.simulation.filter_warnings
 from surp.simulation.multizone_sim import run_model
+
 
 yield_kwargs = {{
      'oob': {args.out_of_box_agb},
      'f_agb': {args.agb_fraction},
-     'beta': {args.zeta}, 
+     'zeta': {args.zeta}, 
      'fe_ia_factor': {args.fe_ia_factor},
      'm_low': {args.m_low},
      'm_mid': {args.m_mid},
@@ -166,7 +174,7 @@ kwargs = {{
      'verbose': {args.test_run},
      'sigma_R': {args.sigma_R},
      'spec': '{args.spec}',
-     'lateburst_amplitude': {args.lateburst_amplitude},
+     'lateburst_amplitude': {args.burst_amplitude},
      'conroy_sf': {args.conroy_sf},
 }}
 

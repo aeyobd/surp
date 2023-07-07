@@ -5,40 +5,66 @@ from scipy.integrate import quad
 from vice.yields import ccsne, sneia, agb
 
 
+
+# Constants
 Z_Sun = 0.014
-y_c_0 = 0.005
-y_c_cc_0=0.004
+
+Y_C_0 = 0.005
+ZETA_0 = 0.06
+
 y_n_flat = 7.2e-4
 
 
+Y_AGB = {
+        "cristallo11": 4.2e-4,
+        "karakas10": 6.4e-4,
+        "ventura13": 3.0e-4,
+        "karakas16": 5.1e-4,
+        "A": 1,
+}
 
-YC_AGB0 = {
-        "cristallo11": 3.47e-4,
-        "karakas10": 5.85e-4,
-        "ventura13": 6.0e-5,
-        "karakas16": 4.21e-4,
-        "A": 5e-4,
+ZETA_AGB = {
+        "cristallo11": -0.0175,
+        "karakas10": -0.059,
+        "ventura13": -0.021,
+        "karakas16": -0.029,
 }
 
 # default settings
 
 
-def set_yields(eta=1, beta=0.7, fe_ia_factor=None,
+def set_yields(eta=1, zeta=None, fe_ia_factor=None,
                agb_model="cristallo11", oob=False, f_agb=0.2,
                alpha_n=0, 
                mass_factor=1,
+               zeta_agb=-0.03,
                **kwargs
               ):
+    """
+    Parameters
+    ----------
+
+    eta
+    
+    """
 
     set_fe(fe_ia_factor)
 
-    alpha_agb, alpha_cc = calc_alpha(agb_model, eta, oob, f_agb)
-    set_agb(agb_model, alpha_agb, mass_factor)
+    alpha_agb = calc_alpha(agb_model, oob, f_agb)
+    y_cc = calc_ycc(agb_model, alpha_agb)
+    if zeta is None:
+        zeta = calc_zeta(agb_model, alpha_agb, zeta_agb)
+
+    # correct ...
+    alpha_agb *= eta
+    y_cc *= eta
+    zeta *= eta
+
+    set_agb(agb_model, alpha_agb, mass_factor, zeta_agb=zeta_agb)
 
     set_n(eta, alpha_n)
     
-    prefactor = y_c_0 * alpha_cc / y_c_cc_0
-    vice.yields.ccsne.settings["c"] = LinCC(zeta=beta*prefactor, y0=prefactor*y_c_cc_0)
+    vice.yields.ccsne.settings["c"] = C_CC_model(zeta=zeta, y0=y_cc)
 
     set_eta(eta)
 
@@ -71,7 +97,7 @@ class LinAGB:
 
 
 
-class LinCC:
+class C_CC_model:
     def __init__(self, zeta, y0, pop_iii=0.2, Z_iii=10**(-5.5)):
         # defaults
         # zeta = 0.70
@@ -84,12 +110,13 @@ class LinCC:
         self.Z_iii = Z_iii
 
     def __call__(self, Z):
-        return self.y0*(1 - self.zeta 
-                        + self.zeta * Z*2/(Z + Z_Sun) 
-                        + self.pop_iii*2/(1 + Z/self.Z_iii))
+        return (self.y0 
+            + self.zeta * (Z - Z_Sun)
+            + self.y0 * self.pop_iii*2/(1 + Z/self.Z_iii))
 
     def __str__(self):
-        return f"{self.y0:0.2e} + {self.zeta:0.2e} Z/Z0 + {self.pop_iii} 1/(1+Z/Z1)"
+        return f"{self.y0:0.2e} + {self.zeta:0.2e} (Z - Z0)"
+
 
 
 def set_defaults():
@@ -132,7 +159,7 @@ def set_agb(study="cristallo11", factor=1, mass_factor=1, **kwargs):
         set_agb_elem(elem, study, factor, mass_factor=mass_factor)
 
     if study == "A":
-        agb.settings["c"] = lambda m, z: factor * a_agb(**kwargs)(m, z)
+        agb.settings["c"] = a_agb(ym_agb=factor * Y_AGB["A"], **kwargs)
 
 
 def set_fe(fe_ia_factor):
@@ -149,7 +176,7 @@ def set_eta(eta=1):
     if eta==1:
         return
 
-    for elem in ["o", "fe", "mg", "sr", "n", "c"]:
+    for elem in ["o", "fe", "mg", "sr", "n"]:
         y = ccsne.settings[elem] 
         if isinstance(y, float):
             ccsne.settings[elem] *= eta
@@ -169,23 +196,31 @@ def set_n(eta, alpha_n):
 
 
 
-def calc_alpha(agb_model="cristallo11" , eta=1, oob=False, f_agb=0.2):
-    y_agb = YC_AGB0[agb_model]
-    y_c = y_c_0 * eta
-
+def calc_alpha(agb_model="cristallo11" , oob=False, f_agb=0.2):
+    y_agb = Y_AGB[agb_model]
     if oob:
-        alpha_agb = 1
-        f_agb = YC_AGB0[agb_model]/y_c_0
+        alpha = 1
     else:
-        alpha_agb = f_agb*y_c/y_agb
+        alpha = f_agb * Y_C_0 /y_agb
+    return alpha
 
-    alpha_cc = eta * (1 - f_agb)
 
-    return alpha_agb, alpha_cc
+def calc_ycc(agb_model, alpha_agb):
+    y_agb = Y_AGB[agb_model]
+
+    y_cc = Y_C_0 - alpha_agb * y_agb 
+    return y_cc
+
+
+def calc_zeta(agb_model, alpha_agb, zeta_agb):
+    if agb_model != "A":
+        zeta_agb = alpha_agb * ZETA_AGB[agb_model]
+
+    return ZETA_0 - zeta_agb
 
 
 def a_agb(m_low=1.3, m_mid=None, m_high=4, yl_agb=0, ym_agb=5e-4, yh_agb=0,
-        mz_agb=-4e-4):
+        zeta_agb=-0.03):
     """
     An analytic version of AGB yields.
 
@@ -197,7 +232,7 @@ def a_agb(m_low=1.3, m_mid=None, m_high=4, yl_agb=0, ym_agb=5e-4, yh_agb=0,
     yl_agb: the yield at m_low
     ym_agb: the total yield
     yh_agb: the yield at m_high 
-    mz_agb: the metallicity dependent part of the yield at ym_agb
+    zeta_agb: the metallicity dependent part of the yield at ym_agb
     """
     if m_mid is None:
         m_mid = (m_low + m_high)/2
@@ -220,8 +255,7 @@ def a_agb(m_low=1.3, m_mid=None, m_high=4, yl_agb=0, ym_agb=5e-4, yh_agb=0,
     A_agb = 1 / quad(f, m_low, m_high)[0]
 
     def inner(m, z):
-        m_h = np.log10(z/0.014)
-        return A_agb * y_spline(m) * (ym_agb + mz_agb * m_h)
+        return A_agb * y_spline(m) * (ym_agb + zeta_agb/ym_agb * (z - Z_Sun) )
     return inner
 
 

@@ -2,6 +2,7 @@ import sys
 import os
 from os import path
 
+import surp.simulation.filter_warnings
 from surp.simulation.vice_to_json import json_output
 
 

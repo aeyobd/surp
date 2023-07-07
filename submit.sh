@@ -18,7 +18,7 @@ sbatch <<EOT
 #SBATCH --job-name=$1
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --output=logs/$1
-#SBATCH --account=PAS2232
+#SBATCH --account=PAS2489
 
 
 set -x
@@ -39,10 +39,10 @@ $2
 export OMP_NUM_THREADS=1
 python \$SLURM_SUBMIT_DIR/surp/simulation/json_outputs.py \$TMPDIR/
 
-# cp -r -u \$TMPDIR/*.vice \$SLURM_SUBMIT_DIR/out
 cp -r -u \$TMPDIR/*.json \$SLURM_SUBMIT_DIR/out
-cp \$TMPDIR/*.txt \$SLURM_SUBMIT_DIR/out
-# cp -r -u \$TMPDIR/*.csv \$SLURM_SUBMIT_DIR/results
+cp \$TMPDIR/*.txt \$SLURM_SUBMIT_DIR/out 2>/dev/null
+cp \$TMPDIR/*.dat \$SLURM_SUBMIT_DIR/out 2>/dev/null
+cp \$TMPDIR/*.csv \$SLURM_SUBMIT_DIR/out 2>/dev/null
 
 scontrol show job=\$SLURM_JOB_ID
 
