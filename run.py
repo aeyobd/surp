@@ -64,7 +64,7 @@ def parse_args():
                         help="the amplitude of the late burst")
     parser.add_argument("-i", "--fe_ia_factor", default="None", 
                         help="the iron yield factor of type Ia supernovae ")
-    parser.add_argument("-d", "--timestep", type=float, default=0.05, 
+    parser.add_argument("-d", "--timestep", type=float, default=0.01, 
                         help="the size of the time step ")
     parser.add_argument("-n", "--n_stars", type=int, default=2, 
                         help="the number of stars")
@@ -80,7 +80,7 @@ def parse_args():
                         help="lower mass of AGB C")
     parser.add_argument("--m_high", default=4.3,
                         help="lower mass of AGB C")
-    parser.add_argument("--mz_agb", default=-7e-4,
+    parser.add_argument("--zeta_agb", default=-0.02,
                         help="metallicity dependence of agb carbon")
     parser.add_argument("--yl_agb", default=0, 
                         help="agb yield at m0")
@@ -94,7 +94,7 @@ def parse_args():
 def generate_filename(args):
     filename = args.agb_model
     if args.agb_model == "A":
-        filename += f"_{args.m_low}_{args.m_mid}_{args.m_high}_z{args.mz_agb}"
+        filename += f"_{args.m_low}_{args.m_mid}_{args.m_high}_z{args.zeta_agb}"
         if args.yl_agb != 0:
             filename += f"_y0{args.yl_agb}"
         if args.yh_agb != 0:
@@ -160,7 +160,7 @@ yield_kwargs = {{
      'm_low': {args.m_low},
      'm_mid': {args.m_mid},
      'm_high': {args.m_high},
-     'mz_agb': {args.mz_agb},
+     'zeta_agb': {args.zeta_agb},
      'yl_agb': {args.yl_agb},
      'yh_agb': {args.yh_agb},
      'alpha_n': {args.alpha_n},

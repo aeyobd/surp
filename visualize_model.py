@@ -35,6 +35,10 @@ def plot_model(filename):
     print("plotting")
 
     plot_mdf(model)
+    plt.savefig("mdf_fe.pdf")
+    plt.close()
+
+    plot_mdf2(model)
     plt.savefig("mdf.pdf")
     plt.close()
 
@@ -97,6 +101,19 @@ def plot_mdf(model):
     plt.ylabel("density")
     arya.Legend()
 
+def plot_mdf2(model):
+    df = model.history
+    kwargs = dict(
+            histtype="step",
+            density=True,
+            range=(-0.3, 0.7),
+            bins=100
+            )
+    plt.hist(df["[o/h]"], label="model", **kwargs)
+    plt.hist(aah.subgiants["MG_H"], label="data", **kwargs)
+    plt.xlabel("[Mg/H]")
+    plt.ylabel("density")
+    arya.Legend()
 
 def plot_cooh_tracks(model):
     h = model.history

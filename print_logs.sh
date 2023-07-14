@@ -1,5 +1,8 @@
 cd out
 
-ls -rt | tail -n $1 | awk '{print "\"" $1 "\","}'
-
+for file in $(ls -rt *.json | tail -n $1)
+do
+    f1="${file%.*}"
+    echo | awk -v file=$f1 '{print "\"" file "\","}'
+done 
 cd ..

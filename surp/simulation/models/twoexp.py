@@ -32,7 +32,7 @@ class twoexp(double_exponential):
 		The time of the thick disk formation
 	t2 : float [default 13.2]
 		The present-day time
-	tau1 : float [default 0.103]
+	tau1 : float [default 2]
 	tau2 : float [set from insideout.timescale]
 		The decay timescale for the thin disk
 	A21 : float [default 3.47]
@@ -43,7 +43,7 @@ class twoexp(double_exponential):
 	def __init__(self, radius, dt = 0.01, dr = 0.1, 
 			**kwargs):
 
-		kwargs["tau2"] = insideout.timescale(radius)
+		kwargs["tau1"] = insideout.timescale(radius)
 
 		super().__init__(**kwargs)
 

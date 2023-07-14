@@ -43,6 +43,7 @@ class star_formation_history:
 					"lateburst":	models.lateburst,
 					"outerburst":	models.outerburst,
 					"twoexp":	models.twoexp,
+					"twoinfall":	models.twoinfall,
 					"threeexp":	models.threeexp,
 				}[spec.lower()]((i + 0.5) * ZONE_WIDTH, **kwargs))
 			i += 1

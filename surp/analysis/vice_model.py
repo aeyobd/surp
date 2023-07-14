@@ -60,9 +60,11 @@ class vice_model():
             d = json.load(f)
 
         self.stars = pd.DataFrame(d["stars"])
+        self.stars["[fe/o]"] = -self.stars["[o/fe]"]
         self.stars_unsampled = pd.DataFrame(d["stars_unsampled"])
 
         self.history = pd.DataFrame(d["history"])
+        self.history["[fe/o]"] = -self.history["[o/fe]"]
 
 
 

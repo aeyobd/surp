@@ -18,9 +18,9 @@ y_n_flat = 7.2e-4
 Y_AGB = {
         "cristallo11": 4.2e-4,
         "karakas10": 6.4e-4,
-        "ventura13": 3.0e-4,
+        "ventura13": 2.2e-4,
         "karakas16": 5.1e-4,
-        "A": 1,
+        "A": 5e-4,
 }
 
 ZETA_AGB = {
@@ -60,7 +60,7 @@ def set_yields(eta=1, zeta=None, fe_ia_factor=None,
     y_cc *= eta
     zeta *= eta
 
-    set_agb(agb_model, alpha_agb, mass_factor, zeta_agb=zeta_agb)
+    set_agb(agb_model, alpha_agb, mass_factor, zeta_agb=zeta_agb, **kwargs)
 
     set_n(eta, alpha_n)
     
@@ -98,7 +98,7 @@ class LinAGB:
 
 
 class C_CC_model:
-    def __init__(self, zeta, y0, pop_iii=0.2, Z_iii=10**(-5.5)):
+    def __init__(self, zeta=0.1, y0=0.004, pop_iii=0.2, Z_iii=10**(-5.5)):
         # defaults
         # zeta = 0.70
         # y0 = 0.004
@@ -236,12 +236,6 @@ def a_agb(m_low=1.3, m_mid=None, m_high=4, yl_agb=0, ym_agb=5e-4, yh_agb=0,
     """
     if m_mid is None:
         m_mid = (m_low + m_high)/2
-    if z > 0:
-        m_h = np.log10(z/Z_Sun)
-    elif z == 0:
-        m_h = -8
-    else:
-        print("warning, negative z, z=", z)
 
     def y_spline(m):
         return spline(m, [m_low, m_mid, m_high], [yl_agb, ym_agb, yh_agb])
@@ -255,7 +249,13 @@ def a_agb(m_low=1.3, m_mid=None, m_high=4, yl_agb=0, ym_agb=5e-4, yh_agb=0,
     A_agb = 1 / quad(f, m_low, m_high)[0]
 
     def inner(m, z):
-        return A_agb * y_spline(m) * (ym_agb + zeta_agb/ym_agb * (z - Z_Sun) )
+        if z > 0:
+            m_h = np.log10(z/Z_Sun)
+        elif z == 0:
+            m_h = -8
+        else:
+            print("warning, negative z, z=", z)
+        return A_agb * y_spline(m) * (ym_agb + zeta_agb * (z - Z_Sun) )
     return inner
 
 

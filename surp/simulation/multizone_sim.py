@@ -183,10 +183,14 @@ def create_evolution(spec, burst_size):
                 burst_size = 1.5*burst_size)
     elif spec == "twoexp":
         evolution = star_formation_history(spec = spec,
-                tau1=0.3,
-                A21 = 3.47 * burst_size,
+                tau2=2,
+                A21 = burst_size,
                 )
-
+    elif spec == "twoinfall":
+        evolution = star_formation_history(spec=spec,
+                tau1=2,
+                A21 = 3.5 * burst_size,
+                )
     elif spec == "threeexp":
         evolution = star_formation_history(
                 spec = spec,

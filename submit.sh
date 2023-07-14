@@ -38,6 +38,7 @@ $2
 
 export OMP_NUM_THREADS=1
 python \$SLURM_SUBMIT_DIR/surp/simulation/json_outputs.py \$TMPDIR/
+python \$SLURM_SUBMIT_DIR/result.py \$TMPDIR/*.json
 
 cp -r -u \$TMPDIR/*.json \$SLURM_SUBMIT_DIR/out
 cp \$TMPDIR/*.txt \$SLURM_SUBMIT_DIR/out 2>/dev/null

@@ -111,6 +111,13 @@ def find_subgiants():
     df["N_H"] = bracket(df, "N", "H")
     df["N_O"] = bracket(df, "N", "O")
     df["N_MG"] = bracket(df, "N", "MG")
+
+    df["FE_O"] = -df["O_FE"]
+    df["FE_MG"] = -df["MG_FE"]
+
+    df["C_MG_ERR"] = df["C_FE_ERR"] + df["MG_FE_ERR"]
+    df["N_MG_ERR"] = df["N_FE_ERR"] + df["MG_FE_ERR"]
+    df["C_N_ERR"] = df["N_FE_ERR"] + df["C_FE_ERR"]
     
     # add high/low alpha column
     df["high_alpha"] = df["MG_FE"] > mg_fe_cutoff(df["FE_H"])
