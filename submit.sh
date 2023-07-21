@@ -12,7 +12,7 @@ rm -f logs/$1.log
 
 sbatch <<EOT
 #!/bin/bash
-#SBATCH --time=32:00:00
+#SBATCH --time=8:00:00
 #SBATCH --ntasks=$3
 #SBATCH --mem=32gb
 #SBATCH --job-name=$1

@@ -52,7 +52,7 @@ def parse_args():
                         help="use the conroy ++ 2022 sfe law")
     parser.add_argument("-m", "--agb_model", default="C11", 
                         help="the name of the AGB model to use ")
-    parser.add_argument("-M", "--migration_mode", default="diffusion", 
+    parser.add_argument("-M", "--migration_mode", default="rand_walk", 
                         help="""The migration mode. Default is diffusion.
                         Acceptable options include post-process, linear, 
                         sudden, and rand_walk""")

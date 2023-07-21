@@ -81,8 +81,6 @@ def run_model(filename, save_dir=None,
     eta_factor: ``float`` [default: 1]
         A factor by which to reduce the model's outflows. 
 
-    ratio_reduce: ``bool``
-        
     """
     print("initialized")
 
@@ -118,7 +116,6 @@ def run_model(filename, save_dir=None,
 def create_model(save_dir, filename, timestep,
         n_stars=2, 
         spec="insideout",
-        ratio_reduce=False,
         eta=1, 
         migration_mode="diffusion", 
         lateburst_amplitude=1,
@@ -169,8 +166,7 @@ def create_model(save_dir, filename, timestep,
                 name=model.name, 
                 sigma_R=sigma_R)
 
-    model.mass_loading = create_mass_loading(eta_factor=eta, 
-                                             ratio_reduce=ratio_reduce)
+    model.mass_loading = mass_loading(factor=eta)
 
     return model
 
@@ -222,31 +218,16 @@ def conroy_sf_law(area=None):
         if t < 2.5:
             tau_st = 50
         elif 2.5 <= t < 3.7:
-            tau_st = 50/(1+3*(t-2.5))^2
+            tau_st = 50/(1+3*(t-2.5))**2
         else:
             tau_st = 2.36
 
-        return vice.toolkit.J21_sf_law(area, t, present_day_molecular=tau_st)(t, m)
+        return vice.toolkit.J21_sf_law(area, tau_st)(t, m)
 
     return inner
 
     
 
-def create_mass_loading(eta_factor, ratio_reduce=False):
-    # for changing value of eta
-    if ratio_reduce:
-        def eta_f(R):
-            ml = mass_loading()
-            eta_0 = ml(R)
-            r = 0.4 # this is an approximation
-            eta =  (1 - r) * (eta_factor - 1) + eta_factor * eta_0
-            if eta < 0:
-                eta = 0
-            return eta
-    else:
-        eta_f = mass_loading(eta_factor)
-
-    return eta_f
 
 
 class mass_loading:
@@ -255,9 +236,9 @@ class mass_loading:
         pass
 
     def __call__(self, R_gal):
-        return self._factor*(
+        return np.maximum(0,
                 -0.6 
-                + 0.015 / 0.00572 
+                + self._factor * 0.015 / 0.00572 
                 * 10**(0.08*(R_gal - 4) - 0.3)
                )
 

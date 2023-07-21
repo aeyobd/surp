@@ -66,6 +66,8 @@ def set_yields(eta=1, zeta=None, fe_ia_factor=None,
     
     vice.yields.ccsne.settings["c"] = C_CC_model(zeta=zeta, y0=y_cc)
 
+    set_defaults()
+
     set_eta(eta)
 
     set_isotopic()
@@ -118,27 +120,42 @@ class C_CC_model:
         return f"{self.y0:0.2e} + {self.zeta:0.2e} (Z - Z0)"
 
 
+class ZeroAGB:
+    def __init__(self):
+        pass
+
+    def __call__(self, *args, **kwargs):
+        return 0
+
+    def __str__(self):
+        return "0"
+
+    def __repr__(self):
+        return "0"
 
 def set_defaults():
+    sneia.settings["c"] = 0
+
     ccsne.settings["o"] = 0.015
     sneia.settings["o"] = 0
+    agb.settings["o"] = ZeroAGB()
 
     ccsne.settings["fe"] = 0.0012
     sneia.settings["fe"] = 0.0017
+    agb.settings["fe"] = ZeroAGB()
     # sneia.settings["fe"] *= 10**0.1 # correction for mdf, used in
 
     ccsne.settings["sr"] = 3.5e-8
     sneia.settings["sr"] = 0
 
     ccsne.settings["n"] = 3.6e-4
-
-    sneia.settings["c"] = 0
     sneia.settings["n"] = 0
+
 
     ccsne.settings["mg"] = 0.00185
     sneia.settings["mg"] = 0
+    agb.settings["mg"] = ZeroAGB()
 
-set_defaults()
 
 
 
