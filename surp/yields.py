@@ -47,6 +47,7 @@ def set_yields(eta=1, zeta=None, fe_ia_factor=None,
     eta
     
     """
+    set_defaults()
 
     set_fe(fe_ia_factor)
 
@@ -66,7 +67,6 @@ def set_yields(eta=1, zeta=None, fe_ia_factor=None,
     
     vice.yields.ccsne.settings["c"] = C_CC_model(zeta=zeta, y0=y_cc)
 
-    set_defaults()
 
     set_eta(eta)
 
@@ -237,7 +237,7 @@ def calc_zeta(agb_model, alpha_agb, zeta_agb):
 
 
 def a_agb(m_low=1.3, m_mid=None, m_high=4, yl_agb=0, ym_agb=5e-4, yh_agb=0,
-        zeta_agb=-0.03):
+        zeta_agb=-0.03, mz_agb=0):
     """
     An analytic version of AGB yields.
 
@@ -250,6 +250,7 @@ def a_agb(m_low=1.3, m_mid=None, m_high=4, yl_agb=0, ym_agb=5e-4, yh_agb=0,
     ym_agb: the total yield
     yh_agb: the yield at m_high 
     zeta_agb: the metallicity dependent part of the yield at ym_agb
+    mz_agb: mass-metallicity coupling constant
     """
     if m_mid is None:
         m_mid = (m_low + m_high)/2
@@ -272,7 +273,7 @@ def a_agb(m_low=1.3, m_mid=None, m_high=4, yl_agb=0, ym_agb=5e-4, yh_agb=0,
             m_h = -8
         else:
             print("warning, negative z, z=", z)
-        return A_agb * y_spline(m) * (ym_agb + zeta_agb * (z - Z_Sun) )
+        return A_agb * y_spline(m + mz_agb*m_h) * (ym_agb + zeta_agb * (z - Z_Sun) )
     return inner
 
 

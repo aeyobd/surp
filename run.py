@@ -4,6 +4,15 @@ import sys
 import os
 
 
+M_LOW_DEFAULT = 1.3
+M_MID_DEFAULT = 2.3
+M_HIGH_DEFAULT = 4
+N_THREADS_DEFAULT = 1
+DT_DEFAULT = 0.02
+SIGMA_R_DEFAULT = 1.27
+ZETA_AGB_DEFAULT = -0.02
+
+
 def main():
     args = parse_args()
     filename = args.filename
@@ -14,7 +23,7 @@ def main():
     if args.test_run and args.threads is None:
         args.threads = 1
     elif args.threads is None:
-        args.threads = 8
+        args.threads = N_THREADS_DEFAULT
 
     if not filename:
         filename = generate_filename(args)
@@ -56,7 +65,7 @@ def parse_args():
                         help="""The migration mode. Default is diffusion.
                         Acceptable options include post-process, linear, 
                         sudden, and rand_walk""")
-    parser.add_argument("-S", "--sigma_R", default=1.27, type=float,
+    parser.add_argument("-S", "--sigma_R", default=SIGMA_R_DEFAULT, type=float,
                         help="migration strength in kpc/Gyr^0.5")
     parser.add_argument("-F", "--filename", default=None,
                         help="the name of the output file ")
@@ -64,9 +73,9 @@ def parse_args():
                         help="the amplitude of the late burst")
     parser.add_argument("-i", "--fe_ia_factor", default="None", 
                         help="the iron yield factor of type Ia supernovae ")
-    parser.add_argument("-d", "--timestep", type=float, default=0.01, 
+    parser.add_argument("-d", "--timestep", type=float, default=DT_DEFAULT, 
                         help="the size of the time step ")
-    parser.add_argument("-n", "--n_stars", type=int, default=2, 
+    parser.add_argument("-n", "--n_stars", type=int, default=1, 
                         help="the number of stars")
     parser.add_argument("-a", "--alpha_n", type=float, default=0, 
                         help="the agb fraction of primary N (0.0)")
@@ -74,13 +83,13 @@ def parse_args():
                         help="only run a test")
     parser.add_argument("-j", "--threads", default=None, type=int,
                         help="number of threads to run. default=1")
-    parser.add_argument("--m_low", default=1.3,
+    parser.add_argument("--m_low", default=M_LOW_DEFAULT,
                         help="lower mass of AGB C")
-    parser.add_argument("--m_mid", default=2.3,
+    parser.add_argument("--m_mid", default=M_MID_DEFAULT,
                         help="lower mass of AGB C")
-    parser.add_argument("--m_high", default=4.3,
+    parser.add_argument("--m_high", default=M_HIGH_DEFAULT,
                         help="lower mass of AGB C")
-    parser.add_argument("--zeta_agb", default=-0.02,
+    parser.add_argument("--zeta_agb", default=ZETA_AGB_DEFAULT,
                         help="metallicity dependence of agb carbon")
     parser.add_argument("--yl_agb", default=0, 
                         help="agb yield at m0")
@@ -88,13 +97,26 @@ def parse_args():
                         help="agb yield at m0")
     parser.add_argument("--m_factor", 
             help="mass factor for agb stars", default=1, type=float)
+    parser.add_argument("-P", "--no_negative", 
+            help="no negative agb", action="store_true")
+    parser.add_argument("--mz_agb", 
+            help="mass coupling factor for agb stars", default=0, type=float)
     return parser.parse_args()
 
 
 def generate_filename(args):
     filename = args.agb_model
     if args.agb_model == "A":
-        filename += f"_{args.m_low}_{args.m_mid}_{args.m_high}_z{args.zeta_agb}"
+        if (args.m_low != M_LOW_DEFAULT
+                or args.m_mid != M_MID_DEFAULT
+                or args.m_high != M_HIGH_DEFAULT
+                ):
+            filename += f"_{args.m_low}_{args.m_mid}_{args.m_high}"
+
+        if args.zeta_agb != ZETA_AGB_DEFAULT:
+            filename += f"_z{args.zeta_agb}"
+        if args.mz_agb != 0:
+            filename += f"_mz{args.mz_agb}"
         if args.yl_agb != 0:
             filename += f"_y0{args.yl_agb}"
         if args.yh_agb != 0:
@@ -102,6 +124,8 @@ def generate_filename(args):
 
     if args.m_factor != 1:
         filename += f"_m{args.m_factor}"
+    if args.no_negative:
+        filename += "_P"
 
     if args.out_of_box_agb:
         filename += "_oob"
@@ -119,7 +143,7 @@ def generate_filename(args):
 
     if args.migration_mode != "diffusion":
         filename += "_" + args.migration_mode
-    if args.migration_mode == "rand_walk":
+    if args.migration_mode == "rand_walk" and args.sigma_R != SIGMA_R_DEFAULT:
         filename += str(args.sigma_R)
 
     if args.fe_ia_factor != "None":
@@ -128,18 +152,17 @@ def generate_filename(args):
     if args.conroy_sf:
         filename += "_c22"
 
-    if args.timestep != 0.01:
+    if args.timestep != DT_DEFAULT:
         filename += "_dt" + str(args.timestep)
 
     if args.alpha_n != 0:
         filename += "_an" + str(args.alpha_n)
 
-    if args.n_stars != 2:
+    if args.n_stars != 1:
         filename += "_nstars" + str(args.n_stars)
 
-    if args.threads != 1:
+    if args.threads != N_THREADS_DEFAULT:
         filename += "_j" + str(args.threads)
-
 
     return filename
 
@@ -165,6 +188,8 @@ yield_kwargs = {{
      'yh_agb': {args.yh_agb},
      'alpha_n': {args.alpha_n},
      'mass_factor': {args.m_factor},
+     'mz_agb': {args.mz_agb},
+     'no_negative': {args.no_negative},
 }}
 
 kwargs = {{
