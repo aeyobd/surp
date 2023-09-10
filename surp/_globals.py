@@ -19,7 +19,7 @@ Z_SUN = 0.014
 Z_C_0 = 0.00236
 
 
-AGB_MODELS = ["cristallo11", "karakas10", "ventura13", "karakas16"]
+AGB_MODELS = ["cristallo11", "pignatari16", "ventura13", "karakas16"]
 
 # just define shorthands
 C11, K10, V13, K16 = AGB_MODELS

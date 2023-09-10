@@ -9,10 +9,12 @@ from vice.yields import ccsne, sneia, agb
 # Constants
 Z_Sun = 0.014
 
-Y_C_0 = 0.005
+Y_C_0 = 0.0052
 ZETA_0 = 0.06
+XI_0 = 0 # 2.6
 
 y_n_flat = 7.2e-4
+Z_III = Z_Sun * 10**-4
 
 
 Y_AGB = {
@@ -20,6 +22,7 @@ Y_AGB = {
         "karakas10": 6.4e-4,
         "ventura13": 2.2e-4,
         "karakas16": 5.1e-4,
+        "pignatari16": 3.5e-3,
         "A": 5e-4,
 }
 
@@ -28,7 +31,9 @@ ZETA_AGB = {
         "karakas10": -0.059,
         "ventura13": -0.021,
         "karakas16": -0.029,
+        "pignatari16": 0.1,
 }
+
 
 # default settings
 
@@ -36,8 +41,10 @@ ZETA_AGB = {
 def set_yields(eta=1, zeta=None, fe_ia_factor=None,
                agb_model="cristallo11", oob=False, f_agb=0.2,
                alpha_n=0, 
+               gamma=1,
                mass_factor=1,
                zeta_agb=-0.03,
+               xi=0,
                **kwargs
               ):
     """
@@ -51,10 +58,12 @@ def set_yields(eta=1, zeta=None, fe_ia_factor=None,
 
     set_fe(fe_ia_factor)
 
+
     alpha_agb = calc_alpha(agb_model, oob, f_agb)
     y_cc = calc_ycc(agb_model, alpha_agb)
     if zeta is None:
         zeta = calc_zeta(agb_model, alpha_agb, zeta_agb)
+        zeta = zeta - 0.016/2.6 * xi
 
     # correct ...
     alpha_agb *= eta
@@ -65,7 +74,8 @@ def set_yields(eta=1, zeta=None, fe_ia_factor=None,
 
     set_n(eta, alpha_n)
     
-    vice.yields.ccsne.settings["c"] = C_CC_model(zeta=zeta, y0=y_cc)
+    vice.yields.ccsne.settings["c"] = C_CC_model(zeta=zeta, y0=y_cc,
+            xi=xi)
 
 
     set_eta(eta)
@@ -100,7 +110,7 @@ class LinAGB:
 
 
 class C_CC_model:
-    def __init__(self, zeta=0.1, y0=0.004, pop_iii=0.2, Z_iii=10**(-5.5)):
+    def __init__(self, zeta=0.1, y0=0.004, pop_iii=0.2, Z_iii=Z_III, xi=XI_0):
         # defaults
         # zeta = 0.70
         # y0 = 0.004
@@ -110,14 +120,20 @@ class C_CC_model:
         self.zeta = zeta
         self.pop_iii = pop_iii
         self.Z_iii = Z_iii
+        self.xi = xi
 
     def __call__(self, Z):
         return (self.y0 
-            + self.zeta * (Z - Z_Sun)
+            + self.zeta * (Z - Z_Sun) 
+            + self.xi * (Z - Z_Sun)**2
             + self.y0 * self.pop_iii*2/(1 + Z/self.Z_iii))
 
     def __str__(self):
-        return f"{self.y0:0.2e} + {self.zeta:0.2e} (Z - Z0)"
+        if self.xi == 0:
+            return f"{self.y0:0.2e} + {self.zeta:0.2e} (Z - Z0)"
+        else:
+            return f"{self.y0:0.2e} + {self.zeta:0.2e} (Z-Z0) + {self.xi:0.1e}(Z-Z0)^2"
+
 
 
 class ZeroAGB:
@@ -171,9 +187,9 @@ def set_agb_elem(elem, study, factor, **kwargs):
 
 
 
-def set_agb(study="cristallo11", factor=1, mass_factor=1, **kwargs):
-    for elem in ["c", "o", "mg"]:
-        set_agb_elem(elem, study, factor, mass_factor=mass_factor)
+def set_agb(study="cristallo11", factor=1, mass_factor=1, no_negative=False, **kwargs):
+    for elem in ["c"]:
+        set_agb_elem(elem, study, factor, mass_factor=mass_factor, no_negative=no_negative)
 
     if study == "A":
         agb.settings["c"] = a_agb(ym_agb=factor * Y_AGB["A"], **kwargs)
@@ -340,3 +356,16 @@ def print_row(*args):
             print(f"{s:30}", end="")
     print()
 
+
+def nugrid_c(factor=1, mass_factor=1):
+    nugrid_c = pd.read_csv("../data/nugrid_c.csv")
+    nugrid_c["y"] = nugrid_c["yC"] - nugrid_c["ZC0"]
+    nugrid_c = nugrid_c[nugrid_c.m <= 8].copy()
+
+    c_table = nugrid_c.pivot(index="m", columns="Z", values="y")
+    M = np.array(c_table.index)
+    Z = np.array(c_table.columns.array)
+
+    y_ng = vice.toolkit.interpolation.interp_scheme_2d(mass_factor*M, Z, factor*np.array(c_table))
+
+    return y_ng

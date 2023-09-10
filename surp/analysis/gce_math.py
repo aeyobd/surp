@@ -4,11 +4,19 @@ import vice
 
 Z_SUN = 0.014
 
-def Z_to_M_H(Z):
-    return np.log10(Z/Z_SUN)
+def Z_to_MH(Z):
+    if type(Z) in (list, tuple):
+        x = np.array(Z)
+    else:
+        x = Z
+    return np.log10(x/Z_SUN)
 
-def M_H_to_Z(M_H):
-    return Z_SUN * 10**M_H
+def MH_to_Z(M_H):
+    if type(M_H) in (list, tuple):
+        x = np.array(M_H)
+    else:
+        x = M_H
+    return Z_SUN * 10**x
 
 
 def log_to_bracket(ratio, elem, elem2="H"):
@@ -45,8 +53,12 @@ def bracket_to_abundance(data, ele, ele2="h"):
     else:
         return 10**data * vice.solar_z(ele) / vice.solar_z(ele2)
 
-def abundance_to_bracket(data, ele):
-    return np.log10(data/vice.solar_z(ele))
+def abundance_to_bracket(data, ele, ele2="h"):
+    if ele2.lower() == "h":
+        return np.log10(data/vice.solar_z(ele))
+    else:
+        return np.log10(data) - np.log10(vice.solar_z(ele) / vice.solar_z(ele2))
+
 
 def cpn(c1, n1):
     if type(c1) in (list, tuple):

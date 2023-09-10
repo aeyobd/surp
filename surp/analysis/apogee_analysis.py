@@ -15,22 +15,15 @@ import sys
 from .gce_math import *
 
 
-def retrieve_apogee():
-    """
-    Checks if the apogee file exists, downloads it if not, and then returns the
-    file's data"""
-
+def download_or_load(filename, url, size=""):
     script_dir = os.path.dirname(__file__)
-    rel_path = "../../data/allStar-dr17-synspec_rev1.fits.1"
-    abs_path = os.path.join(script_dir, rel_path)
-
+    abs_path = os.path.join(script_dir, filename)
+    
     if not os.path.exists(abs_path):
-        ans = input("Requires Apogee allStar file, download now (4GB)? Y/n")
+        ans = input("Requires download, now? Y/n")
         if ans != "Y":
             print("file does not exist, aborting")
             sys.exit()
-        url = "https://data.sdss.org/sas/dr17/apogee/spectro/aspcap/dr17/synspec_rev1/allStar-dr17-synspec_rev1.fits"
-
         print("downloading (this may take a while)")
 
         file = requests.get(url, stream=True)
@@ -39,17 +32,35 @@ def retrieve_apogee():
         with open(abs_path, "wb") as f:
             for chunk in file.iter_content(chunk_size=2**20):
                 f.write(chunk)
-                print("%i MiB / 3.7 GiB \r" % i, end="") 
+                print("%i MiB / %s GiB \r" % (i, size), end="") 
                 i += 1
+                
         print("file saved!")
-
+        
+        
     ff = fits.open(abs_path, mmap=True)
     da = ff[1].data
     ff.close()
-
     return da
 
+def retrieve_apogee():
+    """
+    Checks if the apogee file exists, downloads it if not, and then returns the
+    file's data"""
 
+    rel_path = "../../data/allStar-dr17-synspec_rev1.fits.1"
+    url = "https://data.sdss.org/sas/dr17/apogee/spectro/aspcap/dr17/synspec_rev1/allStar-dr17-synspec_rev1.fits"
+
+    return download_or_load(rel_path, url, "3.7")
+
+
+def retrieve_astroNN():
+    rel_path = "../../data/apogee_astroNN-DR17.fits"
+    url = "https://data.sdss.org/sas/dr17/env/APOGEE_ASTRO_NN/apogee_astroNN-DR17.fits"
+    
+    return download_or_load(rel_path, url, "0.7")
+    
+    
 def filtered_apogee():
     da = retrieve_apogee()
     
@@ -89,16 +100,15 @@ def find_subgiants():
     """
     df = filtered_apogee()
     
-    c = coord.SkyCoord(ra = np.array(df["RA"]) * u.deg,
-                       dec = np.array(df["DEC"]) * u.deg,
-                       distance = np.array(df["GAIAEDR3_R_MED_GEO"]) * u.pc,
-                       frame="icrs")
+    astroNN = retrieve_astroNN()
+    df_aNN = pd.DataFrame(dict(
+        R_gal = astroNN["galr"].byteswap().newbyteorder(),
+        z_gal = astroNN["galz"].byteswap().newbyteorder()),
+        index = astroNN["APOGEE_ID"].byteswap().newbyteorder())
 
-    gc_c = c.transform_to(coord.Galactocentric)
-    df["R_gal"] = np.array(np.sqrt(gc_c.x**2 + gc_c.y**2) / 1e3)
-    df["th_gal"] = np.array(np.arctan(gc_c.y/gc_c.x))
-    df["abs_z"] = np.array(np.abs(gc_c.z) / 1e3)
-    df["z"] = np.array(gc_c.z / 1e3)
+    df = df.join(df_aNN, on="APOGEE_ID")
+
+    df["abs_z"] = np.abs(df.z_gal)
     
     # Add useful abundance ratios
     df["O_H"] = bracket(df, "O")

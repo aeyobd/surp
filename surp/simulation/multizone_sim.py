@@ -95,6 +95,7 @@ def run_model(filename, save_dir=None,
             "K10": "karakas10",
             "V13": "ventura13",
             "K16": "karakas16",
+            "P16": "pignatari16",
             "A": "A"
             }[agb_model]
 

@@ -81,6 +81,8 @@ def parse_args():
                         help="the agb fraction of primary N (0.0)")
     parser.add_argument("-t", "--test_run", action="store_true", 
                         help="only run a test")
+    parser.add_argument("-x", "--xi", type=float,
+            help="CC Z^2 parameter", default=0)
     parser.add_argument("-j", "--threads", default=None, type=int,
                         help="number of threads to run. default=1")
     parser.add_argument("--m_low", default=M_LOW_DEFAULT,
@@ -138,10 +140,13 @@ def generate_filename(args):
     if args.zeta is not None:
         filename += "_zeta" + str(args.zeta)
 
+    if args.xi != 0:
+        filename += "_xi" + str(args.xi)
+
     if args.spec != "insideout":
         filename += "_" + args.spec + str(args.burst_amplitude)
 
-    if args.migration_mode != "diffusion":
+    if args.migration_mode != "rand_walk":
         filename += "_" + args.migration_mode
     if args.migration_mode == "rand_walk" and args.sigma_R != SIGMA_R_DEFAULT:
         filename += str(args.sigma_R)
@@ -190,6 +195,7 @@ yield_kwargs = {{
      'mass_factor': {args.m_factor},
      'mz_agb': {args.mz_agb},
      'no_negative': {args.no_negative},
+     'xi': {args.xi},
 }}
 
 kwargs = {{
