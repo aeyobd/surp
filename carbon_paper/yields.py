@@ -22,7 +22,7 @@ Y_AGB = {
         "karakas10": 6.4e-4,
         "ventura13": 2.2e-4,
         "karakas16": 5.1e-4,
-        "pignatari16": 8.1e-4,
+        "pignatari16": 3.5e-3,
         "A": 5e-4,
 }
 
@@ -31,7 +31,7 @@ ZETA_AGB = {
         "karakas10": -0.059,
         "ventura13": -0.021,
         "karakas16": -0.029,
-        "pignatari16": -0.005,
+        "pignatari16": 0.1,
 }
 
 
