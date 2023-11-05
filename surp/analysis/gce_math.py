@@ -2,7 +2,7 @@ import numpy as np
 import vice
 
 
-Z_SUN = 0.014
+from .._globals import Z_SUN
 
 def Z_to_MH(Z):
     if type(Z) in (list, tuple):
@@ -52,6 +52,11 @@ def bracket_to_abundance(data, ele, ele2="h"):
         return 10**data * vice.solar_z(ele)
     else:
         return 10**data * vice.solar_z(ele) / vice.solar_z(ele2)
+
+
+def A_to_Z(A, ele, mixing_correction=0, X=0.71):
+    logZ = (A - 12)  + np.log10(X * mm_of_elements[ele]) 
+    return 10**(logZ + mixing_correction)
 
 def abundance_to_bracket(data, ele, ele2="h"):
     if ele2.lower() == "h":

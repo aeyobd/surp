@@ -5,6 +5,7 @@ import vice
 import pandas as pd
 import seaborn as sns
 from astropy.io import fits
+from astropy.table import Table
 import astropy.coordinates as coord
 import astropy.units as u
 import os
@@ -38,10 +39,12 @@ def download_or_load(filename, url, size=""):
         print("file saved!")
         
         
-    ff = fits.open(abs_path, mmap=True)
-    da = ff[1].data
-    ff.close()
-    return da
+    dat = Table.read(abs_path, format="fits", hdu=1)
+
+    cols = [col for col in dat.colnames if len(dat[col].shape) <= 1]
+
+    return dat[cols]
+
 
 def retrieve_apogee():
     """
@@ -58,7 +61,7 @@ def retrieve_astroNN():
     rel_path = "../../data/apogee_astroNN-DR17.fits"
     url = "https://data.sdss.org/sas/dr17/env/APOGEE_ASTRO_NN/apogee_astroNN-DR17.fits"
     
-    return download_or_load(rel_path, url, "0.7")
+    return download_or_load(rel_path, url, "0.7").to_pandas()
     
     
 def filtered_apogee():
@@ -74,9 +77,14 @@ def filtered_apogee():
     apogee2_target3 = 1<<5 # young cluster (IN-SYNC)
     apogee2_target3 ^= 1<<18 #APOGEE2_W345
     apogee2_target3 ^= 1<<1 # EB planet
+
+    apogee_aspcapflag = 1<<23 # starbad
+    apogee_aspcapflag ^= 1<<31 # no_aspcap_result
+
     
     mask = (da["APOGEE2_TARGET3"] & apogee2_target3) == 0
     mask &= (da["APOGEE_TARGET2"] & apogee_target2) == 0
+    mask &= (da["ASPCAPFLAG"] & apogee_aspcapflag) == 0
     
     # subgiant mask
     logg = da["LOGG"]
@@ -89,8 +97,15 @@ def filtered_apogee():
     mask &= logg >= 0.0012*teff - 2.8
     
     filtered = da[mask]
-    return pd.DataFrame(filtered.tolist(), columns = [c.name for c in filtered.columns])
+    df =  filtered.to_pandas()
+    return df[~df.APOGEE_ID.duplicated(keep="first")]
 
+
+def convert_strings(df):
+    str_df = df.select_dtypes([np.byte])
+    for col in str_df:
+        df[col] = [a.decode() for a in df[col]]
+    return df
 
 def find_subgiants():
     """
@@ -98,15 +113,15 @@ def find_subgiants():
     a subgiant sample of APOGEE c.o. Jack Roberts
     
     """
-    df = filtered_apogee()
+    df_a = filtered_apogee()
     
     astroNN = retrieve_astroNN()
-    df_aNN = pd.DataFrame(dict(
-        R_gal = astroNN["galr"].byteswap().newbyteorder(),
-        z_gal = astroNN["galz"].byteswap().newbyteorder()),
-        index = astroNN["APOGEE_ID"].byteswap().newbyteorder())
 
-    df = df.join(df_aNN, on="APOGEE_ID")
+    df_aNN = astroNN[~astroNN.APOGEE_ID.duplicated(keep="first")].copy()
+    df_aNN.set_index("APOGEE_ID", inplace=True)
+    df = df_a.set_index("APOGEE_ID").join(df_aNN, rsuffix="_ANN").copy()
+    df["R_gal"] = df.galr
+    df["z_gal"] = df.galz
 
     df["abs_z"] = np.abs(df.z_gal)
     

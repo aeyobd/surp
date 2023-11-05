@@ -15,11 +15,10 @@ M_STAR_MW = 5.17e10
 
 N_MAX = 3_102_519
 
-Z_SUN = 0.014
-Z_C_0 = 0.00236
+Z_SUN = 0.016
 
 
-AGB_MODELS = ["cristallo11", "pignatari16", "ventura13", "karakas16"]
+AGB_MODELS = ["cristallo11", "ventura13", "karakas16", "pignatari16"]
 
 # just define shorthands
 C11, K10, V13, K16 = AGB_MODELS

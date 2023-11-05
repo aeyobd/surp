@@ -14,9 +14,6 @@ from . import apogee_analysis as aah
 from . import gas_phase_data
 
 
-from .plotting_utils import legend_outside, fancy_legend
-from . import plotting_utils as pluto
-
 import arya
 COLORS = arya.style.COLORS
 cmap = arya.style.get_cmap()
@@ -82,22 +79,6 @@ class vice_model():
             plt.xlim(xlim)
 
 
-    def plot_mean_stars(self, x, y, plot_data=True, xlim=None,
-            star_group="solar", ax=None, s=1, **kwargs):
-        stars = self.stars[star_group]
-        
-        if xlim is None:
-            xlim = (min(stars[x]), max(stars[x]))
-
-        if plot_data:
-            aah.plot_stars(x, y, zorder=1, ax=ax, s=s)
-
-        pluto.plot_mean_track(stars[x], stars[y], xlim=xlim, ax=ax,  **kwargs)
-
-        plt.xlabel(x)
-        plt.ylabel(y)
-        plt.xlim(xlim)
-
     def plot_mdf(self, x, star_group="solar", plot_data=True, xlim=None, **kwargs):
         plt.hist(self.stars[star_group][x], 50, histtype="step", density=True, range=xlim, **kwargs)
         if plot_data:
@@ -112,7 +93,6 @@ class vice_model():
         self.plot_annulus_at_t(x, y, **kwargs)
         if plot_data:
             gas_phase_data.plot_all(x, y, alpha_bars=0.5)
-        legend_outside()
 
     def plot_annulus_at_t(self, x, y, t = 13.1, dt = 0.1, c=None, R_min=3, R_max=15, ax=None, **kwargs):
         if ax is None:
@@ -157,7 +137,7 @@ class vice_model():
         ax.set_xlabel(x)
         ax.set_ylabel(y)
 
-    def plot_t_slices(self, x, y, xlim=None, times=[13,11,8,5,2], smooth=0.1, ax=None, legend=True):
+    def plot_t_slices(self, x, y, xlim=None, times=[13,11,8,5,2], smooth=0.1, ax=None):
         if ax is None:
             ax = plt.gca()
 
@@ -168,10 +148,8 @@ class vice_model():
             c = colors[i]
 
             self.plot_annulus_at_t(x, y, t, label="%i Gyr" % t, ax=ax, color=c, zorder=6-i)
-        if legend:
-            fancy_legend(title="", ax=ax, colors=colors)
 
-    def plot_R_slices(self, x, y, Rs=[4,6,8,10,12], ax=None, t_min=0.1, legend=True):
+    def plot_R_slices(self, x, y, Rs=[4,6,8,10,12], ax=None, t_min=0.1):
         colors = [cmap(i/5) for i in range(5)]
 
         if ax is None:
@@ -194,8 +172,6 @@ class vice_model():
             y_values = ave[y][t]
             ax.scatter(x_values, y_values, marker="x", color=c)
 
-        if legend:
-            fancy_legend(title="", ax=ax, colors=colors)
 
     def annulus_average(self, R_min, R_max, t_min=0.1):
         """
@@ -237,41 +213,6 @@ class vice_model():
 
         show_stars(df, "[fe/o]", "[c/o]", c="age", c_label="age", s=1, zorder=2,
                 **kwargs)
-
-    def plot_mean_coofe(self, o_h_0=-0.1, d_o_h = 0.05, star_group="solar", xlim=None, plot_data=True, ax=None, **kwargs):
-        if ax is None:
-            ax = plt.gca()
-
-        if plot_data:
-            aah.plot_coofe(o_h_0, d_o_h)
-
-        stars = self.stars[star_group]
-
-        filt = stars["[o/h]"] > o_h_0 - d_o_h
-        filt &= stars["[o/h]"] < o_h_0 + d_o_h
-        df = stars[filt]
-
-        pluto.plot_mean_track(df["[o/fe]"], df["[c/o]"], xlim=xlim, **kwargs)
-        plt.xlabel("[o/fe]")
-        plt.ylabel("[c/o]")
-
-    def plot_mean_cofeo(self, o_h_0=-0.1, d_o_h = 0.05, star_group="solar", xlim=None, plot_data=True, ax=None, **kwargs):
-        if ax is None:
-            ax = plt.gca()
-
-        if plot_data:
-            aah.plot_cofeo(o_h_0, d_o_h)
-
-        stars = self.stars[star_group]
-
-        filt = stars["[o/h]"] > o_h_0 - d_o_h
-        filt &= stars["[o/h]"] < o_h_0 + d_o_h
-        df = stars[filt]
-
-        df["[fe/o]"] = - np.array(df["[o/fe]"])
-        pluto.plot_mean_track(df["[fe/o]"], df["[c/o]"], xlim=xlim, **kwargs)
-        plt.xlabel("[fe/o]")
-        plt.ylabel("[c/o]")
 
 
 def show_at_R_z(stars, x="[fe/h]", y=None, c=None, xlim=None, ylim=None, **kwargs):

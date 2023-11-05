@@ -17,7 +17,7 @@ else: pass
 
 
 from vice.toolkit import hydrodisk
-from .._globals import END_TIME, MAX_SF_RADIUS, ZONE_WIDTH
+from .._globals import END_TIME, MAX_SF_RADIUS
 from . import migration
 from . import models
 from .models.utils import get_bin_number, interpolate

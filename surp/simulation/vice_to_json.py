@@ -74,8 +74,10 @@ def reduce_history(multioutput):
     mdf_cols.append("R")
     mdf = pd.DataFrame(columns=mdf_cols)
 
-    for i in range(200):
-        zone = multioutput.zones["zone%i" % i]
+    keys = multioutput.zones.keys()
+    N = len(keys)
+    for i in range(N):
+        zone = multioutput.zones[keys[i]]
 
         df = pd.DataFrame(zone.history.todict())
         df["R"] = np.repeat(zone_to_R(i), len(df))

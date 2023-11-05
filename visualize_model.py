@@ -58,6 +58,11 @@ def plot_model(filename):
     plt.savefig("coofe.pdf")
     plt.close()
 
+
+    plot_ofefeh(model)
+    plt.savefig("ofefeh.pdf")
+    plt.close()
+
     print("cd ", pwd)
     os.chdir(pwd)
 
@@ -124,8 +129,8 @@ def plot_cooh_tracks(model):
 
     sns.scatterplot(h, x="[o/h]", y="[c/o]", hue="time", s=0.3, alpha=1,
             legend=False, edgecolor="none", palette="arya_r")
-    plt.xlim(-0.8, 0.8)
-    plt.ylim(-0.4, 0.2)
+    plt.xlim(-1.2, 0.6)
+    plt.ylim(-0.6, 0.2)
     plt.xlabel("[Mg/H]")
     plt.ylabel("[C/Mg]")
     arya.Colorbar(clim=(0, 13.2), label="t (Gyr)", cmap="arya_r")
@@ -140,7 +145,7 @@ def plot_coofe_tracks(model):
     sns.scatterplot(h, x="[o/fe]", y="[c/o]", hue="time", s=0.3, alpha=1,
             legend=False, edgecolor="none", palette="arya_r")
     plt.xlim(-0.1, 0.5)
-    plt.ylim(-0.4, 0.2)
+    plt.ylim(-0.6, 0.2)
     plt.xlabel("[Mg/Fe]")
     plt.ylabel("[C/Mg]")
     arya.Colorbar(clim=(0, 13.2), label="t (Gyr)", cmap="arya_r")
@@ -196,8 +201,21 @@ def plot_coofe(model):
     plt.ylabel("[C/Mg]")
 
 
+def plot_ofefeh(model):
+    s=  model.stars
+    N = len(s)
+    dx = 0.025
+    dy = 0.025
 
+    x = s["[fe/h]"] + np.random.normal(0, dx, N)
+    y = s["[mg/fe]"] + np.random.normal(0, dy, N)
+    aah.plot_contour("[fe/h]", "[mg/fe]", zorder=3, exclude_high_alpha=False)
+    plt.scatter(x, y, c=s["r_origin"], s=0.03, zorder=2)
 
+    plt.xlim(-1, 0.5)
+    plt.ylim(-0.1, 0.5)
+    plt.xlabel("[Fe/H]")
+    plt.ylabel("[Mg/Fe]")
 
 
 

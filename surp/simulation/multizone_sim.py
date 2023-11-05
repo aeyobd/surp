@@ -1,3 +1,4 @@
+# coding=utf-8
 import sys
 import gc
 import os
@@ -5,7 +6,8 @@ import os
 import numpy as np
 
 import vice
-from vice.toolkit.rand_walk.rand_walk_stars import rand_walk_stars
+from vice.toolkit.rand_walk.rand_walk_stars import rand_walk_stars 
+from vice.toolkit.gaussian.gaussian_stars import gaussian_stars 
 from vice.toolkit.hydrodisk.hydrodiskstars import hydrodiskstars
 from vice.milkyway.milkyway import _get_radial_bins
 
@@ -149,7 +151,10 @@ def create_model(save_dir, filename, timestep,
             )
 
     model.elements = ("fe", "o", "mg", "n", "c")
-    model.mode = "sfr"
+    if spec == "twoinfall" or spec=="conroy22":
+        model.mode = "ifr"
+    else:
+        model.mode = "sfr"
     model.dt = timestep
     model.bins = np.arange(-3, 3, 0.01)
     model.setup_nthreads = n_threads
@@ -157,7 +162,7 @@ def create_model(save_dir, filename, timestep,
             
     model.evolution = create_evolution(spec=spec, burst_size=lateburst_amplitude)
 
-    create_sf_law(model, conroy_sf=conroy_sf)
+    create_sf_law(model, conroy_sf=conroy_sf, spec=spec)
 
     if migration_mode == "rand_walk":
         model.migration.stars = rand_walk_stars(
@@ -166,8 +171,16 @@ def create_model(save_dir, filename, timestep,
                 dt=timestep, 
                 name=model.name, 
                 sigma_R=sigma_R)
+    elif migration_mode == "gaussian":
+        model.migration.stars = gaussian_stars(
+                _get_radial_bins(ZONE_WIDTH),
+                n_stars=n_stars, 
+                dt=timestep, 
+                name=model.name, 
+                sigma_R=sigma_R)
 
-    model.mass_loading = mass_loading(factor=eta)
+
+    model.mass_loading = mass_loading()
 
     return model
 
@@ -202,52 +215,79 @@ def create_evolution(spec, burst_size):
     return evolution
 
 
-def create_sf_law(model, conroy_sf=False):
-    if not conroy_sf:
-        return
+def create_sf_law(model, conroy_sf=False, spec="insideout"):
+    for zone in model.zones:
+       zone.Mg0 = 0.
+
     for i in range(model.n_zones):
         R1 = model.annuli[i]
         R2 = model.annuli[i+1]
         R = (R1 + R2)/2
+
         if R <= MAX_SF_RADIUS:
             area = np.pi * (R2**2 - R1**2)
-            model.zones[i].tau_star = conroy_sf_law(area)
+            if conroy_sf:
+                model.zones[i].tau_star = conroy_sf_law(area)
+            elif spec=="twoinfall":
+                model.zones[i].tau_star = twoinfall_sf_law(area)
+            else:
+                model.zones[i].tau_star = vice.toolkit.J21_sf_law(area, mode="sfr")
+
+def conroy_tau_star(t):
+    if t < 2.5:
+        tau_st = 50
+    elif 2.5 <= t < 3.7:
+        tau_st = 50/(1+3*(t-2.5))**2
+    else:
+        tau_st = 2.36
+    return tau_st
+
 
 def conroy_sf_law(area=None):
-
     def inner(t, m):
-        if t < 2.5:
-            tau_st = 50
-        elif 2.5 <= t < 3.7:
-            tau_st = 50/(1+3*(t-2.5))**2
-        else:
-            tau_st = 2.36
-
+        tau_st = conroy_tau_star(t)
         return vice.toolkit.J21_sf_law(area, tau_st)(t, m)
-
     return inner
 
+
+def twoinfall_sf_law(area=None):
+    def inner(t, m):
+        tau_st = twoinfall_tau_star(t)
+        return vice.toolkit.J21_sf_law(area, tau_st)(t, m)
+    return inner
     
 
+def twoinfall_tau_star(t):
+    if t < 4.1:
+        return 1
+    else:
+        return 2
+
+
+def MH_grad(R):
+    R0 = 5
+    return 0.29 + (R-R0) * np.where(R<R0, -0.015, -0.090)
 
 
 class mass_loading:
-    def __init__(self, factor=1):
+    def __init__(self, factor=1, tau_s_sf=0):
         self._factor = factor
-        pass
-
+        self.r = 0.4
+        self.tau_s_sf = tau_s_sf
+        self.yo = factor * vice.yields.ccsne.settings["o"]
     def __call__(self, R_gal):
+        Zo = vice.solar_z("o")*10**MH_grad(R_gal)
         return np.maximum(0,
-                -0.6 
-                + self._factor * 0.015 / 0.00572 
-                * 10**(0.08*(R_gal - 4) - 0.3)
+                -1 + self.r  + self.tau_s_sf
+                + self.yo / Zo
                )
 
     def __str__(self):
-        A = self._factor * 0.015/0.00572 * 10**(-0.3 + 0.08*(-4))
+        A = self._factor * vice.yields.ccsne.settings["o"]/vice.solar_z("o") * 10**(-0.3 + 0.08*(-4))
         C = -0.6 * self._factor
         r = 0.08
-        return f"{C} + {A:0.4f}×10^({r:0.4f} R)"
+        s = f"{C} + {A:0.4f}×10^({r:0.4f} R)"
+        return s
 
     def __repr__(self):
         return str(self)

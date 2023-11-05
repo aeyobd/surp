@@ -12,7 +12,7 @@ rm -f logs/$1.log
 
 sbatch <<EOT
 #!/bin/bash
-#SBATCH --time=8:00:00
+#SBATCH --time=12:00:00
 #SBATCH --ntasks=$3
 #SBATCH --mem=32gb
 #SBATCH --job-name=$1
@@ -42,8 +42,10 @@ python \$SLURM_SUBMIT_DIR/result.py \$TMPDIR/*.json
 
 cp -r -u \$TMPDIR/*.json \$SLURM_SUBMIT_DIR/out
 cp \$TMPDIR/*.txt \$SLURM_SUBMIT_DIR/out 2>/dev/null
-cp \$TMPDIR/*.dat \$SLURM_SUBMIT_DIR/out 2>/dev/null
+# This copies the tracks, which are not needed
+# cp \$TMPDIR/*.dat \$SLURM_SUBMIT_DIR/out 2>/dev/null
 cp \$TMPDIR/*.csv \$SLURM_SUBMIT_DIR/out 2>/dev/null
+# cp -r \$TMPDIR/*.vice \$SLURM_SUBMIT_DIR/out 2>/dev/null
 
 scontrol show job=\$SLURM_JOB_ID
 

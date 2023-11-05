@@ -4,13 +4,13 @@ import sys
 import os
 
 
-M_LOW_DEFAULT = 1.3
-M_MID_DEFAULT = 2.3
-M_HIGH_DEFAULT = 4
 N_THREADS_DEFAULT = 1
 DT_DEFAULT = 0.02
 SIGMA_R_DEFAULT = 1.27
 ZETA_AGB_DEFAULT = -0.02
+
+TAU_AGB_DEFAULT = 0.4
+T_D_DEFAULT = 0.15
 
 
 def main():
@@ -61,7 +61,7 @@ def parse_args():
                         help="use the conroy ++ 2022 sfe law")
     parser.add_argument("-m", "--agb_model", default="C11", 
                         help="the name of the AGB model to use ")
-    parser.add_argument("-M", "--migration_mode", default="rand_walk", 
+    parser.add_argument("-M", "--migration_mode", default="gaussian", 
                         help="""The migration mode. Default is diffusion.
                         Acceptable options include post-process, linear, 
                         sudden, and rand_walk""")
@@ -82,21 +82,25 @@ def parse_args():
     parser.add_argument("-t", "--test_run", action="store_true", 
                         help="only run a test")
     parser.add_argument("-x", "--xi", type=float,
-            help="CC Z^2 parameter", default=0)
+            help="CC Z^2 parameter", default=None)
     parser.add_argument("-j", "--threads", default=None, type=int,
                         help="number of threads to run. default=1")
-    parser.add_argument("--m_low", default=M_LOW_DEFAULT,
-                        help="lower mass of AGB C")
-    parser.add_argument("--m_mid", default=M_MID_DEFAULT,
-                        help="lower mass of AGB C")
-    parser.add_argument("--m_high", default=M_HIGH_DEFAULT,
-                        help="lower mass of AGB C")
+    parser.add_argument("--t_d", default=T_D_DEFAULT,
+                        help="min delay time AGB")
+    parser.add_argument("--tau_agb", default=TAU_AGB_DEFAULT,
+                        help="characteristic dtd AGB")
     parser.add_argument("--zeta_agb", default=ZETA_AGB_DEFAULT,
                         help="metallicity dependence of agb carbon")
-    parser.add_argument("--yl_agb", default=0, 
+
+    parser.add_argument("--yl_cc", default=8.67e-4, 
                         help="agb yield at m0")
-    parser.add_argument("--yh_agb", default=0, 
+    parser.add_argument("--yh_cc", default=0, 
                         help="agb yield at m0")
+    parser.add_argument("--zl_cc", default=0, 
+                        help="agb yield at m0. 0.008 sets the alternate yield")
+    parser.add_argument("--zh_cc", default=3e-3, 
+                        help="agb yield at m0")
+    parser.add_argument("-l", "--log_cc", action="store_true", help="advanced CC yield")
     parser.add_argument("--m_factor", 
             help="mass factor for agb stars", default=1, type=float)
     parser.add_argument("-P", "--no_negative", 
@@ -109,20 +113,12 @@ def parse_args():
 def generate_filename(args):
     filename = args.agb_model
     if args.agb_model == "A":
-        if (args.m_low != M_LOW_DEFAULT
-                or args.m_mid != M_MID_DEFAULT
-                or args.m_high != M_HIGH_DEFAULT
-                ):
-            filename += f"_{args.m_low}_{args.m_mid}_{args.m_high}"
-
         if args.zeta_agb != ZETA_AGB_DEFAULT:
             filename += f"_z{args.zeta_agb}"
-        if args.mz_agb != 0:
-            filename += f"_mz{args.mz_agb}"
-        if args.yl_agb != 0:
-            filename += f"_y0{args.yl_agb}"
-        if args.yh_agb != 0:
-            filename += f"_y2{args.yh_agb}"
+        if args.t_d != T_D_DEFAULT:
+            filename += f"_tD_{args.t_d}"
+        if args.tau_agb != TAU_AGB_DEFAULT:
+            filename += f"_tau_a_{args.tau_agb}"
 
     if args.m_factor != 1:
         filename += f"_m{args.m_factor}"
@@ -136,20 +132,31 @@ def generate_filename(args):
 
     if args.eta != 1:
         filename += "_eta" + str(args.eta) 
+
+
         
     if args.zeta is not None:
         filename += "_zeta" + str(args.zeta)
 
-    if args.xi != 0:
+    if args.zl_cc != 0:
+        filename += f"_y1_{args.yl_cc}"
+        filename += f"_z1_{args.zl_cc}"
+    if args.yh_cc != 0:
+        filename += f"_y2_{args.yh_cc}"
+        filename += f"_z2_{args.zh_cc}"
+    if args.log_cc:
+        filename += "_log"
+
+    if args.xi is not None:
         filename += "_xi" + str(args.xi)
 
     if args.spec != "insideout":
         filename += "_" + args.spec + str(args.burst_amplitude)
 
-    if args.migration_mode != "rand_walk":
+    if args.migration_mode != "gaussian":
         filename += "_" + args.migration_mode
-    if args.migration_mode == "rand_walk" and args.sigma_R != SIGMA_R_DEFAULT:
-        filename += str(args.sigma_R)
+    if args.migration_mode in ("gaussian", "rand_walk") and args.sigma_R != SIGMA_R_DEFAULT:
+        filename += "_sigma" + str(args.sigma_R)
 
     if args.fe_ia_factor != "None":
         filename += "_Fe" + str(args.fe_ia_factor)
@@ -185,17 +192,18 @@ yield_kwargs = {{
      'f_agb': {args.agb_fraction},
      'zeta': {args.zeta}, 
      'fe_ia_factor': {args.fe_ia_factor},
-     'm_low': {args.m_low},
-     'm_mid': {args.m_mid},
-     'm_high': {args.m_high},
      'zeta_agb': {args.zeta_agb},
-     'yl_agb': {args.yl_agb},
-     'yh_agb': {args.yh_agb},
+     't_D': {args.t_d},
+     'tau_agb': {args.tau_agb},
+     'y1_cc': {args.yl_cc},
+     'y2_cc': {args.yh_cc},
+     'z1_cc': {args.zl_cc},
+     'z2_cc': {args.zh_cc},
      'alpha_n': {args.alpha_n},
      'mass_factor': {args.m_factor},
-     'mz_agb': {args.mz_agb},
      'no_negative': {args.no_negative},
      'xi': {args.xi},
+     'log_cc': {args.log_cc},
 }}
 
 kwargs = {{

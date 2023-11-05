@@ -42,9 +42,11 @@ ReadMe
 karakas16_yields
 
 subgiants.csv
+R_subgiants_cdf.csv
 apogee_cartography.csv
 
 
+*.pyc
 # latex
 *.out
 *.dvi
