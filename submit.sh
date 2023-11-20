@@ -18,7 +18,7 @@ sbatch <<EOT
 #SBATCH --job-name=$1
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --output=logs/$1
-#SBATCH --account=PAS2489
+#SBATCH --account=$SLURM_ACCOUNT
 
 
 set -x

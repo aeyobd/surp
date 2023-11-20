@@ -196,14 +196,10 @@ yield_kwargs = {{
      't_D': {args.t_d},
      'tau_agb': {args.tau_agb},
      'y1_cc': {args.yl_cc},
-     'y2_cc': {args.yh_cc},
      'z1_cc': {args.zl_cc},
-     'z2_cc': {args.zh_cc},
      'alpha_n': {args.alpha_n},
      'mass_factor': {args.m_factor},
      'no_negative': {args.no_negative},
-     'xi': {args.xi},
-     'log_cc': {args.log_cc},
 }}
 
 kwargs = {{

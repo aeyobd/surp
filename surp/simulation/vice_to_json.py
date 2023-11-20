@@ -40,7 +40,6 @@ def json_output(file_name, isotopic=False, overwrite=False):
     with open(json_name, "w") as f:
         json.dump(model, f)
         print("saving to ", json_name)
-        
 
 
 
@@ -90,8 +89,6 @@ def reduce_history(multioutput):
     return history, mdf
 
 
-
-
 def create_star_sample(stars, num=12000):
     cdf = load_cdf()
     sample = pd.DataFrame(columns=stars.columns)
@@ -111,8 +108,10 @@ def rand_zone(cdf):
     p = np.random.rand()
     return cdf.zone.loc[cdf.cdf > p].iloc[0]
 
+
 def rand_star(stars, cdf):
     return rand_star_in_zone(stars, rand_zone(cdf))
+
 
 def rand_star_in_zone(stars, zone):
     df = stars.loc[stars.zone_final == zone]
@@ -121,8 +120,6 @@ def rand_star_in_zone(stars, zone):
     index = random.choices(np.arange(size), weights=df["mass"], k=1)
 
     return df.iloc[index]
-
-
 
 
 
