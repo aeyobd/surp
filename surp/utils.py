@@ -43,3 +43,34 @@ def arg_isreal(arg=0):
             return func(*args, **kwargs)
         return wrapper
     return decorator
+
+
+
+
+
+
+def print_row(*args, widths=None, float_fmt="%0.2e"):
+    """
+    given a list of arguments, prints them in a table format
+    """
+    strings = []
+
+    for i in range(len(args)):
+        arg = args[i]
+        if isinstance(arg, float):
+            s = float_fmt % arg
+        else:
+            s = str(arg)
+        strings.append(s)
+
+    N = len(args)
+    wrapped = [textwrap.wrap(s, width=w) for s, w in zip(strings, widths)]
+
+    N_rows = np.max([len(wd) for wd in wrapped])
+    padded = [wd + [''] * (N_rows - len(wd)) for wd in wrapped]
+
+    fmt = "".join("{{:<{}}} ".format(w) for w in widths)
+
+    for i in range(N_rows):
+        print(fmt.format(*(col[i] for col in padded)))
+    print()

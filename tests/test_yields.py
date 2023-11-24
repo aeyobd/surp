@@ -12,26 +12,28 @@ from vice import solar_z
 from surp import yields
 
 
-def test_mag22():
-    assert solar_z["c"] = 
-    assert solar_z["n"] = 
-    assert solar_z["o"] = 
-    assert solar_z["fe"] = 
-    assert solar_z["mg"] = 
-
-def test_default_settings():
-    yields.set_yields()
-    assert ccsne["o"] = 
-
-    assert sneia["c"] =  
-    assert sneia["c"] =  
-
-def test_reset_defaults():
-    yields.set_yields()
-    assert ccsne["o"] = 
-
-    assert sneia["c"] =  
-    assert sneia["c"] =  
+# def test_mag22():
+#     assert solar_z["c"] = 
+#     assert solar_z["n"] = 
+#     assert solar_z["o"] = 
+#     assert solar_z["fe"] = 
+#     assert solar_z["mg"] = 
+# 
+# def test_default_settings():
+#     yields.set_yields()
+#     assert ccsne["o"] = 
+# 
+#     assert sneia["c"] =  
+#     assert sneia["c"] =  
+# 
+# def test_reset_defaults():
+#     yields.set_yields()
+#     ccsne["o"] = 0
+#     yields.set_defaults()
+#     assert ccsne["o"] = 
+# 
+#     assert sneia["c"] =  
+#     assert sneia["c"] =  
 
 
 

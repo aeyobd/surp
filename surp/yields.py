@@ -13,12 +13,10 @@ from vice.yields import ccsne, sneia, agb
 from surp._globals import Z_SUN
 from surp.analysis import MH_to_Z
 from surp.analysis import gce_math as gcem
+from surp.yield_models import ZeroAGB, C_AGB_Model, C_CC_Model, LinAGB
 
-from .utils import isreal, validate, arg_isreal
+from .utils import isreal, validate, arg_isreal, print_row
 
-
-
-# Constants
 
 ELEMS = ["c", "n", "o", "mg", "fe"]
 
@@ -106,27 +104,38 @@ def set_yields(fe_ia_factor=1, yield_scale=1, **kwargs) -> None:
 def set_c_yields(
     agb_model="cristallo11", 
     f_agb=0.2,
-    alpha_agb: Optional[float] = None, 
     zeta_cc: Optional[float] = None, 
     yl_cc: float = 8.67e-4, 
     zl_cc: float = 0.008,
+    alpha_agb: Optional[float] = None, 
     zeta_agb: float = -0.03,
     mass_factor: float = 1,
     no_negative: bool = False,
+    tau_agb: float = 0.3,
+    t_D: float = 0.3,
     **kwargs
     ):
     """
-    Parameters
-    ----------
+    Interdependent Parameters
+    ------------------------
     agb_model
         One of the implimented AGB settings in VICE. Sets all AGB elements to the given value
-    eta_factor
-        The factor by which to multiply yields and outflows by (uniformly)
-    zeta_c_cc
-        If set, determines the zeta_c_cc value. Otherwise zeta_c_cc is calculated from the zeta_c_agb value and 
+    f_agb
+        the AGB fraction of C production at solar metallicity
+    zeta_cc
+        If set, determines the zeta_cc value. Otherwise zeta_cc is calculated from the zeta_c_agb value and the
+        total ZETA_C_0 value
 
-    fe_ia_factor: float 
-    
+    CCSNe Parameters
+    -----------------
+    yl_cc
+        Determines the CC yield at zero metallicity (if zl_cc > 0)
+    zl_cc
+        Below this metallicity, the CC yield linearly decreases to yl_cc
+
+    AGB Parameters
+    --------------
+    zeta_agb
     """
 
     y_c_agb = Y_C_AGB[agb_model]
@@ -148,11 +157,11 @@ def set_c_yields(
 
     if agb_model == "A":
         y0 = alpha_agb * Y_C_AGB["A"]
-        agb.settings["c"] = C_AGB_MODEL(y0=y0, **kwargs)
+        agb.settings["c"] = C_AGB_MODEL(y0=y0, zeta_agb=zeta_agb, tau_agb=tau_agb, t_D=t_D)
     else:
         agb.settings["c"] = interpolator("c", agb_model, prefactor=alpha_agb, mass_factor=mass_factor, no_negative=no_negative)
 
-    ccsne.settings["c"] = C_CC_model(zeta=zeta_cc, y0=y_cc, yl=yl_cc, zl=zl_cc)
+    ccsne.settings["c"] = C_CC_model(zeta=zeta_cc, y0=y_cc, **kwargs)
 
 
 def enhance_fe_ia(fe_ia_factor=1):
@@ -182,181 +191,13 @@ def scale_yields(scale=1):
             agb.settings[elem] = agb.settings[elem] * scale
 
 
-
-
-class ZeroAGB:
-    """A convenience class which represents a value of zero AGB yield"""
-    def __init__(self):
-        pass
-
-    def __call__(self, *args, **kwargs):
-        return 0
-
-    def __str__(self):
-        return "0"
-
-    def __repr__(self):
-        return "0"
-
-    
-    @arg_isreal(1)
-    def __imul__(self, scale):
-        pass
-    def __mul__(self, scale):
-        other = copy(self)
-        other.__imul__(scale)
-        return other 
-
-    def __rmul__(self, scale):
-        return self.__mul__(scale)
-
-
-
-class LinAGB:
-    """
-    A linear AGB model, used e.g. for nitrogen
-    y(m, z) = eta m z
-    """
-    def __init__(self, eta, y0):
-        self.eta = eta
-        self.y0 = y0
-
-    def __call__(self, M, Z):
-        return M*self.y0 + M*Z/Z_SUN * self.eta
-
-    def __str__(self):
-        return f"{self.y0:0.2e} M + {self.eta:0.2e} M Z/Z0"
-
-    @arg_isreal(1)
-    def __imul__(self, scale):
-        self.y0 *= scale
-        self.eta *= scale
-
-    def __mul__(self, scale):
-        other = copy(self)
-        other.__imul__(scale)
-        return other 
-
-    def __rmul__(self, scale):
-        return self.__mul__(scale)
-
-
-class C_AGB_MODEL:
-    """
-    An analytic version of AGB yields.
-
-    Parameters
-    ----------
-    y_0: the yield at solar metallicity
-    zeta: the metallicity dependence
-    tau_agb: the agb dtd
-    t_d: the minimum delay time
-    """
-
-    def __init__(self, y0 = 0.0004, zeta_agb=-0.02, 
-            tau_agb=0.3, t_D = 0.15):
-
-        self.tau_agb = tau_agb
-        self.t_D = t_D
-        self.y0 = y0
-        self.zeta = zeta_agb
-
-        self.mlr = vice.mlr.larson1974
-        self.imf = vice.imf.kroupa
-        m_low = 0.08
-        m_high = 8
-        A_imf = quad(lambda m: m*self.imf(m), m_low, 100)[0]
-
-        self.A_agb = A_imf / quad(lambda m: m * self.imf(m) * self.y_unnorm(m), 
-                m_low, m_high)[0]
-
-    def R(self, t):
-        """
-        The delay time distribution of C enrichment
-        """
-        dt = t - self.t_D
-        return np.where(dt < 0, 0,
-                dt/self.tau_agb**2 * np.exp(-dt/self.tau_agb))
-
-
-    def y_unnorm(self, m):
-        return 1/m * m**-4.5 * 1/self.imf(m) * self.R(self.mlr(m))
-
-
-    def __call__(self, m, Z):
-        y = self.y0 + self.zeta*(Z-Z_SUN)
-        return self.A_agb * y * self.y_unnorm(m) 
-
-
-    @arg_isreal(1)
-    def __imul__(self, scale):
-        self.y0 *= scale
-        self.zeta *= scale
-
-    def __mul__(self, scale):
-        other = copy(self)
-        other.__imul__(scale)
-        return other 
-
-    def __rmul__(self, scale):
-        return self.__mul__(scale)
-
-    def __str__(self):
-        return f"({self.y0:0.2e} + {self.zeta:0.2e}(Z-Zo)), t_D={self.t_D:0.2f}, tau={self.tau_agb:0.2f}"
-
-
-class C_CC_model:
-    def __init__(self, zeta=0.1, y0=0.004, yl=8.67e-4, zl=0.008):
-        self.y0 = y0
-        self.zeta = zeta
-        self.yl = yl
-        self.zl = zl
-
-        if zl > 0:
-            y2 = zeta * (zl - Z_SUN) + y0
-            self.zeta_l = (y2-yl)/(zl)
-        else:
-            self.zeta_l = 0
-            self.zl = -1
-
-    @arg_isreal(1)
-    def __imul__(self, scale):
-        self.y0 *= scale
-        self.zeta *= scale
-        self.yl *= scale
-        self.zeta_l *= scale
-
-    def __mul__(self, scale):
-        other = copy(self)
-        other.__imul__(scale)
-        return other
-
-    def __rmul__(self, scale):
-        return self.__mul__(scale)
-
-
-
-    def __call__(self, Z):
-        return np.where(Z >= self.zl, 
-                self.y0 + self.zeta * (Z - Z_SUN), 
-                self.yl + self.zeta_l * Z
-                )
-
-    def __str__(self):
-        return f"{self.y0:0.2e} + {self.zeta:0.2e} (Z-Z0), Z>={self.zl:0.2e}; {self.yl:0.2e} + {self.zeta_l:0.2e} Z, else"
-
-
-
-
-
-
-
 def print_yields():
     """
     Debugging function to print the current yield settings
     """
     print("Yield settings")
-    print_row("X", "Z_solar", "CC", "agb", "SN Ia")
+    widths = [8, 10, 30, 30, 30]
+    print_row("X", "Z_solar", "CC", "agb", "SN Ia", widths=widths)
 
     # print values
     for elem in ["c", "n", "o", "mg", "fe"]:
@@ -364,7 +205,9 @@ def print_yields():
                 vice.solar_z(elem),
                 ccsne.settings[elem],
                 agb.settings[elem],
-                sneia.settings[elem])
+                sneia.settings[elem],
+                  widths=widths
+                  )
 
     print()
     print()
@@ -400,36 +243,6 @@ def print_yc_tot():
     print(f"{y_tot:0.6f} + {z_tot:0.6f} (Z-Zo)")
     print(f"f_agb = {f:0.4f}")
     print()
-    print()
-
-
-def print_row(*args, width=30, first_width=8, float_fmt="%0.2e"):
-    """
-    given a list of arguments, prints them in a table format
-    """
-    strings = []
-
-    for i in range(len(args)):
-        arg = args[i]
-        if isinstance(arg, float):
-            s = float_fmt % arg
-        else:
-            s = str(arg)
-        strings.append(s)
-
-    N = len(args)
-    widths = np.full(N, width)
-    widths[0] = first_width
-
-    wrapped = [textwrap.wrap(s, width=w) for s, w in zip(strings, widths)]
-
-    N_rows = np.max([len(wd) for wd in wrapped])
-    padded = [wd + [''] * (N_rows - len(wd)) for wd in wrapped]
-
-    fmt = "".join("{{:<{}}} ".format(w) for w in widths)
-
-    for i in range(N_rows):
-        print(fmt.format(*(col[i] for col in padded)))
     print()
 
 
