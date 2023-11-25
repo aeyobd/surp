@@ -1,4 +1,3 @@
-import textwrap
 from typing import Optional
 from copy import copy
 
@@ -11,8 +10,7 @@ from vice.yields.agb import interpolator
 from vice.yields import ccsne, sneia, agb
 
 from surp._globals import Z_SUN
-from surp.analysis import MH_to_Z
-from surp.analysis import gce_math as gcem
+from surp import gce_math as gcem
 from surp.yield_models import ZeroAGB, C_AGB_Model, C_CC_Model, LinAGB
 
 from .utils import isreal, validate, arg_isreal, print_row
@@ -105,14 +103,10 @@ def set_c_yields(
     agb_model="cristallo11", 
     f_agb=0.2,
     zeta_cc: Optional[float] = None, 
-    yl_cc: float = 8.67e-4, 
-    zl_cc: float = 0.008,
     alpha_agb: Optional[float] = None, 
-    zeta_agb: float = -0.03,
     mass_factor: float = 1,
     no_negative: bool = False,
-    tau_agb: float = 0.3,
-    t_D: float = 0.3,
+    a_agb_kwargs: dict = {},
     **kwargs
     ):
     """
@@ -128,6 +122,8 @@ def set_c_yields(
 
     CCSNe Parameters
     -----------------
+    **kwargs are passed to yield_models.C_CC_Model
+
     yl_cc
         Determines the CC yield at zero metallicity (if zl_cc > 0)
     zl_cc
@@ -135,7 +131,8 @@ def set_c_yields(
 
     AGB Parameters
     --------------
-    zeta_agb
+    mass_factor
+
     """
 
     y_c_agb = Y_C_AGB[agb_model]
@@ -143,25 +140,25 @@ def set_c_yields(
     if alpha_agb is None:
         alpha_agb = f_agb * Y_C_0 /y_c_agb
 
-    if agb_model != "A":
+
+    if agb_model == "A":
+        if "zeta_agb" not in a_agb_kwargs.keys():
+            raise ValueError("for analytic AGB model, zeta_agb must be specified")
+
+        y0 = alpha_agb * Y_C_AGB["A"]
+        agb.settings["c"] = C_AGB_Model(y0=y0, **a_agb_kwargs)
+        zeta_agb = a_agb_kwargs["zeta_agb"]
+    else:
+        agb.settings["c"] = interpolator("c", agb_model, prefactor=alpha_agb,
+            mass_factor=mass_factor, no_negative=no_negative)
         zeta_agb = ZETA_C_AGB[agb_model]
-    elif zeta_agb is None:
-        raise ValueError("for analytic AGB model, zeta_agb must be specified")
+
+
     y_cc = Y_C_0 - alpha_agb * y_c_agb 
-
-    print('using alpha_c_agb=', alpha_agb)
-
-
     if zeta_cc is None:
         zeta_cc = ZETA_C_0 - alpha_agb * zeta_agb
 
-    if agb_model == "A":
-        y0 = alpha_agb * Y_C_AGB["A"]
-        agb.settings["c"] = C_AGB_MODEL(y0=y0, zeta_agb=zeta_agb, tau_agb=tau_agb, t_D=t_D)
-    else:
-        agb.settings["c"] = interpolator("c", agb_model, prefactor=alpha_agb, mass_factor=mass_factor, no_negative=no_negative)
-
-    ccsne.settings["c"] = C_CC_model(zeta=zeta_cc, y0=y_cc, **kwargs)
+    ccsne.settings["c"] = C_CC_Model(zeta=zeta_cc, y0=y_cc, **kwargs)
 
 
 def enhance_fe_ia(fe_ia_factor=1):
@@ -256,7 +253,7 @@ def agb_z_interp(N_points=500):
     vice.yields.ccsne.settings["c"] = 0
 
     y_agb = []
-    Zs = MH_to_Z(np.linspace(-6, 1, N_points))
+    Zs = gcem.MH_to_Z(np.linspace(-6, 1, N_points))
     for Z in Zs:
         mc, times = vice.single_stellar_population("c", Z=Z)
         y_agb.append(mc[-1]/1e6)

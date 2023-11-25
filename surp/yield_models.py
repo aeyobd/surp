@@ -10,10 +10,8 @@ from vice.yields.agb import interpolator
 from vice.yields import ccsne, sneia, agb
 
 from surp._globals import Z_SUN
-from surp.analysis import MH_to_Z
-from surp.analysis import gce_math as gcem
-
-from .utils import isreal, validate, arg_isreal
+from surp import gce_math as gcem
+from surp.utils import isreal, validate, arg_isreal
 
 
 

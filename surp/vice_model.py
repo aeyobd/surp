@@ -1,24 +1,15 @@
-import vice
 import pandas as pd
 import numpy as np
-import scipy
-import random
-import matplotlib.pyplot as plt
-import os.path
-from os.path import exists
 import json
+import matplotlib.pyplot as plt
 import seaborn as sns
-
-
-from . import apogee_analysis as aah
-from . import gas_phase_data
-
 
 import arya
 COLORS = arya.style.COLORS
 cmap = arya.style.get_cmap()
 
-class vice_model():
+
+class VICE_Model():
     """
 
     Attributes
@@ -70,9 +61,6 @@ class vice_model():
         stars = self.stars[star_group]
 
 
-        if plot_data:
-                aah.plot_contour(x, y, xlim=xlim, zorder=2, levels=6, exclude_high_alpha=exclude_high_alpha)
-
         show_stars(stars, x, y, c=c, c_label=c_label, zorder=1, **kwargs)
 
         if xlim is not None:
@@ -81,18 +69,12 @@ class vice_model():
 
     def plot_mdf(self, x, star_group="solar", plot_data=True, xlim=None, **kwargs):
         plt.hist(self.stars[star_group][x], 50, histtype="step", density=True, range=xlim, **kwargs)
-        if plot_data:
-            v21 = aah.vincenzo2021()
-            if x in v21.keys():
-                plt.hist(v21[x], 50, histtype="step", label="V21", ls="--", density=True, color="black")
 
         plt.xlabel(x)
         plt.ylabel("density of stars")
 
     def plot_gas(self, x, y, ratio=False, filename=None, plot_data=True, **kwargs):
         self.plot_annulus_at_t(x, y, **kwargs)
-        if plot_data:
-            gas_phase_data.plot_all(x, y, alpha_bars=0.5)
 
     def plot_annulus_at_t(self, x, y, t = 13.1, dt = 0.1, c=None, R_min=3, R_max=15, ax=None, **kwargs):
         if ax is None:
@@ -192,7 +174,6 @@ class vice_model():
 
         stars = self.stars[star_group]
 
-        aah.plot_coofe_contour(o_h_0, d_o_h)
 
         filt = stars["[o/h]"] > o_h_0 - d_o_h
         filt &= stars["[o/h]"] < o_h_0 + d_o_h
@@ -204,7 +185,6 @@ class vice_model():
 
         stars = self.stars[star_group]
 
-        aah.plot_coofe_contour(o_h_0, d_o_h)
 
         filt = stars["[o/h]"] > o_h_0 - d_o_h
         filt &= stars["[o/h]"] < o_h_0 + d_o_h
@@ -214,47 +194,6 @@ class vice_model():
         show_stars(df, "[fe/o]", "[c/o]", c="age", c_label="age", s=1, zorder=2,
                 **kwargs)
 
-
-def show_at_R_z(stars, x="[fe/h]", y=None, c=None, xlim=None, ylim=None, **kwargs):
-    r"""Creates a grid of plots at different R and z of show_stars
-
-    Parameters
-    ----------
-
-    
-
-    """
-    fig, axs = plt.subplots(5, 3, sharex=True, sharey=True, figsize=(15,15), squeeze=True)
-    # fig.supxlabel(x)
-    # fig.supylabel(y)
-
-    vmin = None
-    vmax = None
-    if c is not None:
-        vmin = min(stars[c])
-        vmax = max(stars[c])
-
-    for j in range(5):
-        R_min, R_max = [(3,5), (5,7), (7,9), (9,11), (11,13)][j]
-
-        for i in range(3):
-            z_min, z_max = [(0, 0.5), (0.5, 1), (1, 1.5)][i]
-            filtered = sample_stars(filter_stars(stars, R_min, R_max, z_min, z_max), num=1000)
-
-            ax = axs[j][i]
-            im = show_stars(filtered, x, y, c=c, colorbar=False, fig=fig, ax=ax, vmin=vmin, vmax=vmax, **kwargs)
-            ax.set(xlim=xlim,
-                   ylim=ylim,
-                   xlabel="",
-                   ylabel=""
-                  )
-            if i == 0:
-                ax.set(ylabel="R = %i - %i kpc" %(R_min, R_max))
-            if j == 4:
-                ax.set(xlabel="|z| = %1.1f - %1.1f" % (z_min, z_max))
-
-    if c is not None:
-        fig.colorbar(im, ax=axs.ravel().tolist(), label=c)
 
 
 

@@ -15,7 +15,7 @@ from vice.milkyway.milkyway import _get_radial_bins
 from .star_formation_history import star_formation_history
 from .. import yields
 from ..yields import set_yields
-from .._globals import MAX_SF_RADIUS, END_TIME, N_MAX, ZONE_WIDTH
+from .._globals import MAX_SF_RADIUS, END_TIME, N_MAX
 
 
 def run_model(filename, save_dir=None, 
@@ -24,6 +24,7 @@ def run_model(filename, save_dir=None,
               timestep=0.01,
               seed=None, # needs implemented
               yield_kwargs={},
+              zone_width=0.1,
               **kwargs
      ):
     """
@@ -101,7 +102,7 @@ def run_model(filename, save_dir=None,
             "A": "A"
             }[agb_model]
 
-    set_yields(eta=eta, agb_model=agb_model, **yield_kwargs)
+    set_yields(yield_scale=eta, agb_model=agb_model, **yield_kwargs)
 
     print("configured yields")
 
@@ -134,14 +135,14 @@ def create_model(save_dir, filename, timestep,
         simple = False
 
 
-    Nstars = 2*MAX_SF_RADIUS/ZONE_WIDTH * END_TIME/timestep * n_stars
+    Nstars = 2*MAX_SF_RADIUS/zone_width * END_TIME/timestep * n_stars
     if migration_mode != "rand_walk" and Nstars > N_MAX:
         Nstars = N_MAX
 
     print("using %i stars particles" % Nstars)
 
 
-    model = vice.milkyway(zone_width=ZONE_WIDTH,
+    model = vice.milkyway(zone_width=zone_width,
             name=save_dir + filename,
             n_stars=n_stars,
             verbose=verbose,
@@ -160,20 +161,20 @@ def create_model(save_dir, filename, timestep,
     model.setup_nthreads = n_threads
     model.nthreads = min(len(model.elements), n_threads)
             
-    model.evolution = create_evolution(spec=spec, burst_size=lateburst_amplitude)
+    model.evolution = create_evolution(spec=spec, burst_size=lateburst_amplitude, zone_width=zone_width)
 
     create_sf_law(model, conroy_sf=conroy_sf, spec=spec)
 
     if migration_mode == "rand_walk":
         model.migration.stars = rand_walk_stars(
-                _get_radial_bins(ZONE_WIDTH),
+                _get_radial_bins(zone_width),
                 n_stars=n_stars, 
                 dt=timestep, 
                 name=model.name, 
                 sigma_R=sigma_R)
     elif migration_mode == "gaussian":
         model.migration.stars = gaussian_stars(
-                _get_radial_bins(ZONE_WIDTH),
+                _get_radial_bins(zone_width),
                 n_stars=n_stars, 
                 dt=timestep, 
                 name=model.name, 
@@ -187,31 +188,27 @@ def create_model(save_dir, filename, timestep,
 
 
 
-def create_evolution(spec, burst_size):
-    if spec == "lateburst":
-        evolution = star_formation_history(spec = spec,
-                burst_size = 1.5*burst_size)
-    elif spec == "twoexp":
-        evolution = star_formation_history(spec = spec,
-                tau2=2,
-                A21 = burst_size,
-                )
-    elif spec == "twoinfall":
-        evolution = star_formation_history(spec=spec,
-                tau1=2,
-                A21 = 3.5 * burst_size,
-                )
-    elif spec == "threeexp":
-        evolution = star_formation_history(
-                spec = spec,
-                timescale2 = 1, 
-                amplitude = 0.5*burst_size, 
-                t1 = 5, 
-                amplitude3=0.2, 
-                t2=12)
-    else:
-        evolution = star_formation_history(spec=spec)
+def create_evolution(spec, burst_size, zone_width):
+    kwargs = {}
+    kwargs["spec"] = spec
+    kwargs["zone_width"] = zone_width
 
+    if spec == "lateburst":
+        kwargs["burst_size"] = 1.5 * burst_size
+    elif spec == "twoexp":
+        kwargs["tau2"] = 2
+        kwargs["A21"] = burst_size
+    elif spec == "twoinfall":
+        kwargs["tau1"] = 2
+        kwargs["A21"] = 3.5*burst_size
+    elif spec == "threeexp":
+        kwargs["timescale2"] = 1
+        kwargs["amplitude"] = 0.5*burst_size
+        kwargs["t1"] = 5
+        kwargs["amplitude3"] = 0.2
+        kwargs["t2"] = 12
+
+    evolution = star_formation_history(**kwargs)
     return evolution
 
 

@@ -4,33 +4,21 @@ import sys
 import os
 
 
-N_THREADS_DEFAULT = 1
-DT_DEFAULT = 0.02
-SIGMA_R_DEFAULT = 1.27
-ZETA_AGB_DEFAULT = -0.02
-
-TAU_AGB_DEFAULT = 0.4
-T_D_DEFAULT = 0.15
-
 
 def main():
     args = parse_args()
     filename = args.filename
 
-    for d in ["logs", "out", "results"]:
+    for d in ["logs", "out"]:
         os.makedirs(d, exist_ok=True)
 
-    if args.test_run and args.threads is None:
-        args.threads = 1
-    elif args.threads is None:
-        args.threads = N_THREADS_DEFAULT
-
     if not filename:
-        filename = generate_filename(args)
+        filename = generate_filename_and_defaults(args)
 
-    print(filename)
 
     pycall = create_pycall(filename, args)
+
+    print(filename)
     print(pycall)
 
     if args.test_run:
@@ -45,79 +33,81 @@ def main():
 def parse_args():
     parser = argparse.ArgumentParser(description="Argument parser")
 
-    parser.add_argument("-e", "--eta", type=float, default=1,
-                        help="the efficiency multiplier of the supernova feedback")
+    parser.add_argument("-m", "--agb_model", default="C11", 
+                        help="the name of the AGB model to use. Can be C11, K10, V13, K16, R18, or A")
+    parser.add_argument("-f", "--agb_fraction", type=float, default=0.2, 
+                        help="the fraction of AGB C production at solar metallicity")
     parser.add_argument("-z", "--zeta", type=float, default=None, 
-                        help="the solar fraction of CCSNe secondary C, default=0.7")
+                        help="the metallicity dependence of CCSNe C. By default calculated from emperical relationships")
+
+    parser.add_argument("-e", "--eta", type=float, default=1,
+                        help="a uniform factor to scale yields by")
     parser.add_argument("-s", "--spec", default="insideout", 
                         help="""star formation specification. Options include
                         [insideout, constant, lateburst, outerburst, 
-                        twoexp, threeexp]""")
-    parser.add_argument("-f", "--agb_fraction", type=float, default=0.2, 
-                        help="the mass fraction of AGB stars in the initial mass function ")
-    parser.add_argument("-o", "--out_of_box_agb", action="store_true", 
-                        help="use an out-of-box AGB model ")
+                        twoexp, threeexp, twoinfall]""")
     parser.add_argument("-c", "--conroy_sf", action="store_true", 
                         help="use the conroy ++ 2022 sfe law")
-    parser.add_argument("-m", "--agb_model", default="C11", 
-                        help="the name of the AGB model to use ")
     parser.add_argument("-M", "--migration_mode", default="gaussian", 
-                        help="""The migration mode. Default is diffusion.
-                        Acceptable options include post-process, linear, 
+                        help="""The migration mode. Default is Gaussian.
+                        Acceptable alternate options include diffusion, post-process, linear, 
                         sudden, and rand_walk""")
-    parser.add_argument("-S", "--sigma_R", default=SIGMA_R_DEFAULT, type=float,
+    parser.add_argument("-S", "--sigma_R", default=None, type=float,
                         help="migration strength in kpc/Gyr^0.5")
-    parser.add_argument("-F", "--filename", default=None,
-                        help="the name of the output file ")
     parser.add_argument("-A", "--burst_amplitude", type=float, default=1, 
-                        help="the amplitude of the late burst")
-    parser.add_argument("-i", "--fe_ia_factor", default="None", 
+                        help="the multiplicative amplitude of the late burst")
+    parser.add_argument("-i", "--fe_ia_factor", default=1, 
                         help="the iron yield factor of type Ia supernovae ")
-    parser.add_argument("-d", "--timestep", type=float, default=DT_DEFAULT, 
-                        help="the size of the time step ")
-    parser.add_argument("-n", "--n_stars", type=int, default=1, 
-                        help="the number of stars")
-    parser.add_argument("-a", "--alpha_n", type=float, default=0, 
-                        help="the agb fraction of primary N (0.0)")
-    parser.add_argument("-t", "--test_run", action="store_true", 
-                        help="only run a test")
-    parser.add_argument("-x", "--xi", type=float,
-            help="CC Z^2 parameter", default=None)
-    parser.add_argument("-j", "--threads", default=None, type=int,
-                        help="number of threads to run. default=1")
-    parser.add_argument("--t_d", default=T_D_DEFAULT,
+
+    parser.add_argument("--alpha_agb", default=None,
+                        help="manually set the AGB scaling factor?")
+    parser.add_argument("--m_factor", default=1, type=float,
+                        help="mass scaling factor for AGB C",)
+    parser.add_argument("-P", "--no_negative", action="store_true",
+                        help="no negative agb")
+    parser.add_argument("--t_d", default=None,
                         help="min delay time AGB")
-    parser.add_argument("--tau_agb", default=TAU_AGB_DEFAULT,
+    parser.add_argument("--tau_agb", default=None,
                         help="characteristic dtd AGB")
-    parser.add_argument("--zeta_agb", default=ZETA_AGB_DEFAULT,
-                        help="metallicity dependence of agb carbon")
+    parser.add_argument("--zeta_agb", default=None,
+                        help="metallicity dependence of AGB C in the analytic model")
 
     parser.add_argument("--yl_cc", default=8.67e-4, 
-                        help="agb yield at m0")
-    parser.add_argument("--yh_cc", default=0, 
-                        help="agb yield at m0")
+                        help="the C CC yield at Z=0")
     parser.add_argument("--zl_cc", default=0, 
-                        help="agb yield at m0. 0.008 sets the alternate yield")
-    parser.add_argument("--zh_cc", default=3e-3, 
-                        help="agb yield at m0")
-    parser.add_argument("-l", "--log_cc", action="store_true", help="advanced CC yield")
-    parser.add_argument("--m_factor", 
-            help="mass factor for agb stars", default=1, type=float)
-    parser.add_argument("-P", "--no_negative", 
-            help="no negative agb", action="store_true")
-    parser.add_argument("--mz_agb", 
-            help="mass coupling factor for agb stars", default=0, type=float)
+                        help="Metallicity to switch to low Z CC")
+
+
+    parser.add_argument("-d", "--timestep", type=float, default=None, 
+                        help="the size of the simulation time step")
+    parser.add_argument("-n", "--n_stars", type=int, default=1, 
+                        help="the number of stars to create at each zone for each timestep")
+    parser.add_argument("-F", "--filename", default=None,
+                        help="the name of the output file. by default filename is autogenerated")
+    parser.add_argument("-t", "--test_run", action="store_true", 
+                        help="only run a test")
+    parser.add_argument("-j", "--threads", default=1, type=int,
+                        help="number of threads to run")
     return parser.parse_args()
 
 
-def generate_filename(args):
+def generate_filename_and_defaults(args):
     filename = args.agb_model
     if args.agb_model == "A":
-        if args.zeta_agb != ZETA_AGB_DEFAULT:
+
+        if args.zeta_agb is None:
+            args.zeta_agb = -0.02
+        else:
             filename += f"_z{args.zeta_agb}"
-        if args.t_d != T_D_DEFAULT:
+
+        if args.t_d is None:
+            args.t_D = 0.15
+        else:
             filename += f"_tD_{args.t_d}"
-        if args.tau_agb != TAU_AGB_DEFAULT:
+
+        if args.tau_agb is None:
+            args.tau_agb = 0.4
+        else:
             filename += f"_tau_a_{args.tau_agb}"
 
     if args.m_factor != 1:
@@ -125,8 +115,8 @@ def generate_filename(args):
     if args.no_negative:
         filename += "_P"
 
-    if args.out_of_box_agb:
-        filename += "_oob"
+    if args.alpha_agb is not None:
+        filename += "_alpha_agb" + str(args.alpha_agb)
     else:
         filename += "_f" + str(args.agb_fraction)
 
@@ -141,39 +131,34 @@ def generate_filename(args):
     if args.zl_cc != 0:
         filename += f"_y1_{args.yl_cc}"
         filename += f"_z1_{args.zl_cc}"
-    if args.yh_cc != 0:
-        filename += f"_y2_{args.yh_cc}"
-        filename += f"_z2_{args.zh_cc}"
-    if args.log_cc:
-        filename += "_log"
-
-    if args.xi is not None:
-        filename += "_xi" + str(args.xi)
 
     if args.spec != "insideout":
         filename += "_" + args.spec + str(args.burst_amplitude)
 
     if args.migration_mode != "gaussian":
         filename += "_" + args.migration_mode
-    if args.migration_mode in ("gaussian", "rand_walk") and args.sigma_R != SIGMA_R_DEFAULT:
+
+    if args.migration_mode in ("gaussian", "rand_walk") and args.sigma_R is None:
+        args.sigma_R = 1.27
+    else:
         filename += "_sigma" + str(args.sigma_R)
 
-    if args.fe_ia_factor != "None":
+    if args.fe_ia_factor != 1:
         filename += "_Fe" + str(args.fe_ia_factor)
 
     if args.conroy_sf:
         filename += "_c22"
 
-    if args.timestep != DT_DEFAULT:
-        filename += "_dt" + str(args.timestep)
 
-    if args.alpha_n != 0:
-        filename += "_an" + str(args.alpha_n)
+    if args.timestep is None:
+        args.timestep = 0.02
+    else:
+        filename += "_dt" + str(args.timestep)
 
     if args.n_stars != 1:
         filename += "_nstars" + str(args.n_stars)
 
-    if args.threads != N_THREADS_DEFAULT:
+    if args.threads != 1:
         filename += "_j" + str(args.threads)
 
     return filename
@@ -187,19 +172,23 @@ import surp.simulation.filter_warnings
 from surp.simulation.multizone_sim import run_model
 
 
-yield_kwargs = {{
-     'oob': {args.out_of_box_agb},
-     'f_agb': {args.agb_fraction},
-     'zeta': {args.zeta}, 
-     'fe_ia_factor': {args.fe_ia_factor},
-     'zeta_agb': {args.zeta_agb},
+a_agb_kwargs = {{
      't_D': {args.t_d},
      'tau_agb': {args.tau_agb},
-     'y1_cc': {args.yl_cc},
-     'z1_cc': {args.zl_cc},
-     'alpha_n': {args.alpha_n},
+     'zeta_agb': {args.zeta_agb},
+}}
+
+
+yield_kwargs = {{
+     'alpha_agb': {args.alpha_agb},
+     'f_agb': {args.agb_fraction},
+     'zeta_cc': {args.zeta}, 
+     'fe_ia_factor': {args.fe_ia_factor},
      'mass_factor': {args.m_factor},
      'no_negative': {args.no_negative},
+     'a_agb_kwargs': a_agb_kwargs,
+     'yl': {args.yl_cc},
+     'zl': {args.zl_cc},
 }}
 
 kwargs = {{
