@@ -81,3 +81,5 @@ apogee_cartography.csv
 
 *.pdf
 temp
+
+.coverage

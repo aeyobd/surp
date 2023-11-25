@@ -4,7 +4,7 @@ from pytest import approx
 import numpy as np
 
 from surp.yield_models import LinAGB, ZeroAGB, C_AGB_Model, C_CC_Model
-from surp.analysis import gce_math as gcem
+from surp import gce_math as gcem
 
 
 

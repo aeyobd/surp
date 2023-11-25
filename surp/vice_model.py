@@ -9,7 +9,7 @@ COLORS = arya.style.COLORS
 cmap = arya.style.get_cmap()
 
 
-class VICE_Model():
+class ViceModel():
     """
 
     Attributes
@@ -23,12 +23,6 @@ class VICE_Model():
     solar_neighborhood_stars
     apogee_stars
     unfiltered_stars
-
-    Methods
-    -------
-    plot_stars(x, y, **kwargs)
-    plot_mean_stars
-    plot_gas(x, y)
     """
 
     def __init__(self, filename):
@@ -56,143 +50,143 @@ class VICE_Model():
 
 
 
-    def plot_stars(self, x, y, c=None, c_label=None, xlim=None,
-            star_group="solar", exclude_high_alpha=True, plot_data = True, **kwargs):
-        stars = self.stars[star_group]
+def plot_stars(self, x, y, c=None, c_label=None, xlim=None,
+        star_group="solar", exclude_high_alpha=True, plot_data = True, **kwargs):
+    stars = self.stars[star_group]
 
 
-        show_stars(stars, x, y, c=c, c_label=c_label, zorder=1, **kwargs)
+    show_stars(stars, x, y, c=c, c_label=c_label, zorder=1, **kwargs)
 
-        if xlim is not None:
-            plt.xlim(xlim)
-
-
-    def plot_mdf(self, x, star_group="solar", plot_data=True, xlim=None, **kwargs):
-        plt.hist(self.stars[star_group][x], 50, histtype="step", density=True, range=xlim, **kwargs)
-
-        plt.xlabel(x)
-        plt.ylabel("density of stars")
-
-    def plot_gas(self, x, y, ratio=False, filename=None, plot_data=True, **kwargs):
-        self.plot_annulus_at_t(x, y, **kwargs)
-
-    def plot_annulus_at_t(self, x, y, t = 13.1, dt = 0.1, c=None, R_min=3, R_max=15, ax=None, **kwargs):
-        if ax is None:
-            ax = plt.gca()
-            
-        # modified to just show values at present_day
-        filt = self.history["time"] > t
-        filt &= self.history["time"] < t+dt
-
-        df = self.history[filt].groupby("R").mean().reset_index()
-        filt = df["R"] > R_min
-        filt &= df["R"] < R_max
-
-        x_values = df[filt][x]
-        y_values = df[filt][y]
-
-        if c is None:
-            ax.plot(x_values, y_values, **kwargs)
-        else:
-            c_values = df[filt][c]
-            ax.scatter(x_values, y_values, c=c_values, **kwargs)
-            ax.colorbar()
-
-        ax.set_xlabel(x)
-        ax.set_ylabel(y)
-
-    def plot_annulus_history(self, x, y, c=None, R_min=7, R_max=9, ax=None, **kwargs):
-        if ax is None:
-            ax = plt.gca()
-
-        ave = self.annulus_average(R_min, R_max)
-        x_values = ave[x]
-        y_values = ave[y]
+    if xlim is not None:
+        plt.xlim(xlim)
 
 
-        if c is None:
-            ax.plot(x_values, y_values, **kwargs)
-        else:
-            c_values = ave[c]
-            ax.scatter(x_values, y_values, c=c_values, **kwargs)
-            ax.colorbar()
-        ax.set_xlabel(x)
-        ax.set_ylabel(y)
+def plot_mdf(self, x, star_group="solar", plot_data=True, xlim=None, **kwargs):
+    plt.hist(self.stars[star_group][x], 50, histtype="step", density=True, range=xlim, **kwargs)
 
-    def plot_t_slices(self, x, y, xlim=None, times=[13,11,8,5,2], smooth=0.1, ax=None):
-        if ax is None:
-            ax = plt.gca()
+    plt.xlabel(x)
+    plt.ylabel("density of stars")
 
-        colors = [cmap(i/5) for i in range(5)]
+def plot_gas(self, x, y, ratio=False, filename=None, plot_data=True, **kwargs):
+    self.plot_annulus_at_t(x, y, **kwargs)
 
-        for i in range(len(times)):
-            t = times[i]
-            c = colors[i]
-
-            self.plot_annulus_at_t(x, y, t, label="%i Gyr" % t, ax=ax, color=c, zorder=6-i)
-
-    def plot_R_slices(self, x, y, Rs=[4,6,8,10,12], ax=None, t_min=0.1):
-        colors = [cmap(i/5) for i in range(5)]
-
-        if ax is None:
-            ax = plt.gca()
-            
-        for j in range(5):
-            i = (np.array([4, 6, 8, 10, 12])*10)[j]
-            j0 = 2
-            c = colors[j]
-            
-            R_min=i/10-0.5
-            R_max=i/10+0.5
-            self.plot_annulus_history(x, y, R_min=R_min, R_max=R_max,
-                    label=f"{i/10:2.0f} kpc", ax=ax, color=c)
-
-            # mark points
-            ave = self.annulus_average(R_min, R_max, t_min=t_min)
-            t = np.round(np.arange(0.2, 13.21, 1), 2)
-            x_values = ave[x][t]
-            y_values = ave[y][t]
-            ax.scatter(x_values, y_values, marker="x", color=c)
-
-
-    def annulus_average(self, R_min, R_max, t_min=0.1):
-        """
-        Computes the average values of self.history
-        for each timestep for zones between R_min and R_max
+def plot_annulus_at_t(self, x, y, t = 13.1, dt = 0.1, c=None, R_min=3, R_max=15, ax=None, **kwargs):
+    if ax is None:
+        ax = plt.gca()
         
-        Attributes
-        ----------
-        name: ``str``
-            The name of the"""
-        filt = self.history["R"] > R_min
-        filt &= self.history["R"] < R_max
-        filt &= self.history["time"] > t_min
-        df = self.history[filt]
-        return df.groupby("time").mean()
+    # modified to just show values at present_day
+    filt = self.history["time"] > t
+    filt &= self.history["time"] < t+dt
 
-    def plot_coofe(self, star_group="solar", o_h_0=-0.1, d_o_h = 0.05, **kwargs):
+    df = self.history[filt].groupby("R").mean().reset_index()
+    filt = df["R"] > R_min
+    filt &= df["R"] < R_max
 
-        stars = self.stars[star_group]
+    x_values = df[filt][x]
+    y_values = df[filt][y]
+
+    if c is None:
+        ax.plot(x_values, y_values, **kwargs)
+    else:
+        c_values = df[filt][c]
+        ax.scatter(x_values, y_values, c=c_values, **kwargs)
+        ax.colorbar()
+
+    ax.set_xlabel(x)
+    ax.set_ylabel(y)
+
+def plot_annulus_history(self, x, y, c=None, R_min=7, R_max=9, ax=None, **kwargs):
+    if ax is None:
+        ax = plt.gca()
+
+    ave = self.annulus_average(R_min, R_max)
+    x_values = ave[x]
+    y_values = ave[y]
 
 
-        filt = stars["[o/h]"] > o_h_0 - d_o_h
-        filt &= stars["[o/h]"] < o_h_0 + d_o_h
-        df = stars[filt]
-        show_stars(df, "[o/fe]", "[c/o]", c="age", c_label="age", s=1, zorder=2,
-                **kwargs)
+    if c is None:
+        ax.plot(x_values, y_values, **kwargs)
+    else:
+        c_values = ave[c]
+        ax.scatter(x_values, y_values, c=c_values, **kwargs)
+        ax.colorbar()
+    ax.set_xlabel(x)
+    ax.set_ylabel(y)
 
-    def plot_cofeo(self, star_group="solar", o_h_0=-0.1, d_o_h = 0.05, **kwargs):
+def plot_t_slices(self, x, y, xlim=None, times=[13,11,8,5,2], smooth=0.1, ax=None):
+    if ax is None:
+        ax = plt.gca()
 
-        stars = self.stars[star_group]
+    colors = [cmap(i/5) for i in range(5)]
+
+    for i in range(len(times)):
+        t = times[i]
+        c = colors[i]
+
+        self.plot_annulus_at_t(x, y, t, label="%i Gyr" % t, ax=ax, color=c, zorder=6-i)
+
+def plot_R_slices(self, x, y, Rs=[4,6,8,10,12], ax=None, t_min=0.1):
+    colors = [cmap(i/5) for i in range(5)]
+
+    if ax is None:
+        ax = plt.gca()
+        
+    for j in range(5):
+        i = (np.array([4, 6, 8, 10, 12])*10)[j]
+        j0 = 2
+        c = colors[j]
+        
+        R_min=i/10-0.5
+        R_max=i/10+0.5
+        self.plot_annulus_history(x, y, R_min=R_min, R_max=R_max,
+                label=f"{i/10:2.0f} kpc", ax=ax, color=c)
+
+        # mark points
+        ave = self.annulus_average(R_min, R_max, t_min=t_min)
+        t = np.round(np.arange(0.2, 13.21, 1), 2)
+        x_values = ave[x][t]
+        y_values = ave[y][t]
+        ax.scatter(x_values, y_values, marker="x", color=c)
 
 
-        filt = stars["[o/h]"] > o_h_0 - d_o_h
-        filt &= stars["[o/h]"] < o_h_0 + d_o_h
-        df = stars[filt]
-        df["[fe/o]"] = - np.array(df["[o/fe]"])
+def annulus_average(self, R_min, R_max, t_min=0.1):
+    """
+    Computes the average values of self.history
+    for each timestep for zones between R_min and R_max
+    
+    Attributes
+    ----------
+    name: ``str``
+        The name of the"""
+    filt = self.history["R"] > R_min
+    filt &= self.history["R"] < R_max
+    filt &= self.history["time"] > t_min
+    df = self.history[filt]
+    return df.groupby("time").mean()
 
-        show_stars(df, "[fe/o]", "[c/o]", c="age", c_label="age", s=1, zorder=2,
-                **kwargs)
+def plot_coofe(self, star_group="solar", o_h_0=-0.1, d_o_h = 0.05, **kwargs):
+
+    stars = self.stars[star_group]
+
+
+    filt = stars["[o/h]"] > o_h_0 - d_o_h
+    filt &= stars["[o/h]"] < o_h_0 + d_o_h
+    df = stars[filt]
+    show_stars(df, "[o/fe]", "[c/o]", c="age", c_label="age", s=1, zorder=2,
+            **kwargs)
+
+def plot_cofeo(self, star_group="solar", o_h_0=-0.1, d_o_h = 0.05, **kwargs):
+
+    stars = self.stars[star_group]
+
+
+    filt = stars["[o/h]"] > o_h_0 - d_o_h
+    filt &= stars["[o/h]"] < o_h_0 + d_o_h
+    df = stars[filt]
+    df["[fe/o]"] = - np.array(df["[o/fe]"])
+
+    show_stars(df, "[fe/o]", "[c/o]", c="age", c_label="age", s=1, zorder=2,
+            **kwargs)
 
 
 

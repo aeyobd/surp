@@ -33,12 +33,17 @@ def log_to_brak(ratio, elem, elem2="H"):
     """
         
     if elem2 == "H":
-        return r - np.log10(vice.solar_z(elem)) + np.log10(molar_mass(elem))
+        return ratio - np.log10(vice.solar_z(elem)) + np.log10(molar_mass(elem))
     else:
-        return r - np.log10(vice.solar_z(elem)/vice.solar_z(elem2)) + np.log10(molar_mass(elem)/molar_mass(elem2))
+        return ratio - np.log10(vice.solar_z(elem)/vice.solar_z(elem2)) + np.log10(molar_mass(elem)/molar_mass(elem2))
 
 
-@arg_numpylike
+@arg_numpylike()
+def eps_to_brak(eps, ele):
+    return log_to_brak(eps, ele) - 12
+
+
+@arg_numpylike()
 def brak_to_abund(data, ele, ele2="h"):
     if ele2 == "h":
         return 10**data * vice.solar_z(ele)
@@ -52,7 +57,7 @@ def A_to_Z(A, ele, mixing_correction=0, X=0.71):
     logZ = (A - 12)  + np.log10(X * mmass(ele)) 
     return 10**(logZ + mixing_correction)
 
-@arg_numpylike
+@arg_numpylike()
 def abund_to_brak(data, ele, ele2="h"):
     if ele2.lower() == "h":
         return np.log10(data/vice.solar_z(ele))
@@ -60,13 +65,13 @@ def abund_to_brak(data, ele, ele2="h"):
         return np.log10(data) - np.log10(vice.solar_z(ele) / vice.solar_z(ele2))
 
 
-@arg_numpylike
+@arg_numpylike()
 @arg_numpylike(1)
 def cpn(c1, n1):
     return np.log10( (brak_to_abund(c, "c") + brak_to_abund(n, "n")) / (vice.solar_z("c") + vice.solar_z("n")) )
 
 
-@arg_numpylike
+@arg_numpylike()
 @arg_numpylike(1)
 def cmn(c1, n1):
     return np.log10( (brak_to_abund(c, "c") - brak_to_abund(n, "n")) / (vice.solar_z("c") - vice.solar_z("n")) )
@@ -74,7 +79,7 @@ def cmn(c1, n1):
 
 
 
-@arg_numpylike
+@arg_numpylike()
 def mg_fe_cutoff(fe_h):
     """
     The cutoff between the high and low alpha seqeunces
@@ -92,7 +97,7 @@ def mg_fe_cutoff(fe_h):
     return 0.12 - (fe_h < 0) * 0.13 * fe_h
 
 
-@arg_numpylike
+@arg_numpylike()
 @arg_numpylike(1)
 def is_high_alpha(mg_fe, fe_h):
     return mg_fe > mg_fe_cutoff(fe_h)
