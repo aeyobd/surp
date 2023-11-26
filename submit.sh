@@ -21,15 +21,10 @@ sbatch <<EOT
 #SBATCH --account=$SLURM_ACCOUNT
 
 
-set -x
+set -xe
 export OMP_NUM_THREADS=1
 
 cd $SLURM_SUBMIT_DIR
-# # miniconda is specificed in bashrc
-# module load miniconda3/4.12.0-py39
-# # print out python version for recordkeeping
-python --version
-
 
 export OMP_NUM_THREADS=$3
 python -c "
@@ -37,14 +32,15 @@ $2
 " \$TMPDIR/
 
 export OMP_NUM_THREADS=1
-python \$SLURM_SUBMIT_DIR/surp/simulation/json_outputs.py \$TMPDIR/
-python \$SLURM_SUBMIT_DIR/result.py \$TMPDIR/*.json
+python \$SLURM_SUBMIT_DIR/json_outputs.py \$TMPDIR/$1.vice
+python \$SLURM_SUBMIT_DIR/result.py \$TMPDIR/$1.json
 
-cp -r -u \$TMPDIR/*.json \$SLURM_SUBMIT_DIR/out
-cp \$TMPDIR/*.txt \$SLURM_SUBMIT_DIR/out 2>/dev/null
+cp -r -u \$TMPDIR/$1.json \$SLURM_SUBMIT_DIR/out
+cp \$TMPDIR/$1*.txt \$SLURM_SUBMIT_DIR/out 2>/dev/null
+cp \$TMPDIR/$1.csv \$SLURM_SUBMIT_DIR/out 2>/dev/null
+
 # This copies the tracks, which are not needed
 # cp \$TMPDIR/*.dat \$SLURM_SUBMIT_DIR/out 2>/dev/null
-cp \$TMPDIR/*.csv \$SLURM_SUBMIT_DIR/out 2>/dev/null
 # cp -r \$TMPDIR/*.vice \$SLURM_SUBMIT_DIR/out 2>/dev/null
 
 scontrol show job=\$SLURM_JOB_ID

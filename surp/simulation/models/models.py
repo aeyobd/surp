@@ -36,6 +36,9 @@ class insideout:
     def __call__(self, time):
         return modified_exponential(time, self.tau, self.norm, self.tau_rise)
 
+    def __str__(self):
+        return f"sfh ∝ (1-exp(t/{self.tau_rise}) * exp(-t/{self.tau})"
+
 
 class lateburst:
     r"""

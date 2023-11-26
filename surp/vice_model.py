@@ -11,6 +11,7 @@ cmap = arya.style.get_cmap()
 
 class ViceModel():
     """
+    A class which holds a json'ed VICE output
 
     Attributes
     ----------
@@ -27,14 +28,7 @@ class ViceModel():
 
     def __init__(self, filename):
         """
-        A class which holds a vice multioutput object for pickling
-
-        Parameters
-        ----------
-
-        Notes
-        -----
-        Currently assumes a 200 zone output
+        given the filename, 
         """
 
 
@@ -50,9 +44,9 @@ class ViceModel():
 
 
 
-def plot_stars(self, x, y, c=None, c_label=None, xlim=None,
+def plot_stars(vice_model, x, y, c=None, c_label=None, xlim=None,
         star_group="solar", exclude_high_alpha=True, plot_data = True, **kwargs):
-    stars = self.stars[star_group]
+    stars = vice_model.stars[star_group]
 
 
     show_stars(stars, x, y, c=c, c_label=c_label, zorder=1, **kwargs)
@@ -67,8 +61,7 @@ def plot_mdf(self, x, star_group="solar", plot_data=True, xlim=None, **kwargs):
     plt.xlabel(x)
     plt.ylabel("density of stars")
 
-def plot_gas(self, x, y, ratio=False, filename=None, plot_data=True, **kwargs):
-    self.plot_annulus_at_t(x, y, **kwargs)
+
 
 def plot_annulus_at_t(self, x, y, t = 13.1, dt = 0.1, c=None, R_min=3, R_max=15, ax=None, **kwargs):
     if ax is None:

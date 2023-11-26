@@ -21,21 +21,14 @@ bash <<EOT
 #SBATCH --account=PAS2232
 
 
+set -e
 
 cd $SLURM_SUBMIT_DIR
-pwd
-
-python --version
-
 
 python -c "
 $2
 " \$TMPDIR/
 
-python \$SLURM_SUBMIT_DIR/surp/simulation/json_outputs.py \$TMPDIR/
-
-# cp -r -u \$TMPDIR/*.vice \$SLURM_SUBMIT_DIR/out
-# cp -r -u \$TMPDIR/*.json \$SLURM_SUBMIT_DIR/out
-# cp -r -u \$TMPDIR/*.csv \$SLURM_SUBMIT_DIR/results
+python \$SLURM_SUBMIT_DIR/json_outputs.py \$TMPDIR/$1.vice
 
 EOT

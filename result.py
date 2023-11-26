@@ -1,7 +1,7 @@
 import sys
-from surp.analysis.vice_model import vice_model
 from os import path
-import pandas as pd
+
+from surp import ViceModel
 
 
 def main():
@@ -15,10 +15,12 @@ def main():
             raise IOError("file not found: ", name)
 
         print("loading model: ", name)
-        model = vice_model(name)
-        data = model.stars[["[o/fe]", "[fe/o]", "[c/o]", "[o/h]", "[n/o]"]]
+        model = ViceModel(name)
+        data = model.stars[["[o/fe]", "[c/o]", "[o/h]", "[c/n]"]]
+
         print("writing")
         data.to_csv(name_out)
+
         print("saved to ", name_out)
 
 

@@ -1,6 +1,7 @@
 import math as m
 import numbers
 from ..._globals import MAX_SF_RADIUS, END_TIME, M_STAR_MW
+import os
 
 
 _THIN_DISK_SCALE_RADIUS_ = 2.5 # kpc
