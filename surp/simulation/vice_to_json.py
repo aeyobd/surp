@@ -35,8 +35,6 @@ def json_output(file_name, isotopic=False, overwrite=False):
     output = load_model(file_name)
     model = out_to_dict(output)
 
-    # save_result(model, f"{name}.csv")
-
     with open(json_name, "w") as f:
         json.dump(model, f)
         print("saving to ", json_name)

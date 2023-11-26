@@ -40,7 +40,6 @@ def load_model(name, hydrodisk=False, zone_width=0.01):
 
 
 
-
 def sample_stars(stars, num=1000):
     r"""
     Samples a population of stars while respecting mass weights

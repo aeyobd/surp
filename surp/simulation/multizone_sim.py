@@ -13,6 +13,7 @@ from vice.milkyway.milkyway import _get_radial_bins
 
 
 from .star_formation_history import star_formation_history
+from . import models
 from .. import yields
 from ..yields import set_yields
 from .._globals import MAX_SF_RADIUS, END_TIME, N_MAX
@@ -24,7 +25,6 @@ def run_model(filename, save_dir=None,
               timestep=0.01,
               seed=None, # needs implemented
               yield_kwargs={},
-              zone_width=0.1,
               **kwargs
      ):
     """
@@ -126,7 +126,8 @@ def create_model(save_dir, filename, timestep,
         n_threads=1, 
         sigma_R=1.27, 
         verbose=False,
-        conroy_sf=False):
+        conroy_sf=False, 
+        zone_width=0.01):
 
     if migration_mode == "post-process":
         simple = True
@@ -189,26 +190,39 @@ def create_model(save_dir, filename, timestep,
 
 
 def create_evolution(spec, burst_size, zone_width):
+    """From the parameters, creates a star formation law and 
+    returns a function of radius and time of the evolution. 
+    """
     kwargs = {}
     kwargs["spec"] = spec
     kwargs["zone_width"] = zone_width
 
+    
     if spec == "lateburst":
+        sf_model = models.lateburst
         kwargs["burst_size"] = 1.5 * burst_size
     elif spec == "twoexp":
+        sf_model = models.twoexp
         kwargs["tau2"] = 2
         kwargs["A21"] = burst_size
     elif spec == "twoinfall":
+        sf_model = models.twoinfall
         kwargs["tau1"] = 2
         kwargs["A21"] = 3.5*burst_size
     elif spec == "threeexp":
+        sf_model = models.twoinfall
         kwargs["timescale2"] = 1
         kwargs["amplitude"] = 0.5*burst_size
         kwargs["t1"] = 5
         kwargs["amplitude3"] = 0.2
         kwargs["t2"] = 12
+    elif  spec=="insideout":
+        sf_model = models.insideout
+    else:
+        raise ValueError("name not none: ", spec)
 
-    evolution = star_formation_history(**kwargs)
+
+    evolution = star_formation_history(sf_model, **kwargs)
     return evolution
 
 

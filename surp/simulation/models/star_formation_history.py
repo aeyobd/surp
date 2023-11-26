@@ -1,6 +1,7 @@
 from . import models
 from .._globals import  MAX_SF_RADIUS, MAX_RADIUS
-from .models.model_utils import get_bin_number, interpolate, gradient
+from .models.utils import get_bin_number, interpolate
+from .models.gradient import gradient
 import numpy as np
 
 
@@ -28,7 +29,7 @@ class star_formation_history:
     """
 
     def __init__(self, sf_model, zone_width=0.01, **kwargs):
-        self._radii = np.arange(zone_width/2, MAX_RADIUS, zone_width)
+        self._radii = np.linrange(zone_width/2, MAX_RADIUS, zone_width)
         self._evol = [sf_model(r) for r in self._radii]
 
     def __call__(self, radius, time):
