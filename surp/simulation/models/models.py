@@ -28,13 +28,14 @@ class insideout:
         The width of the annulus in kpc.
     """
     def __init__(self, radius, dt = 0.01, dr = 0.1, tau_rise=2.0):
-        self.tau = timescale(radius)
-        self.norm = 1
-        self.tau_rise = tau_rise
-        self.norm = normalize(self, gradient, radius, dt = dt, dr = dr)
+        tau = timescale(radius)
+        kwargs = {"norm": 1, "tau": tau, "tau_rise": tau_rise}
+        self.kwargs = kwargs
+
+        self.kwargs["norm"] *= normalize(self, gradient, radius, dt=dt, dr=dr)
 
     def __call__(self, time):
-        return modified_exponential(time, self.tau, self.norm, self.tau_rise)
+        return modified_exponential(time, **self.kwargs)
 
     def __str__(self):
         return f"sfh ∝ (1-exp(t/{self.tau_rise}) * exp(-t/{self.tau})"
@@ -65,9 +66,9 @@ class lateburst:
         self._prefactor = 1
         self._prefactor = normalize(self, gradient, radius, dt=dt, dr=dr) 
 
-    def __call__(self, time):
-        return self._prefactor * modified_exponential(time, self.tau, self.tau_rise) * (
-                1 + gaussian(time, self.burst_time, self.burst_width, self.burst_size) )
+    def __call__(self, t):
+        return self._prefactor * modified_exponential(t, self.tau, self.tau_rise) * (
+                1 + gaussian(t, self.burst_time, self.burst_width, self.burst_size) )
 
 
 class twoexp:
@@ -137,7 +138,7 @@ def exponential(t, tau, norm=1):
     return norm * np.exp(-t / tau)
 
 
-def gaussian(time, mean, std, norm=1):
+def gaussian(t, mean, std, norm=1):
     return norm * np.exp( -(t-mean)**2 / (2*std**2) )
 
 

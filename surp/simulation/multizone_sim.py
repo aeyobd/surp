@@ -1,31 +1,56 @@
-# coding=utf-8
-import sys
-import gc
+import numpy as np
 import os
 
-import numpy as np
-
 import vice
-from vice.toolkit.rand_walk.rand_walk_stars import rand_walk_stars 
-from vice.toolkit.gaussian.gaussian_stars import gaussian_stars 
-from vice.toolkit.hydrodisk.hydrodiskstars import hydrodiskstars
 from vice.milkyway.milkyway import _get_radial_bins
 
+from vice.toolkit.rand_walk.rand_walk_stars import rand_walk_stars 
+from vice.toolkit.gaussian.gaussian_stars import gaussian_stars 
 
 from .star_formation_history import create_evolution, create_sf_law
 from ..yields import set_yields
 from .._globals import MAX_SF_RADIUS, END_TIME, N_MAX
 
 
-def run_model(filename, save_dir=None, 
+def run_model(save_dir, filename,
               eta=1,
               agb_model="C11",
               timestep=0.01,
-              seed=None, # needs implemented
               yield_kwargs={},
               **kwargs
      ):
     """
+    creates and runs a vice model. See also create_model for the full parameter choices
+    """
+    print("initialized")
+
+    set_yields(yield_scale=eta, **yield_kwargs)
+
+    print("configured yields")
+
+    model = create_model(save_dir, filename, timestep=timestep, eta=eta, **kwargs)
+
+    print(model)
+
+    model.run(np.arange(0, END_TIME, timestep), overwrite=True, pickle=True)
+
+    print("finished")
+
+
+
+def create_model(save_dir, filename, timestep=0.02,
+        n_stars=2, 
+        spec="insideout",
+        eta=1, 
+        migration_mode="gaussian", 
+        lateburst_amplitude=1,
+        n_threads=1, 
+        sigma_R=1.27, 
+        verbose=False,
+        conroy_sf=False, 
+        zone_width=0.01):
+
+    """"
     This function wraps various settings to make running VICE multizone models
     easier for the carbon paper investigation
     
@@ -81,51 +106,7 @@ def run_model(filename, save_dir=None,
 
     eta_factor: ``float`` [default: 1]
         A factor by which to reduce the model's outflows. 
-
     """
-    print("initialized")
-
-    # collects the first argument of the command as the directory to write
-    # the simulation output to
-    # this allows OSC to use the temperary directory
-    if save_dir is None:
-        save_dir = sys.argv[1]
-
-    agb_model = {
-            "C11": "cristallo11",
-            "K10": "karakas10",
-            "V13": "ventura13",
-            "K16": "karakas16",
-            "P16": "pignatari16",
-            "A": "A"
-            }[agb_model]
-
-    set_yields(yield_scale=eta, agb_model=agb_model, **yield_kwargs)
-
-    print("configured yields")
-
-    model = create_model(save_dir=save_dir, filename=filename, 
-            timestep=timestep, eta=eta, **kwargs)
-
-    print(model)
-
-    model.run(np.arange(0, END_TIME, timestep), overwrite=True, pickle=True)
-
-    print("finished")
-
-
-
-def create_model(save_dir, filename, timestep,
-        n_stars=2, 
-        spec="insideout",
-        eta=1, 
-        migration_mode="diffusion", 
-        lateburst_amplitude=1,
-        n_threads=1, 
-        sigma_R=1.27, 
-        verbose=False,
-        conroy_sf=False, 
-        zone_width=0.01):
 
     if migration_mode == "post-process":
         simple = True
@@ -141,8 +122,9 @@ def create_model(save_dir, filename, timestep,
     print("using %i stars particles" % Nstars)
 
 
+    path = os.path.join(save_dir, filename)
     model = vice.milkyway(zone_width=zone_width,
-            name=save_dir + filename,
+            name = path,
             n_stars=n_stars,
             verbose=verbose,
             N = Nstars,
@@ -187,7 +169,6 @@ def create_model(save_dir, filename, timestep,
 
 
 
-
 def MH_grad(R):
     R0 = 5
     return 0.29 + (R-R0) * np.where(R<R0, -0.015, -0.090)
@@ -215,5 +196,4 @@ class mass_loading:
 
     def __repr__(self):
         return str(self)
-
 

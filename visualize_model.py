@@ -1,14 +1,13 @@
 import matplotlib.pyplot as plt
-import matplotlib.patheffects
-import matplotlib as mpl
 
 import sys
 import os
 import numpy as np
 
 
-from surp.analysis.vice_model import vice_model
+from surp import ViceModel, subgiants
 from surp.analysis import apogee_analysis as aah
+
 import seaborn as sns
 import arya
 
@@ -26,7 +25,7 @@ def plot_model(filename):
         return
 
     print("loading model")
-    model = vice_model(filename)
+    model = ViceModel(filename)
 
     pwd = os.getcwd()
     print("cd ", directory)
@@ -101,7 +100,7 @@ def plot_mdf(model):
             bins=100
             )
     plt.hist(df["[o/fe]"], label="model", **kwargs)
-    plt.hist(aah.subgiants["MG_FE"], label="data", **kwargs)
+    plt.hist(subgiants["MG_FE"], label="data", **kwargs)
     plt.xlabel("[Mg/Fe]")
     plt.ylabel("density")
     arya.Legend()
@@ -115,7 +114,7 @@ def plot_mdf2(model):
             bins=100
             )
     plt.hist(df["[o/h]"], label="model", **kwargs)
-    plt.hist(aah.subgiants["MG_H"], label="data", **kwargs)
+    plt.hist(subgiants["MG_H"], label="data", **kwargs)
     plt.xlabel("[Mg/H]")
     plt.ylabel("density")
     arya.Legend()
@@ -180,9 +179,9 @@ def plot_coofe(model):
     s = model.stars[filt]
 
 
-    filt = aah.subgiants["MG_H"] > oo - do
-    filt &= aah.subgiants["MG_H"] < oo + do
-    df = aah.subgiants[filt]
+    filt = subgiants["MG_H"] > oo - do
+    filt &= subgiants["MG_H"] < oo + do
+    df = subgiants[filt]
 
     dx = 0.03
     dy = 0.03
