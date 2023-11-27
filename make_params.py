@@ -9,14 +9,14 @@ import json
 def main():
     parser, args = parse_args()
     filename = generate_filename(parser, args)
-    config = generate_config(args)
-    config["filename"] = filename
+    params = generate_params(args)
+    params["filename"] = filename
 
     path = f"./params/{filename}.json"
 
-    print("saving config to ", path)
+    print("saving params to ", path)
     with open(path, "w") as f:
-        f.write(json.dumps(config, indent=4))
+        f.write(json.dumps(params, indent=4))
 
 
 
@@ -70,6 +70,8 @@ def parse_args():
 
     parser.add_argument("-d", "--timestep", type=float, default=0.02, 
                         help="the size of the simulation time step")
+    parser.add_argument("-w", "--zone_width", type=float, default=0.1, 
+                        help="the width of the simulation zones")
     parser.add_argument("-n", "--n_stars", type=int, default=1, 
                         help="the number of stars to create at each zone for each timestep")
     parser.add_argument("-F", "--filename", default=None,
@@ -101,7 +103,7 @@ def arg_to_fname(parser, args, arg_name, always_add=False, flag=False, name=None
         else:
             return f"_{name}"
 
-    return f"_{name}_{val}"
+    return f"_{name}{val}"
 
 
 def generate_filename(parser, args):
@@ -125,14 +127,15 @@ def generate_filename(parser, args):
     filename += arg_to_fname(parser, args, "sigma_R", depends = (args.migration_mode in ["gaussian", "rand_walk"]))
     filename += arg_to_fname(parser, args, "fe_ia_factor")
     filename += arg_to_fname(parser, args, "conroy_sf", flag=True)
-    filename += arg_to_fname(parser, args, "timestep")
+    filename += arg_to_fname(parser, args, "timestep", name="dt")
+    filename += arg_to_fname(parser, args, "zone_width", name="w")
     filename += arg_to_fname(parser, args, "n_stars")
     filename += arg_to_fname(parser, args, "threads", name="j")
 
     return filename
 
 
-def generate_config(args):
+def generate_params(args):
     args.agb_model = {
             "C11": "cristallo11",
             "K10": "karakas10",
@@ -175,6 +178,7 @@ def generate_config(args):
         lateburst_amplitude = args.burst_amplitude,
         conroy_sf = args.conroy_sf,
         yield_kwargs= yield_kwargs,
+        zone_width = args.zone_width,
     )
 
     return kwargs

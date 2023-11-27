@@ -4,9 +4,8 @@ import sys
 import os
 import numpy as np
 
-
 from surp import ViceModel, subgiants
-from surp.analysis import apogee_analysis as aah
+from surp import plots as sp
 
 import seaborn as sns
 import arya
@@ -158,7 +157,7 @@ def plot_cooh(model):
     dy = 0.03
     N = len(s)
 
-    aah.plot_contour("[mg/h]", "[c/mg]", zorder=3)
+    sp.plot_contour("[mg/h]", "[c/mg]", zorder=3)
     plt.scatter(s["[mg/h]"] + np.random.normal(0, dx, N),
             s["[c/mg]"] + np.random.normal(0, dx, N),
             c=s["r_origin"], s=0.3, zorder=2)
@@ -187,7 +186,7 @@ def plot_coofe(model):
     dy = 0.03
     N = len(s)
 
-    aah.plot_coofe_contour(oo, do)
+    sp.plot_coofe_contour(oo, do)
 
     plt.scatter(s["[mg/fe]"] + np.random.normal(0, dx, N),
             s["[c/mg]"] + np.random.normal(0, dx, N),
@@ -208,7 +207,7 @@ def plot_ofefeh(model):
 
     x = s["[fe/h]"] + np.random.normal(0, dx, N)
     y = s["[mg/fe]"] + np.random.normal(0, dy, N)
-    aah.plot_contour("[fe/h]", "[mg/fe]", zorder=3, exclude_high_alpha=False)
+    sp.plot_contour("[fe/h]", "[mg/fe]", zorder=3, exclude_high_alpha=False)
     plt.scatter(x, y, c=s["r_origin"], s=0.03, zorder=2)
 
     plt.xlim(-1, 0.5)

@@ -112,7 +112,7 @@ class star_formation_history:
             Simulation time in Gyr.
     """
 
-    def __init__(self, sf_model, zone_width=0.01, **kwargs):
+    def __init__(self, sf_model, zone_width=0.1, **kwargs):
         self._radii = np.arange(zone_width/2, MAX_RADIUS, zone_width)
         self._evol = [sf_model(r) for r in self._radii]
         self.sf_model = sf_model

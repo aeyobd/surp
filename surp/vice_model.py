@@ -5,6 +5,7 @@ import random
 import vice
 from surp.gce_math import is_high_alpha
 import os
+from ._globals import DATA_DIR
 
 
 import surp
@@ -34,22 +35,27 @@ class ViceModel():
     unfiltered_stars
     """
 
-    def __init__(self, stars, history, sampled_stars=None):
-        if sampled_stars is None:
-            sampled_stars = create_star_sample(stars)
-            sampled_stars["MG_H"] = sampled_stars["[mg/h]"]
-            sampled_stars["MG_FE"] = sampled_stars["[mg/fe]"]
-            sampled_stars["C_MG"] = sampled_stars["[c/mg]"]
-            sampled_stars["N_MG"] = sampled_stars["[n/mg]"]
-            sampled_stars["C_N"] = sampled_stars["[c/n]"]
-        self.stars_unsampled = pd.DataFrame(stars)
-        self.stars = pd.DataFrame(sampled_stars)
+    def __init__(self, stars_unsampled, history, mdf, stars=None):
+        self.stars_unsampled = pd.DataFrame(stars_unsampled)
+
+        if stars is None:
+            stars = create_star_sample(self.stars_unsampled)
+
+        self.stars = pd.DataFrame(stars)
 
         self.history = pd.DataFrame(history)
+        self.mdf = pd.DataFrame(mdf)
+
+        self.rename_columns()
 
     def rename_columns(self):
         self.history["[fe/o]"] = -self.history["[o/fe]"]
         self.stars["[fe/o]"] = -self.stars["[o/fe]"]
+        self.stars["MG_H"] = self.stars["[mg/h]"]
+        self.stars["MG_FE"] = self.stars["[mg/fe]"]
+        self.stars["C_MG"] = self.stars["[c/mg]"]
+        self.stars["N_MG"] = self.stars["[n/mg]"]
+        self.stars["C_N"] = self.stars["[c/n]"]
 
 
     @classmethod
@@ -60,29 +66,40 @@ class ViceModel():
 
         with open(filename, "r") as f:
             d = json.load(f)
-        return cls(d["stars_unsampled"], d["history"], d["stars"])
+        return cls(d["stars_unsampled"], d["history"], d["mdf"], d["stars"])
 
     @classmethod
-    def from_vice(self, filename, hydrodiskstars=False, zone_width=0.1):
+    def from_vice(cls, filename, hydrodiskstars=False, zone_width=0.1):
         name = os.path.splitext(filename)[0]
         json_name = f"{name}.json"
+
         output = load_vice(filename)
-        model = out_to_dict(output)
-        history = reduce_history(output)
-        stars_unsampled = reduce_stars(output)
+        history, mdf = reduce_history(output)
+        stars_unsampled = pd.DataFrame(output.stars.todict())
 
-        return cls()
-
-
-    def save(self, filename):
-        if os.path.exists(json_name) and not overwrite:
-            print("skipping %s, file exists" % json_name)
+        return cls(stars_unsampled, history, mdf)
 
 
+    def save(self, filename, overwrite=False):
+        if os.path.exists(filename) and not overwrite:
+            print("not overwritng file")
+            return
+
+        d = {
+            "stars": self.stars.to_dict(),
+            "stars_unsampled": self.stars_unsampled.to_dict(),
+            "history": self.history.to_dict(),
+            "mdf": self.mdf.to_dict(),
+            }
+
+        with open(filename, "w") as f:
+            json.dump(d, f)
 
 
 
-def reduce_history(multioutput):
+
+
+def reduce_history(multioutput, zone_width=0.1):
     """
     Returns a pandas DF object representing the entire history class
     """
@@ -100,11 +117,11 @@ def reduce_history(multioutput):
         zone = multioutput.zones[keys[i]]
 
         df = pd.DataFrame(zone.history.todict())
-        df["R"] = np.repeat(zone_to_R(i), len(df))
+        df["R"] = np.repeat(zone_to_R(i, zone_width=zone_width), len(df))
         history = pd.concat((history, df), ignore_index=True)
 
         df = pd.DataFrame(zone.mdf.todict())
-        df["R"] = np.repeat(zone_to_R(i), len(df))
+        df["R"] = np.repeat(zone_to_R(i, zone_width=zone_width), len(df))
         mdf = pd.concat((mdf, df), ignore_index=True)
     
     return history, mdf
@@ -179,6 +196,12 @@ def load_vice(name, hydrodisk=False, zone_width=0.01):
     return milkyway
 
 
+
+def calculate_z(output):
+    analog_data = analogdata(output.name + "_analogdata.out")
+    return [np.abs(row[-1]) for row in analog_data][:output.stars.size[0]]
+
+
 def analogdata(filename):
     # from VICE/src/utils
     # last column of analogdata is z_height_final
@@ -194,32 +217,3 @@ def analogdata(filename):
         f.close()
     return data
 
-
-def calculate_z(output):
-    analog_data = analogdata(output.name + "_analogdata.out")
-    return [np.abs(row[-1]) for row in analog_data][:output.stars.size[0]]
-
-
-# 
-# def sample_stars(stars, num=1000):
-#     r"""
-#     Samples a population of stars while respecting mass weights
-# 
-#     Parameters
-#     ----------
-#     stars: the stars attribute from vice.output
-#     num: (int) the number of stars to sample
-# 
-#     Returns
-#     -------
-#     A np.array of the sampled parameter from stars
-#     """
-# 
-#     size = len(stars.todict()["mass"])
-#     result = {key: np.zeros(num) for key in stars.keys()}
-# 
-#     index = random.choices(np.arange(size), weights=stars["mass"], k=num)
-#     for i in range(num):
-#         for key in stars.keys():
-#             result[key][i] = stars[key][index[i]]
-#     return vice.dataframe(result)
