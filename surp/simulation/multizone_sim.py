@@ -141,6 +141,8 @@ def create_model(save_dir, filename, timestep=0.02,
     model.bins = np.arange(-3, 3, 0.01)
     model.setup_nthreads = n_threads
     model.nthreads = min(len(model.elements), n_threads)
+    print("using setup threads = ", n_threads)
+    print("using model threads = ", model.nthreads)
             
     model.evolution = create_evolution(spec=spec, burst_size=lateburst_amplitude, zone_width=zone_width)
 

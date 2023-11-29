@@ -44,7 +44,7 @@ sbatch <<EOT
 #SBATCH --time=12:00:00
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=$NTHREADS
-#SBATCH --mem=64gb
+#SBATCH --mem=16gb
 #SBATCH --job-name=$MODEL_NAME
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --output=logs/slurm-$MODEL_NAME.out
@@ -52,14 +52,12 @@ sbatch <<EOT
 
 
 set -xe
+echo job \$SLURM_JOB_ID
 export OMP_NUM_THREADS=$NTHREADS
 
 
 
 python run.py \$TMPDIR ./params/$MODEL_NAME.json > logs/$MODEL_NAME
-
-cp -ru \$TMPDIR/$MODEL_NAME.vice ./out
-cp \$TMPDIR/$MODEL_NAME*.dat ./out
 
 if [[ -n "$SURP_COPY_VICE" ]]; then
     cp \$TMPDIR/C11_f0.2*.dat ./out
@@ -67,9 +65,7 @@ if [[ -n "$SURP_COPY_VICE" ]]; then
 fi
 
 python json_outputs.py \$TMPDIR/$MODEL_NAME.vice
-python result.py \$TMPDIR/$MODEL_NAME.json
 
-cp \$TMPDIR/$MODEL_NAME*.txt out
 cp -r -u \$TMPDIR/$MODEL_NAME.json out
 cp \$TMPDIR/$MODEL_NAME.csv out
 

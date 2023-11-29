@@ -29,7 +29,7 @@ def main():
 
 
 def result(model, filename):
-    data = model.stars[["[o/fe]", "[c/o]", "[o/h]", "[n/o]", "[c/n]"]]
+    data = model.stars
     print("saving result to ", filename)
 
     data.to_csv(filename)

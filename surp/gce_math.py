@@ -100,7 +100,7 @@ def mg_fe_cutoff(fe_h):
 @arg_numpylike()
 @arg_numpylike(1)
 def is_high_alpha(mg_fe, fe_h):
-    return mg_fe > mg_fe_cutoff(fe_h)
+    return np.where(mg_fe > mg_fe_cutoff(fe_h), True, False)
 
 
 

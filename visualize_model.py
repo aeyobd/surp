@@ -17,14 +17,16 @@ def main():
     for f in filenames:
         plot_model(f)
 
-def plot_model(filename):
-    directory = make_dir(filename)
+
+def plot_model(filename, plots_dir="figures"):
+    directory = make_dir(filename, plots_dir)
     if not directory:
-        print("skipping ", filename)
+        print("skipping ", filename, "failed to make directory")
         return
 
     print("loading model")
-    model = ViceModel(filename)
+    model = ViceModel.from_saved(filename)
+    stars = sp.add_scatter(model.stars)
 
     pwd = os.getcwd()
     print("cd ", directory)
@@ -32,32 +34,32 @@ def plot_model(filename):
 
     print("plotting")
 
-    plot_mdf(model)
-    plt.savefig("mdf_fe.pdf")
-    plt.close()
-
-    plot_mdf2(model)
+    plot_mdf(model.history)
     plt.savefig("mdf.pdf")
     plt.close()
 
-    plot_cooh_tracks(model)
+    plot_mdf_o_fe(model.history)
+    plt.savefig("mdf_o_fe.pdf")
+    plt.close()
+
+    plot_cooh_tracks(model.history)
     plt.savefig("cooh_gas.pdf")
     plt.close()
 
-    plot_coofe_tracks(model)
+    plot_coofe_tracks(model.history)
     plt.savefig("coofe_gas.pdf")
     plt.close()
 
-    plot_cooh(model)
+    plot_cooh(stars)
     plt.savefig("cooh.pdf")
     plt.close()
 
-    plot_coofe(model)
+    plot_coofe(stars)
     plt.savefig("coofe.pdf")
     plt.close()
 
 
-    plot_ofefeh(model)
+    plot_ofefeh(stars)
     plt.savefig("ofefeh.pdf")
     plt.close()
 
@@ -76,10 +78,13 @@ def get_args():
     return filenames
 
 
-def make_dir(filename):
+
+def make_dir(filename, plots_dir = "figures/", force=False):
     dirname, _ = os.path.splitext(os.path.basename(filename))
-    dirname = os.path.join("figures/", dirname)
+    dirname = os.path.join(plots_dir, dirname)
     if os.path.exists(dirname):
+        if force:
+            return True
         print("directory already exits: ", dirname)
         overwrite = input("overwrite? (y/N)")
         if overwrite != "y":
@@ -89,78 +94,49 @@ def make_dir(filename):
         os.mkdir(dirname)
     return dirname
 
+def to_label(x):
+    ele1, ele2 = x.split("_")
+    ele1 = ele1.title()
+    ele2 = ele2.title()
+    return "[%s/%s]" % (ele1, ele2)
 
-def plot_mdf(model):
-    df = model.history
+def plot_mdf(history, x="FE_H"):
     kwargs = dict(
             histtype="step",
             density=True,
             range=(-0.3, 0.7),
             bins=100
             )
-    plt.hist(df["[o/fe]"], label="model", **kwargs)
-    plt.hist(subgiants["MG_FE"], label="data", **kwargs)
-    plt.xlabel("[Mg/Fe]")
+    plt.hist(history[x], label="model", **kwargs)
+    plt.hist(subgiants[x], label="data", **kwargs)
+    plt.xlabel(to_label(x))
     plt.ylabel("density")
     arya.Legend()
 
-def plot_mdf2(model):
-    df = model.history
-    kwargs = dict(
-            histtype="step",
-            density=True,
-            range=(-0.3, 0.7),
-            bins=100
-            )
-    plt.hist(df["[o/h]"], label="model", **kwargs)
-    plt.hist(subgiants["MG_H"], label="data", **kwargs)
-    plt.xlabel("[Mg/H]")
-    plt.ylabel("density")
-    arya.Legend()
 
-def plot_cooh_tracks(model):
-    h = model.history
 
-    for R in [4, 6, 8, 10, 12]:
-        df = h[np.isclose(h.R, R-0.05)]
-        plt.plot(df["[o/h]"], df["[c/o]"], color="k")
+def plot_tracks(history, x="MG_H", y="C_MG", Rs=[4,6,8,10,12]):
+    for R in Rs:
+        df = history[np.isclose(history.R, R-0.05)]
+        plt.plot(df[x], df[y], color="k")
 
-    sns.scatterplot(h, x="[o/h]", y="[c/o]", hue="time", s=0.3, alpha=1,
+    sns.scatterplot(history, x=x, y=y, hue="time", s=0.3, alpha=1,
             legend=False, edgecolor="none", palette="arya_r")
     plt.xlim(-1.2, 0.6)
     plt.ylim(-0.6, 0.2)
-    plt.xlabel("[Mg/H]")
-    plt.ylabel("[C/Mg]")
+    plt.xlabel(to_label(x))
+    plt.ylabel(to_label(y))
     arya.Colorbar(clim=(0, 13.2), label="t (Gyr)", cmap="arya_r")
 
-def plot_coofe_tracks(model):
-    h = model.history
 
-    for R in [4, 6, 8, 10, 12]:
-        df = h[np.isclose(h.R, R-0.05)]
-        plt.plot(df["[o/fe]"], df["[c/o]"], color="k")
 
-    sns.scatterplot(h, x="[o/fe]", y="[c/o]", hue="time", s=0.3, alpha=1,
+def plot_cooh(df):
+    df = sp.filter_high_alpha(df)
+    sns.scatterplot(df, x="MG_H", y="C_MG", hue="r_origin", s=0.3, alpha=1,
             legend=False, edgecolor="none", palette="arya_r")
-    plt.xlim(-0.1, 0.5)
-    plt.ylim(-0.6, 0.2)
-    plt.xlabel("[Mg/Fe]")
-    plt.ylabel("[C/Mg]")
-    arya.Colorbar(clim=(0, 13.2), label="t (Gyr)", cmap="arya_r")
 
-
-
-
-def plot_cooh(model):
-    s = model.stars
-    dx = 0.03
-    dy = 0.03
-    N = len(s)
-
-    sp.plot_contour("[mg/h]", "[c/mg]", zorder=3)
-    plt.scatter(s["[mg/h]"] + np.random.normal(0, dx, N),
-            s["[c/mg]"] + np.random.normal(0, dx, N),
-            c=s["r_origin"], s=0.3, zorder=2)
+    df = sp.filter_high_alpha(subgiants)
+    sns.kdeplot(df, x="MG_H", y="C_MG", lw=1, color="k", zorder=3)
 
     plt.xlim(-0.8, 0.8)
     plt.ylim(-0.4, 0.2)
@@ -169,28 +145,12 @@ def plot_cooh(model):
     plt.ylabel("[C/Mg]")
 
 
-def plot_coofe(model):
-    oo = -0.1
-    do = 0.05
+def plot_coofe(stars):
+    df = sp.filter_metallicity(subgiants)
+    sns.kdeplot(df, x="MG_FE", y="C_MG", lw=1, color="k", zorder=3)
 
-    filt = model.stars["[o/h]"] > oo - do
-    filt &= model.stars["[o/h]"] < oo + do
-    s = model.stars[filt]
-
-
-    filt = subgiants["MG_H"] > oo - do
-    filt &= subgiants["MG_H"] < oo + do
-    df = subgiants[filt]
-
-    dx = 0.03
-    dy = 0.03
-    N = len(s)
-
-    sp.plot_coofe_contour(oo, do)
-
-    plt.scatter(s["[mg/fe]"] + np.random.normal(0, dx, N),
-            s["[c/mg]"] + np.random.normal(0, dx, N),
-            c=s["r_origin"], s=0.3, zorder=2)
+    df = sp.filter_metallicity(stars)
+    plt.scatter(df["MG_FE"], df["C_MG"], c=df["r_origin"], s=0.3, zorder=2)
 
     plt.xlim(-0.1, 0.5)
     plt.ylim(-0.4, 0.2)
@@ -199,16 +159,11 @@ def plot_coofe(model):
     plt.ylabel("[C/Mg]")
 
 
-def plot_ofefeh(model):
-    s=  model.stars
-    N = len(s)
-    dx = 0.025
-    dy = 0.025
+def plot_ofefeh(df):
+    sns.scatterplot(df, x="FE_H", y="MG_FE", hue="r_origin", s=0.3, alpha=1,
+            legend=False, edgecolor="none", palette="arya_r")
 
-    x = s["[fe/h]"] + np.random.normal(0, dx, N)
-    y = s["[mg/fe]"] + np.random.normal(0, dy, N)
-    sp.plot_contour("[fe/h]", "[mg/fe]", zorder=3, exclude_high_alpha=False)
-    plt.scatter(x, y, c=s["r_origin"], s=0.03, zorder=2)
+    sns.kdeplot(subgiants, x="FE_H", y="MG_FE", zorder=3, exclude_high_alpha=False)
 
     plt.xlim(-1, 0.5)
     plt.ylim(-0.1, 0.5)

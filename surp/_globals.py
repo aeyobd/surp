@@ -12,6 +12,8 @@ M_STAR_MW = 5.17e10
 N_MAX = 3_102_519
 Z_SUN = 0.016
 
+ELEMENTS = ["C", "N", "O", "MG", "FE"]
+
 
 AGB_MODELS = ["cristallo11", "ventura13", "karakas16", "pignatari16"]
 
