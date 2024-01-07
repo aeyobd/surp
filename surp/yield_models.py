@@ -191,7 +191,10 @@ class C_CC_Model:
                 )
 
     def __str__(self):
-        return f"{self.y0:0.2e} + {self.zeta:0.2e} (Z-Z0), Z>={self.zl:0.2e}; {self.yl:0.2e} + {self.zeta_l:0.2e} Z, else"
+        if self.zl > 0:
+            return f"{self.y0:0.2e} + {self.zeta:0.2e} (Z-Z0), Z>={self.zl:0.2e}; {self.yl:0.2e} + {self.zeta_l:0.2e} Z, else"
+        else:
+            return f"{self.y0:0.2e} + {self.zeta:0.2e} (Z - Z0)"
 
     def copy(self):
         return C_CC_Model(y0=self.y0, zeta=self.zeta, yl = self.yl, zl=self.zl)

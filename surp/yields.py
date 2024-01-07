@@ -22,32 +22,31 @@ ELEMS = ["c", "n", "o", "mg", "fe"]
 Y_C_0 = 2.85e-3
 ZETA_C_0 = 0.029
 Y_C_AGB = {
-        "cristallo11": 4.2e-4,
-        "karakas10": 6.4e-4,
-        "ventura13": 2.2e-4,
-        "karakas16": 5.1e-4,
-        "pignatari16": 8.1e-4,
+        "cristallo11": 3.2e-4,
+        "ventura13": 2.1e-4,
+        "karakas16": 3.4e-4,
+        "pignatari16": 6.9e-4,
         "A": 5e-4,
 }
 
 ZETA_C_AGB = {
-        "cristallo11": -0.0175,
-        "karakas10": -0.059,
-        "ventura13": -0.021,
-        "karakas16": -0.029,
-        "pignatari16": -0.005,
+        "cristallo11": -0.01,
+        "ventura13": -0.04,
+        "karakas16": -0.04,
+        "pignatari16": -0.01,
 }
 
 
 
-def set_magg22_scale():
+def set_magg22_scale(verbose=True):
     """Sets the solar_z values of c, o, mg, fe, and n to magg++2022"""
     vice.solar_z["c"] = 0.00339
     vice.solar_z["o"] = 0.00733
     vice.solar_z["mg"] = 0.000671
     vice.solar_z["fe"] = 0.00137
     vice.solar_z["n"] = 0.00104
-    print("yields set to Magg et al. 2022 abundances")
+    if verbose:
+        print("yields set to Magg et al. 2022 abundances")
 
 
 def set_defaults() -> None:
@@ -71,7 +70,7 @@ def set_defaults() -> None:
     sneia.settings["n"] = 0
 
 
-def set_yields(fe_ia_factor=1, yield_scale=1, **kwargs) -> None:
+def set_yields(fe_ia_factor=1, yield_scale=1,verbose=True, agb_n_model=None, **kwargs) -> None:
     """
     Ses the yields and abundace scale for the C project. 
 
@@ -86,17 +85,23 @@ def set_yields(fe_ia_factor=1, yield_scale=1, **kwargs) -> None:
         passed to set_c_yields
     
     """
-    set_magg22_scale()
+    set_magg22_scale(verbose=verbose)
     set_defaults()
 
     set_c_yields(**kwargs)
+    set_n_yields(agb_n_model)
 
     enhance_fe_ia(fe_ia_factor)
     scale_yields(yield_scale)
 
-    print_yields()
-    print_yc_tot()
+    if verbose:
+        print_yields()
+        print_yc_tot()
 
+
+def set_n_yields(agb_model=None):
+    if agb_model is not None:
+        agb.settings["n"] = interpolator("n", study=agb_model)
 
 
 def set_c_yields(

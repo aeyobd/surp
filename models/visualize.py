@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import argparse
 
 import sys
 import os
@@ -13,15 +14,13 @@ import arya
 
 def main():
     arya.style.init()
-    filenames = get_args()
-    for f in filenames:
-        plot_model(f)
+    filename, output = parse_args()
+    plot_model(filename, output)
 
 
 def plot_model(filename, plots_dir="figures"):
-    directory = make_dir(filename, plots_dir)
-    if not directory:
-        print("skipping ", filename, "failed to make directory")
+    if not os.path.exists(plots_dir):
+        raise FileNotFoundError("directory does not exist ", filename, "failed to make directory")
         return
 
     print("loading model")
@@ -29,8 +28,8 @@ def plot_model(filename, plots_dir="figures"):
     stars = sp.add_scatter(model.stars)
 
     pwd = os.getcwd()
-    print("cd ", directory)
-    os.chdir(directory)
+    print("cd ", plots_dir)
+    os.chdir(plots_dir)
 
     print("plotting")
 
@@ -38,15 +37,15 @@ def plot_model(filename, plots_dir="figures"):
     plt.savefig("mdf.pdf")
     plt.close()
 
-    plot_mdf_o_fe(model.history)
+    plot_mdf(model.history, x="MG_FE")
     plt.savefig("mdf_o_fe.pdf")
     plt.close()
 
-    plot_cooh_tracks(model.history)
+    plot_tracks(model.history)
     plt.savefig("cooh_gas.pdf")
     plt.close()
 
-    plot_coofe_tracks(model.history)
+    plot_tracks(model.history, x="MG_FE")
     plt.savefig("coofe_gas.pdf")
     plt.close()
 
@@ -63,36 +62,21 @@ def plot_model(filename, plots_dir="figures"):
     plt.savefig("ofefeh.pdf")
     plt.close()
 
-    print("cd ", pwd)
     os.chdir(pwd)
 
 
-def get_args():
-    if len(sys.argv) < 2:
-        raise RuntimeError("requires at least 1 arg, name of model")
-    filenames = sys.argv[1:]
-    
-    for filename in filenames:
-        if not os.path.exists(filename):
-            raise RuntimeError("file not found ", filename)
-    return filenames
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Makes a few plots of a vice model")
+    parser.add_argument("filename", help="path to surp .json model", type=str)
+    parser.add_argument("-o", "--output", default="./", type=str)
+
+    args = parser.parse_args()
+
+    return args.filename, args.output
 
 
 
-def make_dir(filename, plots_dir = "figures/", force=False):
-    dirname, _ = os.path.splitext(os.path.basename(filename))
-    dirname = os.path.join(plots_dir, dirname)
-    if os.path.exists(dirname):
-        if force:
-            return True
-        print("directory already exits: ", dirname)
-        overwrite = input("overwrite? (y/N)")
-        if overwrite != "y":
-            return False
-    else:
-        print("creating ", dirname)
-        os.mkdir(dirname)
-    return dirname
 
 def to_label(x):
     ele1, ele2 = x.split("_")
@@ -169,6 +153,9 @@ def plot_ofefeh(df):
     plt.ylim(-0.1, 0.5)
     plt.xlabel("[Fe/H]")
     plt.ylabel("[Mg/Fe]")
+
+
+
 
 
 

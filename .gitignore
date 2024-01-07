@@ -32,7 +32,6 @@ figures
 
 
 *.gz
-*.out
 
 nucleosynthesis_yields
 ReadMe
@@ -83,3 +82,7 @@ apogee_cartography.csv
 temp
 
 .coverage
+model.json
+stars.csv
+
+*walks.dat

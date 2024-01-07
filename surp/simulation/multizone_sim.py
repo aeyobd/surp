@@ -1,5 +1,4 @@
 import numpy as np
-import os
 
 import vice
 from vice.milkyway.milkyway import _get_radial_bins
@@ -12,7 +11,7 @@ from ..yields import set_yields
 from .._globals import MAX_SF_RADIUS, END_TIME, N_MAX
 
 
-def run_model(save_dir, filename,
+def run_model(filename,
               eta=1,
               agb_model="C11",
               timestep=0.01,
@@ -28,7 +27,7 @@ def run_model(save_dir, filename,
 
     print("configured yields")
 
-    model = create_model(save_dir, filename, timestep=timestep, eta=eta, **kwargs)
+    model = create_model(filename, timestep=timestep, eta=eta, **kwargs)
 
     print(model)
 
@@ -38,7 +37,7 @@ def run_model(save_dir, filename,
 
 
 
-def create_model(save_dir, filename, timestep=0.02,
+def create_model(filename, timestep=0.02,
         n_stars=2, 
         spec="insideout",
         eta=1, 
@@ -122,9 +121,8 @@ def create_model(save_dir, filename, timestep=0.02,
     print("using %i stars particles" % Nstars)
 
 
-    path = os.path.join(save_dir, filename)
     model = vice.milkyway(zone_width=zone_width,
-            name = path,
+            name = filename,
             n_stars=n_stars,
             verbose=verbose,
             N = Nstars,

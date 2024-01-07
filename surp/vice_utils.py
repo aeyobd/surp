@@ -5,9 +5,7 @@ import numpy as np
 import pandas as pd
 import vice
 
-from surp.simulation import multizone_sim
-from surp import yields
-from surp.gce_math import is_high_alpha
+import surp
 from ._globals import ELEMENTS, DATA_DIR
 
 
@@ -26,6 +24,9 @@ def load_vice(name, hydrodisk=False, zone_width=0.01):
     -------
     vice.multioutput file
     """
+
+    print("setting magg+22 abundances")
+    surp.yields.set_magg22_scale()
     milkyway = vice.output(name)
     if hydrodisk:
         milkyway.stars["abs_z"] = calculate_z(milkyway)
@@ -64,19 +65,19 @@ def reduce_history(multioutput, zone_width=0.1):
         df["R"] = np.repeat(zone_to_R(i, zone_width=zone_width), len(df))
         mdf = pd.concat((mdf, df), ignore_index=True)
     
+    history = rename_columns(history)
+    drop_z_cols(history)
+    history = order_abundance_ratios(history)
     return history, mdf
 
 
 
 def reduce_stars(multioutput):
     df = pd.DataFrame(multioutput.stars.todict())
-    print(df.keys())
     df = rename_columns(df)
     drop_z_cols(df)
-    print(df.keys())
     df = order_abundance_ratios(df)
-    print(df.keys())
-    df["high_alpha"] = is_high_alpha(df.MG_FE, df.MG_H)
+    df["high_alpha"] = surp.gce_math.is_high_alpha(df.MG_FE, df.MG_H)
     print(df.keys())
     return df
 

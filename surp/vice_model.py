@@ -2,9 +2,6 @@ import pandas as pd
 import json
 import os
 
-import surp
-from ._globals import DATA_DIR, ELEMENTS
-from surp.gce_math import is_high_alpha
 from . import vice_utils
 
 
