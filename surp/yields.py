@@ -21,19 +21,22 @@ ELEMS = ["c", "n", "o", "mg", "fe"]
 
 Y_C_0 = 2.85e-3
 ZETA_C_0 = 0.029
+
+# comments from linear regression of sampled points
+# regression ran on points with M_H > -1 except -1.5 for P16 and -2 for C11
 Y_C_AGB = {
-        "cristallo11": 3.2e-4,
-        "ventura13": 2.1e-4,
-        "karakas16": 3.4e-4,
-        "pignatari16": 6.9e-4,
+        "cristallo11": 3.0e-4, # 2.8 pm 0.5
+        "ventura13": 2.1e-4, # 3.0 pm 1.3
+        "karakas16": 3.6e-4, # 4.3 pm 0.6
+        "pignatari16": 6.9e-4, # 7.5 pm 1.5
         "A": 5e-4,
 }
 
 ZETA_C_AGB = {
-        "cristallo11": -0.01,
-        "ventura13": -0.04,
-        "karakas16": -0.04,
-        "pignatari16": -0.01,
+        "cristallo11": -0.015, # -0.032 pm 0.004
+        "ventura13": -0.04, #  -0.04 pm 0.01
+        "karakas16": -0.04, # -0.04 pm 0.006
+        "pignatari16": -0.01, # -0.010 pm 0.16
 }
 
 
