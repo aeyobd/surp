@@ -51,7 +51,7 @@ def brak_to_abund(data, ele, ele2="h"):
         return 10**data * vice.solar_z(ele) / vice.solar_z(ele2)
 
 def molar_mass(ele):
-    return molmass.ELEMENTS[ele.upper()].mass
+    return molmass.ELEMENTS[ele.title()].mass
 
 def A_to_Z(A, ele, mixing_correction=0, X=0.71):
     logZ = (A - 12)  + np.log10(X * mmass(ele)) 

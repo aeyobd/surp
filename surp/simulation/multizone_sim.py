@@ -47,6 +47,7 @@ def create_model(filename, timestep=0.02,
         sigma_R=1.27, 
         verbose=False,
         conroy_sf=False, 
+        RIa="plaw",
         zone_width=0.01):
 
     """"
@@ -139,6 +140,8 @@ def create_model(filename, timestep=0.02,
     model.bins = np.arange(-3, 3, 0.01)
     model.setup_nthreads = n_threads
     model.nthreads = min(len(model.elements), n_threads)
+    model.RIa = RIa
+    print("sneia model: ", RIa)
     print("using setup threads = ", n_threads)
     print("using model threads = ", model.nthreads)
             

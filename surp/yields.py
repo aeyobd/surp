@@ -25,7 +25,7 @@ ZETA_C_0 = 0.029
 # comments from linear regression of sampled points
 # regression ran on points with M_H > -1 except -1.5 for P16 and -2 for C11
 Y_C_AGB = {
-        "cristallo11": 3.0e-4, # 2.8 pm 0.5
+        "cristallo11": 3.8e-4, # 2.8 pm 0.5
         "ventura13": 2.1e-4, # 3.0 pm 1.3
         "karakas16": 3.6e-4, # 4.3 pm 0.6
         "pignatari16": 6.9e-4, # 7.5 pm 1.5
@@ -33,7 +33,7 @@ Y_C_AGB = {
 }
 
 ZETA_C_AGB = {
-        "cristallo11": -0.015, # -0.032 pm 0.004
+        "cristallo11": -0.01, # -0.032 pm 0.004
         "ventura13": -0.04, #  -0.04 pm 0.01
         "karakas16": -0.04, # -0.04 pm 0.006
         "pignatari16": -0.01, # -0.010 pm 0.16
@@ -115,6 +115,7 @@ def set_c_yields(
     mass_factor: float = 1,
     no_negative: bool = False,
     a_agb_kwargs: dict = {},
+    interp_kind: str = "linear",
     **kwargs
     ):
     """
@@ -153,12 +154,13 @@ def set_c_yields(
         if "zeta_agb" not in a_agb_kwargs.keys():
             raise ValueError("for analytic AGB model, zeta_agb must be specified")
 
-        y0 = alpha_agb * Y_C_AGB["A"]
-        agb.settings["c"] = C_AGB_Model(y0=y0, **a_agb_kwargs)
+        y0 = alpha_agb * y_c_agb
         zeta_agb = a_agb_kwargs["zeta_agb"]
+        a_agb_kwargs["zeta_agb"] *= alpha_agb
+        agb.settings["c"] = C_AGB_Model(y0=y0, **a_agb_kwargs)
     else:
         agb.settings["c"] = interpolator("c", agb_model, prefactor=alpha_agb,
-            mass_factor=mass_factor, no_negative=no_negative)
+            mass_factor=mass_factor, no_negative=no_negative, interp_kind=interp_kind)
         zeta_agb = ZETA_C_AGB[agb_model]
 
 
@@ -234,10 +236,14 @@ def print_yc_tot():
         alpha = yagb.prefactor
         y0_agb = alpha * Y_C_AGB[model]
         zeta_agb = alpha * ZETA_C_AGB[model]
-    elif isinstance(yagb, C_AGB_MODEL):
+        print("y0_agb ", Y_C_AGB[model])
+        print("z0_agb ", ZETA_C_AGB[model])
+    elif isinstance(yagb, C_AGB_Model):
         model = "A"
         y0_agb = yagb.y0
         zeta_agb = yagb.zeta
+        print("Y agb", y0_agb)
+        print("zeta agb", zeta_agb)
 
     print("agb_model: ", model)
 

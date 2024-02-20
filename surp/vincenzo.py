@@ -66,8 +66,8 @@ def vincenzo2021():
     data["[c/h]"] = raw["CHbirth_stars_bracket"]
     data["[n/h]"] = raw["NHbirth_stars_bracket"]
 
-    data["[n/o]"] = log_to_bracket(raw["NObirth_stars"], "n", "o")
-    data["[c/n]"] = log_to_bracket(raw["CNbirth_stars"], "c", "n")
+    data["[n/o]"] = gcem.log_to_brak(raw["NObirth_stars"], "n", "o")
+    data["[c/n]"] = gcem.log_to_brak(raw["CNbirth_stars"], "c", "n")
 
     data["age"] = raw["age_stars"]
 

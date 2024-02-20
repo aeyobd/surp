@@ -10,6 +10,7 @@ results
 *.gif
 *.json
 *.mp4
+*.csv
 
 *.lof
 *.lot

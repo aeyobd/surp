@@ -39,6 +39,7 @@ def parse_args():
     parser.add_argument("-z", "--zeta", type=float, default=None, 
                         help="the metallicity dependence of CCSNe C. By default calculated from emperical relationships")
 
+
     parser.add_argument("-e", "--eta", type=float, default=1,
                         help="a uniform factor to scale yields by")
     parser.add_argument("-s", "--spec", default="insideout", 
@@ -57,6 +58,8 @@ def parse_args():
                         help="the multiplicative amplitude of the late burst")
     parser.add_argument("-i", "--fe_ia_factor", default=1, type=float,
                         help="the iron yield factor of type Ia supernovae ")
+    parser.add_argument("-R", "--RIa", default="plaw", 
+                        help="SNe Ia DTD")
 
     parser.add_argument("--alpha_agb", default=None,
                         help="manually set the AGB scaling factor?")
@@ -71,9 +74,9 @@ def parse_args():
     parser.add_argument("--zeta_agb", default=-0.1,
                         help="metallicity dependence of AGB C in the analytic model")
 
-    parser.add_argument("--yl_cc", default=8.67e-4, 
+    parser.add_argument("--yl_cc", default=8.67e-4, type=float,
                         help="the C CC yield at Z=0")
-    parser.add_argument("--zl_cc", default=0, 
+    parser.add_argument("--zl_cc", default=0, type=float,
                         help="Metallicity to switch to low Z CC")
 
     parser.add_argument("-d", "--timestep", type=float, default=0.02, 
@@ -138,6 +141,7 @@ def generate_filename(parser, args):
     filename += arg_to_fname(parser, args, "migration_mode", name="")
     filename += arg_to_fname(parser, args, "sigma_R", depends = (args.migration_mode in ["gaussian", "rand_walk"]))
     filename += arg_to_fname(parser, args, "fe_ia_factor", name="fe_ia")
+    filename += arg_to_fname(parser, args, "RIa")
     filename += arg_to_fname(parser, args, "agb_n_model", name="N")
     filename += arg_to_fname(parser, args, "conroy_sf", flag=True)
     filename += arg_to_fname(parser, args, "timestep", name="dt")
@@ -190,6 +194,7 @@ def generate_params(args):
         conroy_sf = args.conroy_sf,
         yield_kwargs= yield_kwargs,
         zone_width = args.zone_width,
+        RIa = args.RIa,
     )
 
     return kwargs
