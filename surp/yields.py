@@ -1,22 +1,26 @@
 from typing import Optional
 from copy import copy
+from dataclasses import dataclass
 
 import numpy as np
 from scipy.integrate import quad
 from scipy.interpolate import interp1d
 
 import vice
-from vice.yields.agb import interpolator
+from .agb_interpolator import interpolator
 from vice.yields import ccsne, sneia, agb
 
 from surp._globals import Z_SUN
-from surp import gce_math as gcem
 from surp.yield_models import ZeroAGB, C_AGB_Model, C_CC_Model, LinAGB
 
-from .utils import isreal, validate, arg_isreal, print_row
+from .utils import print_row
 
 
 ELEMS = ["c", "n", "o", "mg", "fe"]
+
+def y_c_total(Z):
+    """Returns our adopted total C yield given Z"""
+    return Y_C_0 + ZETA_C_0*(Z-Z_SUN)
 
 
 Y_C_0 = 2.85e-3
@@ -52,6 +56,7 @@ def set_magg22_scale(verbose=True):
         print("yields set to Magg et al. 2022 abundances")
 
 
+
 def set_defaults() -> None:
     """Sets the constant default yield settings used in the carbon paper"""
     sneia.settings["c"] = 0
@@ -71,6 +76,25 @@ def set_defaults() -> None:
     agb.settings["n"] = LinAGB(eta=5.02e-4, y0=0)
     ccsne.settings["n"] = 5e-4
     sneia.settings["n"] = 0
+
+
+
+@dataclass
+class YieldParams:
+    agb_model:float
+    alpha_agb:float
+    f_agb:float
+    zeta_cc:float
+    fe_ia_factor:float
+    mass_factor:float
+    no_negative:float
+    yl:float
+    zl:float
+    agb_n_model:float
+
+    t_D:float
+    tau_agb:float
+    zeta_agb:float
 
 
 def set_yields(fe_ia_factor=1, yield_scale=1,verbose=True, agb_n_model=None, **kwargs) -> None:
@@ -258,24 +282,4 @@ def print_yc_tot():
 
 
 
-# TODO find where this function actually belongs (probably analysis)
-def agb_z_interp(N_points=500):
-    """
-    a convennience function which interpolates yields
-    """
-    ycc = vice.yields.ccsne.settings["c"]
-    vice.yields.ccsne.settings["c"] = 0
 
-    y_agb = []
-    Zs = gcem.MH_to_Z(np.linspace(-6, 1, N_points))
-    for Z in Zs:
-        mc, times = vice.single_stellar_population("c", Z=Z)
-        y_agb.append(mc[-1]/1e6)
-
-    vice.yields.ccsne.settings["c"] = ycc
-    return interp1d(Zs, y_agb, fill_value="extrapolate")
-
-
-def y_c_total(Z):
-    """Returns our adopted total C yield given Z"""
-    return Y_C_0 + ZETA_C_0*(Z-Z_SUN)

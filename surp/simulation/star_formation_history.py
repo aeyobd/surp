@@ -1,143 +1,199 @@
-from . import models
-from .._globals import  MAX_SF_RADIUS, MAX_RADIUS
-from .models.model_utils import get_bin_number, interpolate, gradient
+from .._globals import  MAX_RADIUS, DATA_DIR, END_TIME
+from ..utils import get_bin_number, interpolate 
+from . import sfh_models
+
 import numpy as np
+import math as m
 import vice
 
 
 
-def create_sf_law(model, conroy_sf=False, spec="insideout"):
-    for zone in model.zones:
-       zone.Mg0 = 0.
+def create_sfh_model(radius, params): 
+    tau_sfh = get_sfh_timescale(radius)
 
-    for i in range(model.n_zones):
-        R1 = model.annuli[i]
-        R2 = model.annuli[i+1]
-        R = (R1 + R2)/2
-
-        if R <= MAX_SF_RADIUS:
-            area = np.pi * (R2**2 - R1**2)
-            if conroy_sf:
-                model.zones[i].tau_star = conroy_sf_law(area)
-            elif spec=="twoinfall":
-                model.zones[i].tau_star = twoinfall_sf_law(area)
-            else:
-                model.zones[i].tau_star = vice.toolkit.J21_sf_law(area, mode="sfr")
-
-def conroy_tau_star(t):
-    if t < 2.5:
-        tau_st = 50
-    elif 2.5 <= t < 3.7:
-        tau_st = 50/(1+3*(t-2.5))**2
+    name = params.sfh_model
+    if name == "insideout":
+        sfh = sfh_models.insideout(radius, 
+           tau_rise=params.tau_rise, tau_sfh=tau_sfh)
+    elif name == "lateburst":
+        sfh = sfh_models.lateburst(radius)
+    elif name == "static":
+        sfh = sfh_models.static
     else:
-        tau_st = 2.36
-    return tau_st
+        raise ValueError("unknown SFH: ", name)
+
+    normalize_sfh(sfh, radius, params)
+    return sfh
 
 
-def conroy_sf_law(area=None):
-    def inner(t, m):
-        tau_st = conroy_tau_star(t)
-        return vice.toolkit.J21_sf_law(area, tau_st)(t, m)
-    return inner
-
-
-def twoinfall_sf_law(area=None):
-    def inner(t, m):
-        tau_st = twoinfall_tau_star(t)
-        return vice.toolkit.J21_sf_law(area, tau_st)(t, m)
-    return inner
-    
-
-def twoinfall_tau_star(t):
-    if t < 4.1:
-        return 1
-    else:
-        return 2
-
-def create_evolution(spec, burst_size, zone_width):
-    """From the parameters, creates a star formation law and 
-    returns a function of radius and time of the evolution. 
-    """
-    kwargs = {}
-    kwargs["spec"] = spec
-    kwargs["zone_width"] = zone_width
-
-    
-    if spec == "lateburst":
-        sf_model = models.lateburst
-        kwargs["burst_size"] = 1.5 * burst_size
-    elif spec == "twoexp":
-        sf_model = models.twoexp
-        kwargs["tau2"] = 2
-        kwargs["A21"] = burst_size
-    elif spec == "twoinfall":
-        sf_model = models.twoinfall
-        kwargs["tau1"] = 2
-        kwargs["A21"] = 3.5*burst_size
-    elif spec == "threeexp":
-        sf_model = models.twoinfall
-        kwargs["timescale2"] = 1
-        kwargs["amplitude"] = 0.5*burst_size
-        kwargs["t1"] = 5
-        kwargs["amplitude3"] = 0.2
-        kwargs["t2"] = 12
-    elif  spec=="insideout":
-        sf_model = models.insideout
-    else:
-        raise ValueError("name not none: ", spec)
-
-
-    evolution = star_formation_history(sf_model, **kwargs)
-    return evolution
 
 class star_formation_history:
     r"""
     The star formation history (SFH) of the model galaxy. This object will be
-    used as the ``evolution`` attribute of the ``diskmodel``.
-
-    Parameters
-    ----------
-    spec : ``str`` [default : "static"]
-        A keyword denoting the time-dependence of the SFH.
-    **kwargs:
-        passed to model
-
-    Calling
-    -------
-    - Parameters
-
-        radius : ``float``
-            Galactocentric radius in kpc.
-        time : ``float``
-            Simulation time in Gyr.
+    used as the ``evolution`` attribute of the milky way model.
     """
 
-    def __init__(self, sf_model, zone_width=0.1, **kwargs):
-        self._radii = np.arange(zone_width/2, MAX_RADIUS, zone_width)
-        self._evol = [sf_model(r) for r in self._radii]
-        self.sf_model = sf_model
+    def __init__(self, params):
+        self._radii = np.arange(params.zone_width/2, MAX_RADIUS, params.zone_width) # maybe _get_radial_bins instead
+        self._evol = [create_sfh_model(r, params) for r in self._radii]
+        self._max_sf = params.max_sf_radius
+        self.sfh_model = params.sfh_model
+        self._params = params
 
     def __call__(self, radius, time):
         # The milkyway object will always call this with a radius in the
         # self._radii array, but this ensures a continuous function of radius
-        if radius > MAX_SF_RADIUS:
+        if radius > self._max_sf:
             return 0
+
+        idx = get_bin_number(self._radii, radius)
+
+        if idx != -1:
+            return BG16_stellar_density(radius, self._params) * interpolate(self._radii[idx],
+                self._evol[idx](time), self._radii[idx + 1],
+                self._evol[idx + 1](time), radius)
         else:
-            idx = get_bin_number(self._radii, radius)
-            if idx != -1:
-                return gradient(radius) * interpolate(self._radii[idx],
-                    self._evol[idx](time), self._radii[idx + 1],
-                    self._evol[idx + 1](time), radius)
-            else:
-                return gradient(radius) * interpolate(self._radii[-2],
-                    self._evol[-2](time), self._radii[-1], self._evol[-1](time),
-                    radius)
-    
+            return BG16_stellar_density(radius, self._params) * interpolate(self._radii[-2],
+                self._evol[-2](time), self._radii[-1], self._evol[-1](time),
+                radius)
+
 
     def __str__(self):
-        return f"{self.sf_model}"
+        return f"{self.sfh_model}"
 
     def __repr__(self):
         return str(self)
 
 
+
+def get_sfh_timescale(radius, Re = 5):
+    r"""
+    Determine the timescale of star formation at a given radius reported
+    by Sanchez (2020) [1]_.
+
+    Parameters
+    ----------
+    radius : real number
+        Galactocentric radius in kpc.
+    Re : real number [default : 5]
+        The effective radius (i.e. half-mass radius) of the galaxy in kpc.
+
+    Returns
+    -------
+    tau_sfh : real number
+        The e-folding timescale of the star formation history at that
+        radius. The detailed time-dependence on the star formation history
+        has the following form:
+
+        .. math:: \dot{M}_\star \sim
+            (1 - e^{-t / \tau_\text{rise}})e^{-t / \tau_\text{sfh}}
+
+        where :math:`\tau_\text{rise}` = 2 Gyr and :math:`\tau_\text{sfh}`
+        is the value returned by this function.
+
+    .. [1] Sanchez (2020), ARA&A, 58, 99
+    """
+    radius /= Re # convert to units of Re
+    radii, timescales = _read_sanchez_data()
+    idx = get_bin_number(radii, radius)
+    if idx != -1:
+        return interpolate(radii[idx], timescales[idx], radii[idx + 1],
+            timescales[idx + 1], radius) 
+    else:
+        return interpolate(radii[-2], timescales[-2], radii[-1],
+            timescales[-1], radius) 
+
+
+
+
+
+
+
+def BG16_stellar_density(radius, params):
+    r"""
+    The gradient in stellar surface density defined in Bland-Hawthorn &
+    Gerhard (2016) [1]_.
+    
+    Parameters
+    ----------
+    radius : real number
+        Galactocentric radius in kpc.
+    
+    Returns
+    -------
+    sigma : real number
+        The radial surface density at that radius defined by the following
+        double-exponential profile:
+    
+        .. math:: \Sigma_\star(r) = e^{-r/r_t} + Ae^{-r/r_T}
+    
+        where :math:`r_t` = 2.5 kpc is the scale radius of the thin disk,
+        :math:`r_T` = 2.0 kpc is the scale radius of the thick disk, and
+        :math:`A = \Sigma_T / \Sigma_t \approx` 0.27 is the ratio of thick to
+        thin disks at :math:`r = 0`.
+    
+        .. note:: This gradient is un-normalized.
+
+    .. [1] Bland-Hawthorn & Gerhard (2016), ARA&A, 54, 529
+    """
+
+    R_thin = params.thin_disk_scale_radius
+    R_thick = params.thick_disk_scale_radius
+    A_thick = params.thin_to_thick_ratio
+    return m.exp(-radius / R_thin) + A_thick * m.exp(-radius / R_thick)
+
+
+def _read_sanchez_data():
+    r"""
+    Reads the Sanchez (2020) [1]_ star formation timescale data.
+
+    Returns
+    -------
+    radii : list
+        Radius in units of the effective radius :math:`R_e` (i.e. the
+        half-mass radius).
+    timescales : list
+        The star formation timescales in Gyr associated with each effective
+        radius.
+
+    .. [1] Sanchez (2020), ARA&A, 58, 99
+    """
+    radii = []
+    timescales = []
+
+    filename = f"{DATA_DIR}/sanchez_tau_sfh.dat"
+    with open(filename, 'r') as f:
+
+        line = f.readline()
+        
+        # read past the header
+        while line[0] == '#':
+            line = f.readline()
+
+        # pull in each line until end of file is reached
+        while line != "":
+            line = [float(i) for i in line.split()]
+            radii.append(line[0])
+            timescales.append(line[1])
+            line = f.readline()
+
+        f.close()
+    return [radii, timescales]
+
+
+def normalize_sfh(sfh_model, radius, params, radial_gradient=BG16_stellar_density):
+    dt = params.timestep
+    dr = params.zone_width
+
+    time_integral = 0
+    for i in range(int(END_TIME / dt)):
+        time_integral += sfh_model(i * dt) * dt * 1.e9 # yr to Gyr
+
+    radial_integral = 0
+    for i in range(int(params.max_sf_radius / dr)):
+        r = dr * (i + 1/2)
+        radial_integral += radial_gradient(r, params) * m.pi * (
+            (dr * (i + 1))**2 - (dr * i)**2
+        )
+
+    return params.M_star_MW / ((1 - params.r) * radial_integral * time_integral)

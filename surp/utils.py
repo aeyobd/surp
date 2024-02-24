@@ -96,6 +96,7 @@ def print_row(*args, widths=None, float_fmt="%0.2e"):
     print()
 
 
+
 def download_or_load(filename, url, size=""):
     script_dir = os.path.dirname(__file__)
     abs_path = os.path.join(script_dir, filename)
@@ -124,3 +125,22 @@ def download_or_load(filename, url, size=""):
     cols = [col for col in dat.colnames if len(dat[col].shape) <= 1]
 
     return dat[cols]
+
+
+def get_bin_number(bins, value):
+    r"""
+    Returns the index of the bin in bins containing value. Returns -1 if outside the bins
+    """
+    for i in range(len(bins) - 1):
+        if bins[i] <= value <= bins[i + 1]: return i
+    return -1
+
+
+
+def interpolate(x1, y1, x2, y2, x):
+    r"""
+    Extrapolate a y-coordinate for a given x-coordinate from a line defined
+    by two points (x1, y1) and (x2, y2) in arbitrary units.
+    """
+    m = (y2 - y1) / (x2 - x1)
+    return  m * (x - x1) + y1

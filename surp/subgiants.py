@@ -23,6 +23,7 @@ def bracket(df, ele, ele2="H"):
         else:
             return df["%s_FE" % ele] - df["%s_FE" % ele2]
 
+
 def retrieve_apogee():
     """
     Checks if the apogee file exists, downloads it if not, and then returns the

@@ -1,5 +1,4 @@
 import numpy as np
-from .model_utils import get_bin_number, interpolate, normalize, gradient, timescale
 
 
 class static:
@@ -7,11 +6,10 @@ class static:
     The constant SFH model from Johnson et al. (2021).
     """
     def __init__(self, radius, dt = 0.01, dr = 0.1):
-        self.amplitude = 1
-        self.amplitude *= normalize(self, gradient, radius, dt = dt, dr = dr)
+        self.norm = 1
 
     def __call__(self):
-        return self.amplitude
+        return self.norm
 
 
 class insideout:
@@ -27,15 +25,14 @@ class insideout:
     dr : float [default : 0.1]
         The width of the annulus in kpc.
     """
-    def __init__(self, radius, dt = 0.01, dr = 0.1, tau_rise=2.0):
-        tau = timescale(radius)
-        kwargs = {"norm": 1, "tau": tau, "tau_rise": tau_rise}
+    def __init__(self, radius, tau_rise=2.0, tau_sfh=5):
+        kwargs = {"norm": 1, "tau": tau_sfh, "tau_rise": tau_rise}
         self.kwargs = kwargs
+        self.norm = 1
 
-        self.kwargs["norm"] *= normalize(self, gradient, radius, dt=dt, dr=dr)
 
     def __call__(self, time):
-        return modified_exponential(time, **self.kwargs)
+        return self.norm * modified_exponential(time, **self.kwargs)
 
     def __str__(self):
         return f"sfh ∝ (1-exp(t/{self.tau_rise}) * exp(-t/{self.tau})"
@@ -55,19 +52,18 @@ class lateburst:
         The width of the annulus in kpc.
     """
 
-    def __init__(self, radius, dt = 0.01, dr = 0.1, 
-              burst_size=1.5, burst_width=1, burst_time=11.2, tau_rise=2.0):
-        self.tau = timescale(radius)
+    def __init__(self, tau_sfh, burst_size=1.5, 
+                 burst_width=1, burst_time=11.2, tau_rise=2.0):
+        self.tau = tau_sfh
         self.tau_rise = tau_rise
         self.burst_time = burst_time
         self.burst_width = burst_width
         self.burst_size = burst_size
 
-        self._prefactor = 1
-        self._prefactor = normalize(self, gradient, radius, dt=dt, dr=dr) 
+        self.norm = 1
 
     def __call__(self, t):
-        return self._prefactor * modified_exponential(t, self.tau, self.tau_rise) * (
+        return self.norm * modified_exponential(t, self.tau, self.tau_rise) * (
                 1 + gaussian(t, self.burst_time, self.burst_width, self.burst_size) )
 
 
@@ -99,47 +95,35 @@ class twoexp:
 
     """
 
-    def __init__(self, radius, dt = 0.01, dr = 0.1, **kwargs):
-        if "tau2" not in kwargs.keys():
-            kwargs["tau2"] = timescale(radius)
-
-        kwargs["norm"] = 1
+    def __init__(self, radius, **kwargs):
+        self.norm = 1
         self.kwargs = kwargs
 
-        self.kwargs["norm"] *= normalize(self, gradient, radius, dt=dt, dr=dr)
-
     def __call__(self, time):
-        return double_exponential(time, norm=self.norm, **self.kwargs)
+        return self.norm * double_exponential(time, **self.kwargs)
 
 
 
 class threeexp:
-    def __init__(self, radius, dt = 0.01, dr = 0.1, **kwargs):
-        if "tau" not in kwargs.keys():
-            kwargs["tau"] = timescale(radius)
-
-        kwargs["norm"] = 1
+    def __init__(self, radius, **kwargs):
         self.kwargs = kwargs
-
-        self.kwargs["norm"] *= normalize(self, gradient, radius, dt=dt, dr=dr)
+        self.norm = 1
 
     def __call__(self, time):
-        return double_exponential(time, norm=self.norm, **self.kwargs)
-
-
+        return self.norm * double_exponential(time, norm=self.norm, **self.kwargs)
 
 
 
 def modified_exponential(t, tau, tau_rise, norm=1):
-    return norm * (1 - np.exp(-t/tau_rise)) * exponential(t, tau) 
+    return (1 - np.exp(-t/tau_rise)) * exponential(t, tau) 
 
 
 def exponential(t, tau, norm=1):
-    return norm * np.exp(-t / tau)
+    return np.exp(-t / tau)
 
 
 def gaussian(t, mean, std, norm=1):
-    return norm * np.exp( -(t-mean)**2 / (2*std**2) )
+    return np.exp( -(t-mean)**2 / (2*std**2) )
 
 
 def double_exponential(t, norm=1, tau1=2, tau2=1, A21=3.47, t1=4.1, t2=13.2):
@@ -147,7 +131,7 @@ def double_exponential(t, norm=1, tau1=2, tau2=1, A21=3.47, t1=4.1, t2=13.2):
     B = A21 / (tau2 * (1 - np.exp(-(t2-t1)/tau2)))
     B *= (t > self.t1)
 
-    return norm * ( 
+    return ( 
        A * np.exp(-t/tau1) + 
        B * np.exp((-t+t1)/tau2) )
 
@@ -156,8 +140,7 @@ def triple_exponential(t, A32=0.4, tau3=0.15, t2=11, t3=13.2, **kwargs):
     C = A32  / (tau3 * (1 - np.exp(-(t3-t2)/tau3)))
     C *= (t > self.t2)
 
-    return  self.norm * (
-        double_exponential(t, t2=t2, **kwargs)
+    return  ( double_exponential(t, t2=t2, **kwargs)
         + C * np.exp(-(t-t2)/tau3)
         )
 

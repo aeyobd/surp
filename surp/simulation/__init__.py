@@ -1,3 +1,4 @@
-__all__ = ["multizone_sim"]
+__all__ = ["create_model"]
 
-from . import multizone_sim
+from .create_model import create_model
+from .parameters import MWParams
