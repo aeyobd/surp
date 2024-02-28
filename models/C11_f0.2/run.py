@@ -1,9 +1,8 @@
 import surp
 
-name, param_file, yields_file = parse_args()
 
-params = surp.MWParams.from_file(param_file)
-yields = surp.MWParams.from_file(yields_file)
+params = surp.MWParams.from_file("params.json")
+yields = surp.yields.YieldParams.from_file("yield_params.json")
 
 print(params)
 print(yields)
@@ -11,6 +10,7 @@ print(yields)
 surp.yields.set_yields(yields)
 model = surp.create_model(params)
 
+model.verbose = True
 print("created model")
 
 model.run(params.times, overwrite=True, pickle=True)

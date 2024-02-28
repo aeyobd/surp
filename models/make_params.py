@@ -3,7 +3,9 @@ import subprocess
 import sys
 import os
 import json
-from surp.simulation import MWParams
+from surp import MWParams, YieldParams
+
+from calc_yields import make_yield_params
 
 AGB_KEYS = { "C11": "cristallo11",
             "K10": "karakas10",
@@ -17,15 +19,22 @@ AGB_KEYS = { "C11": "cristallo11",
 def main():
     parser, args = parse_args()
     dirname = generate_filename(parser, args)
-    params = generate_params(args)
+    yparams, params = generate_params(args)
 
-    os.mkdir(dirname)
+    if os.path.exists(dirname):
+        ans = input(f"overwrite directory {dirname}? y/N")
+        if ans != "y":
+            print("exiting, directory exists: ", dirname)
+            return
+
+    else:
+        os.mkdir(dirname)
     path = f"./{dirname}/params.json"
+    ypath = f"./{dirname}/yield_params.json"
 
-    print("saving params to ", path)
-    with open(path, "w") as f:
-        f.write(json.dumps(params, indent=4))
-
+    print("saving params to ", dirname)
+    yparams.save(ypath)
+    params.save(path)
 
 
 
@@ -47,10 +56,10 @@ def parse_args():
                         help="""star formation specification. Options include
                         [insideout, constant, lateburst, outerburst, 
                         twoexp, threeexp, twoinfall]""")
-    parser.add_argument("-c", "--conroy_sf", action="store_true", 
-                        help="use the conroy ++ 2022 sfe law")
-    parser.add_argument("-M", "--migration_mode", default="gaussian", 
-                        help="""The migration mode. Default is Gaussian.
+    parser.add_argument("-c", "--sf_law", default="J21",
+                        help="Specifies the sfh law")
+    parser.add_argument("-M", "--migration_mode", default="diffusion", 
+                        help="""The migration mode. Default is Diffusion.
                         Acceptable alternate options include diffusion, post-process, linear, 
                         sudden, and rand_walk""")
     parser.add_argument("-S", "--sigma_R", default=1.27, type=float,
@@ -90,11 +99,9 @@ def parse_args():
                         help="the default name of the model filename")
     parser.add_argument("-o", "--output", default=None,
                         help="the directory name to create")
-    parser.add_argument("-t", "--test_run", action="store_true", 
-                        help="only run a test")
     parser.add_argument("-j", "--threads", default=1, type=int,
                         help="number of threads to run")
-    parser.add_argument("-N", "--agb_n_model", default=None,
+    parser.add_argument("-N", "--agb_n_model", default="A",
                         help="the AGB N model to use")
     return parser, parser.parse_args()
 
@@ -144,7 +151,7 @@ def generate_filename(parser, args):
     filename += arg_to_fname(parser, args, "fe_ia_factor", name="fe_ia")
     filename += arg_to_fname(parser, args, "RIa")
     filename += arg_to_fname(parser, args, "agb_n_model", name="N")
-    filename += arg_to_fname(parser, args, "conroy_sf", flag=True)
+    filename += arg_to_fname(parser, args, "sf_law", name="sfl")
     filename += arg_to_fname(parser, args, "timestep", name="dt")
     filename += arg_to_fname(parser, args, "zone_width", name="w")
     filename += arg_to_fname(parser, args, "n_stars")
@@ -155,13 +162,12 @@ def generate_filename(parser, args):
 
 
 def generate_params(args):
-
     args.agb_model = AGB_KEYS[args.agb_model]
     if args.agb_n_model is not None:
         args.agb_n_model = AGB_KEYS[args.agb_n_model]
 
 
-    yield_kwargs = dict(
+    yield_params = make_yield_params(
         agb_model = args.agb_model,
         alpha_agb = args.alpha_agb,
         f_agb = args.agb_fraction,
@@ -169,37 +175,28 @@ def generate_params(args):
         fe_ia_factor = args.fe_ia_factor,
         mass_factor = args.m_factor,
         no_negative = args.no_negative,
-        yl = args.yl_cc,
-        zl = args.zl_cc,
+        y1 = args.yl_cc,
+        z1 = args.zl_cc,
         agb_n_model = args.agb_n_model,
+        t_D = args.t_d,
+        tau_agb = args.tau_agb,
+        zeta_agb = args.zeta_agb,
     )
 
-    if args.agb_model == "A":
-        yield_kwargs["a_agb_kwargs"] = dict(
-            t_D = args.t_d,
-            tau_agb = args.tau_agb,
-            zeta_agb = args.zeta_agb,
-        )
-
-    mw_kwargs = dict(
-        eta = args.eta,
+    mw_params = MWParams(
+        yield_scale = args.eta,
         timestep = args.timestep,
         n_stars = args.n_stars,
         migration_mode = args.migration_mode,
-        n_threads = args.threads,
-        verbose = args.test_run,
+        migration = "gaussian",
         sigma_R = args.sigma_R,
-        spec = args.spec,
-        lateburst_amplitude = args.burst_amplitude,
-        conroy_sf = args.conroy_sf,
+        sfh_model = args.spec,
+        sf_law = args.sf_law,
         zone_width = args.zone_width,
         RIa = args.RIa,
     )
 
-    params = {}
-    params["yields"] = yield_kwargs
-    params["mw"] = mw_kwargs
-    return params
+    return yield_params, mw_params
 
 
 

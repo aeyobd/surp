@@ -2,6 +2,7 @@ from dataclasses import dataclass, field, asdict
 from .._globals import END_TIME
 import json
 from vice.milkyway.milkyway import _get_radial_bins
+import numpy as np
 
 
 
@@ -62,8 +63,8 @@ class MWParams:
     r:float = 0.4
     timestep:float = 0.02
     n_stars:int = 1
-    migration_mode = "diffusion"
-    migration = "gaussian"
+    migration_mode:str = "diffusion"
+    migration:str = "gaussian"
     verbose:bool = False
     sigma_R:bool = True
     sf_law:str = "J21"
@@ -105,6 +106,10 @@ class MWParams:
     def radial_bins(self):
         return _get_radial_bins(self.zone_width)
 
+    @property
+    def times(self):
+        return np.arange(0, END_TIME, self.timestep)
+
     def calc_N_stars_tot(self):
         Nstars = int(2*self.max_sf_radius/self.zone_width * END_TIME/self.timestep * self.n_stars)
 
@@ -121,7 +126,7 @@ class MWParams:
 
     def save(self, filename):
         with open(filename, "w") as f:
-            json.dump(self.to_dict(), f)
+            json.dump(self.to_dict(), f, indent=4)
 
 
     @classmethod

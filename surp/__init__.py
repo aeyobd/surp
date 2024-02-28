@@ -4,6 +4,7 @@ from .simulation.create_model import create_model
 
 from . import utils
 from . import yields
+from .yields import YieldParams
 from . import yield_models
 from . import gce_math
 from . import plots

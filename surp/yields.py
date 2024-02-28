@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field, asdict
+import json
 
 import vice
 from vice.yields import ccsne, sneia, agb
@@ -22,7 +23,7 @@ class YieldParams:
     c_cc_z1:float = 0
 
     c_agb_model:str = "cristallo11"
-    c_agb_alpha:float = None
+    c_agb_alpha:float = 1
     c_agb_kwargs:dict = field(default_factory=dict)
 
     n_agb_model:str = "A"
@@ -39,7 +40,7 @@ class YieldParams:
 
     def save(self, filename):
         with open(filename, "w") as f:
-            json.dump(self.to_dict(), f)
+            json.dump(self.to_dict(), f, indent=4)
 
 
     @classmethod
@@ -109,7 +110,7 @@ def get_c_agb_model(params):
     else:
         model = interpolator("c", study=params.c_agb_model, **params.c_agb_kwargs)
 
-    model *= params.alpha_agb
+    model *= params.c_agb_alpha
     return model
 
 

@@ -1,3 +1,5 @@
+import surp
+
 Y_C_0 = 2.85e-3
 ZETA_C_0 = 0.029
 
@@ -25,51 +27,54 @@ def y_c_total(Z):
     return Y_C_0 + ZETA_C_0*(Z-Z_SUN)
 
 
-def make_yield_params( zeta_cc=None, fe_ia_factor=1,
-        **kwargs):
+def make_yield_params( zeta_cc=None, agb_n_model="A", fe_ia_factor=1,y1=1e-4, z1=0, **kwargs):
 
     params = surp.yields.YieldParams()
-    y_agb, zeta_agb = set_agb(params, **kwargs)
+    y_c_agb, zeta_c_agb = set_agb(params, **kwargs)
 
-
-    y_cc = Y_C_0 - y_agb
+    y_c_cc = Y_C_0 - y_c_agb
 
     if zeta_cc is None:
-        zeta_cc = ZETA_C_0 - zeta_agb
+        zeta_cc = ZETA_C_0 - zeta_c_agb
 
-    params.c_cc_y0 = Y_C_0 - alpha_agb * y_c_agb
+    params.c_cc_y0 = y_c_cc
     params.c_cc_zeta = zeta_cc
+    params.c_cc_kwargs = dict(y1=y1, z1=z1)
+    params.n_agb_model = agb_n_model
 
-    enahce_fe_ia(params, fe_ia_factor)
+    enhance_fe_ia(params, fe_ia_factor)
     return params
 
 
 
-def set_agb(params, agb_model="cristallo11", f_agb=0.2, alpha_agb=None, zeta_agb=None):
-    y_c_agb = Y_C_AGB[agb_model]
+def set_agb(params, agb_model="cristallo11", f_agb=0.2, alpha_agb=None, zeta_agb=None, mass_factor=1, no_negative=False, interp_kind="linear", 
+        t_D=0.1, tau_agb=0.3 ):
 
-    if alpha_agb is None:
-        alpha_agb = f_agb * Y_C_0 /y_c_agb
-
-    y0 = alpha_agb * y_c_agb
+    y0 = f_agb * Y_C_0
 
     if agb_model == "A":
         if zeta_agb is None:
             raise ValueError("for analytic AGB model, zeta_agb must be specified")
 
         params.c_agb_zeta *= alpha_agb
-        params.c_agb_alpha = alpha_agb
-        params.c_agb_kwargs = dict(t_d_agb, tau_agb, etc.)
+        params.c_agb_kwargs = dict(t_D=t_d_agb, tau_agb=tau_agb, y0=y0)
+        params.c_agb_alpha = 1
     else:
-        params.c_agb_params = dict(alpha=alpha_agb, mass_factor=mass_factor, 
+        params.c_agb_kwargs = dict(mass_factor=mass_factor, 
                 no_negative=no_negative, interp_kind=interp_kind)
-        # equals kwargs?
+
+        y_c_agb = Y_C_AGB[agb_model]
+        if alpha_agb is None:
+            alpha_agb = y0 / y_c_agb
+
         zeta_agb = ZETA_C_AGB[agb_model] * alpha_agb
+        params.c_agb_alpha = alpha_agb
+
 
     return y0, zeta_agb
 
 
-def enhance_fe_ia(params, factor)
+def enhance_fe_ia(params, factor):
     """if factor != 1, then enhances sne ia fe yield by factor but maintains same total fe yield, applied to params"""
     if factor == 1:
         return
