@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from .._globals import END_TIME
+import json
 
 
 
@@ -73,6 +74,8 @@ class MWParams:
     zone_width:float = 0.1
 
     RIa:str = "plaw"
+    N_star_tot:int = 0
+
     sfh_model:str = "insideout"
     sfh_tau1:float = None
     sfh_A1:float = None
@@ -92,7 +95,9 @@ class MWParams:
 
     # Stellar mass of Milky Way (Licquia & Newman 2015, ApJ, 806, 96)
     M_star_MW:float = 5.17e10
-    N_star_tot:int = 0
+
+    def __post_init(self):
+        self.process()
 
     def process(self):
         if self.migration_mode == "post-process":
@@ -117,3 +122,17 @@ class MWParams:
         self.N_star_tot = Nstars
 
         return Nstars
+
+    def to_dict(self):
+        pass
+
+    def from_dict(self):
+        pass
+
+    def save(self, filename):
+
+        pass
+
+
+    def from_file(self, filename):
+        pass

@@ -1,4 +1,6 @@
 from . import simulation
+from .simulation import MWParams
+from .simulation.create_model import create_model
 
 from . import utils
 from . import yields

@@ -3,7 +3,6 @@ import subprocess
 import sys
 import os
 import json
-from surp.simulation import MWParams
 
 AGB_KEYS = { "C11": "cristallo11",
             "K10": "karakas10",
@@ -153,7 +152,6 @@ def generate_filename(parser, args):
     return filename
 
 
-
 def generate_params(args):
 
     args.agb_model = AGB_KEYS[args.agb_model]
@@ -181,7 +179,7 @@ def generate_params(args):
             zeta_agb = args.zeta_agb,
         )
 
-    mw_kwargs = dict(
+    kwargs = dict(
         eta = args.eta,
         timestep = args.timestep,
         n_stars = args.n_stars,
@@ -192,14 +190,12 @@ def generate_params(args):
         spec = args.spec,
         lateburst_amplitude = args.burst_amplitude,
         conroy_sf = args.conroy_sf,
+        yield_kwargs= yield_kwargs,
         zone_width = args.zone_width,
         RIa = args.RIa,
     )
 
-    params = {}
-    params["yields"] = yield_kwargs
-    params["mw"] = mw_kwargs
-    return params
+    return kwargs
 
 
 
