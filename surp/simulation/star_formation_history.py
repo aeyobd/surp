@@ -1,29 +1,11 @@
+from copy import copy
+import numpy as np
+
+import vice
+
 from .._globals import  MAX_RADIUS, DATA_DIR, END_TIME
 from ..utils import get_bin_number, interpolate 
 from . import sfh_models
-
-import numpy as np
-import math as m
-import vice
-
-
-
-def create_sfh_model(radius, params): 
-    tau_sfh = get_sfh_timescale(radius)
-
-    name = params.sfh_model
-    if name == "insideout":
-        sfh = sfh_models.insideout(radius, 
-           tau_rise=params.tau_rise, tau_sfh=tau_sfh)
-    elif name == "lateburst":
-        sfh = sfh_models.lateburst(radius)
-    elif name == "static":
-        sfh = sfh_models.static
-    else:
-        raise ValueError("unknown SFH: ", name)
-
-    normalize_sfh(sfh, radius, params)
-    return sfh
 
 
 
@@ -34,36 +16,81 @@ class star_formation_history:
     """
 
     def __init__(self, params):
-        self._radii = np.arange(params.zone_width/2, MAX_RADIUS, params.zone_width) # maybe _get_radial_bins instead
-        self._evol = [create_sfh_model(r, params) for r in self._radii]
-        self._max_sf = params.max_sf_radius
-        self.sfh_model = params.sfh_model
+        self._radii = midpoints(params.radial_bins)
         self._params = params
+        self.create_sfhs()
+        self.normalize()
+
+
+    def create_sfhs(self):
+        self._evol = []
+
+        for i in range(len(self)):
+            r = self._radii[i]
+            evol = create_sfh_model(r, self._params)
+            self._evol.append(evol)
+
+    def normalize(self):
+        masses = normalized_gradient(self._params)
+        dt = self._params.timestep
+        self._coeffs = np.ones(len(self))
+
+        for i in range(len(self)):
+            time_integral = 0
+            for j in range(int(END_TIME / dt)):
+                t = j * dt
+                time_integral += self._evol[i](t) * dt * 1.e9 # yr to Gyr
+            self._coeffs[i] = masses[i] / (time_integral * (1 - self._params.r))
+
+
+    def __len__(self):
+        return len(self._radii)
 
     def __call__(self, radius, time):
         # The milkyway object will always call this with a radius in the
         # self._radii array, but this ensures a continuous function of radius
-        if radius > self._max_sf:
+        if radius > self._params.max_sf_radius:
             return 0
 
         idx = get_bin_number(self._radii, radius)
 
         if idx != -1:
-            return BG16_stellar_density(radius, self._params) * interpolate(self._radii[idx],
+            return self._coeffs[idx] * interpolate(self._radii[idx],
                 self._evol[idx](time), self._radii[idx + 1],
                 self._evol[idx + 1](time), radius)
         else:
-            return BG16_stellar_density(radius, self._params) * interpolate(self._radii[-2],
+            return self._coeffs[idx] * interpolate(self._radii[-2],
                 self._evol[-2](time), self._radii[-1], self._evol[-1](time),
                 radius)
 
 
     def __str__(self):
-        return f"{self.sfh_model}"
+        return f"{self._params.sfh_model}"
 
     def __repr__(self):
         return str(self)
 
+
+
+def create_sfh_model(radius, params): 
+    tau_sfh = get_sfh_timescale(radius)
+
+    kwargs = copy(params.sfh_kwargs)
+    for key, val in kwargs.items():
+        if val == "sanchez":
+            val = tau_sfh
+
+    name = params.sfh_model
+    if name == "insideout":
+        sfh = sfh_models.insideout(radius, **kwargs)
+    elif name == "lateburst":
+        sfh = sfh_models.lateburst(radius, **kwargs)
+    elif name == "static":
+        sfh = sfh_models.static(radius)
+    else:
+        raise ValueError("unknown SFH: ", name)
+
+    return sfh
 
 
 def get_sfh_timescale(radius, Re = 5):
@@ -105,6 +132,13 @@ def get_sfh_timescale(radius, Re = 5):
 
 
 
+def midpoints(array):
+    a = np.array(array)
+    return 1/2*(a[1:] + a[:-1])
+
+def delta(array):
+    a = np.array(array)
+    return a[1:] - a[:-1]
 
 
 
@@ -140,7 +174,7 @@ def BG16_stellar_density(radius, params):
     R_thin = params.thin_disk_scale_radius
     R_thick = params.thick_disk_scale_radius
     A_thick = params.thin_to_thick_ratio
-    return m.exp(-radius / R_thin) + A_thick * m.exp(-radius / R_thick)
+    return np.exp(-radius / R_thin) + A_thick * np.exp(-radius / R_thick)
 
 
 def _read_sanchez_data():
@@ -181,19 +215,14 @@ def _read_sanchez_data():
     return [radii, timescales]
 
 
-def normalize_sfh(sfh_model, radius, params, radial_gradient=BG16_stellar_density):
-    dt = params.timestep
-    dr = params.zone_width
+def normalized_gradient(params, gradient=BG16_stellar_density):
+    radial_bins = np.array(params.radial_bins)
 
-    time_integral = 0
-    for i in range(int(END_TIME / dt)):
-        time_integral += sfh_model(i * dt) * dt * 1.e9 # yr to Gyr
+    radii = midpoints(radial_bins)
+    unnorm = gradient(radii, params)
+    unnorm = np.where(radii > params.max_sf_radius, 0, unnorm)
 
-    radial_integral = 0
-    for i in range(int(params.max_sf_radius / dr)):
-        r = dr * (i + 1/2)
-        radial_integral += radial_gradient(r, params) * m.pi * (
-            (dr * (i + 1))**2 - (dr * i)**2
-        )
+    areas = np.pi * (radial_bins[1:]**2 - radial_bins[:-1]**2)
+    radius_integral = np.sum(unnorm * areas)
 
-    return params.M_star_MW / ((1 - params.r) * radial_integral * time_integral)
+    return params.M_star_MW / radius_integral * unnorm

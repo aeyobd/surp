@@ -1,6 +1,7 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field, asdict
 from .._globals import END_TIME
 import json
+from vice.milkyway.milkyway import _get_radial_bins
 
 
 
@@ -39,7 +40,6 @@ class MWParams:
         The migration mode for the simulation. 
         Can be one of diffusion (most physical), linear, post-process, ???
 
-    spec: ``str`` [default: "insideout"]
         The star formation specification. 
         Accepable values are
         - "insideout"
@@ -53,11 +53,7 @@ class MWParams:
     n_stars: ``int`` [default: 2]
         The number of stars to create during each timestep of the model.
 
-
-    burst_size: ``float`` [default: 1.5]
-        The size of the SFH burst for lateburst model.
-
-    eta_factor: ``float`` [default: 1]
+    yield_scale: ``float`` [default: 1]
         A factor by which to reduce the model's outflows. 
     """
     filename:str = "milkyway"
@@ -74,19 +70,9 @@ class MWParams:
     zone_width:float = 0.1
 
     RIa:str = "plaw"
-    N_star_tot:int = 0
 
     sfh_model:str = "insideout"
-    sfh_tau1:float = None
-    sfh_A1:float = None
-    sfh_tau2:float = None
-    sfh_A2:float = None
-    sfh_tau3:float = None
-    sfh_A3:float = None
-    sfh_t1:float = None
-    sfh_t2:float = None
-    tau_rise: float = 2
-
+    sfh_kwargs:dict = field(default_factory=dict)
     max_sf_radius:float = 15.5 # Radius in kpc beyond which the SFR = 0
 
     thin_disk_scale_radius:float = 2.5 # kpc
@@ -96,43 +82,50 @@ class MWParams:
     # Stellar mass of Milky Way (Licquia & Newman 2015, ApJ, 806, 96)
     M_star_MW:float = 5.17e10
 
-    def __post_init(self):
+
+    # calculated
+    N_star_tot:int = 0 # calculated by model
+    simple:bool = False
+    mode:str = "sfr"
+
+    def __post_init__(self):
         self.process()
 
     def process(self):
         if self.migration_mode == "post-process":
             self.simple = True
             self.migration_mode = "diffusion"
-        else:
-            self.simple = False
 
-        if self.sfh_model == "twoinfall" or self.sfh_model == "conroy22":
+        if self.sfh_model in ["twoinfall", "conroy22"]:
             self.mode = "ifr"
-        else:
-            self.mode = "sfr"
 
         self.calc_N_stars_tot()
 
+    @property
+    def radial_bins(self):
+        return _get_radial_bins(self.zone_width)
 
     def calc_N_stars_tot(self):
-        N_MAX = 3_102_519
         Nstars = int(2*self.max_sf_radius/self.zone_width * END_TIME/self.timestep * self.n_stars)
-        if self.migration_mode not in ["rand_walk", "gaussian"] and Nstars > N_MAX:
+
+        N_MAX = 3_102_519 # max num stars for hydrodisk
+        if self.migration == "hydrodisk" and Nstars > N_MAX:
             Nstars = N_MAX
+
         self.N_star_tot = Nstars
 
         return Nstars
 
     def to_dict(self):
-        pass
-
-    def from_dict(self):
-        pass
+        return asdict(self)
 
     def save(self, filename):
+        with open(filename, "w") as f:
+            json.dump(self.to_dict(), f)
 
-        pass
 
-
-    def from_file(self, filename):
-        pass
+    @classmethod
+    def from_file(cls, filename):
+        with open(filename, "r") as f:
+            params = json.load(f)
+        return cls(**params)

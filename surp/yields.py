@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field, asdict
 
 import vice
 from vice.yields import ccsne, sneia, agb
@@ -15,15 +15,15 @@ ELEMS = ["c", "n", "o", "mg", "fe"]
 
 @dataclass
 class YieldParams:
-    c_cc_y0:float = 0 # if these aren't set, it's my problem now
-    c_cc_zeta:float = 0 
+    c_cc_y0:float = None # these need specified, but initialize anyways
+    c_cc_zeta:float = None
     c_cc_model:str = "A"
     c_cc_y1:float = 0
     c_cc_z1:float = 0
 
     c_agb_model:str = "cristallo11"
     c_agb_alpha:float = None
-    c_agb_kwargs = {}
+    c_agb_kwargs:dict = field(default_factory=dict)
 
     n_agb_model:str = "A"
     n_agb_eta:float = 5.02e-4
@@ -33,6 +33,20 @@ class YieldParams:
 
     fe_ia: float = 7.7e-4
     fe_cc: float = 4.73e-4
+
+    def to_dict(self):
+        return asdict(self)
+
+    def save(self, filename):
+        with open(filename, "w") as f:
+            json.dump(self.to_dict(), f)
+
+
+    @classmethod
+    def from_file(cls, filename):
+        with open(filename, "r") as f:
+            params = json.load(f)
+        return cls(**params)
 
 
 
@@ -76,22 +90,10 @@ def set_yields(params:YieldParams, verbose=False):
     set_magg22_scale(verbose=verbose)
     set_defaults()
 
-    if params.c_agb_model == "A":
-        agb.settings["c"] = C_AGB_Model(**params.c_agb_kwargs)
-    else:
-        agb.settings["c"] = interpolator("c", study=params.c_agb_model, **params.c_agb_kwargs)
-    agb.settings["c"] *= params.alpha_agb
+    agb.settings["c"] = get_c_agb_model(params)
+    ccsne.settings["c"] = get_c_cc_model(params)
 
-    if params.c_cc_model == "A":
-        ccsne.settings["c"] = C_CC_Model(y0=params.c_cc_y0, zeta=params.c_cc_zeta, zl=params.c_cc_z1, yl=params.c_cc_y1)
-    else:
-        ccsne.settings["c"] = params.c_cc_model
-
-    if params.n_agb_model == "A":
-        agb.settings["n"] = LinAGB(eta=params.n_agb_eta, y0=params.n_agb_y0)
-    else:
-        agb.settings["n"] = params.n_agb_model
-
+    agb.settings["n"] = get_n_agb_model(params)
     ccsne.settings["n"] = params.n_cc_y0
 
     sneia.settings["fe"] = params.fe_ia
@@ -100,6 +102,34 @@ def set_yields(params:YieldParams, verbose=False):
     if verbose:
         print_yields()
 
+
+def get_c_agb_model(params):
+    if params.c_agb_model == "A":
+        model = C_AGB_Model(**params.c_agb_kwargs)
+    else:
+        model = interpolator("c", study=params.c_agb_model, **params.c_agb_kwargs)
+
+    model *= params.alpha_agb
+    return model
+
+
+def get_c_cc_model(params):
+    if params.c_cc_model == "A":
+        model = C_CC_Model(y0=params.c_cc_y0, zeta=params.c_cc_zeta, 
+            zl=params.c_cc_z1, yl=params.c_cc_y1)
+    else:
+        model = params.c_cc_model
+
+    return model
+
+
+def get_n_agb_model(params):
+    if params.n_agb_model == "A":
+        model = LinAGB(eta=params.n_agb_eta, y0=params.n_agb_y0)
+    else:
+        model = params.n_agb_model
+
+    return model
 
 
 def scale_yields(scale=1):

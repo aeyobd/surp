@@ -2,7 +2,6 @@ import numpy as np
 
 import vice
 from vice.toolkit import J21_sf_law
-from vice.milkyway.milkyway import _get_radial_bins
 #from vice.toolkit.rand_walk.rand_walk_stars import rand_walk_stars 
 from vice.toolkit.gaussian.gaussian_stars import gaussian_stars 
 from vice.toolkit.hydrodisk.hydrodiskstars import hydrodiskstars 
@@ -93,8 +92,7 @@ def twoinfall_tau_star(t):
 
 
 def create_migration(params):
-    bins = _get_radial_bins(params.zone_width)
-
+    bins = params.radial_bins
     kind = params.migration
     kwargs = dict(n_stars=params.n_stars, dt=params.timestep, 
         name=kind, sigma_R=params.sigma_R
@@ -113,9 +111,22 @@ def create_migration(params):
 
 
 
-def MH_grad(R, R0=5, MH_0 = 0.29, zeta_in=-0.15, zeta_out=-0.09):
-    """Metallicity gradient of galaxy from Hayden et al. 2014"""
-    return MH_0 + (R-R0) * np.where(R<R0, zeta_in, zeta_out)
+class MH_grad:
+    def __init__(self, R0=5, MH_0 = 0.29, zeta_in=-0.15, zeta_out=-0.09):
+        """Metallicity gradient of galaxy from Hayden et al. 2014"""
+        self.R0 = R0
+        self.MH_0 = MH_0
+        self.zeta_in = zeta_in
+        self.zeta_out = zeta_out
+
+    def __call__(self, R):
+        return self.MH_0 + (R-self.R0) * np.where(R<self.R0, self.zeta_in, self.zeta_out)
+
+    def __str__(self):
+        s =  f"{self.MH_0:0.2f} + {self.zeta_in}(R-{self.R0}) , R > {self.R0}"
+        s += "; "
+        s +=  f"{self.MH_0:0.2f} + {self.zeta_out}(R-{self.R0}) , R < {self.R0}"
+        return s
 
 
 class mass_loading:
@@ -128,13 +139,15 @@ class mass_loading:
         self.B = params.r - 1
         self.C = yo / vice.solar_z("o") 
 
+        self.MH_func = MH_grad()
+
     def __call__(self, R_gal):
-        MH = MH_grad(R_gal)
+        MH = self.MH_func(R_gal)
         eta = self.B + self.C * 10**MH
         return np.maximum(0, eta)
 
     def __str__(self):
-        s = f"{self.B} + {self.C}×10^([M/H]); MH = str"
+        s = f"{self.B:0.4f} + {self.C:0.4f}×10^[M/H];\r\t\t\t [M/H] = {self.MH_func}"
         return s
 
     def __repr__(self):
