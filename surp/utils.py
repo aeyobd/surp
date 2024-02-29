@@ -8,6 +8,25 @@ import numpy as np
 
 
 
+def get_bin_number(bins, value):
+    r"""
+    Returns the index of the bin in bins containing value. Returns -1 if outside the bins
+    """
+    for i in range(len(bins) - 1):
+        if bins[i] <= value <= bins[i + 1]: return i
+    return -1
+
+
+
+def interpolate(x1, y1, x2, y2, x):
+    r"""
+    Extrapolate a y-coordinate for a given x-coordinate from a line defined
+    by two points (x1, y1) and (x2, y2) in arbitrary units.
+    """
+    m = (y2 - y1) / (x2 - x1)
+    return  m * (x - x1) + y1
+
+
 def isreal(param):
     """Validates if the given parameter is real"""
 
@@ -51,6 +70,7 @@ def arg_isreal(arg=0):
     return decorator
 
 
+
 def arg_numpylike(arg=0):
     """casts the argument into a numpy array"""
     def decorator(func):
@@ -63,8 +83,6 @@ def arg_numpylike(arg=0):
             return func(*new_args, **kwargs)
         return wrapper
     return decorator
-
-
 
 
 
@@ -97,50 +115,3 @@ def print_row(*args, widths=None, float_fmt="%0.2e"):
 
 
 
-def download_or_load(filename, url, size=""):
-    script_dir = os.path.dirname(__file__)
-    abs_path = os.path.join(script_dir, filename)
-    
-    if not os.path.exists(abs_path):
-        ans = input("Requires download, now? Y/n")
-        if ans != "Y":
-            print("file does not exist, aborting")
-            sys.exit()
-        print("downloading (this may take a while)")
-
-        file = requests.get(url, stream=True)
-
-        i = 0
-        with open(abs_path, "wb") as f:
-            for chunk in file.iter_content(chunk_size=2**20):
-                f.write(chunk)
-                print("%i MiB / %s GiB \r" % (i, size), end="") 
-                i += 1
-                
-        print("file saved!")
-        
-        
-    dat = Table.read(abs_path, format="fits", hdu=1)
-
-    cols = [col for col in dat.colnames if len(dat[col].shape) <= 1]
-
-    return dat[cols]
-
-
-def get_bin_number(bins, value):
-    r"""
-    Returns the index of the bin in bins containing value. Returns -1 if outside the bins
-    """
-    for i in range(len(bins) - 1):
-        if bins[i] <= value <= bins[i + 1]: return i
-    return -1
-
-
-
-def interpolate(x1, y1, x2, y2, x):
-    r"""
-    Extrapolate a y-coordinate for a given x-coordinate from a line defined
-    by two points (x1, y1) and (x2, y2) in arbitrary units.
-    """
-    m = (y2 - y1) / (x2 - x1)
-    return  m * (x - x1) + y1

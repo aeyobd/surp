@@ -6,8 +6,6 @@ import os
 from . import gce_math as gcem
 
 
-
-
 def vincenzo2021_raw():
     """
     Reads in the CNOdredgeup.obj file 

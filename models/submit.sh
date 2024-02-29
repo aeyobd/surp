@@ -45,6 +45,7 @@ cd $MODEL_NAME
 
 
 NTHREADS=$(jq -r ".n_threads" "params.json" )
+NTHREADS=1
 echo using $NTHREADS threads
 
 if [  "$COPY_VICE" = true ] ; then
@@ -78,7 +79,7 @@ OUT_DIR="\$TMPDIR/$MODEL_NAME"
 
 mkdir \$OUT_DIR
 
-python ../run.py \$OUT_DIR/milkyway.vice params.json > log.out
+python run.py \$OUT_DIR/milkyway.vice params.json > log.out
 
 if [ "$COPY_VICE" = true ]; then
     cp -f \$OUT_DIR/*.dat .

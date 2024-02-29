@@ -12,7 +12,7 @@ from ._globals import *
 
 from .vice_model import ViceModel
 
-from .subgiants import read_subgiants
+from .subgiants import _read_subgiants
 from .vincenzo import vincenzo2021 
 
-subgiants = read_subgiants()
+subgiants = _read_subgiants()
