@@ -7,7 +7,7 @@ Z_SUN = 0.016 # Alla Mag++2022
 MAX_RADIUS = 20.0
 
 ELEMENTS = ["c", "n", "o", "mg", "fe"]
-AGB_MODELS = ["cristallo11", "ventura13", "karakas16", "ritter2018"]
+AGB_MODELS = ["cristallo11", "ventura13", "karakas16", "pignatari16"]
 
 def _find_data_dir():
     """Dynamically determines data directory whe n library is imported"""

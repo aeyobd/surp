@@ -1,5 +1,3 @@
-# fits to apogee errors
-
 def polynomial(x, coeffs):
     s = 0
     N = len(coeffs)
@@ -22,3 +20,4 @@ def mg_h_err(Fe_H):
 
 def mg_fe_err(Fe_H):
     return polynomial(Fe_H,[ 0.00792663,-0.00801737, 0.0138201 ])
+

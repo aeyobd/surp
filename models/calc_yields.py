@@ -51,6 +51,7 @@ def set_agb(params, agb_model="cristallo11", f_agb=0.2, alpha_agb=None, zeta_agb
         t_D=0.1, tau_agb=0.3 ):
 
     y0 = f_agb * Y_C_0
+    params.c_agb_model = agb_model
 
     if agb_model == "A":
         if zeta_agb is None:

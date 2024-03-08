@@ -83,6 +83,7 @@ class MWParams:
     # Stellar mass of Milky Way (Licquia & Newman 2015, ApJ, 806, 96)
     M_star_MW:float = 5.17e10
 
+    save_migration:bool = False
 
     # calculated
     N_star_tot:int = 0 # calculated by model

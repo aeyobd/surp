@@ -171,3 +171,6 @@ def print_yields():
 
 
 
+def calc_y(Z=Z_SUN, ele="c"):
+    m_c, times = vice.single_stellar_population(ele, Z=Z, mstar=1)
+    return m_c[-1]

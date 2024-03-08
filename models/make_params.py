@@ -31,6 +31,7 @@ def main():
         os.mkdir(dirname)
     path = f"./{dirname}/params.json"
     ypath = f"./{dirname}/yield_params.json"
+    os.popen(f"cp run.py {dirname}")
 
     print("saving params to ", dirname)
     yparams.save(ypath)

@@ -3,33 +3,38 @@ import sys
 import os
 import argparse
 
-import surp.simulation.filter_warnings
-from surp import ViceModel
+from surp import ViceModel, MWParams
 
 
 def main():
-    filename, name, starsname = parse_args()
-    model = load_model(filename)
-    to_json(model, name)
-    save_stars(model, starsname)
+    args = parse_args()
 
-
-def parse_args():
-    parser = argparse.ArgumentParser(description="A little script to convert .vice multioutput files to .json and .csv files")
-    parser.add_argument("filename", help="thet target path", type=str)
-    parser.add_argument("-o", "--output", type=str)
-    parser.add_argument("-s", "--stars", type=str, default=None)
-
-    args = parser.parse_args()
     filename = args.filename
     check_filename(filename)
+
+    params = MWParams.from_file(args.parameters)
 
     if args.output is None:
         out, ext = os.path.splitext(os.path.normpath(filename))
     else:
         out  = args.output
 
-    return filename, out, args.stars
+
+    model = load_model(filename, params.zone_width)
+    to_json(model, args.output)
+    save_stars(model, args.stars)
+
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="A little script to convert .vice multioutput files to .json and .csv files")
+    parser.add_argument("filename", help="thet target path", type=str)
+    parser.add_argument("-o", "--output", type=str, default="model.json")
+    parser.add_argument("-s", "--stars", type=str, default="stars.csv")
+    parser.add_argument("-p", "--parameters", type=str, default="params.json")
+
+    args = parser.parse_args()
+    return args
 
 
 def check_filename(filename):
@@ -43,9 +48,9 @@ def check_filename(filename):
 
 
 
-def load_model(filename):
+def load_model(filename, zone_width):
     print("loading, ", filename)
-    return surp.ViceModel.from_vice(filename)
+    return ViceModel.from_vice(filename, zone_width)
 
 
 def to_json(model, json_name):

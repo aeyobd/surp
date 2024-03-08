@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "numpy", "hatch-cython", "cython"]
 build-backend = "hatchling.build"
 
 [project]
@@ -19,3 +19,33 @@ classifiers = [
 ]
 
 
+[tool.hatch.build.targets.sdist]
+include = ["arya"]
+
+
+[tool.hatch.build.targets.wheel]
+
+packages = ["surp"]
+
+[tool.hatch.build.targets.wheel.hooks.cython]
+dependencies = ["hatch-cython"]
+
+[tool.hatch.build.targets.wheel.hooks.cython.options]
+includes = []
+include_numpy = true
+
+
+compile_args = [
+    "-v",
+      # by platform
+    { platforms = ["linux", "darwin"], arg = "-Wcpp" },
+    # by platform & arch
+    { platforms = "darwin", arch = "x86_64", arg = "-arch x86_64" },
+    { platforms = ["darwin"], arch = "arm64", arg = "-arch arm64" },
+    # with pep508 markers
+    { platforms = ["darwin"], arch = "x86_64", arg = "-I/usr/local/opt/llvm/include", depends_path = true, marker = "python_version <= '3.10'"  },
+]
+
+derivatives = {boundscheck = false, nonecheck = false, language_level = 3, binding = true }
+
+compile_kwargs = { }

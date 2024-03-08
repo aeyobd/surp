@@ -9,8 +9,12 @@ from vice.yields import ccsne as cc
 from vice.yields import sneia as ia
 from vice import solar_z
 
-from surp import yields
+from surp.yields import set_yields, YieldParams
 
+
+def test_fe_ia():
+    params = YieldParams(fe_ia = 1.2)
+    assert ia.settings["fe"] == 1.2
 
 # def test_mag22():
 #     assert solar_z["c"] = 

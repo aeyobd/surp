@@ -94,8 +94,12 @@ def twoinfall_tau_star(t):
 def create_migration(params):
     bins = params.radial_bins
     kind = params.migration
+    if params.save_migration:
+        name="stars"
+    else:
+        name = None
     kwargs = dict(n_stars=params.n_stars, dt=params.timestep, 
-        name=kind, sigma_R=params.sigma_R
+        name=name, sigma_R=params.sigma_R
         )
 
     if kind == "rand_walk":

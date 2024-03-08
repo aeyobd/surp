@@ -14,6 +14,19 @@ def Z_to_MH(Z):
 def MH_to_Z(M_H):
     return Z_SUN * 10**M_H
 
+@arg_numpylike()
+def log_to_abundance(ratio, ele, ele2="H"):
+    m2 = molar_mass(ele2)
+    if ele2 == "H":
+        m2 = 1
+    return 10**ratio * molar_mass(ele) / m2
+
+@arg_numpylike()
+def eps_to_log(eps):
+    return eps - 12
+@arg_numpylike()
+def eps_to_abundance(eps, ele):
+    return log_to_abundance(eps_to_log(eps), ele)
 
 @arg_numpylike()
 def log_to_brak(ratio, elem, elem2="H"):
@@ -52,6 +65,8 @@ def brak_to_abund(data, ele, ele2="h"):
 
 def molar_mass(ele):
     return molmass.ELEMENTS[ele.title()].mass
+
+molar_mass = np.vectorize(molar_mass)
 
 def A_to_Z(A, ele, mixing_correction=0, X=0.71):
     logZ = (A - 12)  + np.log10(X * mmass(ele)) 

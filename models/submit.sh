@@ -40,13 +40,16 @@ fi
 
 
 
-
 cd $MODEL_NAME
+echo Cleaning old outputs
+rm -f *.out
+rm -rf *.vice
+rm -f model.json stars.csv *.dat
+ls
 
 
 NTHREADS=$(jq -r ".n_threads" "params.json" )
 NTHREADS=1
-echo using $NTHREADS threads
 
 if [  "$COPY_VICE" = true ] ; then
     echo will copy full vice output
@@ -61,7 +64,7 @@ fi
 echo "Submitting Job" $MODEL_NAME
 sbatch <<EOT
 #!/bin/bash
-#SBATCH --time=12:00:00
+#SBATCH --time=1:00:00
 #SBATCH --ntasks=$NTHREADS
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=4gb
@@ -73,25 +76,33 @@ sbatch <<EOT
 
 set -x
 echo job \$SLURM_JOB_ID
+echo \$TMPDIR
+echo \$SLURM_SUBMIT_DIR
 export OMP_NUM_THREADS=$NTHREADS
-OUT_DIR="\$TMPDIR/$MODEL_NAME"
 
+cp run.py \$TMPDIR
+cp params.json \$TMPDIR
+cp yield_params.json \$TMPDIR
 
-mkdir \$OUT_DIR
+cd \$TMPDIR
 
-python run.py \$OUT_DIR/milkyway.vice params.json > log.out
+python run.py > log.out
 
+ls
 if [ "$COPY_VICE" = true ]; then
-    cp -f \$OUT_DIR/*.dat .
-    cp -rf \$OUT_DIR/milkyway.vice .
+    cp -f *.dat \$SLURM_SUBMIT_DIR
+    cp -rf milkyway.vice \$SLURM_SUBMIT_DIR
 fi
 
-python ../vice_to_json.py \$OUT_DIR/milkyway.vice -o model.json -s stars.csv
+python \$SLURM_SUBMIT_DIR/../vice_to_json.py milkyway.vice -o model.json -s stars.csv
+
+cp model.json \$SLURM_SUBMIT_DIR
+cp stars.csv \$SLURM_SUBMIT_DIR
 
 
-if [ "$MAKE_PLOTS" = true ]; then
-    python ../visualize_model.py model.json
-fi
+# if [ "$MAKE_PLOTS" = true ]; then
+#     python ../visualize_model.py model.json
+# fi
 
 scontrol show job=\$SLURM_JOB_ID
 

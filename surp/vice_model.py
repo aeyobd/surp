@@ -47,12 +47,12 @@ class ViceModel():
         return cls(*[d[key] for key in keys])
 
     @classmethod
-    def from_vice(cls, filename, hydrodiskstars=False, zone_width=0.1):
+    def from_vice(cls, filename, zone_width):
         name = os.path.splitext(filename)[0]
         json_name = f"{name}.json"
 
-        output = vice_utils.load_vice(filename)
-        history, mdf = vice_utils.reduce_history(output)
+        output = vice_utils.load_vice(filename, zone_width=zone_width)
+        history, mdf = vice_utils.reduce_history(output, zone_width=zone_width)
         stars_unsampled = vice_utils.reduce_stars(output)
 
         return cls(stars_unsampled, history, mdf)

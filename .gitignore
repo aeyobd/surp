@@ -1,6 +1,7 @@
 logs
 out
 __pycache__
+build
 
 pickles
 results
@@ -34,6 +35,8 @@ figures
 
 *.gz
 
+yield_models.c
+*.so
 nucleosynthesis_yields
 ReadMe
 
