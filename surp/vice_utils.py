@@ -6,7 +6,7 @@ import pandas as pd
 import vice
 
 import surp
-from ._globals import ELEMENTS, DATA_DIR
+from ._globals import ELEMENTS, DATA_DIR, N_SUBGIANTS
 
 
 
@@ -78,11 +78,10 @@ def reduce_stars(multioutput):
     drop_z_cols(df)
     df = order_abundance_ratios(df)
     df["high_alpha"] = surp.gce_math.is_high_alpha(df.MG_FE, df.MG_H)
-    print(df.keys())
     return df
 
 
-def create_star_sample(stars, num=12000):
+def create_star_sample(stars, num=N_SUBGIANTS):
     cdf = load_cdf()
     sample = pd.DataFrame(columns=stars.columns)
 
@@ -111,7 +110,7 @@ def ele_columns():
                 ele2 = "H"
             else:
                 ele2 = ELEMENTS[j]
-            cols.append(f"{ele}_{ele2}")
+            cols.append(f"{ele}_{ele2}".upper()) # apogee_names
     return cols
 
 

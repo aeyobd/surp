@@ -1,53 +1,15 @@
-from dataclasses import dataclass, field, asdict
-import json
-
 import vice
 from vice.yields import ccsne, sneia, agb
 
 from surp._globals import Z_SUN
-from surp.yield_models import ZeroAGB, C_AGB_Model, C_CC_Model, LinAGB
+from surp import yield_models
 
 from .utils import print_row
 from .agb_interpolator import interpolator
+from .yield_params import YieldParams
 
 
 ELEMS = ["c", "n", "o", "mg", "fe"]
-
-
-@dataclass
-class YieldParams:
-    c_cc_y0:float = None # these need specified, but initialize anyways
-    c_cc_zeta:float = None
-    c_cc_model:str = "A"
-    c_cc_y1:float = 0
-    c_cc_z1:float = 0
-
-    c_agb_model:str = "cristallo11"
-    c_agb_alpha:float = 1
-    c_agb_kwargs:dict = field(default_factory=dict)
-
-    n_agb_model:str = "A"
-    n_agb_eta:float = 5.02e-4
-    n_agb_y0:float = 0
-    n_cc_y0: float = 5e-4
-    n_cc_zeta: float = 0
-
-    fe_ia: float = 7.7e-4
-    fe_cc: float = 4.73e-4
-
-    def to_dict(self):
-        return asdict(self)
-
-    def save(self, filename):
-        with open(filename, "w") as f:
-            json.dump(self.to_dict(), f, indent=4)
-
-
-    @classmethod
-    def from_file(cls, filename):
-        with open(filename, "r") as f:
-            params = json.load(f)
-        return cls(**params)
 
 
 
@@ -70,15 +32,15 @@ def set_defaults() -> None:
 
     ccsne.settings["o"] = 7.13e-3
     sneia.settings["o"] = 0
-    agb.settings["o"] = ZeroAGB()
+    agb.settings["o"] = yield_models.ZeroAGB()
 
     # ccsne.settings["fe"] = 
     # sneia.settings["fe"] = 7.7e-4 
-    agb.settings["fe"] = ZeroAGB()
+    agb.settings["fe"] = yield_models.ZeroAGB()
 
     ccsne.settings["mg"] = 6.52e-4
     sneia.settings["mg"] = 0
-    agb.settings["mg"] = ZeroAGB()
+    agb.settings["mg"] = yield_models.ZeroAGB()
 
     #agb.settings["n"] = LinAGB(eta=5.02e-4, y0=0)
     #ccsne.settings["n"] = 5e-4
@@ -86,8 +48,16 @@ def set_defaults() -> None:
 
 
 
-def set_yields(params:YieldParams, verbose=False):
-    """ Ses the yields and abundace scale for the C project. """
+def set_yields(params=YieldParams(), verbose=False, **kwargs):
+    """ 
+    set_yields(params, verbose=False, **kwargs)
+    Ses the yields and abundace scale for the C project. """
+
+    params = params.to_dict()
+    for key, val in kwargs.items():
+        params[key] = val
+    params = YieldParams(**params)
+
     set_magg22_scale(verbose=verbose)
     set_defaults()
 
@@ -105,6 +75,7 @@ def set_yields(params:YieldParams, verbose=False):
 
 
 def get_c_agb_model(params):
+    """Returns an AGB model for C with properties specified in params"""
     if params.c_agb_model == "A":
         model = C_AGB_Model(**params.c_agb_kwargs)
     else:
@@ -115,9 +86,15 @@ def get_c_agb_model(params):
 
 
 def get_c_cc_model(params):
-    if params.c_cc_model == "A":
-        model = C_CC_Model(y0=params.c_cc_y0, zeta=params.c_cc_zeta, 
-            zl=params.c_cc_z1, yl=params.c_cc_y1)
+    """Returns a CC model for C with properties specified in params"""
+    if params.c_cc_model == "BiLin":
+        model = yield_models.BiLin_CC(y0=params.c_cc_y0, zeta=params.c_cc_zeta, **params.c_cc_kwargs)
+    elif params.c_cc_model == "Lin":
+        model = yield_models.Lin_CC(y0=params.c_cc_y0, zeta=params.c_cc_zeta)
+    elif params.c_cc_model == "LogLin":
+        model = yield_models.LogLin_CC(y0=params.c_cc_y0, zeta=params.c_cc_zeta, **params.c_cc_kwargs)
+    elif params.c_cc_model == "BiLogLin":
+        model = yield_models.BiLogLin_CC(y0=params.c_cc_y0, zeta=params.c_cc_zeta, **params.c_cc_kwargs)
     else:
         model = params.c_cc_model
 
@@ -126,7 +103,7 @@ def get_c_cc_model(params):
 
 def get_n_agb_model(params):
     if params.n_agb_model == "A":
-        model = LinAGB(eta=params.n_agb_eta, y0=params.n_agb_y0)
+        model = yield_models.LinAGB(eta=params.n_agb_eta, y0=params.n_agb_y0)
     else:
         model = params.n_agb_model
 

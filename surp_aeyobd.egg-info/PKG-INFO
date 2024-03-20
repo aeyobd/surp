@@ -1,0 +1,13 @@
+Metadata-Version: 2.1
+Name: surp-aeyobd
+Version: 0.0.1
+Summary: My summer research code
+Author-email: Daniel Boyea <boyea.2@osu.edu>
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+
+# SURP
+This is a collection of scripts, jupyter notebooks, and the source files for my research thesis. 

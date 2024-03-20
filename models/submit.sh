@@ -6,20 +6,25 @@ function print_help {
     echo Usage: $0 [-aph] MODEL_DIR ;
     echo -a: copy full vice outputs
     echo -p: make plots
+    echo -m: specify memory
     echo -h: print this message 
 }
 
 
+# default args
 COPY_VICE=false
 MAKE_PLOTS=false
+REQUESTED_MEMORY="4gb"
+
 # Iterate over all the arguments
 #
-while getopts 'aph' OPTION; do
+while getopts 'aphm:' OPTION; do
     case "$OPTION" in
         a) COPY_VICE=true ;;
         p) MAKE_PLOTS=true ;;
+        m) REQUESTED_MEMORY=$OPTARG ;;
         h) print_help; exit 0 ;;
-        \?) echo "Unknown option: -$OPTARG" >%2; exit 1;;
+        \?) echo "Unknown option: -$OPTARG" >&2; exit 1;;
     esac
 done
 
@@ -38,17 +43,6 @@ if [[ ! -d "$MODEL_NAME" ]]; then
     exit 1
 fi
 
-
-
-cd $MODEL_NAME
-echo Cleaning old outputs
-rm -f *.out
-rm -rf *.vice
-rm -f model.json stars.csv *.dat
-ls
-
-
-NTHREADS=$(jq -r ".n_threads" "params.json" )
 NTHREADS=1
 
 if [  "$COPY_VICE" = true ] ; then
@@ -60,6 +54,44 @@ if [  "$MAKE_PLOTS" = true ] ; then
 fi
 
 
+cd $MODEL_NAME
+
+function confirm_and_remove_files {
+    local pattern
+    local existing_files=()
+    for pattern in "$@"; do
+        local matched_files=( $pattern )
+        if [ ${#matched_files[@]} -gt 0 ]; then
+            existing_files+=("${matched_files[@]}")
+        fi
+    done
+
+    if [ ${#existing_files[@]} -eq 0 ]; then
+        echo "No specified files exist, nothing to remove."
+        return
+    fi
+
+    echo "The following files will be removed:"
+    for file in "${existing_files[@]}"; do
+        echo "$file"
+    done
+
+    read -p "Are you sure you want to remove these files? (y/N)  " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        for file in "${existing_files[@]}"; do
+            rm -rf "$file"
+        done
+        echo "Files removed."
+    else
+        echo "File removal aborted."
+        exit 1;
+    fi
+}
+
+# Files to check before removing
+files_to_remove=("*.out" "model.json" "stars.csv" "*.dat", "milkway.vice")
+confirm_and_remove_files "${files_to_remove[@]}"
 
 echo "Submitting Job" $MODEL_NAME
 sbatch <<EOT
@@ -67,7 +99,7 @@ sbatch <<EOT
 #SBATCH --time=1:00:00
 #SBATCH --ntasks=$NTHREADS
 #SBATCH --cpus-per-task=1
-#SBATCH --mem=4gb
+#SBATCH --mem=$REQUESTED_MEMORY
 #SBATCH --job-name=$MODEL_NAME
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --output=%j.out
@@ -86,23 +118,15 @@ cp yield_params.json \$TMPDIR
 
 cd \$TMPDIR
 
-python run.py > log.out
-
-ls
-if [ "$COPY_VICE" = true ]; then
-    cp -f *.dat \$SLURM_SUBMIT_DIR
-    cp -rf milkyway.vice \$SLURM_SUBMIT_DIR
-fi
-
-python \$SLURM_SUBMIT_DIR/../vice_to_json.py milkyway.vice -o model.json -s stars.csv
+python run.py
 
 cp model.json \$SLURM_SUBMIT_DIR
 cp stars.csv \$SLURM_SUBMIT_DIR
 
-
-# if [ "$MAKE_PLOTS" = true ]; then
-#     python ../visualize_model.py model.json
-# fi
+if [ "$COPY_VICE" = true ]; then
+    cp -f *.dat \$SLURM_SUBMIT_DIR
+    cp -rf milkyway.vice \$SLURM_SUBMIT_DIR
+fi
 
 scontrol show job=\$SLURM_JOB_ID
 

@@ -3,6 +3,10 @@ from surp import ViceModel, MWParams
 
 params_file = "params.json"
 yields_file = "yield_params.json"
+model_out = "model.json"
+stars_out = "stars.csv"
+vice_name = "milkyway.vice"
+
 
 params = surp.MWParams.from_file(params_file)
 yields = surp.yields.YieldParams.from_file(yields_file)
@@ -18,9 +22,8 @@ print("created model")
 model.run(params.times, overwrite=True, pickle=True)
 
 
-model = load_model(filename, params.zone_width)
-model.save(json_name, overwrite=True)
-save_stars(model, args.stars)
-model.stars.to_csv(filename)
+processed = ViceModel.from_vice(vice_name, params.zone_width)
+processed.save(model_out, overwrite=True)
+processed.stars.to_csv(stars_out)
 
 print("bye bye!")

@@ -1,13 +1,11 @@
 import surp
-import sys
+from surp import ViceModel, MWParams
 
-if sys.argc < 2:
-    print("error, argument filename required")
+params_file = "params.json"
+yields_file = "yield_params.json"
 
-
-params = surp.MWParams.from_file("params.json")
-yields = surp.yields.YieldParams.from_file("yield_params.json")
-params.filename = sys.argv[1]
+params = surp.MWParams.from_file(params_file)
+yields = surp.yields.YieldParams.from_file(yields_file)
 
 print(params)
 print(yields)
@@ -19,5 +17,10 @@ print("created model")
 
 model.run(params.times, overwrite=True, pickle=True)
 
-print("bye!")
 
+model = load_model(filename, params.zone_width)
+model.save(json_name, overwrite=True)
+save_stars(model, args.stars)
+model.stars.to_csv(filename)
+
+print("bye bye!")

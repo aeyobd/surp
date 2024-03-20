@@ -73,7 +73,7 @@ class MWParams:
     RIa:str = "plaw"
 
     sfh_model:str = "insideout"
-    sfh_kwargs:dict = field(default_factory=dict)
+    sfh_kwargs:dict = field(default_factory=lambda: dict(tau_sfh="sanchez", tau_rise=2))
     max_sf_radius:float = 15.5 # Radius in kpc beyond which the SFR = 0
 
     thin_disk_scale_radius:float = 2.5 # kpc

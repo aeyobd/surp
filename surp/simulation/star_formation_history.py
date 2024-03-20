@@ -78,15 +78,16 @@ def create_sfh_model(radius, params):
     kwargs = copy(params.sfh_kwargs)
     for key, val in kwargs.items():
         if val == "sanchez":
-            val = tau_sfh
+            kwargs[key] = tau_sfh
 
+    print(kwargs)
     name = params.sfh_model
     if name == "insideout":
-        sfh = sfh_models.insideout(radius, **kwargs)
+        sfh = sfh_models.insideout(**kwargs)
     elif name == "lateburst":
-        sfh = sfh_models.lateburst(radius, **kwargs)
+        sfh = sfh_models.lateburst(**kwargs)
     elif name == "static":
-        sfh = sfh_models.static(radius)
+        sfh = sfh_models.static()
     else:
         raise ValueError("unknown SFH: ", name)
 
@@ -135,6 +136,7 @@ def get_sfh_timescale(radius, Re = 5):
 def midpoints(array):
     a = np.array(array)
     return 1/2*(a[1:] + a[:-1])
+
 
 def delta(array):
     a = np.array(array)

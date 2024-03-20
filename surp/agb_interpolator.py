@@ -6,6 +6,8 @@ interpolation scheme off of the built-in yield sets.
 from vice.toolkit.interpolation.interp_scheme_2d import interp_scheme_2d
 from vice.yields.agb._grid_reader import yield_grid
 import math
+from scipy.interpolate import CubicSpline
+
 
 
 class interpolator(interp_scheme_2d):
@@ -14,17 +16,16 @@ class interpolator(interp_scheme_2d):
               no_negative=False):
         # let the grid reader function do the error handling
         yields, masses, metallicities = yield_grid(element, study = study)
-        yields = [[a*prefactor for a in b] for b in yields]
         self._nonegative = no_negative
         self.element = element
 
         if no_negative:
             yields = [[max(0, a) for a in b] for b in yields]
-        self.prefactor = prefactor
         self.study=study
         self.interp_kind = interp_kind
         self.mass_factor = mass_factor
         self.no_negative = no_negative
+        self.prefactor=prefactor
 
         if interp_kind == "linear":
             super().__init__(list(masses), list(metallicities), list(yields))
@@ -43,9 +44,9 @@ class interpolator(interp_scheme_2d):
         elif self.interp_kind == "log":
             y =  super().__call__(self.mass_factor*M, math.log10(Z))
         if self._nonegative:
-            return max(y, 0)
-        else:
-            return y
+            y =  max(y, 0)
+
+        return y * self.prefactor
 
     @property
     def masses(self):

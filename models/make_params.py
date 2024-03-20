@@ -3,9 +3,10 @@ import subprocess
 import sys
 import os
 import json
-from surp import MWParams, YieldParams
+from surp.simulation.parameters import MWParams
+from surp.yield_params import YieldParams
 
-from calc_yields import make_yield_params
+from make_yields import make_yield_params
 
 AGB_KEYS = { "C11": "cristallo11",
             "K10": "karakas10",
@@ -18,8 +19,8 @@ AGB_KEYS = { "C11": "cristallo11",
 
 def main():
     parser, args = parse_args()
-    dirname = generate_filename(parser, args)
-    yparams, params = generate_params(args)
+    dirname = make_filename(parser, args)
+    yparams, params = make_params(args)
 
     if os.path.exists(dirname):
         ans = input(f"overwrite directory {dirname}? y/N")
@@ -31,7 +32,7 @@ def main():
         os.mkdir(dirname)
     path = f"./{dirname}/params.json"
     ypath = f"./{dirname}/yield_params.json"
-    os.popen(f"cp run.py {dirname}")
+    os.popen(f"cp -f run.py {dirname}")
 
     print("saving params to ", dirname)
     yparams.save(ypath)
@@ -59,6 +60,8 @@ def parse_args():
                         twoexp, threeexp, twoinfall]""")
     parser.add_argument("-c", "--sf_law", default="J21",
                         help="Specifies the sfh law")
+    parser.add_argument("-C", "--cc_model", default="Lin",
+                        help="Specifies the cc model")
     parser.add_argument("-M", "--migration_mode", default="diffusion", 
                         help="""The migration mode. Default is Diffusion.
                         Acceptable alternate options include diffusion, post-process, linear, 
@@ -130,28 +133,32 @@ def arg_to_fname(parser, args, arg_name, always_add=False, flag=False, name=None
     return f"_{name}{val}"
 
 
-def generate_filename(parser, args):
+def make_filename(parser, args):
     if args.output is not None:
         return args.output
 
     filename = args.agb_model
+    filename += arg_to_fname(parser, args, "alpha_agb")
+    filename += arg_to_fname(parser, args, "agb_fraction", depends=(args.alpha_agb is None), name="f", always_add=True)
     filename += arg_to_fname(parser, args, "zeta_agb", depends=(args.agb_model == "A"), always_add=True)
     filename += arg_to_fname(parser, args, "t_d", depends=(args.agb_model == "A"), always_add=True)
     filename += arg_to_fname(parser, args, "tau_agb", depends=(args.agb_model == "A"), always_add=True)
-    filename += arg_to_fname(parser, args, "alpha_agb")
-    filename += arg_to_fname(parser, args, "agb_fraction", depends=(args.alpha_agb is None), name="f", always_add=True)
     filename += arg_to_fname(parser, args, "m_factor")
     filename += arg_to_fname(parser, args, "no_negative", flag=True)
+
+    filename += arg_to_fname(parser, args, "cc_model", name="")
     filename += arg_to_fname(parser, args, "eta")
     filename += arg_to_fname(parser, args, "zeta")
     filename += arg_to_fname(parser, args, "yl_cc", depends=(args.zl_cc > 0))
     filename += arg_to_fname(parser, args, "zl_cc")
-    filename += arg_to_fname(parser, args, "spec", name="")
-    filename += arg_to_fname(parser, args, "migration_mode", name="")
-    filename += arg_to_fname(parser, args, "sigma_R", depends = (args.migration_mode in ["gaussian", "rand_walk"]))
+
     filename += arg_to_fname(parser, args, "fe_ia_factor", name="fe_ia")
     filename += arg_to_fname(parser, args, "RIa")
     filename += arg_to_fname(parser, args, "agb_n_model", name="N")
+
+    filename += arg_to_fname(parser, args, "spec", name="")
+    filename += arg_to_fname(parser, args, "migration_mode", name="")
+    filename += arg_to_fname(parser, args, "sigma_R", depends = (args.migration_mode in ["gaussian", "rand_walk"]))
     filename += arg_to_fname(parser, args, "sf_law", name="sfl")
     filename += arg_to_fname(parser, args, "timestep", name="dt")
     filename += arg_to_fname(parser, args, "zone_width", name="w")
@@ -162,7 +169,7 @@ def generate_filename(parser, args):
 
 
 
-def generate_params(args):
+def make_params(args):
     args.agb_model = AGB_KEYS[args.agb_model]
     if args.agb_n_model is not None:
         args.agb_n_model = AGB_KEYS[args.agb_n_model]
@@ -177,11 +184,12 @@ def generate_params(args):
         mass_factor = args.m_factor,
         no_negative = args.no_negative,
         y1 = args.yl_cc,
-        z1 = args.zl_cc,
+        Z1 = args.zl_cc,
         agb_n_model = args.agb_n_model,
         t_D = args.t_d,
         tau_agb = args.tau_agb,
         zeta_agb = args.zeta_agb,
+        cc_model = args.cc_model
     )
 
     mw_params = MWParams(

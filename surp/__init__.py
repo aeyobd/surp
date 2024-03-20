@@ -2,10 +2,10 @@ from . import simulation
 from .simulation import MWParams
 from .simulation.create_model import create_model
 
+from .yield_params import YieldParams
 from . import utils
 from . import yields
-from .yields import YieldParams, calc_y, set_yields
-from . import yield_models
+from .yields import calc_y, set_yields
 from . import gce_math
 from . import plots
 from ._globals import *
@@ -15,4 +15,5 @@ from .vice_model import ViceModel
 from .subgiants import _read_subgiants
 from .vincenzo import vincenzo2021 
 
+# from . import yield_models
 subgiants = _read_subgiants()

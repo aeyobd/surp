@@ -156,8 +156,5 @@ def plot_ofefeh(df):
 
 
 
-
-
-
 if __name__ == "__main__":
     main()

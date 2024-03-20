@@ -25,17 +25,17 @@ class insideout:
     dr : float [default : 0.1]
         The width of the annulus in kpc.
     """
-    def __init__(self, radius, tau_rise=2.0, tau_sfh=5):
-        kwargs = {"norm": 1, "tau": tau_sfh, "tau_rise": tau_rise}
-        self.kwargs = kwargs
+    def __init__(self, tau_rise=2.0, tau_sfh=5):
+        self.tau_sfh = tau_sfh
+        self.tau_rise = tau_rise
         self.norm = 1
 
 
     def __call__(self, time):
-        return self.norm * modified_exponential(time, **self.kwargs)
+        return self.norm * modified_exponential(time, self.tau_sfh, self.tau_rise)
 
     def __str__(self):
-        return f"sfh ∝ (1-exp(t/{self.tau_rise}) * exp(-t/{self.tau})"
+        return f"sfh ∝ (1-exp(t/{self.tau_rise}) * exp(-t/{self.tau_sfh})"
 
 
 class lateburst:
