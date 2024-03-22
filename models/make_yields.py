@@ -69,7 +69,7 @@ def set_c_agb(params, agb_model="cristallo11", f_agb=0.2, alpha_agb=None, zeta_a
         if zeta_agb is None:
             raise ValueError("for analytic AGB model, zeta_agb must be specified")
 
-        params.c_agb_kwargs = dict(t_D=t_d_agb, tau_agb=tau_agb, y0=y0, zeta=zeta_agb)
+        params.c_agb_kwargs = dict(t_D=t_D, tau_agb=tau_agb, y0=y0, zeta=zeta_agb)
         params.c_agb_alpha = 1
     else:
         params.c_agb_kwargs = dict(mass_factor=mass_factor, no_negative=no_negative, interp_kind=interp_kind)

@@ -6,6 +6,10 @@ from ._globals import Z_SUN
 from .utils import arg_numpylike
 
 
+def calc_y(Z=Z_SUN, ele="c"):
+    m_c, times = vice.single_stellar_population(ele, Z=Z, mstar=1)
+    return m_c[-1]
+
 @arg_numpylike()
 def Z_to_MH(Z):
     return np.log10(Z/Z_SUN)

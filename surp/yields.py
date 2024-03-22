@@ -77,7 +77,7 @@ def set_yields(params=YieldParams(), verbose=False, **kwargs):
 def get_c_agb_model(params):
     """Returns an AGB model for C with properties specified in params"""
     if params.c_agb_model == "A":
-        model = C_AGB_Model(**params.c_agb_kwargs)
+        model = yield_models.C_AGB_Model(**params.c_agb_kwargs)
     else:
         model = interpolator("c", study=params.c_agb_model, **params.c_agb_kwargs)
 
@@ -148,6 +148,3 @@ def print_yields():
 
 
 
-def calc_y(Z=Z_SUN, ele="c"):
-    m_c, times = vice.single_stellar_population(ele, Z=Z, mstar=1)
-    return m_c[-1]

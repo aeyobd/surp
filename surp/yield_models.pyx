@@ -123,13 +123,13 @@ cdef class C_AGB_Model:
     cdef public double A_agb
     cdef public object __signature__
 
-    def __cinit__(self, double y0 = 0.0004, double zeta_agb=-0.02, 
+    def __cinit__(self, double y0 = 0.0004, double zeta=-0.02, 
             double tau_agb=0.3, double t_D = 0.15, mlr=vice.mlr.larson1974, imf=vice.imf.kroupa):
 
         self.tau_agb = tau_agb
         self.t_D = t_D
         self.y0 = y0
-        self.zeta = zeta_agb
+        self.zeta = zeta
 
         self.mlr = mlr
         self.imf = imf

@@ -10,7 +10,7 @@ from ._globals import ELEMENTS, DATA_DIR, N_SUBGIANTS
 
 
 
-def load_vice(name, hydrodisk=False, zone_width=0.01):
+def load_vice(name, zone_width, hydrodisk=False):
     """Loads a vice.milkyway model output at the location name
 
     Parameters
@@ -19,6 +19,8 @@ def load_vice(name, hydrodisk=False, zone_width=0.01):
         the name of the model to load
     hydrodisk : bool = False
         if hydrodisk, than reads in abs_z from  analogdata
+    zone_width : float
+        The width of the zones to convert to R (assumed linear...)
 
     Returns
     -------
@@ -87,6 +89,14 @@ def create_star_sample(stars, num=N_SUBGIANTS):
 
     for _ in range(num):
         sample = pd.concat((sample, rand_star(stars, cdf)), ignore_index=True)
+    sample["C_MG_true"] = sample.C_MG
+    sample["MG_H_true"] = sample.MG_H
+    sample["MG_FE_true"] = sample.MG_FE
+    MH = sample.FE_H
+    N = len(sample)
+    sample.C_MG += np.random.normal(0, c_mg_err(MH), N)
+    sample.MG_H += np.random.normal(0, mg_h_err(MH), N)
+    sample.MG_FE += np.random.normal(0, mg_fe_err(MH), N)
 
     return sample
 
@@ -216,6 +226,29 @@ def rand_star_in_zone(stars, zone):
 
     return df.iloc[index]
 
+
+def polynomial(x, coeffs):
+    s = 0
+    N = len(coeffs)
+    for i in range(N):
+        power = (N - i - 1)
+        s += coeffs[i] * x**(N - i - 1)
+
+    return s
+
+    
+def fe_h_err(Fe_H):
+    return polynomial(Fe_H, [-0.00557748, 0.00831548])
+
+def c_mg_err(Fe_H):
+    return polynomial(Fe_H, [-0.03789911, 0.03505672])
+
+def mg_h_err(Fe_H):
+    return polynomial(Fe_H,[0.06521454,0.00522015,0.03381753])
+
+
+def mg_fe_err(Fe_H):
+    return polynomial(Fe_H,[ 0.00792663,-0.00801737, 0.0138201 ])
 
 
 

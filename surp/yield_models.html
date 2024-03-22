@@ -2629,12 +2629,12 @@ static int __pyx_pf_4surp_12yield_models_11C_AGB_Model_13__signature___4__del__(
   return __pyx_r;
 }
 </pre><pre class="cython line score-0">&#xA0;<span class="">125</span>: </pre>
-<pre class="cython line score-154" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">126</span>:     <span class="k">def</span> <span class="nf">__cinit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">double</span> <span class="n">y0</span> <span class="o">=</span> <span class="mf">0.0004</span><span class="p">,</span> <span class="n">double</span> <span class="n">zeta_agb</span><span class="o">=-</span><span class="mf">0.02</span><span class="p">,</span></pre>
+<pre class="cython line score-154" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">126</span>:     <span class="k">def</span> <span class="nf">__cinit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">double</span> <span class="n">y0</span> <span class="o">=</span> <span class="mf">0.0004</span><span class="p">,</span> <span class="n">double</span> <span class="n">zeta</span><span class="o">=-</span><span class="mf">0.02</span><span class="p">,</span></pre>
 <pre class='cython code score-154 '>/* Python wrapper */
 static int __pyx_pw_4surp_12yield_models_11C_AGB_Model_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
 static int __pyx_pw_4surp_12yield_models_11C_AGB_Model_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   double __pyx_v_y0;
-  double __pyx_v_zeta_agb;
+  double __pyx_v_zeta;
   double __pyx_v_tau_agb;
   double __pyx_v_t_D;
   PyObject *__pyx_v_mlr = 0;
@@ -2651,7 +2651,7 @@ static int __pyx_pw_4surp_12yield_models_11C_AGB_Model_1__cinit__(PyObject *__py
   #endif
   __pyx_kwvalues = <span class='pyx_c_api'>__Pyx_KwValues_VARARGS</span>(__pyx_args, __pyx_nargs);
   {
-    PyObject **__pyx_pyargnames[] = {&amp;__pyx_n_s_y0,&amp;__pyx_n_s_zeta_agb,&amp;__pyx_n_s_tau_agb,&amp;__pyx_n_s_t_D,&amp;__pyx_n_s_mlr,&amp;__pyx_n_s_imf,0};
+    PyObject **__pyx_pyargnames[] = {&amp;__pyx_n_s_y0,&amp;__pyx_n_s_zeta,&amp;__pyx_n_s_tau_agb,&amp;__pyx_n_s_t_D,&amp;__pyx_n_s_mlr,&amp;__pyx_n_s_imf,0};
   PyObject* values[6] = {0,0,0,0,0,0};
     values[4] = <span class='pyx_c_api'>__Pyx_Arg_NewRef_VARARGS</span>(__pyx_k_);
     values[5] = <span class='pyx_c_api'>__Pyx_Arg_NewRef_VARARGS</span>(__pyx_k__2);
@@ -2684,7 +2684,7 @@ static int __pyx_pw_4surp_12yield_models_11C_AGB_Model_1__cinit__(PyObject *__py
         CYTHON_FALLTHROUGH;
         case  1:
         if (kw_args &gt; 0) {
-          PyObject* value = <span class='pyx_c_api'>__Pyx_GetKwValue_VARARGS</span>(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_zeta_agb);
+          PyObject* value = <span class='pyx_c_api'>__Pyx_GetKwValue_VARARGS</span>(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_zeta);
           if (value) { values[1] = <span class='pyx_c_api'>__Pyx_Arg_NewRef_VARARGS</span>(value); kw_args--; }
           else if (unlikely(<span class='py_c_api'>PyErr_Occurred</span>())) <span class='error_goto'>__PYX_ERR(1, 126, __pyx_L3_error)</span>
         }
@@ -2745,9 +2745,9 @@ static int __pyx_pw_4surp_12yield_models_11C_AGB_Model_1__cinit__(PyObject *__py
       __pyx_v_y0 = ((double)0.0004);
     }
     if (values[1]) {
-      __pyx_v_zeta_agb = __pyx_<span class='py_c_api'>PyFloat_AsDouble</span>(values[1]); if (unlikely((__pyx_v_zeta_agb == (double)-1) &amp;&amp; <span class='py_c_api'>PyErr_Occurred</span>())) <span class='error_goto'>__PYX_ERR(1, 126, __pyx_L3_error)</span>
+      __pyx_v_zeta = __pyx_<span class='py_c_api'>PyFloat_AsDouble</span>(values[1]); if (unlikely((__pyx_v_zeta == (double)-1) &amp;&amp; <span class='py_c_api'>PyErr_Occurred</span>())) <span class='error_goto'>__PYX_ERR(1, 126, __pyx_L3_error)</span>
     } else {
-      __pyx_v_zeta_agb = ((double)-0.02);
+      __pyx_v_zeta = ((double)-0.02);
     }
     if (values[2]) {
       __pyx_v_tau_agb = __pyx_<span class='py_c_api'>PyFloat_AsDouble</span>(values[2]); if (unlikely((__pyx_v_tau_agb == (double)-1) &amp;&amp; <span class='py_c_api'>PyErr_Occurred</span>())) <span class='error_goto'>__PYX_ERR(1, 127, __pyx_L3_error)</span>
@@ -2778,7 +2778,7 @@ static int __pyx_pw_4surp_12yield_models_11C_AGB_Model_1__cinit__(PyObject *__py
   <span class='refnanny'>__Pyx_RefNannyFinishContext</span>();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4surp_12yield_models_11C_AGB_Model___cinit__(((struct __pyx_obj_4surp_12yield_models_C_AGB_Model *)__pyx_v_self), __pyx_v_y0, __pyx_v_zeta_agb, __pyx_v_tau_agb, __pyx_v_t_D, __pyx_v_mlr, __pyx_v_imf);
+  __pyx_r = __pyx_pf_4surp_12yield_models_11C_AGB_Model___cinit__(((struct __pyx_obj_4surp_12yield_models_C_AGB_Model *)__pyx_v_self), __pyx_v_y0, __pyx_v_zeta, __pyx_v_tau_agb, __pyx_v_t_D, __pyx_v_mlr, __pyx_v_imf);
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -2794,7 +2794,7 @@ static int __pyx_pw_4surp_12yield_models_11C_AGB_Model_1__cinit__(PyObject *__py
   return __pyx_r;
 }
 /* … */
-static int __pyx_pf_4surp_12yield_models_11C_AGB_Model___cinit__(struct __pyx_obj_4surp_12yield_models_C_AGB_Model *__pyx_v_self, double __pyx_v_y0, double __pyx_v_zeta_agb, double __pyx_v_tau_agb, double __pyx_v_t_D, PyObject *__pyx_v_mlr, PyObject *__pyx_v_imf) {
+static int __pyx_pf_4surp_12yield_models_11C_AGB_Model___cinit__(struct __pyx_obj_4surp_12yield_models_C_AGB_Model *__pyx_v_self, double __pyx_v_y0, double __pyx_v_zeta, double __pyx_v_tau_agb, double __pyx_v_t_D, PyObject *__pyx_v_mlr, PyObject *__pyx_v_imf) {
   struct __pyx_obj_4surp_12yield_models___pyx_scope_struct____cinit__ *__pyx_cur_scope;
   double __pyx_v_m_low;
   double __pyx_v_m_hm;
@@ -2868,8 +2868,8 @@ struct __pyx_obj_4surp_12yield_models___pyx_scope_struct____cinit__ {
 <pre class='cython code score-0 '>  __pyx_cur_scope-&gt;__pyx_v_self-&gt;t_D = __pyx_v_t_D;
 </pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">131</span>:         <span class="bp">self</span><span class="o">.</span><span class="n">y0</span> <span class="o">=</span> <span class="n">y0</span></pre>
 <pre class='cython code score-0 '>  __pyx_cur_scope-&gt;__pyx_v_self-&gt;y0 = __pyx_v_y0;
-</pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">132</span>:         <span class="bp">self</span><span class="o">.</span><span class="n">zeta</span> <span class="o">=</span> <span class="n">zeta_agb</span></pre>
-<pre class='cython code score-0 '>  __pyx_cur_scope-&gt;__pyx_v_self-&gt;zeta = __pyx_v_zeta_agb;
+</pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">132</span>:         <span class="bp">self</span><span class="o">.</span><span class="n">zeta</span> <span class="o">=</span> <span class="n">zeta</span></pre>
+<pre class='cython code score-0 '>  __pyx_cur_scope-&gt;__pyx_v_self-&gt;zeta = __pyx_v_zeta;
 </pre><pre class="cython line score-0">&#xA0;<span class="">133</span>: </pre>
 <pre class="cython line score-2" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">134</span>:         <span class="bp">self</span><span class="o">.</span><span class="n">mlr</span> <span class="o">=</span> <span class="n">mlr</span></pre>
 <pre class='cython code score-2 '>  <span class='pyx_macro_api'>__Pyx_INCREF</span>(__pyx_v_mlr);
