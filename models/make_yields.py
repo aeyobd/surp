@@ -9,17 +9,17 @@ ZETA_C_0 = 0.029
 # comments from linear regression of sampled points
 # regression ran on points with M_H > -1 except -1.5 for P16 and -2 for C11
 Y_C_AGB = {
-        "cristallo11": 3.7e-4, # 2.8 pm 0.5
-        "ventura13": 1.5e-4, # 3.0 pm 1.3
-        "karakas16": 3.3e-4, # 2.85
-        "pignatari16": 9.2e-4, # 7.5 pm 1.5
+        "cristallo11": 4.5e-4, # 3.5 +- 0.3
+        "ventura13": 3.0e-4, # 1.6 +- 1.2
+        "karakas16": 5.0e-4, # 2.9 +- 0.5
+        "pignatari16": 9.2e-4, # 6.2 +- 0.1
 }
 
 ZETA_C_AGB = {
-        "cristallo11": -0.015, # -0.032 pm 0.004
-        "ventura13": -0.02, #  -0.04 pm 0.01
-        "karakas16": -0.029, # -0.04 pm 0.006
-        "pignatari16": -0.015, # -0.010 pm 0.16
+        "cristallo11": -0.015, # -0.0096 +- 0.0009
+        "ventura13": -0.03, #  -0.018 pm 0.01
+        "karakas16": -0.035, # -0.029 pm 0.003
+        "pignatari16": -0.010, # -0.015 pm 0.003
 }
 
 

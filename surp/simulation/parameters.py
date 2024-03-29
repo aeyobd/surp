@@ -9,14 +9,15 @@ import numpy as np
 @dataclass
 class MWParams:
     """
+    MWParams(kwargs...)
+    MWParams.from_file(filename)
+
+    A struct storing the parameters to surp.create_model with.
+
     Parameters
     ----------
     filename: ``str``
         The name of the model
-
-    save_dir: ``str`` [default: None]
-        The directory to save the model in
-        If None, then use the argument passed to this script
 
     eta: ``float`` [default: 1]
         The prefactor for mass-loading strength
@@ -29,12 +30,6 @@ class MWParams:
         - K16
         - A: Custom analytic model, see ``surp/yields.py``
         
-    timestep: ``float`` [default: 0.01]
-        The timestep of the simulation, measured in Gyr.
-        Decreasing this value can significantly speed up results
-
-    yield_kwargs: dict 
-        kwargs passed to set_yields in ``surp/yields.py``
 
     migration_mode: ``str``
         Default value: diffusion
@@ -56,7 +51,27 @@ class MWParams:
 
     yield_scale: ``float`` [default: 1]
         A factor by which to reduce the model's outflows. 
+
+    timestep: ``float`` [default: 0.01]
+        The timestep of the simulation, measured in Gyr.
+        Decreasing this value can significantly speed up results
+    zone_width: ``float`` [default: 0.1]
+
+
+    Attributes
+    ----------
+    radial_bins
+    times
+
+
+    Methods
+    -------
+    save(filename): saves the model
+
+
+
     """
+
     filename:str = "milkyway"
 
     yield_scale:float = 1
@@ -90,6 +105,9 @@ class MWParams:
     simple:bool = False
     mode:str = "sfr"
 
+
+
+
     def __post_init__(self):
         self.process()
 
@@ -99,9 +117,11 @@ class MWParams:
             self.migration_mode = "diffusion"
 
         if self.sfh_model in ["twoinfall", "conroy22"]:
+            print("warning, this needs fixed")
             self.mode = "ifr"
 
         self.calc_N_stars_tot()
+
 
     @property
     def radial_bins(self):
@@ -110,6 +130,7 @@ class MWParams:
     @property
     def times(self):
         return np.arange(0, END_TIME, self.timestep)
+
 
     def calc_N_stars_tot(self):
         Nstars = int(2*self.max_sf_radius/self.zone_width * END_TIME/self.timestep * self.n_stars)
@@ -122,8 +143,10 @@ class MWParams:
 
         return Nstars
 
+
     def to_dict(self):
         return asdict(self)
+
 
     def save(self, filename):
         with open(filename, "w") as f:

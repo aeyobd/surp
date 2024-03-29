@@ -5,8 +5,8 @@ function print_help {
     echo Submits a job to run a vice model
     echo Usage: $0 [-aph] MODEL_DIR ;
     echo -a: copy full vice outputs
-    echo -p: make plots
     echo -m: specify memory
+    # echo -p: make plots
     echo -h: print this message 
 }
 
@@ -21,7 +21,7 @@ REQUESTED_MEMORY="4gb"
 while getopts 'aphm:' OPTION; do
     case "$OPTION" in
         a) COPY_VICE=true ;;
-        p) MAKE_PLOTS=true ;;
+        # p) MAKE_PLOTS=true ;;
         m) REQUESTED_MEMORY=$OPTARG ;;
         h) print_help; exit 0 ;;
         \?) echo "Unknown option: -$OPTARG" >&2; exit 1;;
@@ -39,7 +39,7 @@ fi
 MODEL_NAME=${@:$OPTIND:1}
 
 if [[ ! -d "$MODEL_NAME" ]]; then
-    echo "not a valid model $MODEL_NAME"
+    echo "Error: not a valid model $MODEL_NAME"
     exit 1
 fi
 
@@ -49,49 +49,14 @@ if [  "$COPY_VICE" = true ] ; then
     echo will copy full vice output
 fi
 
-if [  "$MAKE_PLOTS" = true ] ; then
-    echo will make plots
-fi
-
 
 cd $MODEL_NAME
 
-function confirm_and_remove_files {
-    local pattern
-    local existing_files=()
-    for pattern in "$@"; do
-        local matched_files=( $pattern )
-        if [ ${#matched_files[@]} -gt 0 ]; then
-            existing_files+=("${matched_files[@]}")
-        fi
-    done
-
-    if [ ${#existing_files[@]} -eq 0 ]; then
-        echo "No specified files exist, nothing to remove."
-        return
-    fi
-
-    echo "The following files will be removed:"
-    for file in "${existing_files[@]}"; do
-        echo "$file"
-    done
-
-    read -p "Are you sure you want to remove these files? (y/N)  " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        for file in "${existing_files[@]}"; do
-            rm -rf "$file"
-        done
-        echo "Files removed."
-    else
-        echo "File removal aborted."
-        exit 1;
-    fi
-}
-
 # Files to check before removing
 files_to_remove=("*.out" "model.json" "stars.csv" "*.dat", "milkway.vice")
-confirm_and_remove_files "${files_to_remove[@]}"
+for file in "${files_to_remove}"; do
+    rm -rf "$file"
+done
 
 echo "Submitting Job" $MODEL_NAME
 sbatch <<EOT

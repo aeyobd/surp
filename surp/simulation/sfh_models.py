@@ -67,6 +67,57 @@ class lateburst:
                 1 + gaussian(t, self.burst_time, self.burst_width, self.burst_size) )
 
 
+
+class exp_sfh:
+    r"""
+    The exponential SFH model from Johnson et al. (2021).
+
+    Parameters
+    ----------
+    radius : float
+        The galactocentric radius in kpc of a given annulus in the model.
+    dt : float [default : 0.01]
+        The timestep size of the model in Gyr.
+    dr : float [default : 0.1]
+        The width of the annulus in kpc.
+    """
+    def __init__(self, tau_sfh=5):
+        self.tau_sfh = tau_sfh
+        self.norm = 1
+
+
+    def __call__(self, time):
+        return self.norm * exponential(time, self.tau_sfh)
+
+    def __str__(self):
+        return f"sfh ∝ exp(-t/{self.tau_sfh})"
+
+
+
+class linexp:
+    r"""
+    The exponential SFH model from Johnson et al. (2021).
+
+    Parameters
+    ----------
+    radius : float
+        The galactocentric radius in kpc of a given annulus in the model.
+    dt : float [default : 0.01]
+        The timestep size of the model in Gyr.
+    dr : float [default : 0.1]
+        The width of the annulus in kpc.
+    """
+    def __init__(self, tau_sfh=5):
+        self.tau_sfh = tau_sfh
+        self.norm = 1
+
+    def __call__(self, time):
+        return self.norm * _linexp(time, self.tau_sfh)
+
+    def __str__(self):
+        return f"sfh ∝ exp(-t/{self.tau_sfh})"
+
+
 class twoexp:
     r"""
     A double exponential star formation history mimicing the two infall
@@ -121,6 +172,8 @@ def modified_exponential(t, tau, tau_rise, norm=1):
 def exponential(t, tau, norm=1):
     return np.exp(-t / tau)
 
+def _linexp(t, tau, norm=1):
+    return (t/tau) * np.exp(-t / tau)
 
 def gaussian(t, mean, std, norm=1):
     return np.exp( -(t-mean)**2 / (2*std**2) )

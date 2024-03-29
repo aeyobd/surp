@@ -1,12 +1,10 @@
+#!/usr/bin/env python
+
 import argparse
 import subprocess
 import sys
 import os
 import json
-from surp.simulation.parameters import MWParams
-from surp.yield_params import YieldParams
-
-from make_yields import make_yield_params
 
 AGB_KEYS = { "C11": "cristallo11",
             "K10": "karakas10",
@@ -18,12 +16,14 @@ AGB_KEYS = { "C11": "cristallo11",
 
 
 def main():
+
     parser, args = parse_args()
     dirname = make_filename(parser, args)
+
     yparams, params = make_params(args)
 
     if os.path.exists(dirname):
-        ans = input(f"overwrite directory {dirname}? y/N")
+        ans = input(f"overwrite directory {dirname}? (y/N) ")
         if ans != "y":
             print("exiting, directory exists: ", dirname)
             return
@@ -81,11 +81,11 @@ def parse_args():
                         help="mass scaling factor for AGB C",)
     parser.add_argument("-P", "--no_negative", action="store_true",
                         help="no negative agb")
-    parser.add_argument("--t_d", default=0.15,
+    parser.add_argument("--t_d", default=0.15, type=float,
                         help="min delay time AGB")
-    parser.add_argument("--tau_agb", default=0.3,
+    parser.add_argument("--tau_agb", default=0.3, type=float,
                         help="characteristic dtd AGB")
-    parser.add_argument("--zeta_agb", default=-0.1,
+    parser.add_argument("--zeta_agb", default=-0.02, type=float,
                         help="metallicity dependence of AGB C in the analytic model")
 
     parser.add_argument("--yl_cc", default=8.67e-4, type=float,
@@ -158,7 +158,7 @@ def make_filename(parser, args):
 
     filename += arg_to_fname(parser, args, "spec", name="")
     filename += arg_to_fname(parser, args, "migration_mode", name="")
-    filename += arg_to_fname(parser, args, "sigma_R", depends = (args.migration_mode in ["gaussian", "rand_walk"]))
+    filename += arg_to_fname(parser, args, "sigma_R", )
     filename += arg_to_fname(parser, args, "sf_law", name="sfl")
     filename += arg_to_fname(parser, args, "timestep", name="dt")
     filename += arg_to_fname(parser, args, "zone_width", name="w")
@@ -170,6 +170,10 @@ def make_filename(parser, args):
 
 
 def make_params(args):
+    from surp.simulation.parameters import MWParams
+    from surp.yield_params import YieldParams
+    from make_yields import make_yield_params
+
     args.agb_model = AGB_KEYS[args.agb_model]
     if args.agb_n_model is not None:
         args.agb_n_model = AGB_KEYS[args.agb_n_model]

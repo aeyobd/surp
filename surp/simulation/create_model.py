@@ -9,7 +9,8 @@ from . import properties
 def create_model(params):
     """"
     This function wraps various settings to make running VICE multizone models
-    easier for the carbon paper investigation
+    easier for the carbon paper investigation. 
+    See Parameters for documentation on the options used to create the model.
     """
 
     model = vice.milkyway(zone_width=params.zone_width,

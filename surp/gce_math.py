@@ -1,12 +1,53 @@
 import numpy as np
 import vice
 import molmass
+from .yield_models import ZeroAGB
 
 from ._globals import Z_SUN
 from .utils import arg_numpylike
 
 
-def calc_y(Z=Z_SUN, ele="c"):
+def calc_y(Z=Z_SUN, ele="c", kind="all"):
+    if hasattr(Z, "__len__"):
+        y = np.array( [_calc_y_of_kind(z, ele, kind) for z in Z ] )
+    else:
+        y = _calc_y_of_kind(Z, ele, kind)
+
+    return y
+
+
+def _calc_y_of_kind(Z, ele, kind):
+    yields = copy_current_yields(ele)
+    if kind != "all":
+        if -1 == kind.find("cc"):
+            vice.yields.ccsne.settings[ele] = 0
+        if -1 == kind.find("ia"):
+            vice.yields.sneia.settings[ele] = 0
+        if -1 == kind.find("agb"):
+            vice.yields.agb.settings[ele] = ZeroAGB()
+
+    y = _calc_y(Z, ele)
+    reset_yields(ele, yields)
+
+    return y
+
+
+def copy_current_yields(ele):
+    ycc = vice.yields.ccsne.settings[ele]
+    yagb = vice.yields.agb.settings[ele]
+    yia = vice.yields.sneia.settings[ele]
+    return ycc, yagb, yia
+
+
+def reset_yields(ele, yields):
+    ycc, yagb, yia = yields
+
+    vice.yields.ccsne.settings[ele] = ycc
+    vice.yields.agb.settings[ele] = yagb
+    vice.yields.sneia.settings[ele] = yia
+
+
+def _calc_y(Z, ele="c"):
     m_c, times = vice.single_stellar_population(ele, Z=Z, mstar=1)
     return m_c[-1]
 
