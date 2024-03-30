@@ -2,20 +2,31 @@
 I am so sorry that most of these parameters are named in reverse of YieldParams
 """
 from surp import YieldParams, Z_SUN
+import vice
 
-Y_C_0 = 2.85e-3
-ZETA_C_0 = 0.029
+Y_C_0_EXP = 2.85e-3
+ZETA_C_0_EXP = 0.029
+
+Y_MG = 0.000671
+
+Y_C_0 = 4.20 * Y_MG # +- 0.009
+ZETA_C_0 = 1.64 * Y_MG # +- 0.044
+
+Y_C_Q = 4.12 * Y_MG # +- 0.01
+B_C_Q = 1.21 * Y_MG # +- 0.05
+A_C_Q = 3.07 * Y_MG # +- 0.07
+
 
 # comments from linear regression of sampled points
 # regression ran on points with M_H > -1 except -1.5 for P16 and -2 for C11
-Y_C_AGB = {
+Y_C_AGB_EXP = {
         "cristallo11": 4.5e-4, # 3.5 +- 0.3
         "ventura13": 3.0e-4, # 1.6 +- 1.2
         "karakas16": 5.0e-4, # 2.9 +- 0.5
         "pignatari16": 9.2e-4, # 6.2 +- 0.1
 }
 
-ZETA_C_AGB = {
+ZETA_C_AGB_EXP = {
         "cristallo11": -0.015, # -0.0096 +- 0.0009
         "ventura13": -0.03, #  -0.018 pm 0.01
         "karakas16": -0.035, # -0.029 pm 0.003
@@ -24,10 +35,32 @@ ZETA_C_AGB = {
 
 
 
+Y_C_AGB= {
+        "cristallo11": 3.51e-4, # 3.5 +- 0.3
+}
+
+ZETA_C_AGB = {
+        "cristallo11": -3.52e-4, # -0.0096 +- 0.0009
+}
+
+
+
 def y_c_total(Z):
     """Returns our adopted total C yield given Z"""
     return Y_C_0 + ZETA_C_0*(Z-Z_SUN)
 
+def y_c_lin(M_H):
+    """Returns our adopted total C yield given [M/H]"""
+    y_mg = vice.yields.ccsne.settings["mg"]
+    return y_mg * (4.16 + 1.64*M_H)
+
+def y_c_quad(M_H):
+    y_mg = vice.yields.ccsne.settings["mg"]
+    return y_mg * (4.12 + 1.21*M_H + 3.07*M_H**2)
+
+def y_c_exp(M_H):
+    y_mg = vice.yields.ccsne.settings["mg"]
+    return y_mg * (3.57 + 0.588*10**M_H)
 
 def make_yield_params( zeta_cc=None, agb_n_model="A", 
                       fe_ia_factor=1,y1=1e-4, Z1=0, cc_model="Lin", **kwargs):
@@ -60,7 +93,7 @@ def set_c_cc(params, y0, zeta, model="Lin", y1=1e-4, Z1=0):
 
 
 def set_c_agb(params, agb_model="cristallo11", f_agb=0.2, alpha_agb=None, zeta_agb=None, 
-            mass_factor=1, no_negative=False, interp_kind="linear", t_D=0.1, tau_agb=0.3 ):
+            mass_factor=1, no_negative=False, interp_kind="log", t_D=0.1, tau_agb=0.3, low_z_flat=True):
 
     y0 = f_agb * Y_C_0
     params.c_agb_model = agb_model
@@ -72,7 +105,7 @@ def set_c_agb(params, agb_model="cristallo11", f_agb=0.2, alpha_agb=None, zeta_a
         params.c_agb_kwargs = dict(t_D=t_D, tau_agb=tau_agb, y0=y0, zeta=zeta_agb)
         params.c_agb_alpha = 1
     else:
-        params.c_agb_kwargs = dict(mass_factor=mass_factor, no_negative=no_negative, interp_kind=interp_kind)
+        params.c_agb_kwargs = dict(mass_factor=mass_factor, no_negative=no_negative, interp_kind=interp_kind, low_z_flat=low_z_flat)
 
         y_c_agb = Y_C_AGB[agb_model]
         if alpha_agb is None:

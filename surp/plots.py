@@ -3,8 +3,40 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from scipy.stats import binned_statistic
 from surp import subgiants
 import arya
+
+
+def equal_num_hist(x, y, x_err=None, y_err=None, bins=None, ci=[16, 84]):
+    """
+    Calculates a histogram with equal number of points in each bin
+    """
+
+    if bins is None:
+        bins = int(np.sqrt(len(x)))
+    if isinstance(bins, int):
+        bins = np.quantile(x, np.linspace(0, 1, bins))
+
+    counts = binned_statistic(x, y, bins=bins, statistic="count")[0]
+    xm = binned_statistic(x, x, bins=bins, statistic="median")[0]
+    ym = binned_statistic(x, y, bins=bins, statistic="median")[0]
+    xl = binned_statistic(x, x, bins=bins, statistic=lambda x: np.percentile(x, ci[0]))[0]
+    xh = binned_statistic(x, x, bins=bins, statistic=lambda x: np.percentile(x, ci[1]))[0]
+    yl = binned_statistic(x, y, bins=bins, statistic=lambda x: np.percentile(x, ci[0]))[0]
+    yh = binned_statistic(x, y, bins=bins, statistic=lambda x: np.percentile(x, ci[1]))[0]
+
+    return (xm, xl, xh), (ym, yl, yh), counts
+
+
+def median_err(x, ci=[16, 84]):
+    """
+    Calculates the median and the error bars
+    """
+    return np.median(x), np.percentile(x, ci[0]), np.percentile(x, ci[1])
+    
+def binned_median_err(x, bins, ci=[16, 84]):
+    pass
 
 
 def vice_to_apogee_name(x):

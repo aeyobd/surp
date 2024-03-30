@@ -53,10 +53,7 @@ fi
 cd $MODEL_NAME
 
 # Files to check before removing
-files_to_remove=("*.out" "model.json" "stars.csv" "*.dat", "milkway.vice")
-for file in "${files_to_remove}"; do
-    rm -rf "$file"
-done
+rm -rf *.out model.json stars.csv *.dat milkway.vice
 
 echo "Submitting Job" $MODEL_NAME
 sbatch <<EOT

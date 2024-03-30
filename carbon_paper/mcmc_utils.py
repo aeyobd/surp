@@ -58,24 +58,25 @@ class Quadratic(MCMCModel):
 
 
 class Exponential(MCMCModel):
-    def __init__(self, beta0=(0, 1), beta1=(0, 1), beta2=(0, 1), log_sigma=(0, 1)):
+    def __init__(self, beta0=(0, 1), beta1=(0, 1), log_sigma=(0, 1), base=10):
         self.distributions = [
             stats.norm(beta0[0], beta0[1]),
             stats.norm(beta1[0], beta1[1]),
-            stats.norm(beta2[0], beta2[1]),
             stats.norm(log_sigma[0], log_sigma[1])
         ]
+        self.base = base
 
     def __call__(self, x, theta):
-        beta0, beta1, beta2, log_sigma = theta
-        return beta0 + beta1 * np.exp(beta2 * x)
+        beta0, beta1, log_sigma = theta
+        return beta0 + beta1 * self.base**(x)
 
     def d_dx(self, x, theta):
-        return theta[1] + theta[2] * np.exp(theta[2] * x)
+        beta0, beta1, log_sigma = theta
+        return beta0 + beta1 * self.base**(x) * np.log(self.base)
 
     @property
     def labels(self):
-        return [r"$\beta_0$", r"$\beta_1$", r"$\beta_2$", r"$\log(\sigma)$"]
+        return [r"$\beta_0$", r"$\beta_1$", r"$\log(\sigma)$"]
 
 
 def LogLinear(MCMCModel):
@@ -109,8 +110,8 @@ def log_likelihood(theta, model, obs):
 
 def log_likelihood_simple(theta, model, x, y):
     pred = model(x, theta)
-    sigma2 = theta[-1]
-    return -0.5 * np.sum((y - pred) ** 2 / sigma2 + np.log(2 * np.pi * sigma2))
+    sigma = np.exp(theta[-1])
+    return -0.5 * np.sum((y - pred) ** 2 / sigma + np.log(2 * np.pi * sigma))
 
 
 def log_likelihood_uncertanties(theta, model, obs, verbose=False):
@@ -144,7 +145,6 @@ def plot_prior(model, N=1000, nwalkers=10, xlims=(-2, 2), N_lines=100):
     
     p0 = model.prior_sample(nwalkers)
     nwalkers, ndim = p0.shape
-    print(p0)
     sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, args=(model, empty_obs))
     sampler.run_mcmc(p0, N, progress=True);
     samples = sampler.get_chain(discard=200, thin=15, flat=True)
@@ -185,5 +185,5 @@ def print_posterior(model, samples):
     for i in range(len(model.labels)):
         ps = np.percentile(samples[:, i], [16, 50, 84])
         q = np.diff(ps)
-        txt = f"{model.labels[i]} = {ps[1]:.2f} + {q[0]:.2f} - {q[1]:.2f}"
+        txt = f"{model.labels[i]} = {ps[1]:.2e} + {q[0]:.2e} - {q[1]:.2e}"
         print(txt)

@@ -60,7 +60,7 @@ def parse_args():
                         twoexp, threeexp, twoinfall]""")
     parser.add_argument("-c", "--sf_law", default="J21",
                         help="Specifies the sfh law")
-    parser.add_argument("-C", "--cc_model", default="Lin",
+    parser.add_argument("-C", "--cc_model", default="BiLogLin",
                         help="Specifies the cc model")
     parser.add_argument("-M", "--migration_mode", default="diffusion", 
                         help="""The migration mode. Default is Diffusion.

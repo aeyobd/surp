@@ -92,9 +92,11 @@ def get_c_cc_model(params):
     elif params.c_cc_model == "Lin":
         model = yield_models.Lin_CC(y0=params.c_cc_y0, zeta=params.c_cc_zeta)
     elif params.c_cc_model == "LogLin":
-        model = yield_models.LogLin_CC(y0=params.c_cc_y0, zeta=params.c_cc_zeta, **params.c_cc_kwargs)
+        model = yield_models.LogLin_CC(y0=params.c_cc_y0, B=params.c_cc_zeta, **params.c_cc_kwargs)
     elif params.c_cc_model == "BiLogLin":
-        model = yield_models.BiLogLin_CC(y0=params.c_cc_y0, zeta=params.c_cc_zeta, **params.c_cc_kwargs)
+        model = yield_models.BiLogLin_CC(y0=params.c_cc_y0, B=params.c_cc_zeta, **params.c_cc_kwargs)
+    elif params.c_cc_model == "Quadratic":
+        model = yield_models.Quadratic_CC(y0=params.c_cc_y0, B=params.c_cc_zeta, **params.c_cc_kwargs)
     else:
         model = params.c_cc_model
 
