@@ -109,9 +109,8 @@ class MH_grad:
 class mass_loading:
     """A class which represents the mass loading profile of galaxy. Set yields before calling this"""
     def __init__(self, params):
-        self._factor = params.yield_scale
         r = params.r
-        yo = self._factor * vice.yields.ccsne.settings["o"]
+        yo = vice.yields.ccsne.settings["o"]
 
         self.B = params.r - 1
         self.C = yo / vice.solar_z("o") 

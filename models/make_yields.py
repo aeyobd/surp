@@ -4,17 +4,34 @@ I am so sorry that most of these parameters are named in reverse of YieldParams
 from surp import YieldParams, Z_SUN
 import vice
 
-Y_C_0_EXP = 2.85e-3
-ZETA_C_0_EXP = 0.029
+noneq_factor = 1.05
 
-Y_MG = 0.000671
+Y_C_0_EXP = 2.85e-3 * noneq_factor
+ZETA_C_0_EXP = 0.029 * noneq_factor
 
-Y_C_0 = 4.20 * Y_MG # +- 0.009
-ZETA_C_0 = 1.64 * Y_MG # +- 0.044
+Y_MG = 0.000652
 
-Y_C_Q = 4.12 * Y_MG # +- 0.01
-B_C_Q = 1.21 * Y_MG # +- 0.05
-A_C_Q = 3.07 * Y_MG # +- 0.07
+Y_C_0 = 4.20 * Y_MG * noneq_factor # +- 0.009
+ZETA_C_0 = 1.64 * Y_MG  * noneq_factor # +- 0.044
+
+Y_C_Q = 4.12 * Y_MG * noneq_factor # +- 0.01
+B_C_Q = 1.21 * Y_MG * noneq_factor # +- 0.05
+A_C_Q = 3.07 * Y_MG * noneq_factor # +- 0.07
+
+
+Y_C_AGB= {
+        "cristallo11": 4.4e-4, # 3.5 +- 0.3
+        "ventura13": 2.6e-4, # 3.5 +- 0.3
+        "karakas16": 5.6e-4,
+        "pignatari16": 8.0e-4,
+}
+
+ZETA_C_AGB = {
+        "cristallo11": -3.5e-4, # -0.0096 +- 0.0009
+        "ventura13": -4.9e-4,
+        "karakas16": -10e-4,
+        "pignatari16": -4e-4,
+}
 
 
 # comments from linear regression of sampled points
@@ -35,16 +52,6 @@ ZETA_C_AGB_EXP = {
 
 
 
-Y_C_AGB= {
-        "cristallo11": 3.51e-4, # 3.5 +- 0.3
-}
-
-ZETA_C_AGB = {
-        "cristallo11": -3.52e-4, # -0.0096 +- 0.0009
-}
-
-
-
 def y_c_total(Z):
     """Returns our adopted total C yield given Z"""
     return Y_C_0 + ZETA_C_0*(Z-Z_SUN)
@@ -56,17 +63,18 @@ def y_c_lin(M_H):
 
 def y_c_quad(M_H):
     y_mg = vice.yields.ccsne.settings["mg"]
+    print(y_mg)
     return y_mg * (4.12 + 1.21*M_H + 3.07*M_H**2)
 
 def y_c_exp(M_H):
     y_mg = vice.yields.ccsne.settings["mg"]
     return y_mg * (3.57 + 0.588*10**M_H)
 
-def make_yield_params( zeta_cc=None, agb_n_model="A", 
-                      fe_ia_factor=1,y1=1e-4, Z1=0, cc_model="Lin", **kwargs):
+def make_yield_params( zeta_cc=None, agb_n_model="A", yield_scale=1,
+                      fe_ia_factor=1, y1=1e-4, Z1=0, cc_model="Lin", **kwargs):
     """Creates yields as given by """
 
-    params = YieldParams()
+    params = YieldParams(yield_scale=yield_scale)
     y_c_agb, zeta_c_agb = set_c_agb(params, **kwargs)
 
     y_c_cc = Y_C_0 - y_c_agb

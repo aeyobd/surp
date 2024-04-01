@@ -33,6 +33,8 @@ class YieldParams:
         
 
     """
+    yield_scale: float = 1
+
     c_cc_model:str = "Lin"
     c_cc_y0:float = 2.28e-3
     c_cc_zeta:float = 0.03

@@ -48,7 +48,7 @@ def set_defaults() -> None:
 
 
 
-def set_yields(params=YieldParams(), verbose=False, **kwargs):
+def set_yields(params=YieldParams(), verbose=True, **kwargs):
     """ 
     set_yields(params, verbose=False, **kwargs)
     Ses the yields and abundace scale for the C project. """
@@ -69,6 +69,8 @@ def set_yields(params=YieldParams(), verbose=False, **kwargs):
 
     sneia.settings["fe"] = params.fe_ia
     ccsne.settings["fe"] = params.fe_cc
+
+    scale_yields(params.yield_scale)
 
     if verbose:
         print_yields()

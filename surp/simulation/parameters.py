@@ -49,9 +49,6 @@ class MWParams:
     n_stars: ``int`` [default: 2]
         The number of stars to create during each timestep of the model.
 
-    yield_scale: ``float`` [default: 1]
-        A factor by which to reduce the model's outflows. 
-
     timestep: ``float`` [default: 0.01]
         The timestep of the simulation, measured in Gyr.
         Decreasing this value can significantly speed up results
@@ -74,7 +71,6 @@ class MWParams:
 
     filename:str = "milkyway"
 
-    yield_scale:float = 1
     r:float = 0.4
     timestep:float = 0.02
     n_stars:int = 1

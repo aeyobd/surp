@@ -16,11 +16,8 @@ AGB_KEYS = { "C11": "cristallo11",
 
 
 def main():
-
     parser, args = parse_args()
     dirname = make_filename(parser, args)
-
-    yparams, params = make_params(args)
 
     if os.path.exists(dirname):
         ans = input(f"overwrite directory {dirname}? (y/N) ")
@@ -30,6 +27,9 @@ def main():
 
     else:
         os.mkdir(dirname)
+
+    yparams, params = make_params(args)
+
     path = f"./{dirname}/params.json"
     ypath = f"./{dirname}/yield_params.json"
     os.popen(f"cp -f run.py {dirname}")
@@ -193,11 +193,11 @@ def make_params(args):
         t_D = args.t_d,
         tau_agb = args.tau_agb,
         zeta_agb = args.zeta_agb,
-        cc_model = args.cc_model
+        cc_model = args.cc_model,
+        yield_scale = args.eta,
     )
 
     mw_params = MWParams(
-        yield_scale = args.eta,
         timestep = args.timestep,
         n_stars = args.n_stars,
         migration_mode = args.migration_mode,

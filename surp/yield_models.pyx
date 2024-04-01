@@ -241,6 +241,11 @@ cdef class Lin_CC(AbstractCC):
     def __str__(self):
         return f"{self.y0:0.2e} + {self.zeta:0.2e} (Z - Z0)"
 
+    def __imul__(self, scale):
+        self.y0 *= scale
+        self.zeta *= scale
+        return self
+
     def copy(self):
         return Lin_CC(y0=self.y0, zeta=self.zeta)
 
