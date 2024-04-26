@@ -75,7 +75,7 @@ def parse_args():
     parser.add_argument("-R", "--RIa", default="plaw", 
                         help="SNe Ia DTD")
 
-    parser.add_argument("--alpha_agb", default=None,
+    parser.add_argument("--alpha_agb", default=None,type=float,
                         help="manually set the AGB scaling factor?")
     parser.add_argument("--m_factor", default=1, type=float,
                         help="mass scaling factor for AGB C",)

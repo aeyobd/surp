@@ -58,7 +58,7 @@ rm -rf *.out model.json stars.csv *.dat milkway.vice
 echo "Submitting Job" $MODEL_NAME
 sbatch <<EOT
 #!/bin/bash
-#SBATCH --time=1:00:00
+#SBATCH --time=0:20:00
 #SBATCH --ntasks=$NTHREADS
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=$REQUESTED_MEMORY

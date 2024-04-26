@@ -20,9 +20,9 @@ A_C_Q = 3.07 * Y_MG * noneq_factor # +- 0.07
 
 
 Y_C_AGB= {
-        "cristallo11": 4.4e-4, # 3.5 +- 0.3
-        "ventura13": 2.6e-4, # 3.5 +- 0.3
-        "karakas16": 5.6e-4,
+        "cristallo11": 4.0e-4,
+        "ventura13": 2.6e-4,
+        "karakas16": 3.5e-4,
         "pignatari16": 8.0e-4,
 }
 
@@ -30,7 +30,7 @@ ZETA_C_AGB = {
         "cristallo11": -3.5e-4, # -0.0096 +- 0.0009
         "ventura13": -4.9e-4,
         "karakas16": -10e-4,
-        "pignatari16": -4e-4,
+        "pignatari16": -3.5e-4,
 }
 
 
@@ -59,7 +59,7 @@ def y_c_total(Z):
 def y_c_lin(M_H):
     """Returns our adopted total C yield given [M/H]"""
     y_mg = vice.yields.ccsne.settings["mg"]
-    return y_mg * (4.16 + 1.64*M_H)
+    return y_mg * (4.20 + 1.64*M_H)
 
 def y_c_quad(M_H):
     y_mg = vice.yields.ccsne.settings["mg"]
@@ -77,6 +77,7 @@ def make_yield_params( zeta_cc=None, agb_n_model="A", yield_scale=1,
     params = YieldParams(yield_scale=yield_scale)
     y_c_agb, zeta_c_agb = set_c_agb(params, **kwargs)
 
+    print(y_c_agb)
     y_c_cc = Y_C_0 - y_c_agb
 
     if zeta_cc is None:
@@ -118,6 +119,8 @@ def set_c_agb(params, agb_model="cristallo11", f_agb=0.2, alpha_agb=None, zeta_a
         y_c_agb = Y_C_AGB[agb_model]
         if alpha_agb is None:
             alpha_agb = y0 / y_c_agb
+
+        y0 = alpha_agb * y_c_agb
 
         zeta_agb = ZETA_C_AGB[agb_model] * alpha_agb
         params.c_agb_alpha = alpha_agb
