@@ -1,0 +1,28 @@
+{
+    "filename": "milkyway",
+    "yield_scale": 1,
+    "r": 0.4,
+    "timestep": 0.02,
+    "n_stars": 1,
+    "migration_mode": "diffusion",
+    "migration": "gaussian",
+    "verbose": false,
+    "sigma_R": 1.27,
+    "sf_law": "J21",
+    "zone_width": 0.1,
+    "RIa": "plaw",
+    "sfh_model": "insideout",
+    "sfh_kwargs": {
+        "tau_sfh": "sanchez",
+        "tau_rise": 2
+    },
+    "max_sf_radius": 15.5,
+    "thin_disk_scale_radius": 2.5,
+    "thick_disk_scale_radius": 2.0,
+    "thin_to_thick_ratio": 0.27,
+    "M_star_MW": 80000000000.0,
+    "save_migration": true,
+    "N_star_tot": 204600,
+    "simple": false,
+    "mode": "sfr"
+}

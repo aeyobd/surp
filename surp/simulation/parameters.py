@@ -87,6 +87,8 @@ class MWParams:
     sfh_kwargs:dict = field(default_factory=lambda: dict(tau_sfh="sanchez", tau_rise=2))
     max_sf_radius:float = 15.5 # Radius in kpc beyond which the SFR = 0
 
+    eta_scale:float = 1.0
+
     thin_disk_scale_radius:float = 2.5 # kpc
     thick_disk_scale_radius:float = 2.0 # kpc
     thin_to_thick_ratio:float = 0.27 # at r = 0
@@ -95,7 +97,6 @@ class MWParams:
     M_star_MW:float = 5.17e10
 
     save_migration:bool = False
-
     # calculated
     N_star_tot:int = 0 # calculated by model
     simple:bool = False

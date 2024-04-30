@@ -110,7 +110,7 @@ class mass_loading:
     """A class which represents the mass loading profile of galaxy. Set yields before calling this"""
     def __init__(self, params):
         r = params.r
-        yo = vice.yields.ccsne.settings["o"]
+        yo = vice.yields.ccsne.settings["o"] * params.eta_scale
 
         self.B = params.r - 1
         self.C = yo / vice.solar_z("o") 

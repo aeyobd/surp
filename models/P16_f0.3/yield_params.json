@@ -1,0 +1,20 @@
+{
+    "c_cc_model": "Lin",
+    "c_cc_y0": 0.0019950000000000002,
+    "c_cc_zeta": 0.03829347826086957,
+    "c_cc_kwargs": {},
+    "c_agb_model": "pignatari16",
+    "c_agb_alpha": 0.9293478260869564,
+    "c_agb_kwargs": {
+        "mass_factor": 1,
+        "no_negative": false,
+        "interp_kind": "linear"
+    },
+    "n_agb_model": "A",
+    "n_agb_eta": 0.000502,
+    "n_agb_y0": 0,
+    "n_cc_y0": 0.0005,
+    "n_cc_zeta": 0,
+    "fe_ia": 0.00077,
+    "fe_cc": 0.000473
+}

@@ -63,7 +63,6 @@ def y_c_lin(M_H):
 
 def y_c_quad(M_H):
     y_mg = vice.yields.ccsne.settings["mg"]
-    print(y_mg)
     return y_mg * (4.12 + 1.21*M_H + 3.07*M_H**2)
 
 def y_c_exp(M_H):
@@ -77,7 +76,6 @@ def make_yield_params( zeta_cc=None, agb_n_model="A", yield_scale=1,
     params = YieldParams(yield_scale=yield_scale)
     y_c_agb, zeta_c_agb = set_c_agb(params, **kwargs)
 
-    print(y_c_agb)
     y_c_cc = Y_C_0 - y_c_agb
 
     if zeta_cc is None:

@@ -9,7 +9,7 @@ results
 *.jpeg
 *.vice
 *.gif
-*.json
+model.json
 *.mp4
 *.csv
 
