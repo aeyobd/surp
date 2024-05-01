@@ -1,13 +1,13 @@
 {
     "yield_scale": 1,
     "c_cc_model": "BiLogLin",
-    "c_cc_y0": 0.002012724,
-    "c_cc_zeta": 0.00150012975,
+    "c_cc_y0": 0.0020953200000000003,
+    "c_cc_zeta": 0.002592744,
     "c_cc_kwargs": {
         "y1": 0.000867
     },
-    "c_agb_model": "pignatari16",
-    "c_agb_alpha": 1.0782450000000001,
+    "c_agb_model": "ventura13",
+    "c_agb_alpha": 3.0,
     "c_agb_kwargs": {
         "mass_factor": 1,
         "no_negative": false,

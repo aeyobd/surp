@@ -1,6 +1,5 @@
 {
     "filename": "milkyway",
-    "yield_scale": 1,
     "r": 0.4,
     "timestep": 0.02,
     "n_stars": 1,
@@ -17,6 +16,7 @@
         "tau_rise": 2
     },
     "max_sf_radius": 15.5,
+    "eta_scale": 1.0,
     "thin_disk_scale_radius": 2.5,
     "thick_disk_scale_radius": 2.0,
     "thin_to_thick_ratio": 0.27,

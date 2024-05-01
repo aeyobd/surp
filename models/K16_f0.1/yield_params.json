@@ -1,14 +1,18 @@
 {
-    "c_cc_model": "Lin",
-    "c_cc_y0": 0.002565,
-    "c_cc_zeta": 0.04895000000000001,
-    "c_cc_kwargs": {},
+    "yield_scale": 1,
+    "c_cc_model": "BiLogLin",
+    "c_cc_y0": 0.002587788,
+    "c_cc_zeta": 0.001944264,
+    "c_cc_kwargs": {
+        "y1": 0.000867
+    },
     "c_agb_model": "karakas16",
-    "c_agb_alpha": 0.5700000000000001,
+    "c_agb_alpha": 0.82152,
     "c_agb_kwargs": {
         "mass_factor": 1,
         "no_negative": false,
-        "interp_kind": "linear"
+        "interp_kind": "log",
+        "low_z_flat": true
     },
     "n_agb_model": "A",
     "n_agb_eta": 0.000502,
