@@ -17,7 +17,9 @@ class interpolator(interp_scheme_2d):
             no_negative=False, no_negative_mass="lowest", low_z_flat=True,
             min_mass="lowest", max_mass=8):
         """
-        interpolator()
+        interpolator(element, study="cristallo11", prefactor=1, mass_factor=1,
+        interp_kind="log", no_negative=False, no_negative_mass="lowest",
+        low_z_flat=True, min_mass="lowest", max_mass=8)
 
         A 2-D interpolation scheme for AGB star yield data used in the Boyea et al. (2024) paper.
         Unlike default vice interpolators, this model (by default) interpolates in log metallicity (instead of linearly in metallicity) and sets yields less than the lowest sampled mass to zero. This is in order to more intuitively match the qualitative trends of the C predictions of yields.

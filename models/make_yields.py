@@ -69,11 +69,11 @@ def y_c_exp(M_H):
     y_mg = vice.yields.ccsne.settings["mg"]
     return y_mg * (3.57 + 0.588*10**M_H)
 
-def make_yield_params( zeta_cc=None, agb_n_model="A", yield_scale=1,
+def make_yield_params( zeta_cc=None, agb_n_model="A", yield_scale=1, mlr="larson1974",
                       fe_ia_factor=1, y1=1e-4, Z1=0, cc_model="Lin", **kwargs):
     """Creates yields as given by """
 
-    params = YieldParams(yield_scale=yield_scale)
+    params = YieldParams(yield_scale=yield_scale, mlr=mlr)
     y_c_agb, zeta_c_agb = set_c_agb(params, **kwargs)
 
     y_c_cc = Y_C_0 - y_c_agb

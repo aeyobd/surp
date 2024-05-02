@@ -32,7 +32,6 @@ def main():
 
     path = f"./{dirname}/params.json"
     ypath = f"./{dirname}/yield_params.json"
-    os.popen(f"cp -f run.py {dirname}")
 
     print("saving params to ", dirname)
     yparams.save(ypath)
@@ -93,6 +92,8 @@ def parse_args():
     parser.add_argument("--zl_cc", default=0, type=float,
                         help="Metallicity to switch to low Z CC")
 
+    parser.add_argument("--mlr", default="larson1974", type=str,
+                        help="mass lifetime relation")
     parser.add_argument("-d", "--timestep", type=float, default=0.02, 
                         help="the size of the simulation time step")
     parser.add_argument("-w", "--zone_width", type=float, default=0.1, 
@@ -156,6 +157,8 @@ def make_filename(parser, args):
     filename += arg_to_fname(parser, args, "RIa")
     filename += arg_to_fname(parser, args, "agb_n_model", name="N")
 
+    filename += arg_to_fname(parser, args, "mlr")
+
     filename += arg_to_fname(parser, args, "spec", name="")
     filename += arg_to_fname(parser, args, "migration_mode", name="")
     filename += arg_to_fname(parser, args, "sigma_R", )
@@ -195,6 +198,7 @@ def make_params(args):
         zeta_agb = args.zeta_agb,
         cc_model = args.cc_model,
         yield_scale = args.eta,
+        mlr = args.mlr,
     )
 
     mw_params = MWParams(

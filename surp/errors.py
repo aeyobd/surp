@@ -1,2 +1,0 @@
-# fits to apogee errors
-

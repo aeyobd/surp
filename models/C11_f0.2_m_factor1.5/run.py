@@ -18,8 +18,6 @@ surp.yields.set_yields(yields)
 model = surp.create_model(params)
 
 print("created model")
-print(model)
-print(model.zones[80])
 
 model.run(params.times, overwrite=True, pickle=True)
 

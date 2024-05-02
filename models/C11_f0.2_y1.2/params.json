@@ -1,6 +1,5 @@
 {
     "filename": "milkyway",
-    "yield_scale": 1,
     "r": 0.4,
     "timestep": 0.02,
     "n_stars": 1,
@@ -24,5 +23,6 @@
     "save_migration": false,
     "N_star_tot": 204600,
     "simple": false,
-    "mode": "sfr"
+    "mode": "sfr",
+    "eta_scale": 0.833
 }

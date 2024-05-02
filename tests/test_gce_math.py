@@ -2,6 +2,7 @@ import pytest
 from pytest import approx
 
 from surp import gce_math as gcem
+import surp
 import numpy as np
 
 

@@ -33,6 +33,7 @@ def set_sf_law(model, params):
                 raise ValueError("SF law not known ", params.sf_law)
 
 
+
 def conroy_tau_star(t):
     if t < 2.5:
         tau_st = 50
@@ -89,12 +90,12 @@ def create_migration(params):
 
 
 class MH_grad:
-    def __init__(self, R0=5, MH_0 = 0.29, zeta_in=-0.015, zeta_out=-0.09):
+    def __init__(self, params):
         """Metallicity gradient of galaxy from Hayden et al. 2014"""
-        self.R0 = R0
-        self.MH_0 = MH_0
-        self.zeta_in = zeta_in
-        self.zeta_out = zeta_out
+        self.R0 = params.MH_grad_R0
+        self.MH_0 = params.MH_grad_MH0
+        self.zeta_in = params.MH_grad_in
+        self.zeta_out = params.MH_grad_out
 
     def __call__(self, R):
         return self.MH_0 + (R-self.R0) * np.where(R<self.R0, self.zeta_in, self.zeta_out)
@@ -107,7 +108,10 @@ class MH_grad:
 
 
 class mass_loading:
-    """A class which represents the mass loading profile of galaxy. Set yields before calling this"""
+    """A class which represents the mass loading profile of galaxy. Set yields before calling this
+    params.eta_scale scales the assumed yield setting used here
+    params.r is the approximated mass loading factor
+    """
     def __init__(self, params):
         r = params.r
         yo = vice.yields.ccsne.settings["o"] * params.eta_scale
@@ -115,7 +119,7 @@ class mass_loading:
         self.B = params.r - 1
         self.C = yo / vice.solar_z("o") 
 
-        self.MH_func = MH_grad()
+        self.MH_func = MH_grad(params)
 
     def __call__(self, R_gal):
         MH = self.MH_func(R_gal)

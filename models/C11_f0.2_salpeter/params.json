@@ -10,7 +10,7 @@
     "sigma_R": 1.27,
     "save_migration": false,
     "mode": "sfr",
-    "imf": "kroupa",
+    "imf": "salpeter",
     "timestep": 0.02,
     "t_d_ia": 0.15,
     "RIa": "plaw",

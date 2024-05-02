@@ -11,6 +11,12 @@ class YieldParams:
     ------
     c_cc_model: [str] = "Lin"
         The CCSNe model to use. If Lin or LogLin, c_cc_y0 and c_cc_zeta are used.
+        - Zero
+        - Lin
+        - LogLin
+        - BiLin
+        - BiLogLin
+        - Quadratic
         May also be a float or a recognized study in VICE
     c_cc_y0: [float]
         The CCSNe of C at Z=Z0
@@ -20,17 +26,32 @@ class YieldParams:
         Extra kwargs to pass to c_cc_model
 
     c_agb_model: str
-        The C AGB model. May be a recognized study in VICE, or 
-        - Zero
-        - Lin
-        - LogLin
-        - BiLin
-        - BiLogLin
+        The C AGB model. May be a recognized study in VICE, or "A" to use the analytic C AGB model
     c_agb_alpha: float = 1
         factor to independenty scale C yield by (especially for use with published yields)
+    c_agb_kwargs: dict = {}
+        Extra kwargs to pass to c_agb_model
 
-    n_agb_model: str
+    n_agb_model: str = A
+        The N AGB model. May be a recognized study in VICE, or "A" to use the analytic N AGB model
+    n_agb_eta: float
+        If n_agb_model="A", the scale factor for the yield
+    n_agb_y0: float
+        If n_agb_model="A", a constant factor in the yield
+
+    n_cc_y0: float
+        The N yield of CCSNe at Z=Z0
+    n_cc_zeta: float = 0
+        The metallicity dependence of N CCSNe yields at Z=Z0
         
+
+    fe_ia: float
+        The iron yield of Ia supernovae
+    fe_cc: float
+        The iron yield of CCSNe
+
+    mlr: str
+        The mass lifetime relation. See ``vice.mlr`` for options
 
     """
     yield_scale: float = 1
@@ -52,6 +73,9 @@ class YieldParams:
 
     fe_ia: float = 7.7e-4
     fe_cc: float = 4.73e-4
+
+    mlr:str = "larson1974"
+
 
     def to_dict(self):
         return asdict(self)

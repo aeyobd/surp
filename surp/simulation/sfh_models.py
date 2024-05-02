@@ -1,30 +1,52 @@
 import numpy as np
 
 
-class static:
-    r"""
-    The constant SFH model from Johnson et al. (2021).
+
+class SFHModel:
     """
-    def __init__(self, radius, dt = 0.01, dr = 0.1):
+    An Abstract SFH Model.
+
+    Properties
+    ----------
+    norm : float
+        The normalization of the SFH model.
+
+    Methods
+    -------
+    __call__(time)
+        Returns the SFH model at a given time.
+    """
+
+
+class static(SFHModel):
+    r"""
+        static()
+
+    The constant SFH model from Johnson et al. (2021). 
+    """
+
+    def __init__(self):
         self.norm = 1
 
-    def __call__(self):
+    def __call__(self, time=0):
         return self.norm
 
 
-class insideout:
+class insideout(SFHModel):
     r"""
+        insideout(tau_sfh=5, tau_rise=2)
+
     The inside-out SFH model from Johnson et al. (2021).
+    SFH = A * exp(-t/tau_sfh) * (1 - exp(-t/tau_rise))
 
     Parameters
     ----------
-    radius : float
-        The galactocentric radius in kpc of a given annulus in the model.
-    dt : float [default : 0.01]
-        The timestep size of the model in Gyr.
-    dr : float [default : 0.1]
-        The width of the annulus in kpc.
+    tau_rise : float
+        The rise timescale of the SFH model.
+    tau_sfh : float
+        The decay timescale of the SFH model.
     """
+
     def __init__(self, tau_rise=2.0, tau_sfh=5):
         self.tau_sfh = tau_sfh
         self.tau_rise = tau_rise
@@ -32,24 +54,40 @@ class insideout:
 
 
     def __call__(self, time):
-        return self.norm * modified_exponential(time, self.tau_sfh, self.tau_rise)
+        sfr = (
+            (1 - np.exp(-time/self.tau_rise)) 
+            * np.exp(-time/self.tau_sfh)
+            )
+
+        sfr *= self.norm
+        return sfr
 
     def __str__(self):
         return f"sfh ∝ (1-exp(t/{self.tau_rise}) * exp(-t/{self.tau_sfh})"
 
 
-class lateburst:
+class lateburst(SFHModel):
     r"""
-    The late-burst SFH model from Johnson et al. (2021).
+        lateburst(tau_sfh=5, tau_rise=2, burst_size=1.5, burst_width=1, burst_time=11.2)
+
+    The late-burst SFH model from Johnson et al. (2021). 
+    Adds a gaussian multiplicative burst ontop of the inside-out SFH model.
+
+    SFR = insideout * (1 + A exp(-delta t^2 / 2 width^2)
 
     Parameters
     ----------
-    radius : float
-        The galactocentric radius in kpc of a given annulus in the model.
-    dt : float [default : 0.01]
-        The timestep size of the model in Gyr.
-    dr : float [default : 0.1]
-        The width of the annulus in kpc.
+    tau_sfh : float
+        The decay timescale of the insideout model.
+    tau_rise : float
+        The timescale of initial insideout rise.
+    burst_size : float
+        The amplitude of the burst.
+    burst_width : float
+        The width of the burst.
+    burst_time : float
+        The time of the burst.
+
     """
 
     def __init__(self, tau_sfh, burst_size=1.5, 
@@ -60,141 +98,105 @@ class lateburst:
         self.burst_width = burst_width
         self.burst_size = burst_size
 
+        self._insideout = insideout(tau_sfh=tau_sfh, tau_rise=tau_rise)
+
         self.norm = 1
 
     def __call__(self, t):
-        return self.norm * modified_exponential(t, self.tau, self.tau_rise) * (
-                1 + gaussian(t, self.burst_time, self.burst_width, self.burst_size) )
+        burst = _gaussian(t, self.burst_time, self.burst_width)
+
+        sfr = self._insideout(t)
+        sfr *= (1 + self.burst_size * burst)
+        sfr *= self.norm
+
+        return sfr
 
 
 
-class exp_sfh:
+class exp_sfh(SFHModel):
     r"""
-    The exponential SFH model from Johnson et al. (2021).
+        exp_sfh(tau_sfh=5)
+
+    A simple exponential SFH model
+    SFH = A * exp(-t/tau_sfh)
 
     Parameters
     ----------
-    radius : float
-        The galactocentric radius in kpc of a given annulus in the model.
-    dt : float [default : 0.01]
-        The timestep size of the model in Gyr.
-    dr : float [default : 0.1]
-        The width of the annulus in kpc.
+    tau_sfh : float
+        The decay timescale of the SFH model.
     """
+
     def __init__(self, tau_sfh=5):
         self.tau_sfh = tau_sfh
         self.norm = 1
 
 
     def __call__(self, time):
-        return self.norm * exponential(time, self.tau_sfh)
+        sfr = np.exp(-time / self.tau_sfh)
+        sfr *= self.norm
+        return sfr
 
     def __str__(self):
         return f"sfh ∝ exp(-t/{self.tau_sfh})"
 
 
 
-class linexp:
+class linexp(SFHModel):
     r"""
-    The exponential SFH model from Johnson et al. (2021).
+    A linear-exponential model
+    SFH = A * (t/tau_sfh) * exp(-t/tau_sfh)
 
     Parameters
     ----------
-    radius : float
-        The galactocentric radius in kpc of a given annulus in the model.
-    dt : float [default : 0.01]
-        The timestep size of the model in Gyr.
-    dr : float [default : 0.1]
-        The width of the annulus in kpc.
+    tau_sfh : float
+        The decay timescale of the SFH model.
     """
+
     def __init__(self, tau_sfh=5):
         self.tau_sfh = tau_sfh
         self.norm = 1
 
     def __call__(self, time):
-        return self.norm * _linexp(time, self.tau_sfh)
+        sfr = (time/self.tau_sfh) * np.exp(-time / self.tau_sfh)
+        sfr *= self.norm
+        return sfr
 
     def __str__(self):
-        return f"sfh ∝ exp(-t/{self.tau_sfh})"
+        return f"sfh ∝ t exp(-t/{self.tau_sfh})"
 
 
-class twoexp:
+
+class twoexp(SFHModel):
     r"""
     A double exponential star formation history mimicing the two infall
-    model. 
+    model. See Spitoni et al. (2019, 2020, 2022) and similar papers for 
+    the motivation.
 
     Parameters
     ----------
-    radius : float
-        The galactocentric radius in kpc of a given annulus in the model.
-    dt : float [default : 0.01]
-        The timestep size of the model in Gyr.
-    dr : float [default : 0.1]
-        The width of the annulus in kpc.
-
-    ** kwargs passeed to ```.utils.double_exponential.__init__```
-    -------------------------------------------------------------
     t1 : float [default 4.1]
         The time of the thick disk formation
     t2 : float [default 13.2]
         The present-day time
     tau1 : float [default 2]
+        The decay timescale for the thick disk
     tau2 : float [set from insideout.timescale]
         The decay timescale for the thin disk
     A21 : float [default 3.47]
         The ratio between thin and thick disk populations
-
     """
 
-    def __init__(self, radius, **kwargs):
+    def __init__(self, tau1=2, tau2=1, A21=3.47, t1=4.1, t2=13.2):
         self.norm = 1
         self.kwargs = kwargs
 
-    def __call__(self, time):
-        return self.norm * double_exponential(time, **self.kwargs)
-
-
-
-class threeexp:
-    def __init__(self, radius, **kwargs):
-        self.kwargs = kwargs
-        self.norm = 1
+        self.A = 1 / (tau1 * (1 - np.exp(-t1/tau1)))
+        self.B = A21 / (tau2 * (1 - np.exp(-(t2-t1)/tau2)))
 
     def __call__(self, time):
-        return self.norm * double_exponential(time, norm=self.norm, **self.kwargs)
+        sfr = self.A * np.exp(-time/self.tau1)
+        sfr += (time > self.t1) * self.B * np.exp(-(time-self.t1)/self.tau2)
 
 
-
-def modified_exponential(t, tau, tau_rise, norm=1):
-    return (1 - np.exp(-t/tau_rise)) * exponential(t, tau) 
-
-
-def exponential(t, tau, norm=1):
-    return np.exp(-t / tau)
-
-def _linexp(t, tau, norm=1):
-    return (t/tau) * np.exp(-t / tau)
-
-def gaussian(t, mean, std, norm=1):
-    return np.exp( -(t-mean)**2 / (2*std**2) )
-
-
-def double_exponential(t, norm=1, tau1=2, tau2=1, A21=3.47, t1=4.1, t2=13.2):
-    A = 1 / (tau1 * (1 - np.exp(-t1/tau1)))
-    B = A21 / (tau2 * (1 - np.exp(-(t2-t1)/tau2)))
-    B *= (t > self.t1)
-
-    return ( 
-       A * np.exp(-t/tau1) + 
-       B * np.exp((-t+t1)/tau2) )
-
-
-def triple_exponential(t, A32=0.4, tau3=0.15, t2=11, t3=13.2, **kwargs):
-    C = A32  / (tau3 * (1 - np.exp(-(t3-t2)/tau3)))
-    C *= (t > self.t2)
-
-    return  ( double_exponential(t, t2=t2, **kwargs)
-        + C * np.exp(-(t-t2)/tau3)
-        )
-
-
+def _gaussian(x, mu, sigma):
+    return np.exp(-0.5 * (x - mu)**2 / sigma**2)

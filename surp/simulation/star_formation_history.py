@@ -11,6 +11,8 @@ from . import sfh_models
 
 class star_formation_history:
     r"""
+        star_formation_history(params)
+
     The star formation history (SFH) of the model galaxy. This object will be
     used as the ``evolution`` attribute of the milky way model.
     """
@@ -80,7 +82,6 @@ def create_sfh_model(radius, params):
         if val == "sanchez":
             kwargs[key] = tau_sfh
 
-    print(kwargs)
     name = params.sfh_model
     if name == "insideout":
         sfh = sfh_models.insideout(**kwargs)

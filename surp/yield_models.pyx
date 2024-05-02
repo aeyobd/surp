@@ -1,5 +1,15 @@
 # cython: language_level=3
 
+"""
+A few yield models which we find useful.
+Some common definitions
+
+y0: the yield at solar metallicity
+zeta: the logarithmic yield slope at solar metallicity
+    zeta = d y / d log10 Z
+
+"""
+
 from inspect import Signature, Parameter
 
 import vice # for MLR
@@ -17,18 +27,19 @@ cdef double Z_to_MH(double Z):
 
 cdef class AbstractCC:
     """
-    AbstractCC()
-    
     An abstract class for core-collapse supernova yield models
     Classes must implement __imul__, copy, and ccall(self, Z), and __init__
     """
     def __call__(self, Z):
         """
-        self(mass, metallicity)
+            self(metallicity)
+
+        returns the net fractional yield for the given metallicity
         """
         return self.ccall(Z)
 
     def __mul__(self, scale):
+        """scales the yield by some factor uniformly"""
         other = self.copy()
         other.__imul__(scale)
         return other 
@@ -46,7 +57,13 @@ cdef class AbstractCC:
 
 
 cdef class AbstractAGB:
+    """
+    Abstract Class for AGB yield model in VICE. Methods must implement
+    ccall(m, Z), __imul__, copy, and __init__
+    """
+
     def __mul__(self, scale):
+        """scale the yield by some factor uniformly"""
         other = self.copy()
         other.__imul__(scale)
         return other 
@@ -65,7 +82,9 @@ cdef class AbstractAGB:
 
     def __call__(self, m, Z):
         """
-        self(mass, metallicity)
+            self(mass, metallicity)
+
+        returns the net fractional yield (Y^{AGB}) for the given mass and metallicity
         """
         return self.ccall(m, Z)
 
@@ -211,19 +230,60 @@ cdef class C_AGB_Model(AbstractAGB):
 
 cdef class Lin_CC(AbstractCC):
     """
-    Exp_CC(y0, zeta)
+    Lin_CC(y0, zeta)
 
-    Constructs a bi-linear piecewise yield model for CCSNe
+    Constructs a linear piecewise yield model for CCSNe
+    y = y_0 + zeta * (Z - Z_\\odot)
+
+    Parameters
+    ----------
+    y0: the yield at solar
+    zeta: the logarithmic yield slope at solar 
+
+    Attributes
+    ----------
+    slope : the linear slope at solar = zeta / (Z_\\odot \\ln(10))
+    """
+
+    cdef public double y0
+    cdef public double zeta
+    cdef public double slope
+
+    def __cinit__(self, double y0=0.004, double zeta=0.1):
+        self.y0 = y0
+        self.zeta = zeta
+        self.slope = zeta / (Z_SUN * m.log(10))
+
+
+    cpdef ccall(self, double Z):
+        return (self.y0 + self.slope * (Z - Z_SUN))
+
+    def __str__(self):
+        return f"{self.y0:0.2e} + {self.slope:0.2e} (Z - Z0)"
+
+    def __imul__(self, scale):
+        self.y0 *= scale
+        self.zeta *= scale
+        self.slope *= scale
+        return self
+
+    def copy(self):
+        return Lin_CC(y0=self.y0, zeta=self.zeta, slope=self.slope)
+
+
+
+cdef class LogLin_CC(AbstractCC):
+    """
+    LogLin_CC(y0, A1)
+
+
+    Constructs a inear ccsne model
+    y = y_0 + zeta * [M/H]
 
     Parameters
     ----------
     y0: the yield at solar
     zeta: the slope of the yield at solar
-
-    Methods
-    -------
-    __call__(Z)
-    copy()
     """
 
     cdef public double y0
@@ -233,67 +293,21 @@ cdef class Lin_CC(AbstractCC):
         self.y0 = y0
         self.zeta = zeta
 
-
-
-    cpdef ccall(self, double Z):
-        return (self.y0 + self.zeta * (Z - Z_SUN))
-
-    def __str__(self):
-        return f"{self.y0:0.2e} + {self.zeta:0.2e} (Z - Z0)"
-
     def __imul__(self, scale):
         self.y0 *= scale
         self.zeta *= scale
         return self
 
-    def copy(self):
-        return Lin_CC(y0=self.y0, zeta=self.zeta)
-
-
-cdef class LogLin_CC(AbstractCC):
-    """
-    LogLin_CC(y0, A1)
-
-
-    Constructs a inear ccsne model
-    y = y_0 + A1 * [M/H]
-
-    Parameters
-    ----------
-    y0: the yield at solar
-    A2: the slope of the yield at solar
-
-    Methods
-    -------
-    __call__(Z)
-    copy()
-    """
-
-    cdef public double y0
-    cdef public double B
-    cdef double slope
-
-    def __cinit__(self, double y0=0.004, double B=0.1):
-        self.y0 = y0
-        self.B = B
-        # self.slope = zeta * Z_SUN * m.log(10)
-
-    def __imul__(self, scale):
-        self.y0 *= scale
-        self.B *= scale
-        # self.slope *= scale
-        return self
-
 
     cpdef double ccall(self, double Z):
         cdef double M_H = Z_to_MH(Z)
-        return (self.y0 + self.B * M_H)
+        return (self.y0 + self.zeta * M_H)
 
     def __str__(self):
-        return f"{self.y0:0.2e} + {self.B:0.2e} [M/H]"
+        return f"{self.y0:0.2e} + {self.zeta:0.2e} [M/H]"
 
     def copy(self):
-        return LogLin_CC(y0=self.y0, B=self.B)
+        return LogLin_CC(y0=self.y0, zeta=self.zeta)
 
 
 
@@ -302,49 +316,43 @@ cdef class BiLogLin_CC(AbstractCC):
     BiLogLin_CC(y0, zeta, Z1, y1)
 
     Constructs a bi-linear piecewise yield model for CCSNe
+        y = max(y1, y0 + zeta * [M/H])
+
 
     Parameters
     ----------
     y0: the yield at solar
-    zeta_0: the slope of the yield at solar
-    Z1: the metallicity below which lerp to y1
+    zeta: the slope of the yield at solar
     y1: the yield at Z=0
-
-    Methods
-    -------
-    __call__(Z)
-    copy()
     """
 
     cdef public double y0
-    cdef public double B
+    cdef public double zeta
     cdef public double y1
 
-    def __cinit__(self, double y0=0.004, double B=0.1, 
+    def __cinit__(self, double y0=0.004, double zeta=0.1, 
                   double y1=8.67e-4):
-        # cdef double slope = Z_SUN * zeta * m.log(10)
         self.y0 = y0
-        self.B = B
+        self.zeta = zeta
         self.y1 = y1
-        # self.slope = zeta * Z_SUN * m.log(10)
 
 
     def __imul__(self, scale):
         self.y0 *= scale
-        self.B *= scale
+        self.zeta *= scale
         self.y1 *= scale
         return self
 
     cpdef double ccall(self, Z):
         cdef double M_H = Z_to_MH(Z)
-        return max(self.y1, self.y0 + self.B*M_H)
+        return max(self.y1, self.y0 + self.zeta*M_H)
 
 
     def __str__(self):
-        return f"{self.y0:0.2e} + {self.B:0.2e} [M/H] or {self.y1:0.2e}, else"
+        return f"{self.y0:0.2e} + {self.zeta:0.2e} [M/H] or {self.y1:0.2e}, else"
 
     def copy(self):
-        return BiLogLin_CC(y0=self.y0, B=self.B, y1=self.y1)
+        return BiLogLin_CC(y0=self.y0, zeta=self.zeta, y1=self.y1)
 
 
 
@@ -354,17 +362,13 @@ cdef class BiLin_CC(AbstractCC):
 
     Constructs a bi-log-linear piecewise yield model for CCSNe
 
+
     Parameters
     ----------
     y0: the yield at solar
     zeta: the slope of the yield at solar
-    Z1: the metallicity below which lerp to y1
     y1: the yield at Z=0
-
-    Methods
-    -------
-    __call__(Z)
-    copy()
+    Z1: the metallicity below which lerp to y1
     """
 
     cdef public double y0
@@ -409,42 +413,46 @@ cdef class BiLin_CC(AbstractCC):
 
 cdef class Quadratic_CC(AbstractCC):
     """
-    Quadratic(A, B, C)
+    Quadratic(A, zeta, y0)
 
     Constructs a bi-linear piecewise yield model for CCSNe
+
+    y = A [M/H]^2 + zeta [M/H] + y0
+
+    note that we set the yield at the vertex to be constant down to Z=0
+
 
     Parameters
     ----------
     y0: the yield at solar
     zeta_0: the slope of the yield at solar
-    Z1: the metallicity below which lerp to y1
-    y1: the yield at Z=0
+    A: the quadratic coefficient
 
-    Methods
-    -------
-    __call__(Z)
-    copy()
+    Attributes
+    ----------
+    vertex : the metallicity at which the yield is at extremum
+    y_v : the yield at the vertex
     """
 
     cdef public double y0
     cdef public double A
-    cdef public double B
+    cdef public double zeta
     cdef double vertex
     cdef double y_v
 
 
-    def __cinit__(self, double A=1e-3, double B=2e-3, double y0=3e-3):
+    def __cinit__(self, double A=1e-3, double zeta=2e-3, double y0=3e-3):
         self.A = A
-        self.B = B
+        self.zeta = zeta
         self.y0 = y0
 
-        self.vertex = -B/(2*A)
-        self.y_v = A*self.vertex**2 + B*self.vertex + y0
+        self.vertex = -zeta/(2*A)
+        self.y_v = A*self.vertex**2 + zeta*self.vertex + y0
 
 
     def __imul__(self, scale):
         self.A *= scale
-        self.B *= scale
+        self.zeta *= scale
         self.y0 *= scale
         return self
 
@@ -452,13 +460,13 @@ cdef class Quadratic_CC(AbstractCC):
     cpdef ccall(self, Z):
         cdef double M_H = Z_to_MH(Z)
         if M_H > self.vertex:
-            return self.A*M_H**2 + self.B*M_H + self.y0
+            return self.A*M_H**2 + self.zeta*M_H + self.y0
         else:
             return self.y_v
 
     def __str__(self):
-        return f"{self.A:0.2e} MH^2 + {self.B:0.2e} MH + {self.y0:0.2e}"
+        return f"{self.A:0.2e} MH^2 + {self.zeta:0.2e} MH + {self.y0:0.2e}"
 
     def copy(self):
-        return Quadratic_CC(A=self.A, zeta=self.B, y0=self.y0)
+        return Quadratic_CC(A=self.A, zeta=self.zeta, y0=self.y0)
 
