@@ -25,8 +25,11 @@ def set_sf_law(model, params):
             area = np.pi * (R2**2 - R1**2)
             if params.sf_law == "conroy22":
                 model.zones[i].tau_star = conroy_sf_law(area)
-            elif params.sf_law == "two_infall":
-                model.zones[i].tau_star = twoinfall_sf_law(area)
+            elif params.sf_law == "twoinfall":
+                kwargs = params.sfh_kwargs
+                model.zones[i].tau_star = twoinfall_sf_law(area,
+                    nu1=kwargs["nu1"], nu2=kwargs["nu2"], t1=kwargs["t1"]
+                    )
             elif params.sf_law == "J21":
                 model.zones[i].tau_star = J21_sf_law(area, mode="sfr")
             else:
@@ -51,18 +54,34 @@ def conroy_sf_law(area=None):
     return inner
 
 
-def twoinfall_sf_law(area=None):
+def twoinfall_sf_law(area=None, t1=4.1, nu1=2, nu2=1):
     def inner(t, m):
-        tau_st = twoinfall_tau_star(t)
+        tau_st = twoinfall_tau_star(t, t1, nu1, nu2)
         return J21_sf_law(area, tau_st)(t, m)
     return inner
     
 
-def twoinfall_tau_star(t):
-    if t < 4.1:
-        return 1
+def twoinfall_tau_star(t, t1, nu1, nu2):
+    """
+        twoinfall_tau_star(t, t1, nu1, nu2)
+
+    Returns the star formation timescale at time t for a two-infall model.
+
+    Parameters
+    ----------
+    t1: time of transition
+    nu1: star formation efficienty before transition
+    nu2: star formation efficiency after transition
+
+    Returns
+    -------
+    tau_star: float
+        The star formation timescale at time t. (1/nu)
+    """
+    if t < t1:
+        return 1/nu1
     else:
-        return 2
+        return 1/nu2
 
 
 def create_migration(params):
@@ -110,7 +129,8 @@ class MH_grad:
 class mass_loading:
     """A class which represents the mass loading profile of galaxy. Set yields before calling this
     params.eta_scale scales the assumed yield setting used here
-    params.r is the approximated mass loading factor
+    params.r is the approximated return fraction
+    params.tau_star_sfh_grad is the linear approximation of tau_star / tau_sfh ~ R.
     """
     def __init__(self, params):
         r = params.r
@@ -120,10 +140,11 @@ class mass_loading:
         self.C = yo / vice.solar_z("o") 
 
         self.MH_func = MH_grad(params)
+        self.tau_star_sfh_grad = params.tau_star_sfh_grad
 
     def __call__(self, R_gal):
         MH = self.MH_func(R_gal)
-        eta = self.B + self.C * 10**-MH
+        eta = self.B + self.C * 10**-MH + self.tau_star_sfh_grad * R_gal
         return np.maximum(0, eta)
 
     def __str__(self):

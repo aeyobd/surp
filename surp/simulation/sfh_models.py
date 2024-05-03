@@ -188,14 +188,62 @@ class twoexp(SFHModel):
 
     def __init__(self, tau1=2, tau2=1, A21=3.47, t1=4.1, t2=13.2):
         self.norm = 1
-        self.kwargs = kwargs
 
         self.A = 1 / (tau1 * (1 - np.exp(-t1/tau1)))
         self.B = A21 / (tau2 * (1 - np.exp(-(t2-t1)/tau2)))
+        self.t1 = t1
+        self.t2 = t2
+        self.tau1 = tau1
+        self.tau2 = tau2
 
     def __call__(self, time):
         sfr = self.A * np.exp(-time/self.tau1)
         sfr += (time > self.t1) * self.B * np.exp(-(time-self.t1)/self.tau2)
+        return sfr
+
+
+class threeexp(SFHModel):
+    """
+    A triple exponential star formation history mimicing the three infall.
+
+    Parameters
+    ----------
+    t1 : float [default 4.1]
+        The time of the transition from thin to thick
+    t2 : float [default 11.2]
+        The time of the lateburst
+    t3 : float [default 13.2]
+        The present-day time
+
+    tau1 : float [default 2]
+        The decay timescale for the thick disk
+    tau2 : float [default 1]
+        The decay timescale for the thin disk
+    tau3 : float [default 0.1]
+        The decay timescale for the late burst
+    A21 : float [default 3.47]
+        The ratio between thin and thick disk populations
+    A32 : float [default 1.5]
+        The ratio between thin disk and lateburst populations
+    """
+    def __init__(self, tau1=2, tau2=1, tau3=0.1, A21=3.47, A32=1.5, t1=4.1, t2=13.2, t3=13.3):
+        self.norm = 1
+
+        self.A = 1 / (tau1 * (1 - np.exp(-t1/tau1)))
+        self.B = A21 / (tau2 * (1 - np.exp(-(t2-t1)/tau2)))
+        self.C = A32 * A21 / (tau3 * (1 - np.exp(-(t3-t2)/tau3)))
+        self.t1 = t1
+        self.t2 = t2
+        self.t3 = t3
+        self.tau1 = tau1
+        self.tau2 = tau2
+        self.tau3 = tau3
+
+    def __call__(self, time):
+        sfr = self.A * np.exp(-time/self.tau1)
+        sfr += (time > self.t1) * self.B * np.exp(-(time-self.t1)/self.tau2)
+        sfr += (time > self.t2) * self.C * np.exp(-(time-self.t2)/self.tau3)
+        return sfr
 
 
 def _gaussian(x, mu, sigma):

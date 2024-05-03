@@ -57,6 +57,8 @@ class MWParams:
     m_lower: ``float`` [default: 0.08]
         The lower mass limit of the IMF
 
+    Re: ``float`` [default: 5]
+        The scale radius of the galaxy in kpc
 
     Attributes
     ----------
@@ -99,6 +101,7 @@ class MWParams:
 
 
     sf_law:str = "J21"
+    Re:float = 5
 
     # sfh settings
     sfh_model:str = "insideout"
@@ -112,6 +115,8 @@ class MWParams:
     thick_disk_scale_radius:float = 2.0 # kpc
     thin_to_thick_ratio:float = 0.27 # at r = 0
 
+    r_sun:float = 8.122 # kpc, GRAVITY Collaboration 2018
+
 
     # outflow settings
     MH_grad_R0:float = 5
@@ -119,7 +124,8 @@ class MWParams:
     MH_grad_in:float = -0.015
     MH_grad_out:float = -0.09
     eta_scale:float = 1.0
-    r:float = 0.4
+    r:float = 0.4 # TODO determine
+    tau_star_sfh_grad: float = 0 # TODO Determine this
 
 
     @classmethod

@@ -1,4 +1,5 @@
 from copy import copy
+import re
 import numpy as np
 
 import vice
@@ -75,18 +76,38 @@ class star_formation_history:
 
 
 def create_sfh_model(radius, params): 
-    tau_sfh = get_sfh_timescale(radius)
+    tau_sfh = get_sfh_timescale(radius, Re = params.Re)
 
     kwargs = copy(params.sfh_kwargs)
     for key, val in kwargs.items():
         if val == "sanchez":
             kwargs[key] = tau_sfh
+        elif type(val) == str and "sanchez" in val:
+            factor = re.findall(r'[-+]?(?:\d*\.*\d+)', val)[0]
+            kwargs[key] = tau_sfh * float(factor)
 
     name = params.sfh_model
     if name == "insideout":
         sfh = sfh_models.insideout(**kwargs)
     elif name == "lateburst":
         sfh = sfh_models.lateburst(**kwargs)
+    elif name == "exp":
+        sfh = sfh_models.exp_sfh(**kwargs)
+    elif name == "twoexp":
+        sfh = sfh_models.twoexp(**kwargs)
+    elif name == "twoinfall":
+        T_t = 1 / params.thin_to_thick_ratio
+        r_t = params.thin_disk_scale_radius
+        r_T = params.thick_disk_scale_radius
+        r_sun = params.r_sun
+
+        At = np.exp(-(radius - r_sun) / r_t)
+        AT = T_t * np.exp(-(radius - r_sun) / r_T)
+        A21 = kwargs["A21"] * At/AT 
+        sfh = sfh_models.twoexp(A21 = A21, t1=kwargs["t1"], tau1=kwargs["tau1"], tau2=kwargs["tau2"])
+
+    elif name == "linexp":
+        sfh = sfh_models.linexp(**kwargs)
     elif name == "static":
         sfh = sfh_models.static()
     else:
