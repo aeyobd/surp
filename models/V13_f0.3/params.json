@@ -19,7 +19,7 @@
     "max_sf_radius": 15.5,
     "thin_disk_scale_radius": 2.5,
     "thick_disk_scale_radius": 2.0,
-    "thin_to_thick_ratio": 0.27,
+    "thin_to_thick_ratio": 3.7,
     "M_star_MW": 51700000000.0,
     "save_migration": false,
     "N_star_tot": 204600,

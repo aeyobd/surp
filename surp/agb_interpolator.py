@@ -7,15 +7,18 @@ from vice.toolkit.interpolation.interp_scheme_2d import interp_scheme_2d
 from vice.yields.agb._grid_reader import yield_grid
 import math
 import numpy as np
-from scipy.interpolate import CubicSpline
+from scipy.interpolate import RectBivariateSpline
 
 
 
 class interpolator(interp_scheme_2d):
     def __init__(self, element, study="cristallo11", 
-            prefactor=1, mass_factor=1, interp_kind="log",
-            no_negative=False, no_negative_mass="lowest", low_z_flat=True,
-            min_mass="lowest", max_mass=8):
+            prefactor=1, mass_factor=1, interp_kind="linear",
+            min_mass=0.08, max_mass=8,
+            pinch_mass=1.0,
+            no_negative=False, no_negative_mass="lowest", 
+            low_z_flat=False,
+            kx=3, ky=1, s=None):
         """
         interpolator(element, study="cristallo11", prefactor=1, mass_factor=1,
         interp_kind="log", no_negative=False, no_negative_mass="lowest",
@@ -34,19 +37,39 @@ class interpolator(interp_scheme_2d):
         prefactor : float
             The multiplicative factor to apply to the interpolated yields.
         mass_factor : float
-            Systematically shift yield masses?
+            Systematically shift yield masses by shifting the 
+            masses associated with the yields by this factor.
         interp_kind : str
             The kind of interpolation to perform. 
-            Options are "linear" and "log"
+            Options are "linear", "log", and "spline". Spline calls 
+            scipy.interpolate.RectBivariateSpline
         min_mass : float or "lowest"
-            The minimum mass with nonzero yields
+            The minimum mass with nonzero yields. "lowest" uses the lowest mass in the yield grid.
         max_mass : float
             The maximum AGB mass. (hardcoded upper limit of 8 in VICE)
         low_z_flat : bool
             If True, the interpolation will be flat at the lowest metallicity. Particularlly important for log interpolation so that C AGB yields do not diverge.
+        pinch_mass : float
+            The mass at which to pinch the yields to zero. If None, no pinching will be performed. Sets min_mass to pinch_mass.
+
+        no_negative : bool
+            If True, the interpolation will set yields below no_negative_mass to zero.
+        no_negative_mass : float or "lowest"
+            The mass below which yields will be set to zero if no_negative is True. "lowest" uses the lowest mass in the yield grid.
+
+
+        kx : int
+            Degree of the spline in the x-direction
+        ky : int
+            Degree of the spline in the y-direction
+        s : float
+            Smoothing factor for the spline interpolation
         """
 
         yields, masses, metallicities = yield_grid(element, study = study)
+        yields = list(yields)
+        masses = list(masses)
+        metallicities = list(metallicities)
 
         self.element = element
         self.study = study
@@ -59,25 +82,38 @@ class interpolator(interp_scheme_2d):
             no_negative_mass = min(masses)
         self.no_negative_mass = no_negative_mass
 
+
+
         self.low_z_flat = low_z_flat
 
         if min_mass == "lowest":
             min_mass = min(masses)
+
+        if pinch_mass is not None:
+            min_mass = pinch_mass
+            masses.insert(0, pinch_mass)
+            yields.insert(0, [0]*len(metallicities))
+
         self.min_mass = min_mass
         self.max_mass = max_mass
 
         self.metallicities = metallicities
 
         if interp_kind == "linear":
-            super().__init__(list(masses), list(metallicities), list(yields))
+            super().__init__(masses, metallicities, yields)
             self._call_interp = self._call_linear
 
         elif interp_kind == "log":
             super().__init__(
-                    list(masses), 
+                    masses,
                     [math.log10(z) for z in metallicities], 
-                    list(yields))
+                    yields)
             self._call_interp = self._call_log
+        elif interp_kind == "spline":
+            self._spline = RectBivariateSpline(
+                    masses, metallicities, yields,
+                    kx=kx, ky=ky, s=s)
+            self._call_interp = self._call_spline
         else:
             raise ValueError("unexpected interp_kind: %s" % interp_kind)
 
@@ -98,8 +134,11 @@ class interpolator(interp_scheme_2d):
     def _call_log(self, M, Z):
         return super().__call__(self.mass_factor*M, math.log10(Z))
 
+    def _call_spline(self, M, Z):
+        return self._spline(self.mass_factor*M, Z)[0][0]
+
     def _truncate(self, M, Z):
-        return (M < self.min_mass) or (M > self.max_mass)
+        return (M <= self.min_mass) or (M >= self.max_mass)
 
     def __call__(self, M, Z):
         if self._truncate(M, Z):

@@ -144,6 +144,13 @@ def mg_fe_cutoff(fe_h):
     """
     The cutoff between the high and low alpha seqeunces
 
+    described by
+    [Mg/Fe] = 0.16 - 0.13*[Fe/H] for [Fe/H] < 0
+    [Mg/Fe] = 0.16 for [Fe/H] >= 0
+
+    Is as used in Roberts et al. 2024 which is a +0.04 dex correction on
+    Weinberg et al. (2019).
+
     Parameters
     ----------
     fe_h: float or np.array
@@ -154,7 +161,7 @@ def mg_fe_cutoff(fe_h):
     mg_fe: float or np.array
         The [Mg/Fe] above which the high alpha sequence is defined
     """
-    return 0.12 - (fe_h < 0) * 0.13 * fe_h
+    return 0.16 - (fe_h < 0) * 0.13 * fe_h
 
 
 @arg_numpylike()

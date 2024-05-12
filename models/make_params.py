@@ -6,6 +6,9 @@ import sys
 import os
 import json
 
+import warnings
+warnings.filterwarnings("ignore")
+
 AGB_KEYS = { "C11": "cristallo11",
             "K10": "karakas10",
             "V13": "ventura13",
@@ -20,10 +23,11 @@ def main():
     dirname = make_filename(parser, args)
 
     if os.path.exists(dirname):
-        ans = input(f"overwrite directory {dirname}? (y/N) ")
-        if ans != "y":
-            print("exiting, directory exists: ", dirname)
-            return
+        if not args.force:
+            ans = input(f"overwrite directory {dirname}? (y/N) ")
+            if ans != "y":
+                print("exiting, directory exists: ", dirname)
+                return
 
     else:
         os.mkdir(dirname)
@@ -43,6 +47,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description="""
          This script makes a directory and generates the config file for the given model""")
 
+    parser.add_argument("-F", "--force", action="store_true", 
+                        help="overwrites the directory if it exists")
     parser.add_argument("-m", "--agb_model", default="C11", 
                         help="the name of the AGB model to use. Can be C11, K10, V13, K16, R18, or A")
     parser.add_argument("-f", "--agb_fraction", type=float, default=0.2, 
@@ -59,7 +65,7 @@ def parse_args():
                         twoexp, threeexp, twoinfall]""")
     parser.add_argument("-c", "--sf_law", default="J21",
                         help="Specifies the sfh law")
-    parser.add_argument("-C", "--cc_model", default="BiLogLin",
+    parser.add_argument("-C", "--cc_model", default="Quadratic",
                         help="Specifies the cc model")
     parser.add_argument("-M", "--migration_mode", default="diffusion", 
                         help="""The migration mode. Default is Diffusion.

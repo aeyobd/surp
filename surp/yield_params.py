@@ -65,6 +65,8 @@ class YieldParams:
     c_agb_alpha:float = 1
     c_agb_kwargs:dict = field(default_factory=dict)
 
+    c_ia:float = 0 # maximum is ~ 1.12e-4 from iwamoto + 99
+
     n_agb_model:str = "A"
     n_agb_eta:float = 5.02e-4
     n_agb_y0:float = 0

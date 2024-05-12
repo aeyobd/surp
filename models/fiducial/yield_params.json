@@ -11,8 +11,8 @@
     "c_agb_kwargs": {
         "mass_factor": 1,
         "no_negative": false,
-        "interp_kind": "log",
-        "low_z_flat": true
+        "interp_kind": "linear",
+        "low_z_flat": false
     },
     "n_agb_model": "A",
     "n_agb_eta": 0.000502,

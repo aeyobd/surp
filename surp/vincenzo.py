@@ -33,7 +33,7 @@ def vincenzo2021_raw():
     columns = raw[0].split(", ")[1:13]
 
     df = {columns[i]: data[i] for i in range(12)}
-    return pd.DataFrame(df, dtype=float)
+    return pd.DataFrame(df)
 
 
 
@@ -86,7 +86,6 @@ def vincenzo2021():
     filt &= data["[o/h]"] <= 10
     filt &= data["[n/o]"] >= -10
     filt &= data["[n/o]"] <= 10
-    data["age"].replace(-999, np.NaN, inplace=True)
 
     return data[filt]
 

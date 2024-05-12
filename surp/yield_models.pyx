@@ -204,7 +204,7 @@ cdef class C_AGB_Model(AbstractAGB):
         return 1/m * m**-4.5 * 1/self.imf(m) * self.R(self.mlr(m))
 
 
-    cdef double ccall(self, double m, double Z):
+    cpdef double ccall(self, double m, double Z):
         cdef double M_H = Z_to_MH(Z)
         y = self.y0 + self.zeta*M_H
         return self.A_agb * y * self.y_unnorm(m) 
@@ -373,42 +373,84 @@ cdef class BiLin_CC(AbstractCC):
 
     cdef public double y0
     cdef public double zeta
+    cdef public double slope
     cdef public double y1
     cdef public double Z1
-    cdef public double zeta1
+    cdef public double slope1
 
     def __cinit__(self, double y0=0.004, double zeta=0.1, 
                   double Z1=0.008, double y1=8.67e-4):
         self.y0 = y0
         self.zeta = zeta
+        self.slope = zeta / (Z_SUN * m.log(10))
 
         self.y1 = y1
         self.Z1 = Z1
 
-        y_2 = zeta * (Z1 - Z_SUN) + y0
-        self.zeta1 = (y_2-y1)/(Z1)
+        y_2 = self.slope * (Z1 - Z_SUN) + y0
+        self.slope1 = (y_2-y1)/(Z1)
 
 
     def __imul__(self, scale):
         self.y0 *= scale
         self.zeta *= scale
         self.y1 *= scale
-        self.zeta1 *= scale
+        self.slope1 *= scale
+        self.slope *= scale
         return self
 
 
     cpdef double ccall(self, Z):
-        return (self.y0 + self.zeta * (Z - Z_SUN)
+        return (self.y0 + self.slope * (Z - Z_SUN)
                 if Z >= self.Z1 
-                else self.y1 + self.zeta1 * Z
+                else self.y1 + self.slope1 * Z
                 )
 
     def __str__(self):
-        return f"{self.y0:0.2e} + {self.zeta:0.2e} log(Z/Z0), Z>={self.Z1:0.2e}; {self.y1:0.2e} + {self.zeta1:0.2e} Z, else"
+        return f"{self.y0:0.2e} + {self.slope:0.2e} (Z-Z0), Z>={self.Z1:0.2e}; {self.y1:0.2e} + {self.slope1:0.2e} Z, else"
 
     def copy(self):
-        return BiLin_CC(y0=self.y0, zeta=self.zeta, yl = self.yl, Z1=self.Z1)
+        return BiLin_CC(y0=self.y0, zeta=self.zeta, Z1=self.Z1, y1=self.y1)
 
+
+cdef class Piecewise_CC(AbstractCC):
+    """
+    Piecewise_CC(y0s, zetas, Zs)
+
+    Constructs a piecewise yield model for CCSNe.
+    y = y0s[i] + zetas[i] [M/H] for Z < Zs[i]
+
+    Parameters
+    ----------
+    y0s: the yields at solar
+    zetas: the slopes of the yield at solar
+    Zs: list(float)
+        The threshold metallicities between pieces. 
+        Should be ascending and length of y0s -1 
+        
+    """
+
+    cdef public list y0s
+    cdef public list zetas
+    cdef public list Zs
+
+    def __cinit__(self, list y0s, list zetas, list Zs):
+        self.y0s = y0s
+        self.zetas = zetas
+        self.Zs = Zs
+
+    def __imul__(self, scale):
+        self.y0s = [y*scale for y in self.y0s]
+        self.zetas = [z*scale for z in self.zetas]
+        return self
+
+    cpdef double ccall(self, double Z):
+        cdef double M_H = Z_to_MH(Z)
+        for i, Z_i in enumerate(self.Zs):
+            if Z <= Z_i:
+                return self.y0s[i] + self.zetas[i] * M_H
+
+        return self.y0s[-1] + self.zetas[-1] * M_H
 
 
 cdef class Quadratic_CC(AbstractCC):

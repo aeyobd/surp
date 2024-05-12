@@ -65,6 +65,7 @@ def set_yields(params=YieldParams(), verbose=True, **kwargs):
 
     agb.settings["c"] = get_c_agb_model(params)
     ccsne.settings["c"] = get_c_cc_model(params)
+    sneia.settings["c"] = params.c_ia
 
     agb.settings["n"] = get_n_agb_model(params)
     ccsne.settings["n"] = params.n_cc_y0

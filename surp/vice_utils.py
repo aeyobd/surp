@@ -83,12 +83,12 @@ def reduce_stars(multioutput):
     return df
 
 
-def create_star_sample(stars, num=N_SUBGIANTS):
+def create_star_sample(stars, num=N_SUBGIANTS, zone_width=0.1):
     cdf = load_cdf()
     sample = pd.DataFrame(columns=stars.columns)
 
     for _ in range(num):
-        sample = pd.concat((sample, rand_star(stars, cdf)), ignore_index=True)
+        sample = pd.concat((sample, rand_star(stars, cdf, zone_width)), ignore_index=True)
     sample["C_MG_true"] = sample.C_MG
     sample["MG_H_true"] = sample.MG_H
     sample["MG_FE_true"] = sample.MG_FE
@@ -211,13 +211,14 @@ def load_cdf():
     return pd.read_csv(os.path.join(DATA_DIR, "R_subgiants_cdf.csv"))
 
 
-def rand_zone(cdf):
+def rand_radii(cdf):
     p = np.random.rand()
-    return cdf.zone.loc[cdf.cdf > p].iloc[0]
+    return cdf.R.loc[cdf.cdf > p].iloc[0]
 
 
-def rand_star(stars, cdf):
-    return rand_star_in_zone(stars, rand_zone(cdf))
+def rand_star(stars, cdf, width):
+    zone = R_to_zone(rand_radii(cdf), width)
+    return rand_star_in_zone(stars, zone)
 
 
 def rand_star_in_zone(stars, zone):

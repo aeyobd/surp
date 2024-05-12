@@ -21,11 +21,11 @@ class ViceModel():
     unfiltered_stars
     """
 
-    def __init__(self, stars_unsampled, history, mdf, stars=None):
+    def __init__(self, stars_unsampled, history, mdf, zone_width, stars=None):
         self.stars_unsampled = pd.DataFrame(stars_unsampled)
 
         if stars is None:
-            stars = vice_utils.create_star_sample(self.stars_unsampled)
+            stars = vice_utils.create_star_sample(self.stars_unsampled, zone_width=zone_width)
 
         self.stars = pd.DataFrame(stars)
 
@@ -33,9 +33,9 @@ class ViceModel():
         self.mdf = pd.DataFrame(mdf)
 
     @classmethod
-    def from_saved(cls, filename):
+    def from_file(cls, filename):
         """
-        given the filename, 
+        Load a ViceModel from a json file (ideally created by ViceModel.save)
         """
 
         with open(filename, "r") as f:
@@ -44,7 +44,7 @@ class ViceModel():
         keys = ["stars_unsampled", "history", "mdf", "stars"]
         assert all([key in d.keys() for key in keys])
 
-        return cls(*[d[key] for key in keys])
+        return cls(d["stars_unsampled"], d["history"], d["mdf"], zone_width=None, stars=d["stars"])
 
     @classmethod
     def from_vice(cls, filename, zone_width):
@@ -55,7 +55,7 @@ class ViceModel():
         history, mdf = vice_utils.reduce_history(output, zone_width=zone_width)
         stars_unsampled = vice_utils.reduce_stars(output)
 
-        return cls(stars_unsampled, history, mdf)
+        return cls(stars_unsampled, history, mdf, zone_width)
 
 
     def save(self, filename, overwrite=False):

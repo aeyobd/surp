@@ -20,13 +20,13 @@ TIME_LIMIT="0:20:00"
 
 # Iterate over all the arguments
 #
-while getopts 'aphm:' OPTION; do
+while getopts 'aphm:t:' OPTION; do
     case "$OPTION" in
         a) COPY_VICE=true ;;
         # p) MAKE_PLOTS=true ;;
         m) REQUESTED_MEMORY=$OPTARG ;;
-        h) print_help; exit 0 ;;
         t) TIME_LIMIT=$OPTARG ;;
+        h) print_help; exit 0 ;;
         \?) echo "Unknown option: -$OPTARG" >&2; exit 1;;
     esac
 done
@@ -68,7 +68,7 @@ else
 fi
 
 # Files to check before removing
-rm -rf log.out model.json stars.csv *.dat milkway.vice
+rm -rf *.out model.json stars.csv *.dat milkway.vice
 
 echo "Submitting Job" $MODEL_NAME
 sbatch <<EOT
@@ -79,7 +79,7 @@ sbatch <<EOT
 #SBATCH --mem=$REQUESTED_MEMORY
 #SBATCH --job-name=$MODEL_NAME
 #SBATCH --mail-type=BEGIN,END,FAIL
-#SBATCH --output=log.out
+#SBATCH --output=%j.out
 #SBATCH --account=$SLURM_ACCOUNT
 
 

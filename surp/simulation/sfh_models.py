@@ -189,7 +189,7 @@ class twoexp(SFHModel):
     def __init__(self, tau1=2, tau2=1, A21=3.47, t1=4.1, t2=13.2):
         self.norm = 1
 
-        self.A = 1 / (tau1 * (1 - np.exp(-t1/tau1)))
+        self.A = 1 / (tau1 * (1 - np.exp(-t2/tau1)))
         self.B = A21 / (tau2 * (1 - np.exp(-(t2-t1)/tau2)))
         self.t1 = t1
         self.t2 = t2
@@ -229,8 +229,8 @@ class threeexp(SFHModel):
     def __init__(self, tau1=2, tau2=1, tau3=0.1, A21=3.47, A32=1.5, t1=4.1, t2=13.2, t3=13.3):
         self.norm = 1
 
-        self.A = 1 / (tau1 * (1 - np.exp(-t1/tau1)))
-        self.B = A21 / (tau2 * (1 - np.exp(-(t2-t1)/tau2)))
+        self.A = 1 / (tau1 * (1 - np.exp(-t3/tau1)))
+        self.B = A21 / (tau2 * (1 - np.exp(-(t3-t1)/tau2)))
         self.C = A32 * A21 / (tau3 * (1 - np.exp(-(t3-t2)/tau3)))
         self.t1 = t1
         self.t2 = t2

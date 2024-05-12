@@ -28,7 +28,7 @@
     "M_star_MW": 51700000000.0,
     "thin_disk_scale_radius": 2.5,
     "thick_disk_scale_radius": 2.0,
-    "thin_to_thick_ratio": 0.27,
+    "thin_to_thick_ratio": 3.7,
     "MH_grad_R0": 5,
     "MH_grad_MH0": 0.29,
     "MH_grad_in": -0.015,

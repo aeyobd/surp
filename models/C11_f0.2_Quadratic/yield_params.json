@@ -8,9 +8,7 @@
     "c_agb_alpha": 1.43766,
     "c_agb_kwargs": {
         "mass_factor": 1,
-        "no_negative": false,
-        "interp_kind": "log",
-        "low_z_flat": true
+        "interp_kind": "linear"
     },
     "n_agb_model": "A",
     "n_agb_eta": 0.000502,

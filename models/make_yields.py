@@ -4,34 +4,41 @@ I am so sorry that most of these parameters are named in reverse of YieldParams
 from surp import YieldParams, Z_SUN
 import vice
 
-noneq_factor = 1.05
+noneq_factor = 1.0
+noneq_A_factor = 2
+noneq_zeta_factor = 2
+
+Y_MG = 0.000652
+
+Y_C_0 = 4.12 * Y_MG * noneq_factor # +- 0.01
+ZETA_C_0 = 1.21 * Y_MG * noneq_factor * noneq_zeta_factor # +- 0.05
+# quadratic coeff
+A_C_0 = 3.07 * Y_MG * noneq_factor * noneq_A_factor # +- 0.07
+
+
+Y_C_AGB= {
+        "cristallo11": 3.8e-4,
+        "ventura13": 1.85e-4,
+        "karakas16": 2.8e-4,
+        "pignatari16": 5.9e-4,
+}
+
+ZETA_C_AGB = {
+        "cristallo11": -3.5e-4,
+        "ventura13": -9.4e-4,
+        "karakas16": -10.1e-4,
+        "pignatari16": -5.7e-4,
+}
+
+
+
+
 
 Y_C_0_EXP = 2.85e-3 * noneq_factor
 ZETA_C_0_EXP = 0.029 * noneq_factor
 
-Y_MG = 0.000652
-
-Y_C_0 = 4.20 * Y_MG * noneq_factor # +- 0.009
-ZETA_C_0 = 1.64 * Y_MG  * noneq_factor # +- 0.044
-
-Y_C_Q = 4.12 * Y_MG * noneq_factor # +- 0.01
-B_C_Q = 1.21 * Y_MG * noneq_factor # +- 0.05
-A_C_Q = 3.07 * Y_MG * noneq_factor # +- 0.07
-
-
-Y_C_AGB= {
-        "cristallo11": 4.0e-4,
-        "ventura13": 2.6e-4,
-        "karakas16": 3.5e-4,
-        "pignatari16": 8.0e-4,
-}
-
-ZETA_C_AGB = {
-        "cristallo11": -3.5e-4, # -0.0096 +- 0.0009
-        "ventura13": -4.9e-4,
-        "karakas16": -10e-4,
-        "pignatari16": -3.5e-4,
-}
+Y_C_0_LIN = 4.20 * Y_MG * noneq_factor # +- 0.009
+ZETA_C_0_LIN = 1.64 * Y_MG  * noneq_factor # +- 0.044
 
 
 # comments from linear regression of sampled points
@@ -97,10 +104,12 @@ def set_c_cc(params, y0, zeta, model="Lin", y1=1e-4, Z1=0):
         params.c_cc_kwargs = dict(y1=y1, Z1=Z1)
     elif model == "BiLogLin":
         params.c_cc_kwargs = dict(y1=y1)
+    elif model == "Quadratic":
+        params.c_cc_kwargs = dict(A=A_C_0)
 
 
 def set_c_agb(params, agb_model="cristallo11", f_agb=0.2, alpha_agb=None, zeta_agb=None, 
-            mass_factor=1, no_negative=False, interp_kind="log", t_D=0.1, tau_agb=0.3, low_z_flat=True):
+            mass_factor=1, no_negative=False, interp_kind="linear", t_D=0.1, tau_agb=0.3, low_z_flat=False):
 
     y0 = f_agb * Y_C_0
     params.c_agb_model = agb_model

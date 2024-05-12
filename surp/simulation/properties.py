@@ -57,7 +57,7 @@ def conroy_sf_law(area=None):
 def twoinfall_sf_law(area=None, t1=4.1, nu1=2, nu2=1):
     def inner(t, m):
         tau_st = twoinfall_tau_star(t, t1, nu1, nu2)
-        return J21_sf_law(area, tau_st)(t, m)
+        return tau_st
     return inner
     
 
@@ -128,7 +128,7 @@ class MH_grad:
 
 class mass_loading:
     """A class which represents the mass loading profile of galaxy. Set yields before calling this
-    params.eta_scale scales the assumed yield setting used here
+    params.eta_scale scales the assumed yield setting used here. approximantly multiplies eta by this value
     params.r is the approximated return fraction
     params.tau_star_sfh_grad is the linear approximation of tau_star / tau_sfh ~ R.
     """

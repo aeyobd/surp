@@ -1,19 +1,20 @@
 {
     "yield_scale": 1,
-    "c_cc_model": "BiLogLin",
-    "c_cc_y0": 0.002587788,
-    "c_cc_zeta": 0.0013743345,
+    "c_cc_model": "Quadratic",
+    "c_cc_y0": 0.0024176160000000005,
+    "c_cc_zeta": 0.0018252568421052633,
     "c_cc_kwargs": {
-        "y1": 0.000867
+        "A": 0.00400328
     },
     "c_agb_model": "cristallo11",
-    "c_agb_alpha": 0.71883,
+    "c_agb_alpha": 0.7069052631578947,
     "c_agb_kwargs": {
         "mass_factor": 1,
         "no_negative": false,
-        "interp_kind": "log",
-        "low_z_flat": true
+        "interp_kind": "linear",
+        "low_z_flat": false
     },
+    "c_ia": 0,
     "n_agb_model": "A",
     "n_agb_eta": 0.000502,
     "n_agb_y0": 0,

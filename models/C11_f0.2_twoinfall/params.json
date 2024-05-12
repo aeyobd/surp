@@ -23,8 +23,8 @@
     "sfh_model": "twoinfall",
     "sfh_kwargs": {
         "tau1": 0.2,
-        "tau2": "1.5*sanchez",
-        "A21": 1.5,
+        "tau2": "0.5*sanchez",
+        "A21": 1.25,
         "t1": 4.1,
         "nu1": 2,
         "nu2": 1
@@ -33,12 +33,12 @@
     "M_star_MW": 51700000000.0,
     "thin_disk_scale_radius": 2.5,
     "thick_disk_scale_radius": 2.0,
-    "thin_to_thick_ratio": 0.27,
+    "thin_to_thick_ratio": 3.7,
     "MH_grad_R0": 5,
     "MH_grad_MH0": 0.29,
     "MH_grad_in": -0.015,
     "MH_grad_out": -0.09,
-    "eta_scale": 1.0,
+    "eta_scale": 0.0,
     "r": 0.4,
     "tau_star_sfh_grad": 0
 }

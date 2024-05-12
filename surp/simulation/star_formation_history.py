@@ -96,14 +96,20 @@ def create_sfh_model(radius, params):
     elif name == "twoexp":
         sfh = sfh_models.twoexp(**kwargs)
     elif name == "twoinfall":
-        T_t = 1 / params.thin_to_thick_ratio
+        t_T = params.thin_to_thick_ratio
         r_t = params.thin_disk_scale_radius
         r_T = params.thick_disk_scale_radius
         r_sun = params.r_sun
 
         At = np.exp(-(radius - r_sun) / r_t)
-        AT = T_t * np.exp(-(radius - r_sun) / r_T)
-        A21 = kwargs["A21"] * At/AT 
+        AT = np.exp(-(radius - r_sun) / r_T)
+        A21 = kwargs["A21"] * At/AT  * t_T
+        print(f"t_T = {t_T}")
+        print(f"At/AT = {At/AT}")
+        print(f"r = {radius}")
+        print(f"A21 = {A21}")
+        print(f"tau2 = {kwargs['tau2']}")
+        print()
         sfh = sfh_models.twoexp(A21 = A21, t1=kwargs["t1"], tau1=kwargs["tau1"], tau2=kwargs["tau2"])
 
     elif name == "linexp":
@@ -143,6 +149,7 @@ def get_sfh_timescale(radius, Re = 5):
 
     .. [1] Sanchez (2020), ARA&A, 58, 99
     """
+    tau_min = 1
     radius /= Re # convert to units of Re
     radii, timescales = _read_sanchez_data()
     idx = get_bin_number(radii, radius)
@@ -150,8 +157,8 @@ def get_sfh_timescale(radius, Re = 5):
         return interpolate(radii[idx], timescales[idx], radii[idx + 1],
             timescales[idx + 1], radius) 
     else:
-        return interpolate(radii[-2], timescales[-2], radii[-1],
-            timescales[-1], radius) 
+        return max(tau_min, interpolate(radii[-2], timescales[-2], radii[-1],
+            timescales[-1], radius) )
 
 
 
@@ -197,8 +204,8 @@ def BG16_stellar_density(radius, params):
 
     R_thin = params.thin_disk_scale_radius
     R_thick = params.thick_disk_scale_radius
-    A_thick = params.thin_to_thick_ratio
-    return np.exp(-radius / R_thin) + A_thick * np.exp(-radius / R_thick)
+    A_thin = params.thin_to_thick_ratio
+    return A_thin * np.exp(-radius / R_thin) + np.exp(-radius / R_thick)
 
 
 def _read_sanchez_data():

@@ -11,7 +11,11 @@ results
 *.gif
 model.json
 *.mp4
-*.csv
+stars.csv
+subgiants.csv
+apogee_*.csv
+galah_dwarfs.csv
+gso_dwarfs.csv
 
 *.lof
 *.lot

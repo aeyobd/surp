@@ -113,7 +113,7 @@ class MWParams:
 
     thin_disk_scale_radius:float = 2.5 # kpc
     thick_disk_scale_radius:float = 2.0 # kpc
-    thin_to_thick_ratio:float = 0.27 # at r = 0
+    thin_to_thick_ratio:float = 3.70 # at r = 0kpc, not solar radius
 
     r_sun:float = 8.122 # kpc, GRAVITY Collaboration 2018
 
