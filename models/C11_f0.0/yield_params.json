@@ -1,10 +1,10 @@
 {
     "yield_scale": 1,
     "c_cc_model": "Quadratic",
-    "c_cc_y0": 0.0026862400000000003,
-    "c_cc_zeta": 0.00157784,
+    "c_cc_y0": 0.002753396,
+    "c_cc_zeta": 0.0014555574,
     "c_cc_kwargs": {
-        "A": 0.00400328
+        "A": 0.0036930257999999994
     },
     "c_agb_model": "cristallo11",
     "c_agb_alpha": 0.0,

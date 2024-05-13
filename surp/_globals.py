@@ -5,7 +5,7 @@ Global variables to the migration simulations and plot analysis.
 END_TIME = 13.2 # total simulation time in Gyr
 Z_SUN = 0.016 # Alla Mag++2022
 MAX_RADIUS = 20.0
-N_SUBGIANTS = 16_365
+N_SUBGIANTS = 14_066
 
 ELEMENTS = ["c", "n", "o", "mg", "fe"]
 AGB_MODELS = ["cristallo11", "ventura13", "karakas16", "pignatari16"]

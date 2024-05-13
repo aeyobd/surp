@@ -1,7 +1,7 @@
 {
     "yield_scale": 1,
     "c_cc_model": "Quadratic",
-    "c_cc_y0": 0.00195,
+    "c_cc_y0": 0.0020,
     "c_cc_zeta": 0.00135892,
     "c_cc_kwargs": {
         "A": 0.0016

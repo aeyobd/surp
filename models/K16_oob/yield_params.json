@@ -1,10 +1,10 @@
 {
     "yield_scale": 1,
     "c_cc_model": "Quadratic",
-    "c_cc_y0": 0.0023,
-    "c_cc_zeta": 0.0020,
+    "c_cc_y0": 0.0024,
+    "c_cc_zeta": 0.0025,
     "c_cc_kwargs": {
-        "A": 0.0026
+        "A": 0.003
     },
     "c_agb_model": "karakas16",
     "c_agb_alpha": 1.0,

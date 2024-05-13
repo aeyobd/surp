@@ -4,9 +4,9 @@ I am so sorry that most of these parameters are named in reverse of YieldParams
 from surp import YieldParams, Z_SUN
 import vice
 
-noneq_factor = 1.0
-noneq_A_factor = 2
-noneq_zeta_factor = 2
+noneq_factor = 1.025
+noneq_A_factor = 1.8
+noneq_zeta_factor = 1.8
 
 Y_MG = 0.000652
 

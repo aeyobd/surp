@@ -496,6 +496,7 @@ cdef class Quadratic_CC(AbstractCC):
         self.A *= scale
         self.zeta *= scale
         self.y0 *= scale
+        self.y_v *= scale
         return self
 
 
