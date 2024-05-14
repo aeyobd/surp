@@ -65,13 +65,13 @@ def set_yields(params=YieldParams(), verbose=True, **kwargs):
 
     agb.settings["c"] = get_c_agb_model(params)
     ccsne.settings["c"] = get_c_cc_model(params)
-    sneia.settings["c"] = params.c_ia
+    sneia.settings["c"] = params.y_c_ia
 
     agb.settings["n"] = get_n_agb_model(params)
-    ccsne.settings["n"] = params.n_cc_y0
+    ccsne.settings["n"] = params.y0_n_cc
 
-    sneia.settings["fe"] = params.fe_ia
-    ccsne.settings["fe"] = params.fe_cc
+    sneia.settings["fe"] = params.y_fe_ia
+    ccsne.settings["fe"] = params.y_fe_cc
 
     scale_yields(params.yield_scale)
 
@@ -82,38 +82,38 @@ def set_yields(params=YieldParams(), verbose=True, **kwargs):
 
 def get_c_agb_model(params):
     """Returns an AGB model for C with properties specified in params"""
-    if params.c_agb_model == "A":
-        model = yield_models.C_AGB_Model(**params.c_agb_kwargs)
+    if params.Y_c_agb == "A":
+        model = yield_models.C_AGB_Model(**params.kwargs_c_agb)
     else:
-        model = interpolator("c", study=params.c_agb_model, **params.c_agb_kwargs)
+        model = interpolator("c", study=params.Y_c_agb, **params.kwargs_c_agb)
 
-    model *= params.c_agb_alpha
+    model *= params.alpha_c_agb
     return model
 
 
 def get_c_cc_model(params):
     """Returns a CC model for C with properties specified in params"""
-    if params.c_cc_model == "BiLin":
-        model = yield_models.BiLin_CC(y0=params.c_cc_y0, zeta=params.c_cc_zeta, **params.c_cc_kwargs)
-    elif params.c_cc_model == "Lin":
-        model = yield_models.Lin_CC(y0=params.c_cc_y0, zeta=params.c_cc_zeta)
-    elif params.c_cc_model == "LogLin":
-        model = yield_models.LogLin_CC(y0=params.c_cc_y0, zeta=params.c_cc_zeta, **params.c_cc_kwargs)
-    elif params.c_cc_model == "BiLogLin":
-        model = yield_models.BiLogLin_CC(y0=params.c_cc_y0, zeta=params.c_cc_zeta, **params.c_cc_kwargs)
-    elif params.c_cc_model == "Quadratic":
-        model = yield_models.Quadratic_CC(y0=params.c_cc_y0, zeta=params.c_cc_zeta, **params.c_cc_kwargs)
+    if params.y_c_cc == "BiLin":
+        model = yield_models.BiLin_CC(y0=params.y0_c_cc, zeta=params.zeta_c_cc, **params.kwargs_c_cc)
+    elif params.y_c_cc == "Lin":
+        model = yield_models.Lin_CC(y0=params.y0_c_cc, zeta=params.zeta_c_cc)
+    elif params.y_c_cc == "LogLin":
+        model = yield_models.LogLin_CC(y0=params.y0_c_cc, zeta=params.zeta_c_cc, **params.kwargs_c_cc)
+    elif params.y_c_cc == "BiLogLin":
+        model = yield_models.BiLogLin_CC(y0=params.y0_c_cc, zeta=params.zeta_c_cc, **params.kwargs_c_cc)
+    elif params.y_c_cc == "Quadratic":
+        model = yield_models.Quadratic_CC(y0=params.y0_c_cc, zeta=params.zeta_c_cc, **params.kwargs_c_cc)
     else:
-        model = params.c_cc_model
+        model = params.y_c_cc
 
     return model
 
 
 def get_n_agb_model(params):
-    if params.n_agb_model == "A":
-        model = yield_models.LinAGB(eta=params.n_agb_eta, y0=params.n_agb_y0)
+    if params.Y_n_agb == "A":
+        model = yield_models.LinAGB(eta=params.eta_n_agb, y0=params.y0_n_agb)
     else:
-        model = params.n_agb_model
+        model = params.Y_n_agb
 
     return model
 

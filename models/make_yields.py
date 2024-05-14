@@ -97,31 +97,31 @@ def make_yield_params( zeta_cc=None, agb_n_model="A", yield_scale=1, mlr="larson
 
 
 def set_c_cc(params, y0, zeta, model="Lin", y1=1e-4, Z1=0):
-    params.c_cc_y0 = y0
-    params.c_cc_zeta = zeta
-    params.c_cc_model = model
+    params.y0_c_cc = y0
+    params.zeta_c_cc = zeta
+    params.y_c_cc= model
     if model == "BiLin":
-        params.c_cc_kwargs = dict(y1=y1, Z1=Z1)
+        params.kwargs_c_cc = dict(y1=y1, Z1=Z1)
     elif model == "BiLogLin":
-        params.c_cc_kwargs = dict(y1=y1)
+        params.kwargs_c_cc = dict(y1=y1)
     elif model == "Quadratic":
-        params.c_cc_kwargs = dict(A=A_C_0)
+        params.kwargs_c_cc = dict(A=A_C_0)
 
 
 def set_c_agb(params, agb_model="cristallo11", f_agb=0.2, alpha_agb=None, zeta_agb=None, 
             mass_factor=1, no_negative=False, interp_kind="linear", t_D=0.1, tau_agb=0.3, low_z_flat=False):
 
     y0 = f_agb * Y_C_0
-    params.c_agb_model = agb_model
+    params.y_c_agb = agb_model
 
     if agb_model == "A":
         if zeta_agb is None:
             raise ValueError("for analytic AGB model, zeta_agb must be specified")
 
-        params.c_agb_kwargs = dict(t_D=t_D, tau_agb=tau_agb, y0=y0, zeta=zeta_agb)
-        params.c_agb_alpha = 1
+        params.kwargs_c_agb = dict(t_D=t_D, tau_agb=tau_agb, y0=y0, zeta=zeta_agb)
+        params.alpha_c_agb = 1
     else:
-        params.c_agb_kwargs = dict(mass_factor=mass_factor, no_negative=no_negative, interp_kind=interp_kind, low_z_flat=low_z_flat)
+        params.kwargs_c_agb = dict(mass_factor=mass_factor, no_negative=no_negative, interp_kind=interp_kind, low_z_flat=low_z_flat)
 
         y_c_agb = Y_C_AGB[agb_model]
         if alpha_agb is None:
@@ -130,7 +130,7 @@ def set_c_agb(params, agb_model="cristallo11", f_agb=0.2, alpha_agb=None, zeta_a
         y0 = alpha_agb * y_c_agb
 
         zeta_agb = ZETA_C_AGB[agb_model] * alpha_agb
-        params.c_agb_alpha = alpha_agb
+        params.alpha_c_agb = alpha_agb
 
 
     return y0, zeta_agb
@@ -140,9 +140,9 @@ def enhance_fe_ia(params, factor):
     """if factor != 1, then enhances sne ia fe yield by factor but maintains same total fe yield, applied to params"""
     if factor == 1:
         return
-    fe_total = params.fe_cc + params.fe_ia
-    params.fe_ia *= factor
-    params.fe_cc = fe_total - params.fe_ia
+    y_fe = params.y_fe_cc + params.y_fe_ia
+    params.y_fe_ia *= factor
+    params.y_fe_cc = y_fe - params.y_fe_ia
     return params
 
 

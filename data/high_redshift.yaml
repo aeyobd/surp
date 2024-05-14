@@ -1,0 +1,42 @@
+high_redshift:
+  - study:  iani+23
+    link: https://ui.adsabs.harvard.edu/abs/2023MNRAS.518.5018I/abstract
+    galaxy: abell2895b
+    redshift: 3.72096,0.00012
+    eps_o: 7.36,0.02
+    log_c_o: -0.99,0.23
+    o_lines: 16660.809,1666.150,4960.295,5008.240,4364.436
+    c_lines: 1906.680,1908.734
+    Te: 2.2e4,0.2e4
+    # oxygen determined by He2-O3C3 diagram (Byler et al. 2020)
+
+
+  - study: rigby+2021
+    link: https://ui.adsabs.harvard.edu/abs/2021ApJ...908..154R/abstract
+    galaxy: J1723+3411
+    redshift: 1.3293,0.0002
+    eps_o: 8.62, 0.03
+    log_c_o: none
+
+  - study: mathee+2021
+    method: CEL stack
+    link: https://ui.adsabs.harvard.edu/abs/2021MNRAS.505.1382M/abstract
+    galaxy: none
+    redshift: 
+    eps_o: 8.21, 0.03, 0.14
+    log_c_o: [-0.8, 0.2]
+
+  - study: mainali+2020
+    link: https://ui.adsabs.harvard.edu/abs/2020MNRAS.494..719M/abstract
+    galaxy: RXCJ0232−588
+    redshift: 1.6448
+    eps_o: 7.60,0.24,0.2
+    log_c_o: -0.68,0.19
+    c_lines: 1907.71
+    o_lines
+
+
+
+  - study: berg+2018
+    link: https://ui.adsabs.harvard.edu/abs/2018ApJ...859..164B/abstract
+    eps_o:
