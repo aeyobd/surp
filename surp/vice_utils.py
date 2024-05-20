@@ -240,6 +240,8 @@ def polynomial(x, coeffs):
     return s
 
     
+
+# TODO: replace these with polynomials from Jonsson + 2020
 def fe_h_err(Fe_H):
     return polynomial(Fe_H, [-0.00557748, 0.00831548])
 

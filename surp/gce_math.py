@@ -127,13 +127,13 @@ def abund_to_brak(data, ele, ele2="h"):
 
 @arg_numpylike()
 @arg_numpylike(1)
-def cpn(c1, n1):
+def cpn(c, n):
     return np.log10( (brak_to_abund(c, "c") + brak_to_abund(n, "n")) / (vice.solar_z("c") + vice.solar_z("n")) )
 
 
 @arg_numpylike()
 @arg_numpylike(1)
-def cmn(c1, n1):
+def cmn(c, n):
     return np.log10( (brak_to_abund(c, "c") - brak_to_abund(n, "n")) / (vice.solar_z("c") - vice.solar_z("n")) )
 
 

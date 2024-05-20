@@ -8,8 +8,8 @@ from surp.simulation.sfh_models import insideout, exp_sfh, linexp, static, lateb
 
 
 def run_singlezone(
-        dt=0.01, t_end=13.2, tau_sfh=None, 
-        eta=0.5, tau_star=2.5, mode="sfr", sfh=insideout(tau_sfh=14),
+        dt=0.01, t_end=13.2, tau_sfh=14, 
+        eta=0.5, tau_star=2.5, mode="sfr", sfh=insideout(tau_sfh=None),
         RIa="plaw", Mg0=1, verbose=False,
     ):
     """

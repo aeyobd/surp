@@ -16,6 +16,7 @@ subgiants.csv
 apogee_*.csv
 galah_dwarfs.csv
 gso_dwarfs.csv
+lamost_dwarfs.csv
 
 *.lof
 *.lot
@@ -86,6 +87,7 @@ apogee_cartography.csv
 *.sls
 *.gls
 
+*.tar
 *.pdf
 temp
 

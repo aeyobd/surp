@@ -1,5 +1,10 @@
 high_redshift:
-  - study:  iani+23
+
+  jones+2023:
+    jwst result
+
+
+  iani+2023:
     link: https://ui.adsabs.harvard.edu/abs/2023MNRAS.518.5018I/abstract
     galaxy: abell2895b
     redshift: 3.72096,0.00012
@@ -8,17 +13,18 @@ high_redshift:
     o_lines: 16660.809,1666.150,4960.295,5008.240,4364.436
     c_lines: 1906.680,1908.734
     Te: 2.2e4,0.2e4
-    # oxygen determined by He2-O3C3 diagram (Byler et al. 2020)
+    notes: oxygen determined by He2-O3C3 diagram (Byler et al. 2020)
 
 
-  - study: rigby+2021
+  rigby+2021:
     link: https://ui.adsabs.harvard.edu/abs/2021ApJ...908..154R/abstract
     galaxy: J1723+3411
     redshift: 1.3293,0.0002
     eps_o: 8.62, 0.03
     log_c_o: none
 
-  - study: mathee+2021
+
+  mathee+2021:
     method: CEL stack
     link: https://ui.adsabs.harvard.edu/abs/2021MNRAS.505.1382M/abstract
     galaxy: none
@@ -26,17 +32,89 @@ high_redshift:
     eps_o: 8.21, 0.03, 0.14
     log_c_o: [-0.8, 0.2]
 
-  - study: mainali+2020
+
+  mainali+2020:
     link: https://ui.adsabs.harvard.edu/abs/2020MNRAS.494..719M/abstract
     galaxy: RXCJ0232−588
     redshift: 1.6448
     eps_o: 7.60,0.24,0.2
     log_c_o: -0.68,0.19
     c_lines: 1907.71
-    o_lines
 
 
 
-  - study: berg+2018
+  berg+2018:
+    notes: a strongly lensed galaxy in CANDELS, observed with Keck LIRS. C is determined by ICF with CII and OII. O does not have a robust measurement here.
     link: https://ui.adsabs.harvard.edu/abs/2018ApJ...859..164B/abstract
-    eps_o:
+    galaxy: SL2S J0217-0513
+    log_M_star: 8.26, 0.10
+    log_SFR: 22.5, 1.6
+    redshift: 1.84435, 0.00066
+    eps_o: 7.5, NaN
+    log_c_o: -0.81, 0.09
+    log_n_o: -1.48, 0.46
+    log_si_o: -1.59, 0.17
+    c_lines:
+      - C IV 1548.19, 1550.77
+      - \[C III\] 1906.68
+      - C III\] 1908.73
+      - C II\] 2325.40, 2326.93, 2328.12
+
+    o_lines: 
+      - \[O III\] 2321.66, 
+
+
+  amorin+2017:
+    link: https://ui.adsabs.harvard.edu/abs/2017NatAs...1E..52A/abstract
+
+
+  vanzella+2016:
+    notes: VLT-XShooter and MUSE spectroscopy. A 16x magnified galaxy in 
+      Abell S1063. Needs ionization correction...
+    link: https://ui.adsabs.harvard.edu/abs/2016ApJ...821L..27V/abstract
+    galaxy: ID11
+
+  steidel+2016:
+    link: https://ui.adsabs.harvard.edu/abs/2016ApJ...826..159S/abstract
+    galaxy: stack
+    redshift: 2.40, 0.11
+    eps_o: 8.38, 0.10
+    log_c_o: -0.60, 0.09
+    log_n_o: -1.24,0.04
+    log_si_o: -1.81,0.08
+    SFR: 27, 1
+
+  stark+2014:
+    pass
+
+  james+2014:
+    pass
+
+  bayliss+2014
+
+  christensen+2012
+
+  erb+2010
+
+  fosbury+2003
+
+  fosbury+2003b
+
+  pettini+2000
+
+
+  garnett+1997
+  kobulnicky+1997
+  kobulnicky&skillman1998
+  izotov&thuan1999
+  perez-montero&amorin2017
+  pena-guerrero+2017
+
+
+  james+2014
+  leitherer+2011
+  leitherer2011
+
+  conroy+2014
+
+
