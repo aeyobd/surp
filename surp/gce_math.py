@@ -1,140 +1,109 @@
 import numpy as np
-import vice
-import molmass
-from .yield_models import ZeroAGB
+import vice # used for solar_z
+import molmass # used for molar_mass
 
 from ._globals import Z_SUN
 from .utils import arg_numpylike
 
 
-def calc_y(Z=Z_SUN, ele="c", kind="all"):
-    if hasattr(Z, "__len__"):
-        y = np.array( [_calc_y_of_kind(z, ele, kind) for z in Z ] )
+def solar_z(ele):
+    """Solar abundance scale. Overloaded from VICE.
+    Adds convenience definitions solar_z("H") = 1 and solar_z("M") = Z_SUN
+    """
+    if ele.lower() == "h":
+        return 1
+    elif ele.upper() == "M":
+        return Z_SUN
     else:
-        y = _calc_y_of_kind(Z, ele, kind)
-
-    return y
+        return vice.solar_z(ele)
 
 
-def _calc_y_of_kind(Z, ele, kind):
-    yields = copy_current_yields(ele)
-    if kind != "all":
-        if -1 == kind.find("cc"):
-            vice.yields.ccsne.settings[ele] = 0
-        if -1 == kind.find("ia"):
-            vice.yields.sneia.settings[ele] = 0
-        if -1 == kind.find("agb"):
-            vice.yields.agb.settings[ele] = ZeroAGB()
+@np.vectorize
+def molar_mass(ele):
+    """Returns the molar mass of an element (or array of elements).
+    Note: H is overloaded to give exactly 1. This is because we allow H to 
+    pass through as if the second element does not exist.
+    """
+    if ele.upper() == "H":
+        return 1.0
 
-    y = _calc_y(Z, ele)
-    reset_yields(ele, yields)
-
-    return y
-
-
-def copy_current_yields(ele):
-    ycc = vice.yields.ccsne.settings[ele]
-    yagb = vice.yields.agb.settings[ele]
-    yia = vice.yields.sneia.settings[ele]
-    return ycc, yagb, yia
-
-
-def reset_yields(ele, yields):
-    ycc, yagb, yia = yields
-
-    vice.yields.ccsne.settings[ele] = ycc
-    vice.yields.agb.settings[ele] = yagb
-    vice.yields.sneia.settings[ele] = yia
-
-
-def _calc_y(Z, ele="c"):
-    m_c, times = vice.single_stellar_population(ele, Z=Z, mstar=1)
-    return m_c[-1]
+    return molmass.ELEMENTS[ele.title()].mass
+    
 
 @arg_numpylike()
 def Z_to_MH(Z):
+    """Converts the mass fraction to the scaled solar log"""
     return np.log10(Z/Z_SUN)
+
 
 @arg_numpylike()
 def MH_to_Z(M_H):
     return Z_SUN * 10**M_H
 
-@arg_numpylike()
-def log_to_abundance(ratio, ele, ele2="H"):
-    m2 = molar_mass(ele2)
-    if ele2 == "H":
-        m2 = 1
-    return 10**ratio * molar_mass(ele) / m2
 
+
+
+
+""" Converts a bracket notation [A/B] into mass abundance A/B"""
 @arg_numpylike()
-def eps_to_log(eps):
-    return eps - 12
+def brak_to_abund(data, ele, ele2="h"):
+    return 10.0**data * solar_z(ele) / solar_z(ele2)
+
+
+
+""" Converts a mass abundance A/B into bracket notation [A/B]"""
 @arg_numpylike()
-def eps_to_abundance(eps, ele):
-    return log_to_abundance(eps_to_log(eps), ele)
+def abund_to_brak(data, ele, ele2="h"):
+    return np.log10(data) - np.log10(solar_z(ele) / solar_z(ele2))
+
+
 
 @arg_numpylike()
 def log_to_brak(ratio, elem, elem2="H"):
     """Calculates [A/B] from log A/B
-    Parameters
-    ----------
-    ratio : float or list-like
-        The input value of log A/B
-    elem : str
-        The string of element A
-    elem2 : str
-        The string of element B, default H
-        
-    Returns
-    -------
-    The value of [A/B]
     """
         
-    if elem2 == "H":
-        return ratio - np.log10(vice.solar_z(elem)) + np.log10(molar_mass(elem))
-    else:
-        return ratio - np.log10(vice.solar_z(elem)/vice.solar_z(elem2)) + np.log10(molar_mass(elem)/molar_mass(elem2))
+    return ratio - np.log10(solar_z(elem)/solar_z(elem2)) + np.log10(molar_mass(elem)/molar_mass(elem2))
+
+
+
+
+@arg_numpylike()
+def log_to_abundance(ratio, ele, ele2="H"):
+    return 10**ratio * molar_mass(ele) / molar_mass(ele2)
+
+
+@arg_numpylike()
+def eps_to_log(eps):
+    return eps - 12
 
 
 @arg_numpylike()
 def eps_to_brak(eps, ele):
-    return log_to_brak(eps, ele) - 12
+    return eps_to_log(log_to_brak(eps, ele))
 
 
 @arg_numpylike()
-def brak_to_abund(data, ele, ele2="h"):
-    if ele2 == "h":
-        return 10**data * vice.solar_z(ele)
-    else:
-        return 10**data * vice.solar_z(ele) / vice.solar_z(ele2)
-
-def molar_mass(ele):
-    return molmass.ELEMENTS[ele.title()].mass
-
-molar_mass = np.vectorize(molar_mass)
-
-def A_to_Z(A, ele, mixing_correction=0, X=0.71):
-    logZ = (A - 12)  + np.log10(X * mmass(ele)) 
-    return 10**(logZ + mixing_correction)
-
-@arg_numpylike()
-def abund_to_brak(data, ele, ele2="h"):
-    if ele2.lower() == "h":
-        return np.log10(data/vice.solar_z(ele))
-    else:
-        return np.log10(data) - np.log10(vice.solar_z(ele) / vice.solar_z(ele2))
+def eps_to_abundance(eps, ele):
+    return log_to_abundance(eps_to_log(eps), ele)
 
 
+
+
+
+""" C + N given [C/H] and [N/H]"""
 @arg_numpylike()
 @arg_numpylike(1)
 def cpn(c, n):
-    return np.log10( (brak_to_abund(c, "c") + brak_to_abund(n, "n")) / (vice.solar_z("c") + vice.solar_z("n")) )
+    return np.log10( (brak_to_abund(c, "c") + brak_to_abund(n, "n")) / (solar_z("c") + solar_z("n")) )
 
 
+
+""" [C - N/H] given [C/H] and [N/H]"""
 @arg_numpylike()
 @arg_numpylike(1)
 def cmn(c, n):
-    return np.log10( (brak_to_abund(c, "c") - brak_to_abund(n, "n")) / (vice.solar_z("c") - vice.solar_z("n")) )
+    return np.log10( (brak_to_abund(c, "c") - brak_to_abund(n, "n")) / (solar_z("c") - solar_z("n")) )
 
 
 
@@ -164,6 +133,8 @@ def mg_fe_cutoff(fe_h):
     return 0.16 - (fe_h < 0) * 0.13 * fe_h
 
 
+
+"""Returns True if the star is in the high alpha sequence"""
 @arg_numpylike()
 @arg_numpylike(1)
 def is_high_alpha(mg_fe, fe_h):

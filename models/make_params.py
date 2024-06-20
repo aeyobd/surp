@@ -46,6 +46,8 @@ def main():
 def parse_args():
     parser = argparse.ArgumentParser(description="""
          This script makes a directory and generates the config file for the given model""")
+    parser.add_argument("-o", "--output", default=None,
+                        help="the directory name to create")
 
     parser.add_argument("-F", "--force", action="store_true", 
                         help="overwrites the directory if it exists")
@@ -108,8 +110,6 @@ def parse_args():
                         help="the number of stars to create at each zone for each timestep")
     parser.add_argument("--filename", default="model",
                         help="the default name of the model filename")
-    parser.add_argument("-o", "--output", default=None,
-                        help="the directory name to create")
     parser.add_argument("-j", "--threads", default=1, type=int,
                         help="number of threads to run")
     parser.add_argument("-N", "--agb_n_model", default="A",

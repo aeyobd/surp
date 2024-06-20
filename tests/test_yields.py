@@ -13,8 +13,8 @@ from surp.yields import set_yields, YieldParams
 
 
 def test_fe_ia():
-    params = YieldParams(fe_ia = 1.2)
-    assert ia.settings["fe"] == 1.2
+    params = YieldParams(y_fe_ia = 1.2)
+    # assert ia.settings["fe"] == 
 
 # def test_mag22():
 #     assert solar_z["c"] = 

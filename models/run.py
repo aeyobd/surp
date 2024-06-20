@@ -1,8 +1,13 @@
 import surp
 from surp import ViceModel, MWParams
+import sys
 
-params_file = "params.json"
-yields_file = "yield_params.json"
+if len(sys.argv) < 3:
+    print("Usage: python run.py params_file yields_file")
+    sys.exit(1)
+
+params_file = sys.argv[1]
+yields_file = sys.argv[2]
 model_out = "model.json"
 stars_out = "stars.csv"
 vice_name = "milkyway.vice"

@@ -25,6 +25,14 @@ cdef double Z_to_MH(double Z):
 
 
 
+"""
+Given zeta (the logarithmic slope d y / d log10 Z), returns
+the linear slope $d y / d Z = zeta / (Z_SUN * ln(10))$
+"""
+def zeta_to_slope(zeta):
+    return zeta / (Z_SUN * m.log(10))
+
+
 cdef class AbstractCC:
     """
     An abstract class for core-collapse supernova yield models
@@ -84,7 +92,8 @@ cdef class AbstractAGB:
         """
             self(mass, metallicity)
 
-        returns the net fractional yield (Y^{AGB}) for the given mass and metallicity
+        returns the net fractional yield (Y^{AGB}) for the given mass and 
+        metallicity
         """
         return self.ccall(m, Z)
 
@@ -170,7 +179,9 @@ cdef class C_AGB_Model(AbstractAGB):
     cdef public double A_agb
 
     def __cinit__(self, double y0 = 0.0004, double zeta=-0.0002, 
-            double tau_agb=0.3, double t_D = 0.15, mlr=vice.mlr.larson1974, imf=vice.imf.kroupa):
+            double tau_agb=0.3, double t_D = 0.15, mlr=vice.mlr.larson1974, 
+            imf=vice.imf.kroupa):
+
         cdef double m_low = 1.2
         cdef double m_hm = 8
         cdef double m_high = 100
@@ -233,7 +244,10 @@ cdef class Lin_CC(AbstractCC):
     Lin_CC(y0, zeta)
 
     Constructs a linear piecewise yield model for CCSNe
-    y = y_0 + zeta * (Z - Z_\\odot)
+    y = y_0 + slope * (Z - Z_\\odot)
+
+    Note that the slope is defined as zeta / (Z_\\odot \\ln(10)) as to be 
+    the slope in the log10 space where zeta = d y / d Z
 
     Parameters
     ----------
@@ -252,7 +266,7 @@ cdef class Lin_CC(AbstractCC):
     def __cinit__(self, double y0=0.004, double zeta=0.1):
         self.y0 = y0
         self.zeta = zeta
-        self.slope = zeta / (Z_SUN * m.log(10))
+        self.slope = zeta_to_slope(zeta)
 
 
     cpdef ccall(self, double Z):
@@ -382,7 +396,7 @@ cdef class BiLin_CC(AbstractCC):
                   double Z1=0.008, double y1=8.67e-4):
         self.y0 = y0
         self.zeta = zeta
-        self.slope = zeta / (Z_SUN * m.log(10))
+        self.slope = zeta_to_slope(zeta)
 
         self.y1 = y1
         self.Z1 = Z1
@@ -451,6 +465,7 @@ cdef class Piecewise_CC(AbstractCC):
                 return self.y0s[i] + self.zetas[i] * M_H
 
         return self.y0s[-1] + self.zetas[-1] * M_H
+
 
 
 cdef class Quadratic_CC(AbstractCC):

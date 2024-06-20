@@ -1,9 +1,9 @@
-from dataclasses import dataclass, field, asdict
-import json
+from surp.utils import AbstractParams
+from dataclasses import dataclass, field
 
 
 @dataclass
-class YieldParams:
+class YieldParams(AbstractParams):
     """
     A class storing yield parameters for this project (C, N, Fe).
     Mg, O are held fixed. Note that the IMF is set through the vice singlezone
@@ -69,7 +69,7 @@ class YieldParams:
     # carbon
     y_c_cc:str = "Lin"
     y0_c_cc:float = 2.28e-3
-    zeta_c_cc:float = 0.03
+    zeta_c_cc:float = 0.00
     kwargs_c_cc:dict = field(default_factory=dict)
 
     Y_c_agb:str = "cristallo11"
@@ -90,18 +90,4 @@ class YieldParams:
     # iron
     y_fe_cc: float = 4.73e-4
     y_fe_ia: float = 7.7e-4
-
-
-    def to_dict(self):
-        return asdict(self)
-
-    def save(self, filename):
-        with open(filename, "w") as f:
-            json.dump(self.to_dict(), f, indent=4)
-
-    @classmethod
-    def from_file(cls, filename):
-        with open(filename, "r") as f:
-            params = json.load(f)
-        return cls(**params)
 

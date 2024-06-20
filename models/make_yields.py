@@ -77,18 +77,18 @@ def y_c_exp(M_H):
     return y_mg * (3.57 + 0.588*10**M_H)
 
 def make_yield_params( zeta_cc=None, agb_n_model="A", yield_scale=1, mlr="larson1974",
-                      fe_ia_factor=1, y1=1e-4, Z1=0, cc_model="Lin", **kwargs):
+                      fe_ia_factor=1, y1=1e-4, Z1=0, y_c_cc="Lin", **kwargs):
     """Creates yields as given by """
 
     params = YieldParams(yield_scale=yield_scale, mlr=mlr)
     y_c_agb, zeta_c_agb = set_c_agb(params, **kwargs)
 
-    y_c_cc = Y_C_0 - y_c_agb
+    y0_c_cc = Y_C_0 - y_c_agb
 
     if zeta_cc is None:
         zeta_cc = ZETA_C_0 - zeta_c_agb
 
-    set_c_cc(params, y0=y_c_cc, zeta=zeta_cc, model=cc_model, y1=y1, Z1=Z1)
+    set_c_cc(params, y0=y0_c_cc, zeta=zeta_cc, y_c_cc=y_c_cc, y1=y1, Z1=Z1)
     params.n_agb_model = agb_n_model
 
     enhance_fe_ia(params, fe_ia_factor)
@@ -96,15 +96,15 @@ def make_yield_params( zeta_cc=None, agb_n_model="A", yield_scale=1, mlr="larson
 
 
 
-def set_c_cc(params, y0, zeta, model="Lin", y1=1e-4, Z1=0):
+def set_c_cc(params, y0, zeta, y_c_cc="Lin", y1=1e-4, Z1=0):
     params.y0_c_cc = y0
     params.zeta_c_cc = zeta
-    params.y_c_cc= model
-    if model == "BiLin":
+    params.y_c_cc= y_c_cc
+    if y_c_cc == "BiLin":
         params.kwargs_c_cc = dict(y1=y1, Z1=Z1)
-    elif model == "BiLogLin":
+    elif y_c_cc == "BiLogLin":
         params.kwargs_c_cc = dict(y1=y1)
-    elif model == "Quadratic":
+    elif y_c_cc == "Quadratic":
         params.kwargs_c_cc = dict(A=A_C_0)
 
 
@@ -112,7 +112,7 @@ def set_c_agb(params, agb_model="cristallo11", f_agb=0.2, alpha_agb=None, zeta_a
             mass_factor=1, no_negative=False, interp_kind="linear", t_D=0.1, tau_agb=0.3, low_z_flat=False):
 
     y0 = f_agb * Y_C_0
-    params.y_c_agb = agb_model
+    params.Y_c_agb = agb_model
 
     if agb_model == "A":
         if zeta_agb is None:

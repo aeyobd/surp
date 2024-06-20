@@ -5,6 +5,44 @@ from astropy.table import Table
 import textwrap
 import os
 import numpy as np
+import json
+from os import path
+from dataclasses import dataclass, field, asdict
+
+
+
+class AbstractParams:
+    """ A general config class used for yieldparams and parameters"""
+    def to_dict(self):
+        return asdict(self)
+
+    def save(self, filename):
+        with open(filename, "w") as f:
+            json.dump(self.to_dict(), f, indent=4)
+
+
+    @classmethod
+    def from_file(cls, filename):
+        with open(filename, "r") as f:
+            params = json.load(f)
+
+        if "inherits" in params:
+            parentname = params.pop("inherits")
+            parentname = path.join(path.dirname(filename), parentname)
+            parent = cls.from_file(parentname).to_dict()
+            
+            for key in parent.keys():
+                if key not in params:
+                    params[key] = parent[key]
+
+
+        return cls(**params)
+
+    def __str__(self):
+        return json.dumps(self.to_dict(), indent=4)
+
+    def __repr__(self):
+        return self.__str__()
 
 
 

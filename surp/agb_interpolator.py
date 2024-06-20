@@ -77,12 +77,12 @@ class interpolator(interp_scheme_2d):
         self.mass_factor = mass_factor
         self.interp_kind = interp_kind
         self.no_negative = no_negative
+        if pinch_mass is not None:
+            pinch_mass = pinch_mass * mass_factor
 
         if no_negative_mass == "lowest":
             no_negative_mass = min(masses)
         self.no_negative_mass = no_negative_mass
-
-
 
         self.low_z_flat = low_z_flat
 
@@ -95,7 +95,7 @@ class interpolator(interp_scheme_2d):
             yields.insert(0, [0]*len(metallicities))
 
         self.min_mass = min_mass
-        self.max_mass = max_mass
+        self.max_mass = min(max_mass, max_mass * mass_factor)
 
         self.metallicities = metallicities
 
@@ -129,13 +129,13 @@ class interpolator(interp_scheme_2d):
 
 
     def _call_linear(self, M, Z):
-        return super().__call__(self.mass_factor*M, Z)
+        return super().__call__(1/self.mass_factor*M, Z)
 
     def _call_log(self, M, Z):
-        return super().__call__(self.mass_factor*M, math.log10(Z))
+        return super().__call__(1/self.mass_factor*M, math.log10(Z))
 
     def _call_spline(self, M, Z):
-        return self._spline(self.mass_factor*M, Z)[0][0]
+        return self._spline(1/self.mass_factor*M, Z)[0][0]
 
     def _truncate(self, M, Z):
         return (M <= self.min_mass) or (M >= self.max_mass)

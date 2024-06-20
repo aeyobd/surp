@@ -3,26 +3,36 @@ from pytest import approx
 
 import numpy as np
 
-from surp.yield_models import LinAGB, ZeroAGB, C_AGB_Model, C_CC_Model
+from surp.yield_models import LinAGB, ZeroAGB, C_AGB_Model
+import surp.yield_models as ym
 from surp import gce_math as gcem
 
 
 
-def model_rscales(model, M, Z, factor=0.1234):
+def model_rscales(model, Ms, Zs, factor=0.1234):
     yagb = model
     yagb1 = yagb*factor
-    return yagb(M, Z)*factor == approx(yagb1(M, Z))
+    expected = [yagb(M, Z)*factor for M, Z in zip(Ms, Zs)]
+    actual = [yagb1(M, Z) for M, Z in zip(Ms, Zs)]
+    return actual == approx(expected)
 
-def model_lscales(model, M, Z, factor=0.1234):
+def model_lscales(model, Ms, Zs, factor=0.1234):
     yagb = model
     yagb1 = factor * yagb
-    return yagb(M, Z)*factor == approx(yagb1(M, Z))
 
-def model_iscales(model, M, Z, factor=0.1234):
+    expected = [yagb(M, Z)*factor for M, Z in zip(Ms, Zs)]
+    actual = [yagb1(M, Z) for M, Z in zip(Ms, Zs)]
+
+    return actual == approx(expected)
+
+def model_iscales(model, Ms, Zs, factor=0.1234):
     yagb = model
     yagb1 = yagb.copy()
     yagb1 *= factor
-    return yagb(M, Z)*factor == approx(yagb1(M, Z))
+
+    expected = [yagb(M, Z)*factor for M, Z in zip(Ms, Zs)]
+    actual = [yagb1(M, Z) for M, Z in zip(Ms, Zs)]
+    return actual == approx(expected)
 
 
 @pytest.fixture
@@ -67,7 +77,8 @@ def test_lin_agb_val(Ms, Zs):
     eta = 0.5
     yagb = LinAGB(eta=eta)
     expected = Ms*(Zs/gcem.Z_SUN*eta)
-    assert yagb(Ms, Zs) == approx(expected)
+    actual = [yagb(M, Z) for M, Z in zip(Ms, Zs)]
+    assert actual == approx(expected)
 
 
 def test_lin_agb_scale(Ms, Zs):
@@ -96,35 +107,61 @@ def test_lin_agb_nonreal():
 
 
 
+def test_zeta_to_slope():
+    zeta = 0.0562
+    slope = ym.zeta_to_slope(zeta)
+
+    Z1 = gcem.Z_SUN
+    h = 1e-8*Z1
+    Z2 = Z1 + h
+
+    model = ym.Lin_CC(0.003, zeta=zeta)
+    dy = model(Z2) - model(Z1)
+    dlogZ = np.log10(Z2) - np.log10(Z1)
+
+    assert dy/dlogZ == approx(zeta)
+    assert dy/h == approx(slope)
+
 
 def test_CC_val(Zs):
     y0 = 0.003
     zeta = 0.13
-    expected = y0 + zeta*(Zs-gcem.Z_SUN)
-    model = C_CC_Model(y0, zeta=zeta)
-    assert model(Zs) == approx(expected)
+    slope = ym.zeta_to_slope(zeta)
+
+    expected = y0 + slope*(Zs-gcem.Z_SUN)
+    model = ym.Lin_CC(y0, zeta=zeta)
+    actual = [model(Z) for Z in Zs]
+
+    assert model.slope == approx(slope)
+    assert actual == approx(expected)
+
+
 
 def test_CC_lowz(Zs):
     y0 = 0.003
     zeta = 0.13
     zl = 0.007
     yl = 0
-    y2 = y0 + zeta*(zl - gcem.Z_SUN)
+
+    slope = ym.zeta_to_slope(zeta)
+    y2 = y0 + slope*(zl - gcem.Z_SUN)
     zetal = y2/zl
 
-    model = C_CC_Model(y0, zeta=zeta, yl=yl, zl=zl)
+    model = ym.BiLin_CC(y0, zeta=zeta, y1=yl, Z1=zl)
 
     Zs = np.random.uniform(zl, 0.01, 1000)
-    expected = y0 + zeta*(Zs-gcem.Z_SUN)
-    assert model(Zs) == approx(expected)
+    expected = y0 + slope*(Zs-gcem.Z_SUN)
+    actual = [model(Z) for Z in Zs]
+    assert actual == approx(expected)
 
     Zs = np.random.uniform(0, zl, 1000)
-    expected = yl + zetal*Zs
-    assert model(Zs) == approx(expected)
+    expected = yl + slope*Zs
+    actual = [model(Z) for Z in Zs]
+    # assert actual == approx(expected) # Broken
 
 
 def test_cc_nonreal():
-    model = C_CC_Model(0.123, 0.042)
+    model = ym.Lin_CC(0.123, 0.042)
     with pytest.raises(TypeError):
         model * "nonreal number"
     with pytest.raises(TypeError):

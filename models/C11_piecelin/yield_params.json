@@ -1,0 +1,26 @@
+{
+    "yield_scale": 1,
+    "mlr": "larson1974",
+    "y0_c_cc": 0.0022027168,
+    "y_c_cc": "BiLogLin",
+    "zeta_c_cc": 0.0021,
+    "kwargs_c_cc": {
+        "y1": 0.0022027
+    },
+    "Y_c_agb": "cristallo11",
+    "alpha_c_agb": 0,
+    "kwargs_c_agb": {
+        "mass_factor": 1,
+        "no_negative": false,
+        "interp_kind": "linear",
+        "low_z_flat": false
+    },
+    "y_c_ia": 0,
+    "Y_n_agb": "A",
+    "eta_n_agb": 0.000502,
+    "y0_n_agb": 0,
+    "y0_n_cc": 0.0005,
+    "zeta_n_cc": 0,
+    "y_fe_ia": 0.00077,
+    "y_fe_cc": 0.000473
+}

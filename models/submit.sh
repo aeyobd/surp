@@ -90,13 +90,11 @@ echo \$SLURM_SUBMIT_DIR
 export OMP_NUM_THREADS=$NTHREADS
 
 cp $SCRIPTNAME \$TMPDIR
-cp params.json \$TMPDIR
-cp yield_params.json \$TMPDIR
-
 cd \$TMPDIR
 
 
-python run.py
+python run.py \$SLURM_SUBMIT_DIR/params.json \$SLURM_SUBMIT_DIR/yield_params.json
+
 cp model.json \$SLURM_SUBMIT_DIR
 cp stars.csv \$SLURM_SUBMIT_DIR
 

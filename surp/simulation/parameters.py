@@ -3,11 +3,12 @@ from .._globals import END_TIME
 import json
 from vice.milkyway.milkyway import _get_radial_bins
 import numpy as np
+from surp.utils import AbstractParams
 
 
 
 @dataclass
-class MWParams:
+class MWParams(AbstractParams):
     """
     MWParams(kwargs...)
     MWParams.from_file(filename)
@@ -128,13 +129,6 @@ class MWParams:
     tau_star_sfh_grad: float = 0 # TODO Determine this
 
 
-    @classmethod
-    def from_file(cls, filename):
-        with open(filename, "r") as f:
-            params = json.load(f)
-        return cls(**params)
-
-
     def __post_init__(self):
         self.process()
 
@@ -166,15 +160,6 @@ class MWParams:
         self.N_star_tot = Nstars
 
         return Nstars
-
-
-    def to_dict(self):
-        return asdict(self)
-
-
-    def save(self, filename):
-        with open(filename, "w") as f:
-            json.dump(self.to_dict(), f, indent=4)
 
 
     @property
