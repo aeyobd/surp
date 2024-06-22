@@ -2,16 +2,31 @@ import numpy as np
 import vice # used for solar_z
 import molmass # used for molar_mass
 
-from ._globals import Z_SUN
+from ._globals import Z_SUN, X_SUN, Y_SUN
 from .utils import arg_numpylike
+
+"""
+some brief notes
+
+- Z represents the mass fraction of an element
+- log represents the log of the number fraction of an element
+- eps represents 12 + log
+
+Note that there are different functions for absolute and relative abundances
+because these represent different things.
+"""
+
+
 
 
 def solar_z(ele):
     """Solar abundance scale. Overloaded from VICE.
-    Adds convenience definitions solar_z("H") = 1 and solar_z("M") = Z_SUN
+    Adds convenience definitions solar_z("H") = X_SUN and solar_z("M") = Z_SUN
     """
     if ele.lower() == "h":
-        return 1
+        return X_SUN
+    elif ele.lower() == "he":
+        return Y_SUN
     elif ele.upper() == "M":
         return Z_SUN
     else:
@@ -21,12 +36,7 @@ def solar_z(ele):
 @np.vectorize
 def molar_mass(ele):
     """Returns the molar mass of an element (or array of elements).
-    Note: H is overloaded to give exactly 1. This is because we allow H to 
-    pass through as if the second element does not exist.
     """
-    if ele.upper() == "H":
-        return 1.0
-
     return molmass.ELEMENTS[ele.title()].mass
     
 
@@ -44,23 +54,37 @@ def MH_to_Z(M_H):
 
 
 
-""" Converts a bracket notation [A/B] into mass abundance A/B"""
+""" Converts a bracket notation [A/B] into mass abundance ratio Z_A/Z_B.
+"""
 @arg_numpylike()
-def brak_to_abund(data, ele, ele2="h"):
+def brak_to_abund_ratio(data, ele, ele2):
     return 10.0**data * solar_z(ele) / solar_z(ele2)
 
 
-
-""" Converts a mass abundance A/B into bracket notation [A/B]"""
+""" Converts a bracket notation [A/H] into mass abundance Z_A."""
 @arg_numpylike()
-def abund_to_brak(data, ele, ele2="h"):
+def brak_to_abund(data, ele):
+    return 10.0**data * solar_z(ele)
+
+
+""" Converts a mass abundance A/B into bracket notation [A/B].
+If ele2 == H, then the input is instead Z_A
+"""
+@arg_numpylike()
+def abund_ratio_to_brak(data, ele, ele2):
     return np.log10(data) - np.log10(solar_z(ele) / solar_z(ele2))
+
+
+""" Converts a mass abundance Z_A into bracket notation [A/H]."""
+@arg_numpylike()
+def abund_to_brak(data, ele):
+    return np.log10(data) - np.log10(solar_z(ele))
 
 
 
 @arg_numpylike()
 def log_to_brak(ratio, elem, elem2="H"):
-    """Calculates [A/B] from log A/B
+    """Calculates log A/B to A/B
     """
         
     return ratio - np.log10(solar_z(elem)/solar_z(elem2)) + np.log10(molar_mass(elem)/molar_mass(elem2))
@@ -69,8 +93,15 @@ def log_to_brak(ratio, elem, elem2="H"):
 
 
 @arg_numpylike()
-def log_to_abundance(ratio, ele, ele2="H"):
+def log_to_abundance_ratio(ratio, ele, ele2="H"):
+    ratio = np.float64(ratio)
     return 10**ratio * molar_mass(ele) / molar_mass(ele2)
+
+
+@arg_numpylike()
+def log_to_abundance(ratio, ele):
+    ratio = np.float64(ratio)
+    return 10**ratio * molar_mass(ele) * X_SUN / molar_mass("h")
 
 
 @arg_numpylike()
