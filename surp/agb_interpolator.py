@@ -11,12 +11,13 @@ from scipy.interpolate import RectBivariateSpline
 
 
 
-class interpolator(interp_scheme_2d):
+class interpolator:
     def __init__(self, element, study="cristallo11", 
             prefactor=1, mass_factor=1, interp_kind="linear",
             min_mass=0.08, max_mass=8,
             pinch_mass=1.0,
-            no_negative=False, no_negative_mass="lowest", 
+            no_negative=False, 
+            no_negative_mass="lowest", 
             low_z_flat=False,
             kx=3, ky=1, s=None):
         """
@@ -77,11 +78,10 @@ class interpolator(interp_scheme_2d):
         self.mass_factor = mass_factor
         self.interp_kind = interp_kind
         self.no_negative = no_negative
-        if pinch_mass is not None:
-            pinch_mass = pinch_mass * mass_factor
 
         if no_negative_mass == "lowest":
             no_negative_mass = min(masses)
+
         self.no_negative_mass = no_negative_mass
 
         self.low_z_flat = low_z_flat
@@ -95,16 +95,20 @@ class interpolator(interp_scheme_2d):
             yields.insert(0, [0]*len(metallicities))
 
         self.min_mass = min_mass
-        self.max_mass = min(max_mass, max_mass * mass_factor)
+        self.max_mass = min(max_mass, max_mass / mass_factor)
 
         self.metallicities = metallicities
 
+        self.masses = masses
+        self.metallicities = metallicities
+        self.yields = yields
+
         if interp_kind == "linear":
-            super().__init__(masses, metallicities, yields)
+            self._spline = interp_scheme_2d(masses, metallicities, yields)
             self._call_interp = self._call_linear
 
         elif interp_kind == "log":
-            super().__init__(
+            self._spline = interp_scheme_2d(
                     masses,
                     [math.log10(z) for z in metallicities], 
                     yields)
@@ -129,10 +133,10 @@ class interpolator(interp_scheme_2d):
 
 
     def _call_linear(self, M, Z):
-        return super().__call__(1/self.mass_factor*M, Z)
+        return self._spline.__call__(1/self.mass_factor*M, Z)
 
     def _call_log(self, M, Z):
-        return super().__call__(1/self.mass_factor*M, math.log10(Z))
+        return self._spline.__call__(1/self.mass_factor*M, math.log10(Z))
 
     def _call_spline(self, M, Z):
         return self._spline(1/self.mass_factor*M, Z)[0][0]
@@ -141,7 +145,7 @@ class interpolator(interp_scheme_2d):
         return (M <= self.min_mass) or (M >= self.max_mass)
 
     def __call__(self, M, Z):
-        if self._truncate(M, Z):
+        if self._truncate(M/self.mass_factor, Z):
             return 0
 
         M, Z = self._call_lowz(M, Z)
@@ -149,14 +153,6 @@ class interpolator(interp_scheme_2d):
         y = self._call_noneg(M, y)
 
         return y * self.prefactor
-
-    @property
-    def masses(self):
-        return super().xcoords
-
-    @property
-    def yields(self):
-        return super().zcoords
 
     def copy(self):
         return interpolator(
