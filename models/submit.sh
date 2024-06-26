@@ -52,8 +52,12 @@ if [  "$COPY_VICE" = true ] ; then
     echo will copy full vice output
 fi
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+echo "Script dir: $SCRIPT_DIR"
 
 cd $MODEL_NAME
+
+
 
 
 SCRIPTNAME="run.py"
@@ -62,6 +66,8 @@ if [ -f $SCRIPTNAME ]; then
     echo "Found $SCRIPTNAME"
 elif [ -f ../$SCRIPTNAME ]; then
     SCRIPTNAME="../$SCRIPTNAME"
+elif [ -f $SCRIPT_DIR/$SCRIPTNAME ]; then
+    SCRIPTNAME="$SCRIPT_DIR/$SCRIPTNAME"
 else
     echo "Error: $SCRIPTNAME not found"
     exit 1
@@ -95,8 +101,12 @@ cd \$TMPDIR
 
 python run.py \$SLURM_SUBMIT_DIR/params.json \$SLURM_SUBMIT_DIR/yield_params.json
 
+
 cp model.json \$SLURM_SUBMIT_DIR
 cp stars.csv \$SLURM_SUBMIT_DIR
+
+python \$SLURM_SUBMIT_DIR/visualize.py .
+cp *.pdf \$SLURM_SUBMIT_DIR
 
 if [ "$COPY_VICE" = true ]; then
     cp -f *.dat \$SLURM_SUBMIT_DIR

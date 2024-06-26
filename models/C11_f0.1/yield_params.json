@@ -1,27 +1,5 @@
 {
-    "yield_scale": 1,
-    "mlr": "larson1974",
-    "y_c_cc": "Quadratic",
-    "y0_c_cc": 0.0024780564,
-    "zeta_c_cc": 0.0017091596631578947,
-    "kwargs_c_cc": {
-        "A": 0.0036930257999999994
-    },
-    "Y_c_agb": "cristallo11",
+    "inherits": "../fiducial/yield_params.json",
     "alpha_c_agb": 0.7245778947368421,
-    "kwargs_c_agb": {
-        "mass_factor": 1,
-        "no_negative": false,
-        "interp_kind": "linear",
-        "low_z_flat": false
-    },
-    "y_c_ia": 0,
-    "y0_n_cc": 0.0005,
-    "zeta_n_cc": 0,
-    "Y_n_agb": "A",
-    "kwargs_n_agb": {},
-    "eta_n_agb": 0.000502,
-    "y0_n_agb": 0,
-    "y_fe_cc": 0.000473,
-    "y_fe_ia": 0.00077
+    "y0_c_cc": 0.0024780564
 }

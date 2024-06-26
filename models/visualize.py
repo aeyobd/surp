@@ -18,20 +18,19 @@ def main():
     plot_model(filename, output)
 
 
-def plot_model(filename, plots_dir="figures"):
-    if not os.path.exists(plots_dir):
-        raise FileNotFoundError("directory does not exist ", filename, "failed to make directory")
-        return
+def plot_model(dirname, out_dir):
+    pwd = os.getcwd()
+    print("cd ", dirname)
+    os.chdir(dirname)
 
     print("loading model")
-    model = ViceModel.from_saved(filename)
+    model = ViceModel.from_file("model.json")
     stars = sp.add_scatter(model.stars)
 
-    pwd = os.getcwd()
-    print("cd ", plots_dir)
-    os.chdir(plots_dir)
 
     print("plotting")
+    print("cd ", out_dir)
+    os.chdir(out_dir)
 
     plot_mdf(model.history)
     plt.savefig("mdf.pdf")
@@ -110,7 +109,7 @@ def plot_tracks(history, x="MG_H", y="C_MG", Rs=[4,6,8,10,12]):
     plt.ylim(-0.6, 0.2)
     plt.xlabel(to_label(x))
     plt.ylabel(to_label(y))
-    arya.Colorbar(clim=(0, 13.2), label="t (Gyr)", cmap="arya_r")
+    arya.Colorbar(clim=(0, 13.2), ax=plt.gca(), label="t (Gyr)", cmap="arya_r")
 
 
 
