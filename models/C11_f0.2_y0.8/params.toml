@@ -1,0 +1,2 @@
+inherits = "../fiducial/params.toml"
+eta_scale = 1.2

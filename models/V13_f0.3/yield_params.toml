@@ -1,0 +1,19 @@
+y0_c_cc = 0.0019950000000000002
+y_c_cc = "Lin"
+zeta_c_cc = 0.11449999999999999
+Y_c_agb = "ventura13"
+alpha_c_agb = 2.85
+Y_n_agb = "A"
+eta_n_agb = 0.000502
+y0_n_agb = 0
+y0_n_cc = 0.0005
+zeta_n_cc = 0
+y_fe_ia = 0.00077
+y_fe_cc = 0.000473
+
+[kwargs_c_cc]
+
+[kwargs_c_agb]
+mass_factor = 1
+no_negative = false
+interp_kind = "linear"

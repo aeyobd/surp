@@ -1,0 +1,2 @@
+inherits = "../params.toml"
+yield_scale = 0.5

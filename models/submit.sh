@@ -99,13 +99,13 @@ cp $SCRIPTNAME \$TMPDIR
 cd \$TMPDIR
 
 
-python run.py \$SLURM_SUBMIT_DIR/params.json \$SLURM_SUBMIT_DIR/yield_params.json
+python run.py \$SLURM_SUBMIT_DIR/params.toml \$SLURM_SUBMIT_DIR/yield_params.toml
 
 
 cp model.json \$SLURM_SUBMIT_DIR
 cp stars.csv \$SLURM_SUBMIT_DIR
 
-python \$SLURM_SUBMIT_DIR/visualize.py .
+python $SCRIPT_DIR/visualize.py .
 cp *.pdf \$SLURM_SUBMIT_DIR
 
 if [ "$COPY_VICE" = true ]; then

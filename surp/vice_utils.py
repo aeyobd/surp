@@ -243,17 +243,17 @@ def polynomial(x, coeffs):
 
 # TODO: replace these with polynomials from Jonsson + 2020
 def fe_h_err(Fe_H):
-    return polynomial(Fe_H, [-0.00557748, 0.00831548])
+    return np.maximum(0.005, polynomial(Fe_H, [-0.00557748, 0.00831548]))
 
 def c_mg_err(Fe_H):
-    return polynomial(Fe_H, [-0.03789911, 0.03505672])
+    return np.maximum(0.01, polynomial(Fe_H, [-0.03789911, 0.03505672]))
 
 def mg_h_err(Fe_H):
-    return polynomial(Fe_H,[0.06521454,0.00522015,0.03381753])
+    return np.maximum(0.01, polynomial(Fe_H,[0.06521454,0.00522015,0.03381753]))
 
 
 def mg_fe_err(Fe_H):
-    return polynomial(Fe_H,[ 0.00792663,-0.00801737, 0.0138201 ])
+    return np.maximum(0.005, polynomial(Fe_H,[ 0.00792663,-0.00801737, 0.0138201 ]))
 
 
 

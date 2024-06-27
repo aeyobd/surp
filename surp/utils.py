@@ -6,7 +6,19 @@ from numbers import Real
 import textwrap
 import numpy as np
 
+import toml
 
+
+def json_to_toml(filename):
+    with open(filename, "r") as f:
+        data = json.load(f)
+
+    toml_filename = filename.replace(".json", ".toml")
+    with open(toml_filename, "w") as f:
+        toml.dump(data, f)
+
+    print(f"Converted {filename} to {toml_filename}")
+    return toml_filename
 
 class AbstractParams:
     """ A general config class used for yieldparams and parameters"""
@@ -15,13 +27,13 @@ class AbstractParams:
 
     def save(self, filename):
         with open(filename, "w") as f:
-            json.dump(self.to_dict(), f, indent=4)
+            toml.dump(self.to_dict(), f)
 
 
     @classmethod
     def from_file(cls, filename):
         with open(filename, "r") as f:
-            params = json.load(f)
+            params = toml.load(f)
 
         if "inherits" in params:
             parentname = params.pop("inherits")
@@ -36,7 +48,7 @@ class AbstractParams:
         return cls(**params)
 
     def __str__(self):
-        return json.dumps(self.to_dict(), indent=4)
+        return toml.dumps(self.to_dict())
 
     def __repr__(self):
         return self.__str__()

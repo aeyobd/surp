@@ -1,4 +1,0 @@
-{
-    "inherits": "../fiducial/params.json",
-    "save_migration": true
-}
