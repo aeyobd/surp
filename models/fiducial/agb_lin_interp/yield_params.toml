@@ -1,0 +1,9 @@
+inherits = "fiducial/yield_params.toml"
+
+[kwargs_c_agb]
+mass_factor = 1
+no_negative = true
+interp_kind = "linear"
+low_z_flat = false
+no_negative_mass = 1.5
+min_mass = 0.08

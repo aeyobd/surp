@@ -1,8 +1,6 @@
 from surp.utils import AbstractParams
-from dataclasses import dataclass, field
 
 
-@dataclass
 class YieldParams(AbstractParams):
     """
     A class storing yield parameters for this project (C, N, Fe).
@@ -63,31 +61,31 @@ class YieldParams(AbstractParams):
 
     """
 
-    yield_scale: float = 1
-    mlr:str = "larson1974"
+    yield_scale: float #= 1
+    mlr:str #= "larson1974"
 
     # carbon
-    y_c_cc:str = "Lin"
-    y0_c_cc:float = 2.28e-3
-    zeta_c_cc:float = 0.00
-    kwargs_c_cc:dict = field(default_factory=dict)
+    y_c_cc:str #= "Lin"
+    y0_c_cc:float #= 2.28e-3
+    zeta_c_cc:float# = 0.00
+    kwargs_c_cc:dict# = field(default_factory=dict)
 
-    Y_c_agb:str = "cristallo11"
-    alpha_c_agb:float = 1
-    kwargs_c_agb:dict = field(default_factory=dict)
+    Y_c_agb:str #= "cristallo11"
+    alpha_c_agb:float #= 1
+    kwargs_c_agb:dict #= field(default_factory=dict)
 
-    y_c_ia:float = 0 # maximum is ~ 1.12e-4 from iwamoto + 99
+    y_c_ia:float #= 0 # maximum is ~ 1.12e-4 from iwamoto + 99
 
     # nitrogen
-    y0_n_cc: float = 5e-4
-    zeta_n_cc: float = 0
+    y0_n_cc: float #= 5e-4
+    zeta_n_cc: float #= 0
 
-    Y_n_agb:str = "A"
-    kwargs_n_agb:dict = field(default_factory=dict)
-    eta_n_agb:float = 5.02e-4
-    y0_n_agb:float = 0
+    Y_n_agb:str #= "A"
+    kwargs_n_agb:dict #= field(default_factory=dict)
+    eta_n_agb:float #= 5.02e-4
+    y0_n_agb:float #= 0
 
     # iron
-    y_fe_cc: float = 4.73e-4
-    y_fe_ia: float = 7.7e-4
+    y_fe_cc: float #= 4.73e-4
+    y_fe_ia: float #= 7.7e-4
 

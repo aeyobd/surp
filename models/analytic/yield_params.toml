@@ -1,0 +1,10 @@
+inherits = "../fiducial/yield_params.toml"
+Y_c_agb = "A"
+
+[kwargs_c_agb]
+y0 = 0.0004
+zeta = -0.0002
+tau_agb = 0.3
+t_D = 0.15
+# mlr = larson
+# imf = kroupa

@@ -1,26 +1,23 @@
-import json
 from os import path
-from dataclasses import dataclass, field, asdict
 from functools import wraps
 from numbers import Real
 import textwrap
+
+from pydantic.dataclasses import dataclass
+from dataclasses import field, asdict
 import numpy as np
 
 import toml
 
 
-def json_to_toml(filename):
-    with open(filename, "r") as f:
-        data = json.load(f)
+class DataclassMeta(type):
+    """Metaclass for dataclasses that also adds the dataclass decorator"""
+    def __init__(cls, name, bases, dct):
+        super().__init__(name, bases, dct)
+        dataclass(cls)
 
-    toml_filename = filename.replace(".json", ".toml")
-    with open(toml_filename, "w") as f:
-        toml.dump(data, f)
 
-    print(f"Converted {filename} to {toml_filename}")
-    return toml_filename
-
-class AbstractParams:
+class AbstractParams(metaclass=DataclassMeta):
     """ A general config class used for yieldparams and parameters"""
     def to_dict(self):
         return asdict(self)

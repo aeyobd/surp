@@ -40,11 +40,11 @@ def plot_model(dirname, out_dir):
     plt.savefig("mdf_o_fe.pdf")
     plt.close()
 
-    plot_tracks(model.history)
+    plot_cooh_gas(model.history)
     plt.savefig("cooh_gas.pdf")
     plt.close()
 
-    plot_tracks(model.history, x="MG_FE")
+    plot_coofe_gas(model.history)
     plt.savefig("coofe_gas.pdf")
     plt.close()
 
@@ -97,6 +97,16 @@ def plot_mdf(history, x="FE_H"):
     arya.Legend()
 
 
+def plot_coofe_gas(history):
+    plot_tracks(history, x="MG_FE", y="C_MG")
+    plt.xlim(-0.2, 0.5)
+    plt.ylim(-0.4, 0.2)
+
+def plot_cooh_gas(history):
+    plot_tracks(history, x="MG_H", y="C_MG")
+    plt.xlim(-1.2, 0.6)
+    plt.ylim(-0.4, 0.1)
+
 
 def plot_tracks(history, x="MG_H", y="C_MG", Rs=[4,6,8,10,12]):
     for R in Rs:
@@ -104,9 +114,7 @@ def plot_tracks(history, x="MG_H", y="C_MG", Rs=[4,6,8,10,12]):
         plt.plot(df[x], df[y], color="k")
 
     sns.scatterplot(history, x=x, y=y, hue="time", s=0.3, alpha=1,
-            legend=False, edgecolor="none", palette="arya_r")
-    plt.xlim(-1.2, 0.6)
-    plt.ylim(-0.6, 0.2)
+            legend=False, edgecolor="none", palette="arya_r", rasterized=True)
     plt.xlabel(to_label(x))
     plt.ylabel(to_label(y))
     arya.Colorbar(clim=(0, 13.2), ax=plt.gca(), label="t (Gyr)", cmap="arya_r")
@@ -116,7 +124,7 @@ def plot_tracks(history, x="MG_H", y="C_MG", Rs=[4,6,8,10,12]):
 def plot_cooh(df):
     df = sp.filter_high_alpha(df)
     sns.scatterplot(df, x="MG_H", y="C_MG", hue="r_origin", s=0.3, alpha=1,
-            legend=False, edgecolor="none", palette="arya_r")
+            legend=False, edgecolor="none", palette="arya_r", rasterized=True)
 
     df = sp.filter_high_alpha(subgiants)
     sns.kdeplot(df, x="MG_H", y="C_MG", lw=1, color="k", zorder=3)
@@ -133,10 +141,10 @@ def plot_coofe(stars):
     sns.kdeplot(df, x="MG_FE", y="C_MG", lw=1, color="k", zorder=3)
 
     df = sp.filter_metallicity(stars)
-    plt.scatter(df["MG_FE"], df["C_MG"], c=df["r_origin"], s=0.3, zorder=2)
+    plt.scatter(df["MG_FE"], df["C_MG"], c=df["r_origin"], s=0.3, zorder=2, rasterized=True,)
 
     plt.xlim(-0.1, 0.5)
-    plt.ylim(-0.4, 0.2)
+    plt.ylim(-0.4, 0.3)
 
     plt.xlabel("[Mg/Fe]")
     plt.ylabel("[C/Mg]")
@@ -144,7 +152,7 @@ def plot_coofe(stars):
 
 def plot_ofefeh(df):
     sns.scatterplot(df, x="FE_H", y="MG_FE", hue="r_origin", s=0.3, alpha=1,
-            legend=False, edgecolor="none", palette="arya_r")
+            legend=False, edgecolor="none", palette="arya_r", rasterized=True)
 
     sns.kdeplot(subgiants, x="FE_H", y="MG_FE", zorder=3, exclude_high_alpha=False)
 

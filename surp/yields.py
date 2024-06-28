@@ -50,10 +50,13 @@ def set_defaults() -> None:
 
 
 
-def set_yields(params=YieldParams(), verbose=True, **kwargs):
+def set_yields(params=None, verbose=True, **kwargs):
     """ 
     set_yields(params, verbose=False, **kwargs)
     Ses the yields and abundace scale for the C project. """
+
+    if params is None:
+        params = YieldParams.from_file("../models/fiducial/yield_params.toml")
 
     params = params.to_dict()
     for key, val in kwargs.items():
