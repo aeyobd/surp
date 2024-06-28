@@ -63,14 +63,6 @@ def filter_high_alpha(df):
     return df[~high_alpha]
 
 
-def add_scatter(df, cols=["MG_H", "C_MG", "MG_FE", "C_N", "FE_H"], sigmas=[0.03, 0.03, 0.03, 0.03, 0.03]):
-    df1 = df.copy()
-    N = len(df1)
-    for i in range(len(cols)):
-        df1[cols[i]] += np.random.normal(0, sigmas[i], N)
-
-    return df1
-
 
 def show_stars(stars, x="[fe/h]", y=None, c=None, c_label=None, s=1, alpha=1, kde=False, ax=None, fig=None, colorbar=None,vmin=None, vmax=None, x_err=0.03, y_err=0.03, **args):
     if ax is None or fig is None:
