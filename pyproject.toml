@@ -1,51 +1,31 @@
 [build-system]
-requires = ["hatchling", "numpy", "hatch-cython", "cython"]
-build-backend = "hatchling.build"
+build-backend = "mesonpy"
+requires = [
+    "meson-python", 
+    "Cython>=3.0.0",
+    "numpy", 
+]
+
 
 [project]
-name = "surp_aeyobd"
-version = "0.0.1"
+name = "surp"
+version = "0.1.0"
 authors = [
     { name="Daniel Boyea", email="boyea.2@osu.edu" },
 ]
-description = "My summer research code"
+
+description = "A library for the carbon paper"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 
 classifiers = [
-    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
 
-
-[tool.hatch.build.targets.sdist]
-include = ["arya"]
-
-
-[tool.hatch.build.targets.wheel]
-
-packages = ["surp"]
-
-[tool.hatch.build.targets.wheel.hooks.cython]
-dependencies = ["hatch-cython"]
-
-[tool.hatch.build.targets.wheel.hooks.cython.options]
-includes = []
-include_numpy = true
-
-
-compile_args = [
-    "-v",
-      # by platform
-    { platforms = ["linux", "darwin"], arg = "-Wcpp" },
-    # by platform & arch
-    { platforms = "darwin", arch = "x86_64", arg = "-arch x86_64" },
-    { platforms = ["darwin"], arch = "arm64", arg = "-arch arm64" },
-    # with pep508 markers
-    { platforms = ["darwin"], arch = "x86_64", arg = "-I/usr/local/opt/llvm/include", depends_path = true, marker = "python_version <= '3.10'"  },
+test = [
+    "pytest",
+    "pytest-cov",
 ]
 
-derivatives = {boundscheck = false, nonecheck = false, language_level = 3, binding = true }
-
-compile_kwargs = { }
