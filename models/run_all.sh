@@ -54,12 +54,12 @@ PARAMSPATH=params.toml
 YIELDSPATH=yield_params.toml
 
 # Files to check before removing
-rm -rf *.out model.json stars.csv *.dat milkway.vice
+# rm -rf *.out model.json stars.csv *.dat milkway.vice
 
 $PYTHON $SCRIPTNAME $PARAMSPATH $YIELDSPATH
 
 cd $SCRIPT_DIR
 
 echo visualizing model >> log.out
-$PYTHON visualize.py $MODEL_DIR . >> log.out
+$PYTHON visualize.py $MODEL_DIR -o . >> log.out
 

@@ -1,5 +1,7 @@
 from surp.utils import AbstractParams
 
+from typing import Union
+
 
 class YieldParams(AbstractParams):
     """
@@ -65,7 +67,7 @@ class YieldParams(AbstractParams):
     mlr:str #= "larson1974"
 
     # carbon
-    y_c_cc:str #= "Lin"
+    y_c_cc:Union[float, str]
     y0_c_cc:float #= 2.28e-3
     zeta_c_cc:float# = 0.00
     kwargs_c_cc:dict# = field(default_factory=dict)

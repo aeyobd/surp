@@ -7,7 +7,12 @@ from vice.toolkit.interpolation.interp_scheme_2d import interp_scheme_2d
 from vice.yields.agb._grid_reader import yield_grid
 import math
 import numpy as np
-from scipy.interpolate import RectBivariateSpline
+
+try:
+    from scipy.interpolate import RectBivariateSpline
+    scipy_available = True
+except ImportError:
+    print("scipy not available")
 
 
 
@@ -114,6 +119,9 @@ class interpolator:
                     yields)
             self._call_interp = self._call_log
         elif interp_kind == "spline":
+            if not scipy_available:
+                raise ValueError("spline interpolation requires scipy")
+
             self._spline = RectBivariateSpline(
                     masses, metallicities, yields,
                     kx=kx, ky=ky, s=s)

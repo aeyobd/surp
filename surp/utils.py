@@ -28,19 +28,9 @@ class AbstractParams(metaclass=DataclassMeta):
 
 
     @classmethod
-    def from_file(cls, filename):
-        with open(filename, "r") as f:
-            params = toml.load(f)
-
-        if "inherits" in params:
-            parentname = params.pop("inherits")
-            parentname = path.join(path.dirname(filename), parentname)
-            parent = cls.from_file(parentname).to_dict()
-            
-            for key in parent.keys():
-                if key not in params:
-                    params[key] = parent[key]
-
+    def from_file(cls, filename, **kwargs):
+        params = load_toml(filename)
+        params = params | kwargs
 
         return cls(**params)
 
@@ -50,6 +40,21 @@ class AbstractParams(metaclass=DataclassMeta):
     def __repr__(self):
         return self.__str__()
 
+
+def load_toml(filename):
+    """ loads a toml file from the filename, recursavely if inherits in params"""
+
+    with open(filename, "r") as f:
+        params = toml.load(f)
+
+    if "inherits" in params:
+        parentname = params.pop("inherits")
+        parentname = path.join(path.dirname(filename), parentname)
+        parent = load_toml(parentname)
+
+        params = parent | params
+
+    return params
 
 
 def get_bin_number(bins, value):

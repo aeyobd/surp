@@ -77,7 +77,7 @@ fi
 rm -rf *.out model.json stars.csv *.dat milkway.vice
 
 echo "Submitting Job" $MODEL_NAME
-sbatch <<EOT
+bash <<EOT
 #!/bin/bash
 #SBATCH --time=$TIME_LIMIT
 #SBATCH --ntasks=$NTHREADS

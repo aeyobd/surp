@@ -22,3 +22,5 @@ mass_factor = 1
 no_negative = false
 interp_kind = "linear"
 low_z_flat = false
+
+[kwargs_n_agb]

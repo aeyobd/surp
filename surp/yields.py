@@ -59,8 +59,7 @@ def set_yields(params=None, verbose=True, **kwargs):
         params = YieldParams.from_file("../models/fiducial/yield_params.toml")
 
     params = params.to_dict()
-    for key, val in kwargs.items():
-        params[key] = val
+    params = params | kwargs
     params = YieldParams(**params)
 
     set_magg22_scale(verbose=verbose)

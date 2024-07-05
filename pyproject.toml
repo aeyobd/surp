@@ -29,3 +29,28 @@ test = [
     "pytest-cov",
 ]
 
+
+dependencies = [
+    "vice",
+    "numpy",
+    "pandas",
+    "toml",
+    "pydantic"
+]
+
+
+
+
+[project.optional-dependencies]
+plots = [
+    "matplotlib",
+    "scipy",
+    "astropy"
+]
+interpolation = [
+    "scipy"
+]
+
+full = [
+    "arya"
+]

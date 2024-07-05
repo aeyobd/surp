@@ -26,7 +26,7 @@ print("created model")
 print(model)
 print(model.zones[80])
 
-model.run(params.times, overwrite=True, pickle=True)
+# model.run(params.times, overwrite=True, pickle=True)
 
 
 processed = ViceModel.from_vice(vice_name, params.zone_width)

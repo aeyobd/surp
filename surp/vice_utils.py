@@ -47,24 +47,28 @@ def reduce_history(multioutput, zone_width=0.1):
     Returns a pandas DF object representing the entire history class
     """
     history_cols = multioutput.zones["zone0"].history.keys()
-    history_cols.append("R")
-    history = pd.DataFrame(columns=history_cols)
+    history_cols += ["R", "zone"]
+    history = pd.DataFrame() #columns=history_cols)
 
     mdf_cols = multioutput.zones["zone0"].mdf.keys()
-    mdf_cols.append("R")
-    mdf = pd.DataFrame(columns=mdf_cols)
+    mdf_cols += ["R", "zone"]
+    mdf = pd.DataFrame() #columns=mdf_cols)
 
     keys = multioutput.zones.keys()
     N = len(keys)
     for i in range(N):
         zone = multioutput.zones[keys[i]]
+        zone_idx = zone_to_int(keys[i])
+        R = zone_to_R(zone_idx, zone_width=zone_width)
 
         df = pd.DataFrame(zone.history.todict())
-        df["R"] = np.repeat(zone_to_R(i, zone_width=zone_width), len(df))
+        df["R"] = np.repeat(R, len(df))
+        df["zone"] = np.repeat(zone_idx, len(df))
         history = pd.concat((history, df), ignore_index=True)
 
         df = pd.DataFrame(zone.mdf.todict())
-        df["R"] = np.repeat(zone_to_R(i, zone_width=zone_width), len(df))
+        df["R"] = np.repeat(R, len(df))
+        df["zone"] = np.repeat(zone_idx, len(df))
         mdf = pd.concat((mdf, df), ignore_index=True)
     
     history = rename_columns(history)
@@ -73,6 +77,19 @@ def reduce_history(multioutput, zone_width=0.1):
     return history, mdf
 
 
+
+def zone_to_int(zone: str):
+    matches = re.findall(r'\d+', zone)
+
+    if len(matches) != 1:
+        raise Exception("expected only one number in zone, instead got ", matches)
+
+    i = int(matches[0])
+
+    if i < 0:
+        raise Exception("expected zone number to be positive, got, ", i)
+
+    return i
 
 def reduce_stars(multioutput):
     df = pd.DataFrame(multioutput.stars.todict())
