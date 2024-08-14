@@ -1,20 +1,17 @@
 #!/bin/bash
 
 
+# this is finicky on some systems...
+PYTHON=python
+
 function print_help {
-    echo Runs a VICE model
-    echo Usage: $0 MODEL_DIR ;
+    echo Usage: $0 modelpath runpath parampath yieldpath ;
+    echo
+    echo Runs a VICE model with the given parameters and yields. 
+    echo modelpath: path to the directory containing the model
+    echo runpath: path to the directory containing the run script
 }
 
-
-# Iterate over all the arguments
-#
-while getopts 'h' OPTION; do
-    case "$OPTION" in
-        h) print_help; exit 0 ;;
-        \?) echo "Unknown option: -$OPTARG" >&2; exit 1;;
-    esac
-done
 
 # Check if at least one positional argument is provided
 if [ $(( $# - $OPTIND )) -lt 0 ]; then
@@ -22,20 +19,33 @@ if [ $(( $# - $OPTIND )) -lt 0 ]; then
     exit 1
 fi
 
+MODEL_DIR=${@:$OPTIND:1}
+
+set -x
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-echo "Script dir: $SCRIPT_DIR"
 
+cd $MODEL_DIR
 
-MODEL_NAME=${@:$OPTIND:1}
-
-if [[ ! -d "$MODEL_NAME" ]]; then
-    echo "Error: not a valid model $MODEL_NAME"
+SCRIPTNAME="run.py"
+if [ -f $SCRIPTNAME ]; then
+    echo "Found $SCRIPTNAME"
+elif [ -f ../$SCRIPTNAME ]; then
+    SCRIPTNAME="../$SCRIPTNAME"
+elif [ -f $SCRIPT_DIR/$SCRIPTNAME ]; then
+    SCRIPTNAME="$SCRIPT_DIR/$SCRIPTNAME"
+else
+    echo "Error: $SCRIPTNAME not found"
     exit 1
 fi
 
+PARAMSPATH=params.toml
+YIELDSPATH=yield_params.toml
 
+$PYTHON $SCRIPTNAME $PARAMSPATH $YIELDSPATH
 
-echo submitting job
+cd $SCRIPT_DIR
 
-nohup bash ./run_all.sh $MODEL_NAME > $MODEL_NAME/log.out &
+echo visualizing model >> log.out
+$PYTHON visualize.py $MODEL_DIR -o . >> log.out
+

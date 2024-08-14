@@ -1,4 +1,4 @@
-inherits = "../fiducial/yield_params.toml"
+inherits = "../../fiducial/yield_params.toml"
 y0_c_cc = 0.0024
 zeta_c_cc = 0.002
 Y_c_agb = "cristallo11"
