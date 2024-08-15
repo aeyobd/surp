@@ -1,15 +1,17 @@
 #!/bin/bash
 
-
-# this is finicky on some systems...
+# if your system requires a specific python executable. 
 PYTHON=python
 
 function print_help {
-    echo Usage: $0 modelpath runpath parampath yieldpath ;
+    echo Usage: $0 modelpath
     echo
-    echo Runs a VICE model with the given parameters and yields. 
-    echo modelpath: path to the directory containing the model
-    echo runpath: path to the directory containing the run script
+    echo Runs a VICE model in the directory modelpath.
+    echo assumes that the parameterfiles params.toml and yield_params.toml 
+    echo are present in the modelpath.
+    echo Searches for the run.py script in the modelpath, or in the parent, or in the current 
+    echo directory.
+    echo Additionally runs visualize.py to create figures in the model directory.
 }
 
 

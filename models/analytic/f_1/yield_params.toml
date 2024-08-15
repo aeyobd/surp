@@ -2,7 +2,7 @@ inherits = "../yield_params.toml"
 
 
 [kwargs_c_agb]
-y0 = 0.00038
+y0 = 0.00055067
 zeta = -0.00035
 tau_agb = 0.3
 t_D = 0.15

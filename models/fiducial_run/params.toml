@@ -1,2 +1,0 @@
-inherits = "../fiducial/params.toml"
-save_migration = true

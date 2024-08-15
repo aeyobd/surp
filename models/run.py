@@ -29,6 +29,7 @@ print(model.zones[80])
 model.run(params.times, overwrite=True, pickle=True)
 
 
+print(f"saving processed stars to {model_out} and {stars_out}")
 processed = ViceModel.from_vice(vice_name, params.zone_width)
 processed.save(model_out, overwrite=True)
 processed.stars.to_csv(stars_out)

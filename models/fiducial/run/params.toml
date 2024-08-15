@@ -1,2 +1,2 @@
 inherits = "../params.toml"
-imf = "salpeter"
+save_migration = true

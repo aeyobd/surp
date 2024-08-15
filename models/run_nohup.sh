@@ -25,5 +25,5 @@ if [[ ! -d "$MODEL_NAME" ]]; then
 fi
 
 echo submitting job $MODEL_NAME
-nohup bash ./run.sh $MODEL_NAME > $MODEL_NAME/log.out 2> err.out &
+nohup bash ./run.sh $MODEL_NAME > $MODEL_NAME/nohup.out 2> $MODEL_NAME/err.out &
 

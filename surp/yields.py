@@ -10,6 +10,7 @@ from .yield_params import YieldParams
 import numpy as np
 from surp.yield_models import ZeroAGB
 
+import os
 
 ELEMS = ["c", "n", "o", "mg", "fe"]
 
@@ -56,7 +57,8 @@ def set_yields(params=None, verbose=True, **kwargs):
     Ses the yields and abundace scale for the C project. """
 
     if params is None:
-        params = YieldParams.from_file("../models/fiducial/yield_params.toml")
+        dirname = os.path.dirname(__file__)
+        params = YieldParams.from_file(os.path.join(dirname, "yield_params.toml"))
 
     params = params.to_dict()
     params = params | kwargs

@@ -1,2 +1,2 @@
 inherits = "../params.toml"
-imf = "salpeter"
+sigma_R = 2
