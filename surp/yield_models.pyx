@@ -503,8 +503,12 @@ cdef class Quadratic_CC(AbstractCC):
         self.zeta = zeta
         self.y0 = y0
 
-        self.vertex = -zeta/(2*A)
-        self.y_v = A*self.vertex**2 + zeta*self.vertex + y0
+        if abs(A) < 1e-10:
+            self.vertex = 0
+            self.y_v = y0
+        else:
+            self.vertex = -zeta/(2*A)
+            self.y_v = A*self.vertex**2 + zeta*self.vertex + y0
 
 
     def __imul__(self, scale):

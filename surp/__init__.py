@@ -1,3 +1,5 @@
+# from . import yield_models
+
 from . import simulation
 from .simulation import MWParams
 from .simulation.create_model import create_model
@@ -38,5 +40,6 @@ The `plots` module will not be available.""")
 
 
 
-# from . import yield_models
+
 subgiants = _read_subgiants()
+

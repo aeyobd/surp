@@ -2,14 +2,14 @@
 build-backend = "mesonpy"
 requires = [
     "meson-python", 
-    "Cython>=3.0.0",
+    "Cython>=3.0.8",
     "numpy", 
 ]
 
 
 [project]
 name = "surp"
-version = "0.1.0"
+version = "0.1.1"
 authors = [
     { name="Daniel Boyea", email="boyea.2@osu.edu" },
 ]
@@ -39,8 +39,6 @@ dependencies = [
 ]
 
 
-
-
 [project.optional-dependencies]
 plots = [
     "matplotlib",
@@ -51,6 +49,6 @@ interpolation = [
     "scipy"
 ]
 
-full = [
+extra = [
     "arya"
 ]

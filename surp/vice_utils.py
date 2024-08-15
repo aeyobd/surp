@@ -91,6 +91,8 @@ def zone_to_int(zone: str):
 
     return i
 
+
+
 def reduce_stars(multioutput):
     df = pd.DataFrame(multioutput.stars.todict())
     df = rename_columns(df)
@@ -100,9 +102,26 @@ def reduce_stars(multioutput):
     return df
 
 
-def create_star_sample(stars, num=N_SUBGIANTS, zone_width=0.1):
-    cdf = load_cdf()
-    sample = pd.DataFrame(columns=stars.columns)
+def create_star_sample(stars, cdf = None, num=N_SUBGIANTS, zone_width=0.1):
+    """
+    creates a sample of stars given a dataframe of vice stars.
+
+    Parameters
+    ----------
+    stars : pd.DataFrame
+        The dataframe of stars to sample from. Expected to have columns
+        - R_final
+        - C_MG
+        - MG_H
+        - MG_FE
+        - FE_H
+        - C_N
+
+    """
+    if cdf is None:
+        cdf = load_cdf()
+
+    sample = pd.DataFrame()
 
     for _ in range(num):
         sample = pd.concat((sample, rand_star(stars, cdf, zone_width)), ignore_index=True)

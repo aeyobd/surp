@@ -2,12 +2,13 @@ import vice
 from vice.yields import ccsne, sneia, agb
 
 from surp._globals import Z_SUN
-from surp import yield_models
 
 from .utils import print_row
 from .agb_interpolator import interpolator
 from .yield_params import YieldParams
 import numpy as np
+
+from surp import yield_models
 from surp.yield_models import ZeroAGB
 
 import os
