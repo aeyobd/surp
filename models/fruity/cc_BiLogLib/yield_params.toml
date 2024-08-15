@@ -1,0 +1,6 @@
+inherits = "../yield_params.toml"
+
+y_c_cc = "BiLogLin"
+
+[kwargs_c_cc]
+y1 = 0.000867

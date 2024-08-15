@@ -2,37 +2,51 @@
 This is a collection of scripts, jupyter notebooks, and the source files for my research thesis. 
 
 ## Requirements
+
+To build (pip should take care of these)
 - Python 3.11
+- numpy
+- cython
+- meson-python
+
+Other main dependencies
 - my vice fork (https://github.com/aeyobd/VICE) on branch `new_yields`. Needs cython 3.0 to install but seems to install well.
-- latest version of arya (matplotlib style files)
-- numpy, scipy, astropy, matplotlib
 - pandas 
+- toml
+- pydantic
+
+Optional dependencies to run all notebooks
+- latest version of arya (matplotlib style files)
+- matplotlib
 - seaborn (for contour / scatter plots)
 - molmass
-- hatch (build requirement)
-
+- astropy
+- scipy
 
 
 ## Installing the library
 To install surp, run 
 ```bash
-python setup.py build_ext --inplace
-pip install -e .
+pip install .
 ```
 
-if there are issues with running the mod
+An editable install is also possible with 
+```bash
+python -m pip install --no-build-isolation --editable .
+```
+
+which depends on `meson-python`, `ninja`, and `meson` python packages being installed. 
 
 ## Running models
 A model runs in about 10 minutes on a single core with about 4 GB of RAM (storing many star particles).
-All models are in the directory 'models/'. 
-To run a model, navigate to the directory and run the script. 
+All models are in the directory `models`.
+To run a model, navigate to the `models` directory and run the script. 
 ```bash
-./run.sh <DIRNAME>
+./run_nohub.sh <DIRNAME>
 ```
 where `<DIRNAME>` is the name of the directory containing the model.
+See `models/README.md` for more information on the structure and all.
 
-
-## Outputs
 Each model contains several outputs
 - `model.json` A plaintext (sory) json containing several subcomponents: Stars.
 - `stars.csv` a CSV file meant to replicate APOGEE solar observations from the model.
@@ -41,8 +55,8 @@ Each model contains several outputs
 
 
 
-## Configuration
-See the documentation on MWParams and YieldParams in the package to understand encoded options. Broadly most components of the vice models are stored in two files: `params.toml` and `yield_params.tom` in each model directory. If you would like additional or more active configuration, overload the `run.py` script and add new options there.
+### Model configuration
+See the documentation on MWParams and YieldParams in the package to understand encoded options. Broadly most components of the vice models are stored in two files: `params.toml` and `yield_params.toml` in each model directory. If you would like additional or more active configuration, overload the `run.py` script and add new options there.
 
 In general there are options for changing relevant yields, and star formation histories and yield/scales. 
 

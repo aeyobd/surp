@@ -1,1 +1,1 @@
-inherits = "../fiducial/params.toml"
+inherits = "../params.toml"

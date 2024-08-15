@@ -1,0 +1,5 @@
+inherits = "../yield_params.toml"
+
+y_c_cc = "Lin"
+
+[kwargs_c_cc]
