@@ -1,1 +1,4 @@
 inherits = "../yield_params.toml"
+
+[kwargs_c_cc]
+A = 0.5

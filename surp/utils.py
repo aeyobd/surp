@@ -14,7 +14,7 @@ class DataclassMeta(type):
     """Metaclass for dataclasses that also adds the dataclass decorator"""
     def __init__(cls, name, bases, dct):
         super().__init__(name, bases, dct)
-        dataclass(cls)
+        dataclass(cls, kw_only=True)
 
 
 class AbstractParams(metaclass=DataclassMeta):
@@ -31,6 +31,10 @@ class AbstractParams(metaclass=DataclassMeta):
     def from_file(cls, filename, **kwargs):
         params = load_toml(filename)
         params = params | kwargs
+
+        for k in params.keys():
+            if k not in cls.__dataclass_fields__:
+                raise ValueError(f"Unknown parameter {k} in {filename} or its parents")
 
         return cls(**params)
 

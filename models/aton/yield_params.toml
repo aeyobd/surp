@@ -1,0 +1,11 @@
+inherits = "../fiducial/yield_params.toml"
+
+Y_c_agb = "ventura13"
+
+
+y0_c_cc = 0.00255
+zeta_c_cc = 0.0025
+alpha_c_agb = 1.0
+
+[kwargs_c_cc]
+A = 0.0021

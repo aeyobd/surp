@@ -1,6 +1,6 @@
 inherits = "../fiducial/yield_params.toml"
 Y_c_agb = "A"
-alpha_agb = 1.449155
+alpha_c_agb = 1.449155
 y0_c_cc = 0.0022027
 
 [kwargs_c_agb] # matches fruity table

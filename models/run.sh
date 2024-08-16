@@ -45,9 +45,14 @@ PARAMSPATH=params.toml
 YIELDSPATH=yield_params.toml
 
 $PYTHON $SCRIPTNAME $PARAMSPATH $YIELDSPATH
+status=$?
 
 cd $SCRIPT_DIR
 
 echo visualizing model >> log.out
 $PYTHON visualize.py $MODEL_DIR -o . >> log.out
 
+
+echo putting name in log 
+
+echo "$MODEL_DIR, $date, $status" >> log.out

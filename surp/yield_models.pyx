@@ -177,14 +177,16 @@ cdef class C_AGB_Model(AbstractAGB):
     cdef public double tau_agb, t_D, y0, zeta
     cdef object imf, mlr
     cdef public double A_agb
+    cdef public double m_low, m_hm, m_high
 
     def __cinit__(self, double y0 = 0.0004, double zeta=-0.0002, 
             double tau_agb=0.3, double t_D = 0.15, mlr=vice.mlr.larson1974, 
             imf=vice.imf.kroupa):
 
-        cdef double m_low = 1.2
-        cdef double m_hm = 8
-        cdef double m_high = 100
+        self.m_low = 1.2
+        imf_low = 0.08
+        self.m_hm = 8
+        self.m_high = 100
 
         self.tau_agb = tau_agb
         self.t_D = t_D
@@ -195,10 +197,10 @@ cdef class C_AGB_Model(AbstractAGB):
         self.imf = imf
 
 
-        A_imf = quad(lambda m: m*self.imf(m), m_low, m_high)[0]
+        A_imf = quad(lambda m: m*self.imf(m), imf_low, self.m_high)[0]
 
         self.A_agb = A_imf / quad(lambda m: m * self.imf(m) * self.y_unnorm(m), 
-                m_low, m_hm)[0]
+                imf_low, self.m_high)[0]
 
 
     cdef R(self, double t):
@@ -212,6 +214,8 @@ cdef class C_AGB_Model(AbstractAGB):
 
 
     cdef y_unnorm(self, double m):
+        if m < self.m_low or m > self.m_high:
+            return 0
         return 1/m * m**-4.5 * 1/self.imf(m) * self.R(self.mlr(m))
 
 
@@ -504,8 +508,8 @@ cdef class Quadratic_CC(AbstractCC):
         self.y0 = y0
 
         if abs(A) < 1e-10:
-            self.vertex = 0
-            self.y_v = y0
+            self.vertex = -m.INFINITY
+            self.y_v = m.NAN
         else:
             self.vertex = -zeta/(2*A)
             self.y_v = A*self.vertex**2 + zeta*self.vertex + y0

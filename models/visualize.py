@@ -144,7 +144,7 @@ def plot_cooh_hilo(stars):
     plt.scatter(df.MG_H, df.C_MG, s=0.3, alpha=1, rasterized=True)
 
     plot_eq_caah()
-    plot_bins_caah(stars)
+    plot_binned_caah(stars)
 
     plt.xlim(-0.8, 0.8)
     plt.ylim(-0.4, 0.2)

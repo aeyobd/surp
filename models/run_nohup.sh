@@ -24,6 +24,12 @@ if [[ ! -d "$MODEL_NAME" ]]; then
     exit 1
 fi
 
+echo removing files in model
+rm -rf $MODEL_NAME/milkyway.vice
+rm -f $MODEL_NAME/model.json $MODEL_NAME/err.out $MODEL_NAME/log.out
+rm -f $MODEL_NAME/stars.csv $MODEL_NAME/*.pdf
+
+
 echo submitting job $MODEL_NAME
-nohup bash ./run.sh $MODEL_NAME > $MODEL_NAME/nohup.out 2> $MODEL_NAME/err.out &
+nohup bash ./run.sh $MODEL_NAME > $MODEL_NAME/log.out 2> $MODEL_NAME/err.out &
 
