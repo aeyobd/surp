@@ -1,0 +1,140 @@
+[dessauges-zavadsky+03]
+galaxy = "J2155+1358"
+redshift = 4.212
+c_o = -0.29
+c_o_err = 0.08
+o_h = -1.8
+o_h_err = 0.13
+notes = "grevesse scale; contains about 3 other maybe useful systems"
+
+
+[pettini+08]
+galaxy      = ["Q0913+072", "J1016+4040", "J1558+4053", "Q2206-199"]
+redshift    = [ 2.618,       2.816,        2.553,        2.076]
+log_c_o     = [-0.65,       -0.47,        -0.32,        -0.64] # from paper
+c_o         = [-0.36,       -0.21,        -0.06,        -0.38] # from 
+log_c_o_err = [ 0.05,        0.05,         0.07,         0.04]
+o_h         = [-2.37,       -2.43,        -2.42,        -2.04]
+o_h_err     = [ 0.04,        0.11,         0.06,         0.05]
+log_N_HI    = [ 20.34,      19.90,        20.30,        20.43]
+log_N_HI_err= [ 0.04,        0.11,         0.04,         0.04]
+
+solar_scale = "asplund05"
+notes = """
+KECK/HIRES or UVES data.
+Calculate ionization corrections which are ~0.2 dex for C/O. (see their fig. 5)
+"""
+
+
+["ellison+10"]
+galaxy = "J0140-0839"
+redshift = 3.696
+c_o = -0.29
+c_o_err = 0.08
+o_h = -2.72
+o_h_err = 0.15
+abundance_scale = "asplund05"
+
+
+
+[cooke+11]
+link = "https://ui.adsabs.harvard.edu/abs/2011MNRAS.412.1047C/abstract"
+
+galaxy  = [ "J0311-1722",  "J1001+0343"]
+redshift= [  3.734,         3.078]
+c_h     = [ -2.71,         -3.06]
+c_h_err = [  0.10,          0.05]
+o_h     = [ -2.29,         -2.65]
+o_h_err = [  0.10,          0.05]
+log_N_HI = [ 20.30,        20.21]
+log_N_HI_err = [ 0.06,      0.05]  
+
+solar_scale = "asplund09"
+
+notes = """
+UVES or HIRES data.
+"""
+
+
+[cooke+12]
+
+
+
+
+[cooke+14]
+link = "https://ui.adsabs.harvard.edu/abs/2014ApJ...781...31C/abstract"
+galaxy  = ["HS0105+1619","Q0913+072",   "J1358+6522"]
+redshift= [ 2.536,        2.618,         3.067   ]
+c_o     = [ 0.110,       -0.36,         -0.27    ]
+c_o_err = [ 0.045,        0.012,         0.06    ]
+o_h     = [-1.776,       -2.416,        -2.335   ]
+o_h_err = [ 0.021,        0.011,         0.02    ]
+
+solar_scale = "asplund09"
+
+notes = """
+C measurements not repropted in the paper but in Cooke+17
+"""
+
+[cooke+15]
+redshift = 2.340
+skip = true
+
+galaxy      = [ "J0035-0918", "J1111+1332"]
+redshift    = [ 2.340,        2.270]
+log_N_HI    = [ 20.43,        20.39]
+log_N_HI_err= [ 0.04,         0.04]
+c_h         = [-2.36,        -2.10]
+c_h_err     = [ 0.16,         0.10]
+o_h         = [-2.44,        -1.92]
+o_h_err     = [ 0.07,         0.08]
+
+notes = """
+the values are reported as individual ions; no corrrections in paper.
+"""
+
+[cooke+17]
+galaxy = "J0903+2628"
+redshift = 3.077
+c_o = -0.38
+c_o_err = 0.03
+o_h = -3.05
+o_h_err = 0.05
+
+
+["welsh+20"]
+link = "https://ui.adsabs.harvard.edu/abs/2020MNRAS.494.1411W/abstract"
+
+galaxy = "J0035-0918"
+redshift = 2.340
+
+log_c= -0.12
+log_c_err= 0.15
+o_h= -2.45
+o_h_err= 0.06
+
+log_N_HI = 20.43
+log_N_HI_err = 0.04
+
+notes = """
+ESPRESSSO data from VLT. Bound on C12/C13 > 0.37 !!
+Asplund 2009 scale.
+
+HI column density from cooke+15
+"""
+
+
+
+# Name        z       c_o     c_o_err o_h     o_h_err references
+# J0035-0918  2.340  -0.12    0.15   -2.45    0.06    welsh+20,cooke+15,dutta+14
+# HS0105+1619 2.536   0.110   0.045  -1.776   0.021   cooke+14
+#Q0913+072   2.618  -0.36    0.012  -2.416   0.011   cooke+14,pettini+08
+J0953-0504  4.203  -0.50    0.03   -2.55    0.10    dutta+14            # verified, asplund2009
+#J1016+4040  2.816  -0.21    0.05   -2.46    0.11    pettini+08
+Q1111+1332  2.270  -0.18    0.11   -1.92    0.08    cooke+15
+Q1202+3235  4.977  -0.33    0.11   -2.02    0.13    morrison+16
+J1337+3153  3.167  -0.18    0.11   -2.64    0.17    srianand+10         #asplund09 scale, verified
+#J1358+6522  3.067  -0.27    0.06   -2.335   0.02    cooke+14,cooke+12
+#J1558+4053  2.553  -0.06    0.07   -2.45    0.06    pettini+08
+#Q2206-199   2.076  -0.38    0.04   -2.07    0.05    pettini+08
+#J2155+1358  4.212  -0.29    0.08   -1.8     0.13    dessauges-zavadsky+03 # grevesse & sauval 1998. Also there is more than one possible DLA to use here
