@@ -1,44 +1,123 @@
-[dessauges-zavadsky+03]
-galaxy = "J2155+1358"
-redshift = 4.212
-c_o = -0.29
-c_o_err = 0.08
-o_h = -1.8
-o_h_err = 0.13
-notes = "grevesse scale; contains about 3 other maybe useful systems"
+["dessauges-zavadsky+03"]
+link = "https://ui.adsabs.harvard.edu/abs/2003MNRAS.345..447D/abstract"
+galaxy      = ["Q1101-264", "Q2059-360", "J2155+1358"]
+redshift    = [ 1.838,       2.507,       4.212]
+log_HI      = [19.50,       20.21,       19.61]
+log_HI_err  = [ 0.05,        0.10,        0.10]
+log_OI      = [14.55,       15.54,       14.50]
+log_OI_err  = [ 0.05,        0.21,        0.05]
+log_CII     = [15.06,       14.87,       13.95]
+log_CII_err = [ 0.07,        0.19,        0.06]
+log_FeII    = [13.51,       13.47,       12.93]
+log_FeII_err= [ 0.02,        0.03,        0.23]
 
 
-[pettini+08]
+notes = """
+Contains 2 other maybe useful systems: Q1101−264 and Q2059−360.
+No ionization corrections. In analysis, shows that the ionization corrections are at the level of the abundance errors (< 0.2 dex).
+Q2059-360 has metal lines in the lyman alpha forest so have large errors...
+Also includes Si, Al.
+"""
+
+["peroux+07"]
+
+
+["pettini+08"]
+link = "https://ui.adsabs.harvard.edu/abs/2008MNRAS.385.2011P/abstract"
+
 galaxy      = ["Q0913+072", "J1016+4040", "J1558+4053", "Q2206-199"]
 redshift    = [ 2.618,       2.816,        2.553,        2.076]
+log_HI      = [ 20.34,      19.90,        20.30,        20.43]
+log_HI_err  = [  0.04,       0.11,         0.04,         0.04]
+log_CII     = [ 13.98,      13.66,        14.22,        14.41]
+log_CII_err = [  0.05,       0.04,         0.06,         0.03]
+log_NI      = [ 12.29,        nan,        12.66,        12.79]
+log_NI_err  = [  0.12,        nan,         0.07,         0.05]
+log_OI      = [ 14.63,      14.13,        14.54,        15.05]
+log_OI_err  = [  0.01,       0.03,         0.04,         0.03]
+log_AlII    = [ 11.78,        nan,        11.92,        12.18]
+log_AlII_err= [  0.03,        nan,         0.06,         0.01]
+log_SiII    = [ 13.30,      12.90,        13.32,        13.65]
+log_SiII_err= [  0.01,       0.05,         0.02,         0.01]
+log_FeII    = [ 12.99,        nan,        13.07,        13.33]
+log_FeII_err= [  0.01,        nan,         0.06,         0.01]
+
 log_c_o     = [-0.65,       -0.47,        -0.32,        -0.64] # from paper
 c_o         = [-0.36,       -0.21,        -0.06,        -0.38] # from 
 log_c_o_err = [ 0.05,        0.05,         0.07,         0.04]
 o_h         = [-2.37,       -2.43,        -2.42,        -2.04]
 o_h_err     = [ 0.04,        0.11,         0.06,         0.05]
-log_N_HI    = [ 20.34,      19.90,        20.30,        20.43]
-log_N_HI_err= [ 0.04,        0.11,         0.04,         0.04]
 
 solar_scale = "asplund05"
 notes = """
 KECK/HIRES or UVES data.
-Calculate ionization corrections which are ~0.2 dex for C/O. (see their fig. 5)
+
+Run ionization corrections models and find they are at most ~0.2 dex for C/O. (see their fig. 5)
+Some other misc measured values.
 """
 
 
 ["ellison+10"]
+link = "https://ui.adsabs.harvard.edu/abs/2010MNRAS.406.1435E/abstract"
+
 galaxy = "J0140-0839"
 redshift = 3.696
 c_o = -0.29
 c_o_err = 0.08
 o_h = -2.72
 o_h_err = 0.15
+
+
+log_HI = 20.75
+log_HI_err = 0.15
+log_CII = 14.13
+log_CII_err = 0.08
+log_OI = 14.69
+log_OI_err = 0.01
+log_AlII = 11.82
+log_AlII_err = 0.04
+log_SiII = 13.51
+log_SiII_err = 0.09
+
 abundance_scale = "asplund05"
 
+notes = """
+Sample of 14 DLAs; but only one has C II. No ionization corrections.
+"""
 
 
-[cooke+11]
-link = "https://ui.adsabs.harvard.edu/abs/2011MNRAS.412.1047C/abstract"
+["srianand+10"]
+galaxy = "J1337+3152"
+link = "https://ui.adsabs.harvard.edu/abs/2010MNRAS.405.1888S/abstract"
+
+redshift = 3.167
+sol_scale = "asplund09"
+
+log_HI = 20.31
+log_HI_err = 0.15
+log_OI = 14.43
+log_OI_err = 0.09
+log_CII = 13.98
+log_CII_err = 0.06
+log_SiII = 13.24
+log_SiII_err = 0.05
+log_SiIII = 13.28
+log_SiIII_err = 0.06
+log_AlII = 12.00
+log_AlII_err = 0.05
+log_FeII = 13.14
+log_FeII_err = 0.26
+
+
+notes = """
+contains two systems. The first one only observes CII* which is not trivial to go to CII, so we only use the second one.
+No ionization corrections.
+"""
+
+
+
+["cooke+11"]
+link = "https://ui.adsabs.harvard.edu/abs/2011MNRAS.417.1534C/abstract"
 
 galaxy  = [ "J0311-1722",  "J1001+0343"]
 redshift= [  3.734,         3.078]
@@ -46,81 +125,215 @@ c_h     = [ -2.71,         -3.06]
 c_h_err = [  0.10,          0.05]
 o_h     = [ -2.29,         -2.65]
 o_h_err = [  0.10,          0.05]
-log_N_HI = [ 20.30,        20.21]
-log_N_HI_err = [ 0.06,      0.05]  
+
+log_HI =    [ 20.30,       20.21]
+log_HI_err =[ 0.06,        0.05]  
+log_CII =   [14.02,        13.58]
+log_CII_err=[0.08,         0.02]
+log_OI =    [14.70,        14.25]
+log_OI_err=[ 0.08,         0.02]
+log_SiII =  [13.31,        12.86]
+log_SiII_err=[0.07,        0.01]
+log_FeII =  [nan,        12.50]
+log_FeII_err=[nan,        0.14]
 
 solar_scale = "asplund09"
 
 notes = """
 UVES or HIRES data.
+
+Discuss ionization corrections and how they are < 0.1 dex. Do not apply any.
+Measure CII* in J0311-1722 as well.
 """
 
 
-[cooke+12]
+["cooke+12"]
+link = "https://ui.adsabs.harvard.edu/abs/2012MNRAS.425..347C/abstract"
+galaxy = "J1358+6522"
+redshift = 3.067295
+
+log_HI = 20.47
+log_HI_err = 0.07
+log_CII = 14.65
+log_CII_err = 0.10
+log_NI = 12.62
+log_NI_err = 0.14
+log_OI = 14.94
+log_OI_err = 0.05
+log_AlII = 11.92
+log_AlII_err = 0.03
+log_SiII = 13.40
+log_SiII_err = 0.03
+log_SII = 13.11
+log_SII_err = 0.09
+log_FeII = 13.10
+log_FeII_err = 0.03
+
+
+notes = """
+No ionization corrections.
+Do not measure temperature.
+"""
 
 
 
-
-[cooke+14]
+["cooke+14"]
 link = "https://ui.adsabs.harvard.edu/abs/2014ApJ...781...31C/abstract"
 galaxy  = ["HS0105+1619","Q0913+072",   "J1358+6522"]
 redshift= [ 2.536,        2.618,         3.067   ]
-c_o     = [ 0.110,       -0.36,         -0.27    ]
-c_o_err = [ 0.045,        0.012,         0.06    ]
-o_h     = [-1.776,       -2.416,        -2.335   ]
-o_h_err = [ 0.021,        0.011,         0.02    ]
+C_O     = [ 0.110,       -0.36,         -0.27    ]
+C_O_err = [ 0.045,        0.012,         0.06    ]
+O_H     = [-1.776,       -2.416,        -2.335   ]
+O_H_err = [ 0.021,        0.011,         0.02    ]
 
 solar_scale = "asplund09"
 
 notes = """
-C measurements not repropted in the paper but in Cooke+17
+C measurements not reported in this paper ? but in Cooke+17
 """
 
-[cooke+15]
-redshift = 2.340
-skip = true
+
+["dutta+14"]
+link = "https://ui.adsabs.harvard.edu/abs/2014MNRAS.440..307D/abstract"
+
+
+galaxy      = ["J0035-0918", "J0953-0504"]
+redshift    = [2.34006,     4.20287]
+log_HI    = [20.55,       20.55]
+log_HI_err= [0.10,        0.10]
+log_CII   = [14.45,       13.93]
+log_CII_err=[0.19,       0.02]
+log_OI    = [14.55,       14.69]
+log_OI_err= [0.14,        0.02]
+log_FeII  = [13.07,       13.07]
+log_FeII_err=[0.04,       0.19]
+
+
+
+notes = """
+does not apply ionization corrections.
+"""
+
+
+["cooke+15"]
+link = "https://ui.adsabs.harvard.edu/abs/2015ApJ...800...12C/abstract"
 
 galaxy      = [ "J0035-0918", "J1111+1332"]
 redshift    = [ 2.340,        2.270]
-log_N_HI    = [ 20.43,        20.39]
-log_N_HI_err= [ 0.04,         0.04]
-c_h         = [-2.36,        -2.10]
-c_h_err     = [ 0.16,         0.10]
-o_h         = [-2.44,        -1.92]
-o_h_err     = [ 0.07,         0.08]
+log_HI      = [ 20.43,        20.39]
+log_HI_err  = [  0.04,         0.04]
+log_CII     = [ 14.50,        14.72]
+log_CII_err = [  0.15,         0.09]
+log_NI      = [ 13.37,        13.53]
+log_NI_err  = [  0.05,         0.02]
+log_OI      = [ 14.68,        15.16]
+log_OI_err  = [  0.06,         0.07]
+log_FeII    = [ 12.96,        13.59]
+log_FeII_err= [  0.05,         0.01]
 
 notes = """
 the values are reported as individual ions; no corrrections in paper.
 """
 
-[cooke+17]
+
+["morrison+16"]
+link = "https://ui.adsabs.harvard.edu/abs/2016ApJ...830..158M/abstract"
+galaxy = "Q1202+3235"
+redshift = 4.977
+solar_scale = "asplund09"
+
+log_HI = 19.83
+log_HI_err = 0.10
+log_CII = 14.48
+log_CII_err = 0.05
+log_CIV = 13.91
+log_CIV_err = 0.04
+log_OI = 14.54
+log_OI_err = 0.07
+log_SiII = 13.21
+log_SiII_err = 0.03
+log_SiIV = 13.40
+log_SiIV_err = 0.02
+log_FeII = 12.86
+log_FeII_err = 0.12
+
+
+C_IC1 = -0.37
+C_IC2 = -0.47
+
+O_IC1 = 0
+O_IC2 = -0.01
+Si_IC1 = -0.40
+Si_IC2 = -0.37
+Fe_IC1 = -0.04
+Fe_IC2 = -0.10
+
+
+notes = """
+Applies two different ionization corrections which are about 0.1 dex difference for C/O and a 0.3 dex total ionization correction.
+Also calculate column densities with aparent optical depth method.
+To use ICs, add the IC to the [X/H] value from dominant species to correct.
+"""
+
+
+
+["cooke+17"]
+link = "https://ui.adsabs.harvard.edu/abs/2017MNRAS.467..802C/abstract"
 galaxy = "J0903+2628"
-redshift = 3.077
+redshift = 3.07759
+
+log_HI = 20.32
+log_HI_err = 0.05
+log_CII = 13.32
+log_CII_err = 0.03
+log_OI = 13.96
+log_OI_err = 0.02
+log_SiII = 12.62
+log_SiII_err = 0.01
+
 c_o = -0.38
 c_o_err = 0.03
 o_h = -3.05
 o_h_err = 0.05
+
+notes = """
+No ionization corrections applied.
+
+Keck HIRES data. only detect CII, OI, SiII.
+Contains table of C/O values for other systems.
+"""
 
 
 ["welsh+20"]
 link = "https://ui.adsabs.harvard.edu/abs/2020MNRAS.494.1411W/abstract"
 
 galaxy = "J0035-0918"
-redshift = 2.340
+redshift = 2.340064
 
 log_c= -0.12
 log_c_err= 0.15
 o_h= -2.45
 o_h_err= 0.06
+solar_scale = "asplund09"
 
-log_N_HI = 20.43
-log_N_HI_err = 0.04
+log_HI = 20.43
+log_HI_err = 0.04
+log_CII = 14.29
+log_CII_err = 0.13
+log_NI = 13.37
+log_NI_err = 0.04
+log_OI = 14.67
+log_OI_err = 0.05
+log_MgII = 12.89
+log_MgII_err = 0.13
+log_FeII = 13.01
+log_FeII_err = 0.03
 
 notes = """
 ESPRESSSO data from VLT. Bound on C12/C13 > 0.37 !!
-Asplund 2009 scale.
 
-HI column density from cooke+15
+HI column density from cooke+15.
+Errors are 1 sugna confidence limits.
 """
 
 
@@ -129,11 +342,11 @@ HI column density from cooke+15
 # J0035-0918  2.340  -0.12    0.15   -2.45    0.06    welsh+20,cooke+15,dutta+14
 # HS0105+1619 2.536   0.110   0.045  -1.776   0.021   cooke+14
 #Q0913+072   2.618  -0.36    0.012  -2.416   0.011   cooke+14,pettini+08
-J0953-0504  4.203  -0.50    0.03   -2.55    0.10    dutta+14            # verified, asplund2009
+#J0953-0504  4.203  -0.50    0.03   -2.55    0.10    dutta+14            # verified, asplund2009
 #J1016+4040  2.816  -0.21    0.05   -2.46    0.11    pettini+08
-Q1111+1332  2.270  -0.18    0.11   -1.92    0.08    cooke+15
-Q1202+3235  4.977  -0.33    0.11   -2.02    0.13    morrison+16
-J1337+3153  3.167  -0.18    0.11   -2.64    0.17    srianand+10         #asplund09 scale, verified
+#Q1111+1332  2.270  -0.18    0.11   -1.92    0.08    cooke+15
+#Q1202+3235  4.977  -0.33    0.11   -2.02    0.13    morrison+16
+#J1337+3153  3.167  -0.18    0.11   -2.64    0.17    srianand+10         #asplund09 scale, verified
 #J1358+6522  3.067  -0.27    0.06   -2.335   0.02    cooke+14,cooke+12
 #J1558+4053  2.553  -0.06    0.07   -2.45    0.06    pettini+08
 #Q2206-199   2.076  -0.38    0.04   -2.07    0.05    pettini+08
