@@ -161,10 +161,14 @@ cdef class LinAGB(AbstractAGB):
 
 
 cdef class C_AGB_Model(AbstractAGB):
-    """
+    r"""
     C_AGB_Model(y0, zeta_agb, tau_agb, t_D)
 
     An analytic version of AGB yields.
+
+    ```math
+    Y_{\rm C}^{\rm AGB} = A \left(y_0 + \zeta [M/H]\right) \frac{\exp(-(t-t_D) / \tau_{\rm AGB}}{t^\gamma} 
+    ```
 
     Parameters
     ----------
@@ -172,18 +176,26 @@ cdef class C_AGB_Model(AbstractAGB):
     zeta: the metallicity dependence
     tau_agb: the agb dtd
     t_D: the minimum delay time
+    gamma: the exponent
+    zeta_tau: the metallicity dependence of t_D
+    mlr: the mass - lifetime relationship
+    imf: the initial mass function
+    m_low: the minimum cutoff mass
     """
 
     cdef public double tau_agb, t_D, y0, zeta
     cdef object imf, mlr
     cdef public double A_agb
     cdef public double m_low, m_hm, m_high
+    cdef public double gamma, zeta_tau
 
     def __cinit__(self, double y0 = 0.0004, double zeta=-0.0002, 
             double tau_agb=0.3, double t_D = 0.15, mlr=vice.mlr.larson1974, 
+            double gamma=2, double zeta_tau=0, 
+            double m_low = 1.2, 
             imf=vice.imf.kroupa):
 
-        self.m_low = 1.2
+        self.m_low = m_low
         imf_low = 0.08
         self.m_hm = 8
         self.m_high = 100
@@ -192,6 +204,8 @@ cdef class C_AGB_Model(AbstractAGB):
         self.t_D = t_D
         self.y0 = y0
         self.zeta = zeta
+        self.gamma = gamma
+        self.zeta_tau = zeta_tau
 
         self.mlr = mlr
         self.imf = imf
@@ -199,30 +213,38 @@ cdef class C_AGB_Model(AbstractAGB):
 
         A_imf = quad(lambda m: m*self.imf(m), imf_low, self.m_high)[0]
 
-        self.A_agb = A_imf / quad(lambda m: m * self.imf(m) * self.y_unnorm(m), 
+        self.A_agb = A_imf / quad(lambda m: m * self.imf(m) * self.y_unnorm(m, Z_SUN), 
                 imf_low, self.m_high)[0]
 
 
-    cdef R(self, double t):
+    cdef R(self, double t, double Z):
         """
         The delay time distribution of C enrichment
         """
         cdef double dt = t - self.t_D
-        cdef double R0 = dt/self.tau_agb**2 * m.exp(-dt/self.tau_agb)
+        cdef double M_H = Z_to_MH(Z)
+        cdef double tau = self.tau_agb + self.zeta_tau * M_H
+        
+        if tau < 0:
+            tau = 1e-3
+            
+        cdef double R0 = 0
+        if dt > 0:
+            R0 = dt**self.gamma / tau**(self.gamma + 1) * m.exp(-dt/tau)
 
-        return 0 if dt < 0 else R0
+        return R0
 
 
-    cdef y_unnorm(self, double m):
+    cdef y_unnorm(self, double m, double Z):
         if m < self.m_low or m > self.m_high:
             return 0
-        return 1/m * m**-4.5 * 1/self.imf(m) * self.R(self.mlr(m))
+        return 1/m * m**-4.5 * 1/self.imf(m) * self.R(self.mlr(m), Z)
 
 
     cpdef double ccall(self, double m, double Z):
         cdef double M_H = Z_to_MH(Z)
         y = self.y0 + self.zeta*M_H
-        return self.A_agb * y * self.y_unnorm(m) 
+        return self.A_agb * y * self.y_unnorm(m, Z) 
 
 
     def __imul__(self, scale):
