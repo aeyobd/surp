@@ -1,0 +1,298 @@
+
+\documentclass[11pt]{article}
+
+
+% MNRAS is set in Times font. If you don't have this installed (most LaTeX
+% installations will be fine) or prefer the old Computer Modern fonts, comment
+% out the following line
+\usepackage{newtxtext,newtxmath}
+\usepackage{anyfontsize}
+\usepackage{aas_macros}
+% Depending on your LaTeX fonts installation, you might get better results with one of these:
+%\usepackage{mathptmx}
+%\usepackage{txfonts}
+
+% Use vector fonts, so it zooms properly in on-screen viewing software
+% Don't change these lines unless you know what you are doing
+\usepackage[T1]{fontenc}
+
+% Allow "Thomas van Noord" and "Simon de Laguarde" and alike to be sorted by "N" and "L" etc. in the bibliography.
+% Write the name in the bibliography as "\VAN{Noord}{Van}{van} Noord, Thomas"
+
+
+%%%%% AUTHORS - PLACE YOUR OWN PACKAGES HERE %%%%%
+
+% Only include extra packages if you really need them. Common packages are:
+\usepackage{graphicx}	% Including figure files
+\usepackage{amsmath}	% Advanced maths commands
+% \usepackage{amssymb}	% Extra maths symbols
+\usepackage{hyperref}
+\usepackage[normalem]{ulem}
+\usepackage[dvipsnames]{xcolor}
+
+\graphicspath{{figures/}} 
+
+\usepackage{natbib}
+
+
+% Acronyms
+\newcommand{\agb}{AGB}
+\newcommand{\apogee}{APOGEE}
+\newcommand{\aspcap}{\textsc{aspcap}}
+\newcommand{\cc}{CCSN}
+\newcommand{\gce}{GCE}
+\newcommand{\ia}{SN Ia}
+
+% internal abbreviations
+\newcommand{\caah}{[C/Mg]-[Mg/H]}
+\newcommand{\caafe}{[C/Mg]-[Mg/Fe]}
+
+
+% other
+\newcommand{\ycmg}{\ensuremath{2.7 + 32\left(Z-\Zo\right)}}
+\newcommand{\ycccmg}{1}
+\newcommand{\yco}{1}
+\newcommand{\fmeas}{20\%}
+
+\makeatletter
+\newcommand{\C}[1][\@nil]{
+    \def\tmp{#1}%
+    \ifx\tmp\@nnil%
+        \ensuremath{\rm C}%
+    \else%
+        \ifmmode ^{#1}{\rm C}%
+        \else $^{#1}$C%
+        \fi%
+\fi }
+\makeatother
+
+\newcommand{\Yct}{{y_{\rm C}}}
+\newcommand{\Ycc}{{y_{\rm C}^{\rm CC}}}
+\newcommand{\Yoc}{{y_{\rm Mg}^{\rm CC}}}
+\newcommand{\Ycagb}{{y_{\rm C}^{\rm AGB}}}
+ \newcommand{\yb}{\ensuremath{\rotatebox[origin=B,y=0.5ex]{180}{y}}}
+\newcommand{\y}{Y}
+
+\newcommand{\Mo}{ {\rm M}_{\sun}}
+    
+\newcommand{\Zo}{ Z_{\sun}}
+
+\newcommand{\about}[1]{${\sim} #1$}
+
+\newcommand{\dbnote}[1]{ {\color{Thistle} \textit{\small (DB: #1)}} }
+
+
+
+
+
+
+% MAIN DOCUMENT
+\title{Comparison of C inn observations}
+
+\author{daniel}
+
+\begin{document}
+
+\maketitle
+
+
+
+This document is a summary of the differences between measurements and surveys as it is related to C. Below, we provide brief descriptions of the relavant characteristics of C determination and survey properties.
+
+Some relevant literature comparing surveys includes \citet{hegedhus+2023}, and \dots.
+
+\section{Stars}
+
+\subsection{Large Spectroscopic Surveys}
+In general (see Fig.~\ref{fig:other_surveys}, all surveys (except for GALAH, see below) agree in both the \caah\ and \caafe\ trends, up to a \about{0.2} dex offset. Changing our adopted equilibrium trend to any of these would only affect the yield scale, which is already a known degeneracy in chemical evolution modeling. 
+
+
+We do not renormalize surveys and instead use reported abundances. Each survey sets zero points in slightly different manners, and given the systematic uncertainty in this step, the absolute abundance scale of a survey is less precise than abundance trends.
+
+
+
+% \begin{figure}
+%     \centering
+%     \includegraphics{c+n.pdf}
+%     \caption{[C+N/Mg]. This figure is likely getting cut, check if looks good with full sample (reassuring), and maybe look at [Mg/Fe] here too, but if agrees, we do not need it anymore...}
+%     \label{fig:cn}
+% \end{figure}
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=\textwidth]{figures/cmg_other_surveys.pdf}
+    \caption{Binned median trends for several surveys.
+    With the exception of GALAH (see text), all samples agree up to a normalization for \caah\, and, even more encouragingly, samples approximately trace out the same trend in \caafe.}
+    \label{fig:other_surveys}
+\end{figure*}
+
+% \begin{figure*}
+%     \centering
+%     \includegraphics{figures/caah_catalogues.pdf}
+%     \caption{Similar to binned trends (REF) but for three other samples of stars with Birth C estimates.
+%     With the exception of GALAH (see text), all samples agree upto a normalization for \caah\, and, even more encouragingly, samples approximantly trace out the same trend in \caafe.}
+%     \label{fig:other_catalogues}
+% \end{figure*}
+
+
+
+
+\subsubsection{APOGEE} 
+APOGEE (The Apache Point Observatory Galactic Evolution Experiment) is a large spectroscopic survey carried out on the Sloann 2.5 metre telescope and Irénée du Pont Telescope in Chile.
+APOGEE DR17 provides over 600,000 stars observed with medium-high resolution spectroscopy ($R\gtrsim 22,000$) in the near infrared (1.51–1.70 $\mu$m) \citep{apogee17}.
+
+While we focus on APOGEE subgiants, there are several other approaches to using APOGEE data to validate our models:
+APOGEE ASPCAP fits molecular C lines (calibrated only to lab data) whereas atomic lines are on the Grevesse 2007 scale. The reported atomic C abundances are broadly consistent with the molecular measurements. 
+See Jonsson + 2020 for a description of the data reduction for APOGEE DR16 (no DR17 published yet).
+
+A second approach is to add corrections to the effects of first dredge up, as \citet{vincenzo+21} has done.
+
+
+The {\bf Gaia-ESO} survey (Gilmore + 2022, Randich+2022) is a large ($10^5$) stellar spectroscopic instrument using FLAMES/VLT with both the GIRAFFE (R $\sim$ 20k) and UVES ($R\sim 50k$) spectrographs. 
+Here, we use the catalogue published in  \citep{hourihane+2023} containing 114,816 stars.
+GSO uses the Grevesse 2007 solar abundances for the low resolution survey but does not calibrate (?) the high resolution survey, so we apply XXX corrections.
+WG10 uses 5380.33, 6587.61 as the C lines (worley+2024).
+However, for high resolution observations (WG11), C is derived from the swan bands:
+C2 Swan (1, 0) band head at 5135 Å and C2 Swan (0, 1) band head at 5635.5 Å
+(Tautvaišiene˙ et al. 2015); discussed as but are not sensitive to non-local thermodynamic equilibrium (NLTE) deviations (cf. Clegg et al. 1981;
+Gustafsson et al. 1999) 
+
+our flags are
+\begin{itemize}
+    \item No flags in SNR, SRP, BIN, SSA, IPA, PSC< EML
+    \item errors in LOGG < 0.5
+    \item errors in Teff < 200
+    \item logg >= 3.5
+    \item no NaN C, Mg, Fe, and respective errors.
+\end{itemize}
+
+With these selections, 263 stars in UVES and 26509 in GIRAFFE. However, only 29 stars in UVES now have C2 measurements, 214 with C I, and 142 with CI in GIRAFFE. No star reports using more than 2 lines to measure C.
+We note that we only find very few stars with reliable stellar parameters and C abundance measurements in both surveys. In particular, the Girraffe low-resolution survey only has < 0.4\% completion for our GSO dwarf sample, and only 547 stars pass our cuts in the high resolution survey with less than half containing some carbon abundance measurement.
+
+Note that the GSO-UVES C abundances are re-calculted in \citet{franchini+20}, with much higher completeness
+which result in trends very similar to the general survey (except for a \~ 0.2 dex offset).
+
+
+\textbf{GALAH}: 
+The Galactic Archeology XXX with HERMES survey \citep{DeSilva2015, Martell2017}
+is a high-resolution ($R\sim 50,000$), large ($10^5?$ stars), optical (lambda in ...) survey predominantly targeting local dwarfs.
+
+GALAH is perhaps the strongest outlier in terms of the infered \caah\ trend: predicting a steep negative slope of > 0.5 (compared to < 0.1 for APOGEE)
+However, GALAH may not be the ideal survey for measuring C. Reported C measurments have low completion (50\% or down to 20 \% at lower metallicities) and are based on one weak line (6587.6100Å, in supplemental material of DR3 paper).
+So, whlikely observational effects of lower detection rates for metal poor stars, but also strong systematic from APOGEE. Reference Emily's appendix
+GALAH is the one survey which could be consistent with a very different abundance trend in the milky way, declining from +0.3 to -0.2 across the sampled range. 
+Crossmatches with apogee reveal that completion is not the whole story-and stars with C abundances measured in both surveys exhibit a similar systematic trend with metallicity. 
+\dbnote{Note how results would be affected if using Galah instead}
+GALAH consideres NLTE for O, Mg, and Fe, (among others) but not C, using the SME code on a small sample, then applied to the whole survey using the Cannon.
+
+We select our sample with
+\begin{itemize}
+    \item no FLAG\_SP
+    \item no FLAG FE\_H
+    \item SNR C3 IRAF > 30
+    \item no nan in TEFF \& LOGG
+    \item error LOGG < 0.5
+    \item error TEFF < 200
+    \item LOGG >= 3.5
+    \item 6500 >= TEFF >= 4500
+    \item no flag C, O, or Mg \# should be Fe instead of O
+    \item No NaNs in C, Mg, Fe
+\end{itemize}
+This results in 97,212 stars.
+
+
+\textbf{LAMOST}: Lamost has low and medium resolution surveys. Here, we use the dataset from ... derived from machine learning on APOGEE and GALAH.
+
+\begin{itemize}
+    \item Qual = 0
+    \item 3.5 < logg < 5
+    \item 7000 > teff > 4000
+    \item no flag on FE and MG and C 
+\end{itemize}
+
+
+
+
+
+\textbf{DESI} is an ongoing large spectroscopic survey. The Milky Way survey aims to record spectra for 30,000 stars, with the potential to measure stellar parameters, radial velocities, and chemical abundances (C, Mg, Fe, Si?). the early data-release 1 does contain the information, but it does not appear to be well-calibrated or explained yet. 
+COMPLETION NOTE??
+Finally, we note a few examples of other, smaller spectroscopic catalogues here. We do not show plots of these as their abundance trends for dwarfs are within the range of large spectroscopic surveys. (Note the downturn at O/H about 0.4??)
+
+There are other large spectroscopic surveys (RAVE, SEGUE, the really old one?)  but they do not have C abundances. (Jofre ARAA)
+H3 might have C but not publicly available?
+
+\citet{bensby+21}
+
+Hypatia catalog (Hinkel + 2017).
+ Luck et al. 2018.
+Harps-GTO: publically available :).
+
+California-Kepler Survey: HIRES (Brewer+2016): also publically available
+
+% SPECIES (Soto & Jenkins) no C
+% Hawkins + 2016 (apokasc): only giants...> used by Vincenzo ? 
+% SPOCS (Valenti & Fischer 2005): No C
+% AMBRE (no C)
+
+
+
+\section{Gas-Phase and Extragalactic Abundances}
+
+Table of sources and measurements if time...
+
+\subsection{H II regions}
+interestingly, the same techniques can be applied to both Milky Way HII regions and nearby extragalactic ones. 
+
+\subsubsection{Damped Lymnan Alpha}
+In Figure.~\ref{fig:gas_phase}, we show damped-lynman alpha systems as compiled in \citet{cooke+17}. These are clouds of gas observed by their (strong Lynman alpha) absorption in quasar spectra. As such, a handful of studies have been able to determine the abundances of these systems, which are typically at redshifts $z\sim 3$. 
+According to REVIEW, it is still uncertain what astrophysical systems these are (circumgalactic, dwarf galaxies, etc.?), but they are most likely understood as high-redshift analgues of compact blue dwarf galaxies.
+
+
+
+\begin{table}
+\centering
+\caption{
+Damped lyman alpha measurements
+References are (1) dessauges-zavadsky+03, (2) : pettini+08, 3: \citet{ellison+10}, }
+\begin{tabular}{lrlll}
+    \hline
+    Quasar & $z_{\rm abs}$ & [C/O] & [O/H] & references \\
+    \hline
+    Q1101-264 & 1.838000 & $0.77 \pm 0.09$ & $-1.66 \pm 0.07$ & (1) \\
+    Q2059-360 & 2.507000 & $-0.41 \pm 0.28$ & $-1.38 \pm 0.23$ & (1) \\
+    J2155+1358 & 4.212000 & $-0.29 \pm 0.08$ & $-1.82 \pm 0.11$ & (1) \\
+    Q0913+072 & 2.618000 & $-0.39 \pm 0.05$ & $-2.42 \pm 0.04$ & (2)\\
+    J1016+4040 & 2.816000 & $-0.21 \pm 0.05$ & $-2.48 \pm 0.11$ & (2)\\
+    J1558+4053 & 2.553000 & $-0.06 \pm 0.07$ & $-2.47 \pm 0.06$ & (2)\\
+    Q2206-199 & 2.076000 & $-0.38 \pm 0.04$ & $-2.09 \pm 0.05$ & (2)\\
+    J0140-0839 & 3.696000 & $-0.30 \pm 0.08$ & $-2.77 \pm 0.15$ & (3) \\
+    J1337+3152 & 3.167000 & $-0.19 \pm 0.11$ & $-2.59 \pm 0.17$ & srianand+10 \\
+    J0311-1722 & 3.734000 & $-0.42 \pm 0.11$ & $-2.31 \pm 0.10$ & cooke+11 \\
+    J1001+0343 & 3.078000 & $-0.41 \pm 0.03$ & $-2.67 \pm 0.05$ & cooke+11 \\
+    J1358+6522 & 3.067295 & $-0.03 \pm 0.11$ & $-2.24 \pm 0.09$ & cooke+12 \\
+    J0035-0918 & 2.340060 & $0.16 \pm 0.24$ & $-2.71 \pm 0.17$ & dutta+14 \\
+    J0953-0504 & 4.202870 & $-0.50 \pm 0.03$ & $-2.57 \pm 0.10$ & dutta+14 \\
+    J0035-0918 & 2.340000 & $0.08 \pm 0.16$ & $-2.46 \pm 0.07$ & cooke+15 \\
+    J1111+1332 & 2.270000 & $-0.18 \pm 0.11$ & $-1.94 \pm 0.08$ & cooke+15 \\
+    Q1202+3235 & 4.977000 & $0.20 \pm 0.09$ & $-2.00 \pm 0.12$ & morrison+16 \\
+    J0903+2628 & 3.077590 & $-0.38 \pm 0.04$ & $-3.07 \pm 0.05$ & cooke+17 \\
+    J0035-0918 & 2.340064 & $-0.12 \pm 0.14$ & $-2.47 \pm 0.06$ & welsh+20 \\
+    HS0105+1619 & 2.536000 & $0.11 \pm 0.04$ & $-1.78 \pm 0.02$ & cooke+14 \\
+    Q0913+072 & 2.618000 & $-0.36 \pm 0.01$ & $-2.42 \pm 0.01$ & cooke+14 \\
+    J1358+6522 & 3.067000 & $-0.27 \pm 0.06$ & $-2.33 \pm 0.02$ & cooke+14 \\
+    \hline
+\end{tabular}
+\end{table}
+
+C abundances are measured in XXXX.
+
+Hello
+
+
+\newpage
+
+\bibliographystyle{mnras}
+\bibliography{main}
+
+
+\end{document}
