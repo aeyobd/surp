@@ -2,73 +2,143 @@
 
 Here, I can follow the WAF method to solve for the evolution of C abundances for different assumptions about the yields.
 
-
-
 ## Introduction to Chemical Evolution
 
-The simplest model of chemical evolution is a single-zone model, where the system consists of a single homogenous gas reservoir which is instantaneously mixed. Thus, baryonic matter exists in the system in a gas-phase or a stellar phase. To add slightly more realism, we allow some amount of gas to enter into the system 
-$$
-\dot{M}_{\rm in}\\
-M_g \propto \exp(-t/\tau_{\rm sfh})
-$$
-and some amount of gas to leave the system through mass-loaded outflows
-$$
-\dot{M}_{\rm out} = \eta \dot{M_{\rm star}}
-$$
-. 
+The simplest model of chemical evolution is a single-zone model, where the system consists of a single homogenous gas reservoir which is instantaneously mixed. Thus, baryonic matter exists in the system in a gas-phase or a stellar phase. 
 
-The gas mass evolution is thus governed by
+The processes that affect the ISM are
+
+- Inflows, adding gas material to the system
+- Outflows, removing material from the ISM
+- ISM formed into stars (removing gas and metals from the system)
+- Material returned from stars back to the ISM
+
+The resulting equations for the change in total ISM mass ($M_{\rm gas}$) and the ISM mass of element $X$ ($M_{\rm gas,\;x}$) are given by
 $$
-\dot{M}_{\rm gas} = \dot{M}_{\rm in} - \dot{M}_{\rm out} - \dot{M}_{\star} + \dot{M}_{\rm return}
+\dot{M}_{\rm gas} = \dot{M}_{\rm in} - \dot{M}_{\rm out} - \dot{M}_{\star} + \dot{M}_{\rm return} \\
+\dot{M}_X = \dot{M}_{\rm in, X} - \dot{M}_{\rm out, X} - \dot{M}_{\star, X} + \dot{M}_{\rm return, X} + \dot{M}_{\rm new, X}
 $$
-where $\dot{M}_{\star}$ is the rate of star formation and $\dot{M}_{\rm return}$ is the rate that stars return material back to the ISM. 
+where $\dot{M}_{\star}$ is the rate of star formation and $\dot{M}_{\rm return}$ is the rate that stars return material back to the ISM. To simplify these equations, we apply the following assumptions
+
+- Inflows are zero metallicity, so $\dot{M}_{\rm in, X}=0$
+- Outflows remove material proportional to the SFH with the ISM abundance, $\dot{M}_{\rm out} = \eta\;\dot{M}_\star$, $\dot{M}_{\rm out, X} = Z_X\;\eta\; \dot{M}_\star$ 
+- Recycling is instantaneous and constant: $\dot{M}_{\rm return} = r \dot{M}_\star$ , $\dot{M}_{return, X} = Z_X\;r\;\dot{M}_\star$ 
+- The SFH present-day yields are represented as $\langle y_X \rangle$, so that the newly produced mass of $X$ is given by $\dot{M}_{\rm new, X} = \langle y_X \rangle \dot{M}_\star$ 
+- The star formation rate is proportional to the gas mass, $\dot{M}_\star = M_g / \tau_\star$
+
+So, the change in ISM mass equation becomes
 $$
 \dot{M}_g = \dot{M}_{\rm in} - \dot{M}_\star ( 1 + \eta - r)
 $$
 
-
-We can further simplify by assuming that the rate of star formation is proportional to the gas mass
+which allows solving for the IFR if the metallicity of inflows is non zero. For a given element $X$, the rate of gas evolution is now determined by the form
 $$
-\dot{M}_\star = \frac{M_g}{\tau_\star}
-$$
-
-
-For a given element $X$, the rate of gas evolution is now determined by the form
-$$
-\dot{M}_X = \langle\dot{m}_X\rangle_\star - (1+\eta - r) Z_X\,\dot{M}_\star
+\dot{M}_X = \langle y_X\rangle_\star\dot{M}_\star - (1+\eta - r) Z_X\,\dot{M}_\star
 $$
 where the first term describes the present-day enrichment rate (a convolution on the system/star formation history for delayed-processes)  and the second term describes the evolution of the mass of the material due to the element locked away in stars, released through outflows, and returned by older stars.
 
-For the actual abundance of an element, we can divide by $M_g$ and in the case of exponential SFH
-$$
-\dot{Z}_X + \frac{M_X\dot{M_g}}{M_g^2}= \frac{\dot{M}_X}{M_g}  = \langle \dot{m}_X \rangle_\star / M_g - (1 + \eta - r ) Z_X \dot{M}_\star/{M}_g \\
-\dot{Z}_X = Z_X /\tau_{\rm sfh} + \langle\dot{m}_X \rangle_\star / M_g - (1 + \eta - r)Z_X  / \tau_\star \\
-\dot{Z}_X = \langle \dot{y}_X \rangle_\star - (1 + \eta - r -\tau_\star/\tau_{\rm sfh}) Z_X / \tau_\star
-$$
-since $\dot{M}_g = -1/\tau_{\rm sfh} M_g$ 
-
-### Equilibrium
-
-In the event that $\dot{M}_\star$ is constant, then, $\langle \dot{m}_X\rangle_\star = m_x = y_X \dot{M}_\star$ for any process (as they are all time-independent), so that if the system evolves to reach equilibrium, the equilibrium value of $Z_X$ (found by setting $\dot{M}_X$ to zero above) is given by
-$$
-Z_{X,\rm eq} = \frac{y_X}{1+\eta - r}
-$$
-
-
-However, in the case that $\dot{M}_\star$ is exponential, equilibrium becomes more complex, depending on the rate of star formation decline. Because the gas mass is now $M_g = M_{g, 0} \exp(-t/\tau_{\rm sfh})$, we can rewrite the above evolution equation in terms of 
-$$
-Z_{X, \rm eq} = \frac{\langle y_X \rangle_\star}{1 + \eta - r - \tau_\star / \tau_{\rm sfh}}
-$$
-
-
-where 
+The SFH-averaged effective yield is 
 $$
 \langle y_X \rangle(t) = \frac{\int_0^t \dot{M}_\star(t')\,\dot{M}_{X, \rm SSP}\,(Z_{\rm ISM}, t-t')\,dt' }{\dot{M}_\star}
 $$
-where $\dot{M}_{X, \rm SSP}$ is the rate of new $X$ ejected from a single stellar population of metallicity $Z$ at time $t-t'$ after birth. The integrand in detail looks different depending on the process (and can incorporate either a stellar-mass-dependent yield or some DTD prescription). For instance, the mean yield of sneia Fe in our prescription is given by
+where $\dot{M}_{X, \rm SSP}$ is the rate of new $X$ ejected from a single stellar population of metallicity $Z$ at time $t-t'$ after birth. The integrand in detail looks different depending on the process (and can incorporate either a stellar-mass-dependent yield or some DTD prescription). Written in terms of a time-dependent yield and a DTD $R(t)$, this equation beomes
+$$
+\dot{M}_\star \langle y_X \rangle = \frac{\int_0^t \dot{M}_\star(t') y_C(t') R(t-t')\; dt'}{\int_0^{t_{\rm end}} R(t') dt'}
+$$
+
+
+## Solving Equations of evolution
+
+By defining 
+$$
+1/\varpi = \tau_{\rm dep} = \frac{\tau_\star}{1+\eta - r}
+$$
+using $\tau_\star = M_g / \dot{M}_\star$, the above differential equation can be rewritten as
+$$
+\dot{M}_{X} + \varpi M_{X} = \lang \dot{m}_{X} \rang_\star
+$$
+To solve this equation, we can use that a differential equation of the form $\dot{M} + p(t) M = f(t)$ is solved with
+$$
+M(t) = \frac{1}{\mu} \left[ \int_0^t \mu(t')\, f(t')\ dt' + C\right]
+$$
+where $\mu(t) = \exp{\int p(t)\ dt}$ . In our case, $p(t) = \varpi$, so $\mu(t) = \epsilon(-\varpi t)$, and $f(t) = \dot{M}_\star \langle y_X\rangle$. We can find $M_C(t)$ with
+$$
+M_{\rm C}(t) =  \epsilon(\varpi t) \int_0^t \epsilon(-\varpi t')\ \langle \dot{m}_{\rm C} \rangle(t') \ dt'
+$$
+
+Or in terms of metallicity
+$$
+Z_X(t) = \frac{\epsilon(\varpi t)}{M_g(t)} \int_0^t \epsilon(-\varpi t')\;\langle \dot{m}_X \rangle (t')\; dt'
+$$
+
+
+So, to solve these equations, we first integrate to find $\langle \dot{M}_X \rangle $ and then integrate to solve for the ISM mass $M_X(t)$ and finally divide by the gas mass (given by the SFH) to find $Z_X(t)$. 
+
+For CCSNe, $\lang \dot{m}_{X} \rang_\star = y_{X}\ \dot{M}_\star $ since $R(t) \approx \delta(t)$, so the equation tends to be much simpler.
+
+## Convenience definitions
+
+I have defined the following functions and variables to make later expressions much easier to work with. Firstly, 
+$$
+\epsilon(x) \equiv e^{-x}\\
+\epsilon_i(x) = x^i\,e^{-x}
+$$
+As a helper, we will need
+$$
+c_{i, j} \equiv \frac{i!}{j! (i-j)!}
+$$
+which represents the combination i choose j.
+
+We will also adopt the summation convention
+$$
+a_i b_i \equiv \sum_i a_i b_i
+$$
+for any index repeated two or more times. 
+
+The derivative is then 
+$$
+\frac{d}{dx} \epsilon_i(x) = -\epsilon_i(x) - i \epsilon_{i-1}x\\
+\frac{d}{dx} \epsilon(x) = -\epsilon(x)
+$$
+And the integrals are given by
+
+! TODO HERE
+
+Given these definitions, the integrals and derivatives are
+$$
+\int \epsilon(ax)\,dx = -\frac{1}{a} \epsilon(ax)\\
+\int \chi(ax) = -\frac{1}{a} \chi(ax) - \frac{1}{a} \epsilon(ax)\\
+\frac{d}{dy} \epsilon(y) = -\frac{dy}{dx} \epsilon(y) \\
+\frac{d}{dx} \chi(y) = \frac{da}{dx} \epsilon(y) - \frac{dy}{dx} \chi(y)
+$$
+furthermore, I like writing all the timescales instead as frequencies which avoids more complex algebraic expressions later on.
+
+# Equilibrium
+
+### Constant SFH
+
+In the event that $\dot{M}_\star$ is constant, then, $\langle \dot{m}_X\rangle_\star = m_x = y_X \dot{M}_\star$ for any process (as they are all time-independent), so that if the system evolves to reach equilibrium, the equilibrium value of $Z_X$ (found by setting $\dot{M}_X$ to zero above) is given by
+$$
+Z_{X,\;\rm Eq(cosnt)} = \frac{y_X}{1+\eta - r} = \frac{y_X}{\tau_\star \varpi}
+$$
+
+### Exponential SFH
+
+However, in the case that $\dot{M}_\star$ is exponential, equilibrium becomes more complex, depending on the rate of star formation decline. Because the gas mass is now $M_g = M_{g, 0} \exp(-t/\tau_{\rm sfh})$, we can rewrite the above evolution equation in terms of 
+$$
+Z_{X, \rm eq} = \frac{\langle y_X \rangle_\star}{1 + \eta - r - \tau_\star / \tau_{\rm sfh}} = \frac{\langle y \rangle}{\tau_\star (\varpi - \phi)}
+$$
+
+ For instance, the mean yield of sneia Fe in our prescription is given by
 $$
 \nu_{\rm Fe}^{\rm Ia} = \frac{\int_0^t \dot{M}_\star(t') R(t-t') dt'}{\dot{M}_\star\int_0^\infty R(t') dt'}
 $$
+For the exponential delay time distribution, 
+$$
+\nu_{\rm Fe}^{\rm Ia} = \frac{\iota}{\iota - \phi} \epsilon(-\phi\;t_D) (1 - \epsilon((\iota - \phi)\Delta	t))
+$$
+
+
 And for AGB stars (the most complex of all of them)
 $$
 \nu_{\rm X}^{\rm AGB} = \frac{\int_0^t Y_X^{\rm AGB}(m_{\rm AGB}(t-t'), Z(t')) \dot{M_\star}(t') \dot{h}(t-t') dt'
@@ -84,63 +154,6 @@ $$
 \dot{h}_{\rm agb} = \frac{1}{\int_l^u m \frac{dN}{dm}\,dm} \left(m_{\rm agb} \dot{m}_{\rm agb} \frac{dN}{dm} \right)
 $$
 where we have suppresed the dependences on $t$ or $m_{\rm agb}(t)$ for all components.
-
-## Equation of evolution
-
-Most of these equations are not solvable under more complex star formation histories. Here, we simply assume $M_g(t) = M_0$.
-
-The gas mass of C changes over time by
-$$
-\dot{M}_{\rm C} = \lang\dot{m}_{\rm C}\rang_\star -(1+\eta - r) Z_{\rm C}\, \dot{M}_\star
-$$
-Where the SFH-averaged yield is
-$$
-\lang \dot{m}_{\rm C} \rang_\star = \int_0^t \dot{M}_{\star}(t')\ y_{\rm C}(t')\ R(t - t')\ dt'
-$$
-where $R(t)$ is the normalized DTD of the yield. $\lang y \rang_\star$ describes the current rate of mass of C produced from stars formed at any time in the past (units mass / time).
-
-For CCSNe, $\lang \dot{m}_{\rm C} \rang_\star = y_{\rm C}\ \dot{M}_\star $ since $R(t) \approx \delta(t)$. 
-
-By defining 
-$$
-\tau_{\rm dep} = \frac{\tau_\star}{1+\eta - r}
-$$
-and $\tau_\star = M_g / \dot{M}_\star$, the above differential equation can be rewritten as
-$$
-\dot{M}_{\rm C} + \frac{M_{\rm C}}{\tau_{\rm dep}} = \lang \dot{m}_{\rm C} \rang_\star
-$$
-To solve this equation, we can use that a differential equation of the form $\dot{M} + p(t) M = f(t)$ is solved with
-$$
-M(t) = \frac{1}{\mu} \left[ \int_0^t \mu(t')\, f(t')\ dt' + C\right]
-$$
-where $\mu(t) = \exp{\int p(t)\ dt}$ . In our case, $p(t) = 1/\tau_{\rm dep}$, so $\mu(t) = e^{t/\tau_{\rm dep}}$, and $f(t) = y_{\rm C} M_g/\tau_\star$. We can find $M_C(t)$ with
-$$
-M_{\rm C}(t) =  e^{-t/\tau_{\rm dep}} \int_0^t e^{t'/\tau_{\rm dep}}\ \langle \dot{m}_{\rm C} \rangle_\star \ dt'
-$$
-
-
-## Convenience definitions
-
-I have defined the following functions and variables to make later expressions much easier to work with. Firstly, 
-$$
-\epsilon(x) \equiv e^{-x}\\
-\chi(x) = x\,e^{-x}
-$$
-Given these definitions, the integrals and derivatives are
-$$
-\int \epsilon(ax)\,dx = -\frac{1}{a} \epsilon(ax)\\
-\int \chi(ax) = -\frac{1}{a} \chi(ax) - \frac{1}{a} \epsilon(ax)\\
-\frac{d}{dy} \epsilon(y) = -\frac{dy}{dx} \epsilon(y) \\
-\frac{d}{dx} \chi(y) = \frac{da}{dx} \epsilon(y) - \frac{dy}{dx} \chi(y)
-$$
-furthermore, I like writing all the timescales instead as frequencies which avoids more complex algebraic expressions later on
-$$
-\varpi \equiv 1 / \tau_{\rm dep} = (1 + \eta - r)\ /\ \tau_\star
-$$
-the mass evolution equation becomes
-$$
-M_{\rm C}(t) = \epsilon(\varpi\, t) \int_0^t \epsilon(-\varpi\,t)\ \lang \dot{m}_{\rm C} \rang_\star(t)\ dt
-$$
 
 # Constant SFH
 
@@ -209,7 +222,34 @@ $$
 
 
 
+# Exponential SFH
 
+Assume that $\dot{M}_\star \propto \epsilon(\phi t) = \exp(-t/\tau_{\rm sfh}) = \epsilon(\phi t)$. 
+
+## CCSNe
+
+$$
+Z_X^{\rm CC}(t) = Z_{X, \rm Eq(exp)}^{\rm CC} \left[1 - \epsilon(\varpi t - \phi t)\right]
+$$
+
+which looks the same as for a constant SFH except with an increase on the depletion timescale.
+
+## SneIa (exp)
+
+
+$$
+Z^{\rm Ia}(t) = Z_X^{\rm eq, exp} \left[
+1 - \frac{\varpi - \phi}{\varpi - \iota}
+\epsilon((\iota - \phi)\Delta  t) 
+- \left(1 - \frac{\varpi - \phi}{\varpi - \iota} \right)
+\epsilon((\varpi - \phi)\Delta  t)
+\right]
+$$
+where 
+$$
+Z_{X}^{\rm eq, exp} = \frac{y}{\tau_\star (\varpi - \phi)} \frac{\iota}{\iota - \phi} \epsilon(-\phi\;t_d)
+$$
+is the limit of the time-dependent equilibrium expression above.
 
 # Old work
 
