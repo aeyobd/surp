@@ -50,33 +50,37 @@ class Quadratic(MCMCModel):
         return beta0 + beta1 * x + beta2 * x ** 2
 
     def d_dx(self, x, theta):
-        return theta[1] + 2 * theta[2] * x
+        beta0, beta1, beta2, log_sigma = theta
+        return beta1 + 2 * beta2 * x
 
     @property
     def labels(self):
         return [r"$\beta_0$", r"$\beta_1$", r"$\beta_2$", r"$\log(\sigma)$"]
 
 
+"""
+An exponential modeel.
+"""
 class Exponential(MCMCModel):
-    def __init__(self, beta0=(0, 1), beta1=(0, 1), log_sigma=(0, 1), base=10):
+    def __init__(self, beta0=(0, 1), beta1=(0, 1), alpha=(1, 4), log_sigma=(0, 1)):
         self.distributions = [
             stats.norm(beta0[0], beta0[1]),
             stats.norm(beta1[0], beta1[1]),
-            stats.norm(log_sigma[0], log_sigma[1])
+            stats.norm(log_sigma[0], log_sigma[1]),
+            stats.norm(alpha[0], alpha[1]),
         ]
-        self.base = base
 
     def __call__(self, x, theta):
-        beta0, beta1, log_sigma = theta
-        return beta0 + beta1 * self.base**(x)
+        beta0, beta1, log_sigma, alpha = theta
+        return beta0 + beta1 * np.exp(x * alpha)
 
     def d_dx(self, x, theta):
-        beta0, beta1, log_sigma = theta
-        return beta0 + beta1 * self.base**(x) * np.log(self.base)
+        beta0, beta1, log_sigma, alpha = theta
+        return beta1 * np.exp(x * alpha)  * alpha
 
     @property
     def labels(self):
-        return [r"$\beta_0$", r"$\beta_1$", r"$\log(\sigma)$"]
+        return [r"$\beta_0$", r"$\beta_1$", r"$\log(\sigma)$", r"$\alpha$"]
 
 
 def LogLinear(MCMCModel):
