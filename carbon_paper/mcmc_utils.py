@@ -66,16 +66,16 @@ class Exponential(MCMCModel):
         self.distributions = [
             stats.norm(beta0[0], beta0[1]),
             stats.norm(beta1[0], beta1[1]),
-            stats.norm(log_sigma[0], log_sigma[1]),
             stats.norm(alpha[0], alpha[1]),
+            stats.norm(log_sigma[0], log_sigma[1]),
         ]
 
     def __call__(self, x, theta):
-        beta0, beta1, log_sigma, alpha = theta
+        beta0, beta1, alpha, log_sigma = theta
         return beta0 + beta1 * np.exp(x * alpha)
 
     def d_dx(self, x, theta):
-        beta0, beta1, log_sigma, alpha = theta
+        beta0, beta1, alpha, log_sigma = theta
         return beta1 * np.exp(x * alpha)  * alpha
 
     @property
