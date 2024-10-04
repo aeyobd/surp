@@ -1,11 +1,10 @@
 inherits = "../params.toml"
 sfh_model = "twoinfall"
-sf_law = "twoinfall"
 
 [sfh_kwargs]
 tau1 = 1
 tau2 = 4
+t1 = 4
+
+# ratio given by thin/thick ratios inside the code
 A21 = 1
-t1 = 4.1
-nu1 = 2
-nu2 = 1

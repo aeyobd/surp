@@ -28,7 +28,7 @@ def create_model(params):
     model.evolution = star_formation_history(params)
     model.mode = params.mode
     model.elements = ("fe", "o", "mg", "n", "c")
-    model.IMF = params.imf
+    model.IMF = properties.get_imf(params)
     model.mass_loading = properties.mass_loading(params)
     model.dt = params.timestep
     model.bins = np.arange(-3, 3, 0.01) # don't use this so is okay
@@ -40,7 +40,7 @@ def create_model(params):
     model.m_lower = params.m_lower
     model.Z_solar = Z_SUN
 
-    model.migration.stars = properties.create_migration(params)
+    model.migration.stars = properties.create_migration(model.annuli, params)
     # no gas migration
     
     # SF law (Kennicutt-Schmidt), needs to be for each zone

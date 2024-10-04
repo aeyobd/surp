@@ -89,7 +89,7 @@ bash <<EOT
 #SBATCH --account=$SLURM_ACCOUNT
 
 
-set -x
+set -xe
 echo job \$SLURM_JOB_ID
 echo \$TMPDIR
 echo \$SLURM_SUBMIT_DIR

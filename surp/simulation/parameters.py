@@ -1,9 +1,9 @@
 import numpy as np
-from vice.milkyway.milkyway import _get_radial_bins
 
 from .._globals import END_TIME
 from surp.utils import AbstractParams
 
+from vice.milkyway.milkyway import _get_radial_bins
 
 
 class MWParams(AbstractParams):
@@ -40,9 +40,6 @@ class MWParams(AbstractParams):
         - "twoexp"
         - "threeexp"
 
-    sf_law: ``string``
-        The star formation law to use. May be "J21" or "K13"
-
     n_stars: ``int``
         The number of stars to create during each timestep of the model.
 
@@ -58,7 +55,7 @@ class MWParams(AbstractParams):
         The migration mode to use. Options are
         - "hydrodisk"
         - "gaussian"
-        - "random_walk"
+        - "rand_walk"
 
     simple: ``bool``
         Use a simple migration mode
@@ -96,6 +93,8 @@ class MWParams(AbstractParams):
         - "J21"
         - "C22"
         - "twoinfall"
+    tau_star0: ``float``
+        The star formation timescale at t=0
 
     Re: ``float``
         The scale radius of the galaxy
@@ -193,6 +192,7 @@ class MWParams(AbstractParams):
 
 
     sf_law:str
+    tau_star0:float
     Re:float
 
     sfh_model:str

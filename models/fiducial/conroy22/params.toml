@@ -1,0 +1,8 @@
+inherits = "../params.toml"
+
+sf_law = "conroy22"
+sfh_model = "exp"
+mode = "ifr"
+
+[sfh_kwargs]
+tau_sfh = "sanchez"

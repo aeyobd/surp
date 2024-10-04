@@ -33,6 +33,41 @@ def zeta_to_slope(zeta):
     return zeta / (Z_SUN * m.log(10))
 
 
+cpdef chabrier(double mass):
+    """
+    Returns the chabrier [1] imf (taken from table 1 for single stars).
+    the single argument is the mass in solar masses.
+
+    The Chabrier
+
+
+    [1] Chabrier, G. 2003, PASP, 115(809), 763-795
+    """
+    cdef double A1 = 0.158
+    cdef double mc = 0.079
+    cdef double sigma = 0.69
+
+    cdef double logm = m.log10(mass)
+
+    cdef double xi
+
+    if mass < 0.08:
+        xi = 0.
+    elif mass < 1:
+        xi = A1 * m.exp( -(logm - m.log10(mc))**2 / (2*sigma**2))
+    elif logm < 0.54:
+        xi = 0.044 * mass**-4.37
+    elif logm < 1.26:
+        xi = 0.015 * mass**-3.53
+    elif logm < 1.8:
+        xi = 2.5e-4 * mass**-2.11
+    else:
+        xi = 0.
+
+    return xi / (m.log(10) * mass)
+    
+
+
 cdef class AbstractCC:
     """
     An abstract class for core-collapse supernova yield models
@@ -557,4 +592,6 @@ cdef class Quadratic_CC(AbstractCC):
 
     def copy(self):
         return Quadratic_CC(A=self.A, zeta=self.zeta, y0=self.y0)
+
+
 

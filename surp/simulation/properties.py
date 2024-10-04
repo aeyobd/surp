@@ -2,13 +2,14 @@ import numpy as np
 
 import vice
 from vice.toolkit import J21_sf_law
-#from vice.toolkit.rand_walk.rand_walk_stars import rand_walk_stars 
-from vice.toolkit.gaussian.gaussian_stars import gaussian_stars 
+from vice.toolkit.rand_walk.rand_walk_stars import rand_walk_stars 
+#from vice.toolkit.gaussian.gaussian_stars import gaussian_stars 
 from vice.toolkit.hydrodisk.hydrodiskstars import hydrodiskstars 
 
 from .star_formation_history import star_formation_history 
 from ..yields import set_yields
 from .._globals import Z_SUN
+from surp.yield_models import chabrier
 
 
 
@@ -16,13 +17,15 @@ def set_sf_law(model, params):
     for zone in model.zones:
        zone.Mg0 = 0.
 
-    for i in range(model.n_zones):
+    for i in range(model.n_zones-1):
         R1 = model.annuli[i]
         R2 = model.annuli[i+1]
         R = (R1 + R2)/2
 
         if R <= params.max_sf_radius:
             area = np.pi * (R2**2 - R1**2)
+            print("area ", area)
+            print("R1, R2 ", R1, R2)
             if params.sf_law == "conroy22":
                 model.zones[i].tau_star = conroy_sf_law(area)
             elif params.sf_law == "twoinfall":
@@ -31,7 +34,7 @@ def set_sf_law(model, params):
                     nu1=kwargs["nu1"], nu2=kwargs["nu2"], t1=kwargs["t1"]
                     )
             elif params.sf_law == "J21":
-                model.zones[i].tau_star = J21_sf_law(area, mode="sfr")
+                model.zones[i].tau_star = J21_sf_law(area, mode="sfr", present_day_molecular=params.tau_star0)
             else:
                 raise ValueError("SF law not known ", params.sf_law)
 
@@ -48,9 +51,9 @@ def conroy_tau_star(t):
 
 
 def conroy_sf_law(area=None):
-    def inner(t, m):
+    def inner(t):
         tau_st = conroy_tau_star(t)
-        return J21_sf_law(area, tau_st)(t, m)
+        return tau_st #J21_sf_law(area, tau_st)(t, m)
     return inner
 
 
@@ -84,8 +87,7 @@ def twoinfall_tau_star(t, t1, nu1, nu2):
         return 1/nu2
 
 
-def create_migration(params):
-    bins = params.radial_bins
+def create_migration(bins, params):
     kind = params.migration
     if params.save_migration:
         name="stars"
@@ -153,3 +155,16 @@ class mass_loading:
 
     def __repr__(self):
         return str(self)
+
+
+def get_imf(params):
+    if params.imf == "salpeter":
+        return params.imf
+    elif params.imf == "kroupa":
+        return params.imf
+    elif params.imf == "chabrier":
+        return chabrier
+    else:
+        raise ValueError("IMF not known", params.imf)
+
+
