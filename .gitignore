@@ -96,3 +96,5 @@ model.json
 stars.csv
 
 *walks.dat
+star_migration.dat
+migration_initial_final.dat

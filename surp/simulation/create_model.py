@@ -41,6 +41,7 @@ def create_model(params):
     model.Z_solar = Z_SUN
 
     model.migration.stars = properties.create_migration(model.annuli, params)
+    print(model.migration.stars)
     # no gas migration
     
     # SF law (Kennicutt-Schmidt), needs to be for each zone

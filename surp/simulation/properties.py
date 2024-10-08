@@ -3,7 +3,7 @@ import numpy as np
 import vice
 from vice.toolkit import J21_sf_law
 from vice.toolkit.rand_walk.rand_walk_stars import rand_walk_stars 
-#from vice.toolkit.gaussian.gaussian_stars import gaussian_stars 
+from vice.toolkit.analytic_migration.analytic_migration_2d import analytic_migration_2d
 from vice.toolkit.hydrodisk.hydrodiskstars import hydrodiskstars 
 
 from .star_formation_history import star_formation_history 
@@ -16,16 +16,17 @@ from surp.yield_models import chabrier
 def set_sf_law(model, params):
     for zone in model.zones:
        zone.Mg0 = 0.
+    
+    tot_area = 0  # sanity check for me
 
-    for i in range(model.n_zones-1):
+    for i in range(model.n_zones):
         R1 = model.annuli[i]
         R2 = model.annuli[i+1]
         R = (R1 + R2)/2
-
+        area = np.pi * (R2**2 - R1**2)
+        tot_area += area
         if R <= params.max_sf_radius:
-            area = np.pi * (R2**2 - R1**2)
-            print("area ", area)
-            print("R1, R2 ", R1, R2)
+
             if params.sf_law == "conroy22":
                 model.zones[i].tau_star = conroy_sf_law(area)
             elif params.sf_law == "twoinfall":
@@ -37,6 +38,10 @@ def set_sf_law(model, params):
                 model.zones[i].tau_star = J21_sf_law(area, mode="sfr", present_day_molecular=params.tau_star0)
             else:
                 raise ValueError("SF law not known ", params.sf_law)
+
+    tot_area_exp = np.pi * (model.annuli[-1]**2 - model.annuli[0]**2)
+    relerr = abs(tot_area - tot_area_exp) / tot_area_exp
+    assert relerr < 1e-3, f"Area {tot_area} does not match expected {tot_area_exp} within 1e-3"
 
 
 
@@ -90,17 +95,23 @@ def twoinfall_tau_star(t, t1, nu1, nu2):
 def create_migration(bins, params):
     kind = params.migration
     if params.save_migration:
-        name="stars"
+        filename="star_migration.dat"
     else:
-        name = None
-    kwargs = dict(n_stars=params.n_stars, dt=params.timestep, 
-        name=name, sigma_R=params.sigma_R
-        )
+        filename = None
 
     if kind == "rand_walk":
-        migration = rand_walk_stars(bins, **kwargs)
+        migration = rand_walk_stars(bins, n_stars=params.n_stars, dt=params.timestep, 
+            name=filename, sigma_R=params.sigma_R
+            )
     elif kind == "gaussian":
-        migration = gaussian_stars(bins, **kwargs)
+        migration = analytic_migration_2d(
+            bins, 
+            dt=params.timestep, 
+            n_stars=params.n_stars, 
+            filename=filename, 
+            verbose=params.verbose,
+            initial_final_filename="migration_initial_final.dat",
+        )
     elif kind == "hydrodisk":
         migration = hydrodiskstars(bins, N=params.N_star_tot)
     else:
