@@ -1,5 +1,9 @@
 ! from MESA rvn 3372 chem/public/chem_def.f, same as 3709
 ! Li, Be, B are all meteor abundances 
+element	A
+! double precision, parameter :: GN93_zsol   = 0.0179d0
+! double precision, parameter :: GN93_ysol  = 0.2485
+
 H	12.00
 He	10.99
 Li	3.31

@@ -2,8 +2,13 @@ import numpy as np
 
 import vice
 from vice.toolkit import J21_sf_law
-from vice.toolkit.rand_walk.rand_walk_stars import rand_walk_stars 
-from vice.toolkit.analytic_migration.analytic_migration_2d import analytic_migration_2d
+
+try:
+    from vice.toolkit.rand_walk.rand_walk_stars import rand_walk_stars 
+    from vice.toolkit.analytic_migration.analytic_migration_2d import analytic_migration_2d
+except ImportError:
+    print("modified vice not installed, fancy migration not available")
+
 from vice.toolkit.hydrodisk.hydrodiskstars import hydrodiskstars 
 
 from .star_formation_history import star_formation_history 

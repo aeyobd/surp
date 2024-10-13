@@ -1,0 +1,32 @@
+["bayliss+2014"]
+link = "https://ui.adsabs.harvard.edu/abs/2014ApJ...790..144B/abstract"
+
+notes = """
+referenced in berg+19
+Highly magnified galaxy. Subaru & HST imaging. Magellan/FIRE + GMOS + others for spectra...
+
+No species has ionization corrections. The study says that given 
+the log u value, the ionization corrections should be minimal.
+
+For 12+log(O/H), I use their reported mean value.
+The study uses a variety of methods (Te-direct, R23 method with many calibrations)
+.
+For C/O I use their 1909/1666 line ratio abundance.
+"""
+
+[["galaxies"]]
+galaxy = "SGAS J105039.6+001730"
+redshift = 3.6253
+redshift_err = 0.0008
+
+log_u = -2.22
+log_u_err = 0.15
+
+eps_o = 8.3
+eps_o_err = 0.1
+log_c_o = -0.79
+log_c_o_err = 0.06
+log_n_o = -1.2
+log_n_o_err = 0.3
+log_si_o = -2.0
+log_si_o_err = 0.4

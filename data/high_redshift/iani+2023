@@ -1,0 +1,13 @@
+["iani+2023"]
+link = "https://ui.adsabs.harvard.edu/abs/2023MNRAS.518.5018I/abstract"
+galaxy = "abell2895b"
+redshift = 3.72096
+redshift_err = 0.00012
+eps_o = 7.36
+eps_o_err = 0.02
+log_c_o = -0.99
+log_c_o_err = 0.23
+o_lines = "16660.809,1666.150,4960.295,5008.240,4364.436"
+c_lines = "1906.680,1908.734"
+Te = "2.2e4,0.2e4"
+notes = "oxygen determined by He2-O3C3 diagram (Byler et al. 2020)"

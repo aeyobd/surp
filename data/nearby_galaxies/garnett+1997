@@ -1,0 +1,9 @@
+
+["garnett+1997"]
+link = "https://ui.adsabs.harvard.edu/abs/1997ApJ...481..174G/abstract"
+galaxy = "I-Zwicky-18"
+log_c_o = [ -0.6, 0.07,]
+include = false
+notes = """
+reanalyzed in izotov&thuan1999
+"""

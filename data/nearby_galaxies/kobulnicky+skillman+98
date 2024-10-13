@@ -1,0 +1,7 @@
+["kobulnicky&skillman1998"]
+link = "https://ui.adsabs.harvard.edu/abs/1998ApJ...497..601K/abstract"
+galaxy = ["ngc-4861", "um-469", "tol-1345-420"]
+notes = """
+Reanalyzed in izotov&thuan1999. Within about 0.05 dex of their log C/O values.
+"""
+include = false

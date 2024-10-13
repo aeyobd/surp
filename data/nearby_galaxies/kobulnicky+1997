@@ -1,0 +1,12 @@
+["kobulnicky+1997"]
+galaxy = "NGC-5253"
+link = "https://ui.adsabs.harvard.edu/abs/1997ApJ...477..679K/abstract"
+log_c_o = -0.62
+log_c_o_err = 0.2
+eps_o = 8.15
+eps_o_err = 0.06
+include = false
+notes = """
+reanalyzed in izotov&thuan 1999 as well
+"""
+

@@ -1,0 +1,13 @@
+["steidel+2016"]
+link = "https://ui.adsabs.harvard.edu/abs/2016ApJ...826..159S/abstract"
+galaxy = "stack"
+redshift = 2.4
+redshift_err = 0.11
+eps_o = 8.38
+eps_o_err = 0.1
+log_c_o = -0.6
+log_c_o_err = 0.09
+log_n_o = "-1.24,0.04"
+log_si_o = "-1.81,0.08"
+SFR = "27, 1"
+note = "referenced in berg+19"

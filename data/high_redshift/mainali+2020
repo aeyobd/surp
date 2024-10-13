@@ -1,0 +1,11 @@
+["mainali+2020"]
+link = "https://ui.adsabs.harvard.edu/abs/2020MNRAS.494..719M/abstract"
+galaxy = "RXCJ0232−588"
+redshift = 1.6448
+eps_o = 7.6
+eps_o_err = 0.24
+eps_o_err_sys = 0.2
+log_c_o = -0.68
+log_c_o_err = 0.19
+c_lines = 1907.71
+

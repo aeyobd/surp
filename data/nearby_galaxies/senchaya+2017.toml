@@ -1,0 +1,12 @@
+link = "https://ui.adsabs.harvard.edu/abs/2017MNRAS.472.2608S/abstract"
+notes = """HST UV + optical ground based spectra of local star-forming dwarf galaxies
+with He II emission.
+The IDs are non-standard and are from Shirazi & Brinchmann 2012.
+Errors are approximate here since they report asymmetric error bars.
+"""
+
+galaxy  = ["SB2",   "SB36", "SB80","SB82", "SB110","SB111","SB179","SB182","SB191","SB198"  ]
+eps_O   = [ 7.81,    7.92,   8.24,  7.91,   8.17,   7.81,   8.35,   8.01,   8.30,   8.48    ]
+eps_O_err=[ 0.07,    0.04,   0.06,  0.04,   0.08,   0.08,   0.07,   0.04,   0.07,   0.11    ]
+log_C_O = [-1.36,   -0.81,  -0.74,  -0.52,  -0.68,  -1.02,  -1.01,  -0.75,  -0.74,  -0.80   ]
+log_C_O_err=[0.06,  0.20,   0.45,   0.04,   0.3,    0.15,   0.14,   0.09,   0.09,   0.20    ]

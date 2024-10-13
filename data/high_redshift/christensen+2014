@@ -1,0 +1,23 @@
+link = "https://ui.adsabs.harvard.edu/abs/2012MNRAS.427.1973C/abstract"
+notes = "Abundances derived from using that log U approx -2 means C+2 / O+2 is about equal to C/O. Oxygen is by direct method and ~0.2 dex fro Ne3 / O2 strong line method. Abel 16089 arc ID 31.1 SMACS J2031.8-4036 ID 1.1 referenced in berg+19"
+
+
+[["galaxies"]]
+galaxy = "A31.1"
+
+redshift = 1.8339
+redshift_err = 0.0003
+log_c_o = -1.03
+log_c_o_err = 0.08
+eps_o = 7.69
+eps_o_err = 0.13
+
+[["galaxies"]]
+galaxy = "M2031"
+
+redshift = 3.5061
+redshift_err = 0.0013
+log_c_o = -0.8
+log_c_o_err = 0.09
+eps_o = 7.76
+eps_o_err = 0.03

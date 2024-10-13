@@ -1,0 +1,21 @@
+AC2022
+
+notes = """
+JWST result
+
+from Arellano-Córdova et al. 2022 (https://ui.adsabs.harvard.edu/abs/2022ApJ...940L..23A). lines:
+
+C III] 1907
+C III] 1909
+"""
+
+
+[[galaxies]]
+galaxy = "s04590"
+redshift = 8.459
+eps_o = 7.12
+eps_o_err = 0.12
+log_c_o = -0.83
+log_c_o_err = 0.38
+log_ne_o = -0.52
+log_ne_o_err = 0.15

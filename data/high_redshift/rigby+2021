@@ -1,0 +1,8 @@
+["rigby+2021"]
+link = "https://ui.adsabs.harvard.edu/abs/2021ApJ...908..154R/abstract"
+galaxy = "J1723+3411"
+redshift = 1.3293
+redshift_err = 0.0002
+eps_o = 8.62
+eps_o_err = 0.03
+log_c_o = "none"

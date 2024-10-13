@@ -1,0 +1,128 @@
+["amorin+2017"]
+link = "https://ui.adsabs.harvard.edu/abs/2017NatAs...1E..52A/abstract"
+notes = """
+referenced in berg+19. Study on variety of redshift 2-3 galaxies
+VLT-VIMOS in COSMOS field.
+
+Chemical abundances are derived from Chi2 weighted means of 
+grids of photoionization models from CLOUDY, resulting in larger (but maybe
+more realistic) errors than the direct method.
+"""
+
+[[galaxies]]
+galaxy = "VUDS 510583858"
+redshift = 2.4141
+stellar_mass = 4.31e9
+stellar_mass_err = 2.9e9
+eps_o = 7.43
+eps_o_err = 0.31
+log_c_o = -0.95
+log_c_o_err = 0.10
+
+[[galaxies]]
+galaxy = "VUDS 510838687"
+redshift = 2.5539
+stellar_mass = 0.78e9
+stellar_mass_err = 0.35e9
+eps_o = 7.56
+eps_o_err = 0.36
+log_c_o = -0.57
+log_c_o_err = 0.06
+
+
+[[galaxies]]
+galaxy = "VUDS 511267982"
+redshift = 2.8256
+stellar_mass = 0.36e9
+#stellar_mass_err = [-0.13e9, 0.54e9]
+stellar_mass_err = 0.54e9
+eps_o = 7.59
+eps_o_err = 0.24
+log_c_o = -0.67
+log_c_o_err = 0.08
+
+[[galaxies]]
+galaxy = "VUDS5100534435"
+redshift = 2.9635
+stellar_mass = 0.52e9
+#stellar_mass_err = [-0.19e9, 0.18e9]
+stellar_mass_err = 0.18e9
+eps_o = 7.71
+eps_o_err = 0.20
+log_c_o = -1.00
+log_c_o_err = 0.09
+log_u = -2.03
+log_u_err = 0.13
+
+[[galaxies]]
+galaxy = "VUDS5100565880"
+redshift = 3.0505
+stellar_mass = 2.66e9
+stellar_mass_err = 0.96e9#, 0.64e9]
+eps_o = 7.59
+eps_o_err = 0.26
+log_c_o = -0.38
+log_c_o_err = 0.10
+log_u = -1.73
+log_u_err = 0.40
+
+[[galaxies]]
+galaxy = "VUDS5100750978"
+redshift = 2.9630
+stellar_mass = 0.29e9
+stellar_mass_err = 0.28e9 # [-0.08, 0.28]
+eps_o = 7.55
+eps_o_err = 0.21
+log_c_o = -0.78
+log_c_o_err = 0.04
+log_u = -2.25
+log_u_err = 0.11
+
+[[galaxies]]
+galaxy = "VUDS5100994378"
+redshift = 2.7970
+stellar_mass = 0.88e9
+stellar_mass_err = 0.72e9 # [-0.25e9, 0.72e9]
+eps_o = 7.51
+eps_o_err = 0.32
+log_c_o = -0.61
+log_c_o_err = 0.06
+log_u = -2.15
+log_u_err = 0.18
+
+[[galaxies]]
+galaxy = "VUDS5100998761"
+redshift = 2.4460
+stellar_mass = 0.08e9
+stellar_mass_err = 0.04e9 # [-0.02e9, 0.04e9]
+eps_o = 7.38
+eps_o_err = 0.19
+log_c_o = -0.64
+log_c_o_err = 0.06
+log_u = -2.01
+log_u_err = 0.11
+
+[[galaxies]]
+galaxy = "VUDS5101421970"
+redshift = 2.4650
+stellar_mass = 5.60e9
+stellar_mass_err = 1.52e9 # [-1.33e9, 1.52e9]
+eps_o = 7.58
+eps_o_err = 0.38
+log_c_o = -0.81
+log_c_o_err = 0.11
+log_u = -1.97
+log_u_err = 0.45
+
+
+[[galaxies]]
+galaxy = "VUDS5101444192"
+redshift = 3.4240
+stellar_mass = 0.58e9
+stellar_mass_err = 0.47e9 # [-0.04e9, 0.47e9]
+eps_o = 7.66
+eps_o_err = 0.25
+log_c_o = -0.67
+log_c_o_err = 0.08
+log_u = -2.04
+log_u_err = 0.16
