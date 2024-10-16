@@ -1,0 +1,30 @@
+# ["cooke+12"]
+link = "https://ui.adsabs.harvard.edu/abs/2012MNRAS.425..347C/abstract"
+
+notes = """
+No ionization corrections.
+Do not measure temperature.
+"""
+
+[["galaxies"]]
+galaxy = "J1358+6522"
+redshift = 3.067295
+
+log_HI = 20.47
+log_HI_err = 0.07
+log_CII = 14.65
+log_CII_err = 0.10
+log_NI = 12.62
+log_NI_err = 0.14
+log_OI = 14.94
+log_OI_err = 0.05
+log_AlII = 11.92
+log_AlII_err = 0.03
+log_SiII = 13.40
+log_SiII_err = 0.03
+log_SII = 13.11
+log_SII_err = 0.09
+log_FeII = 13.10
+log_FeII_err = 0.03
+
+

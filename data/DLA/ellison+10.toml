@@ -1,0 +1,29 @@
+
+# ["ellison+10"]
+link = "https://ui.adsabs.harvard.edu/abs/2010MNRAS.406.1435E/abstract"
+abundance_scale = "asplund05"
+notes = """
+Sample of 14 DLAs; but only one has C II. No ionization corrections.
+"""
+
+
+[["galaxies"]]
+galaxy = "J0140-0839"
+redshift = 3.696
+c_o = -0.29
+c_o_err = 0.08
+o_h = -2.72
+o_h_err = 0.15
+
+
+log_HI = 20.75
+log_HI_err = 0.15
+log_CII = 14.13
+log_CII_err = 0.08
+log_OI = 14.69
+log_OI_err = 0.01
+log_AlII = 11.82
+log_AlII_err = 0.04
+log_SiII = 13.51
+log_SiII_err = 0.09
+

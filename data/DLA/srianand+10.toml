@@ -1,0 +1,30 @@
+
+# ["srianand+10"]
+link = "https://ui.adsabs.harvard.edu/abs/2010MNRAS.405.1888S/abstract"
+sol_scale = "asplund09"
+
+
+notes = """
+contains two systems. The first one only observes CII* which is not trivial to go to CII, so we only use the second one.
+No ionization corrections.
+"""
+
+[["galaxies"]]
+redshift = 3.167
+
+galaxy = "J1337+3152"
+log_HI = 20.31
+log_HI_err = 0.15
+log_OI = 14.43
+log_OI_err = 0.09
+log_CII = 13.98
+log_CII_err = 0.06
+log_SiII = 13.24
+log_SiII_err = 0.05
+log_SiIII = 13.28
+log_SiIII_err = 0.06
+log_AlII = 12.00
+log_AlII_err = 0.05
+log_FeII = 13.14
+log_FeII_err = 0.26
+

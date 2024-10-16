@@ -1,0 +1,45 @@
+# ["stark+2014"]
+link = "https://ui.adsabs.harvard.edu/abs/2014MNRAS.445.3200S/abstract"
+notes = """
+referenced in berg+19. Deep spectroscopy of Z=1.5-3 lensed galaxies
+
+Parameters are derived from a bayesian analysis using a grid of CLOUDY models.
+"""
+
+
+
+[["galaxies"]]
+galaxy = "876_330"
+log_u = -2.16
+log_u_err = 0.3
+eps_o = 7.74
+eps_o_err = 0.5 # -0.56, +0.27
+log_c_o = -0.68
+log_c_o_err = 0.17
+
+[["galaxies"]]
+galaxy = "863_348"
+log_u = -1.84
+log_u_err = 0.2 # -0.21 + 0.15
+eps_o = 7.82
+eps_o_err = 0.5 # -0.53, 0.10
+log_c_o = -0.74
+log_c_o_err = 0.08
+
+[[ "galaxies" ]]
+galaxy = "860_359"
+log_u = -2.13
+log_u_err = 0.16
+eps_o = 7.79
+eps_o_err = 0.5 # -0.46, 0.19
+log_c_o = -0.58
+log_c_o_err = 0.08
+
+[[ "galaxies" ]]
+galaxy = "MARCS 0451-1.1"
+log_u = -1.97
+log_u_err = 0.3
+eps_o = 7.29
+eps_o_err = 0.5 # -0.22 + 0.58
+log_c_o = -0.71
+log_c_o_err = 0.13 # - 0.09

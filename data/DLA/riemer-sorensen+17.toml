@@ -1,0 +1,24 @@
+
+# ["riemer-sørensen+17"]
+link = "https://ui.adsabs.harvard.edu/abs/2017MNRAS.468.3239R/abstract"
+notes = """
+Have to sum all 4 components to measure OI.
+"""
+
+[["galaxies"]]
+galaxy = "PKS1937-101"
+redshift = 3.5724
+log_HI = 17.925
+log_HI_err = 0.006
+log_CII = 13.357
+log_CII_err = 0.029
+log_SiII = 13.345
+log_SiII_err = 0.006
+log_FeIII = 13.419
+log_FeIII_err = 0.029
+log_SiIV = 13.080
+log_SiIV_err = 0.005
+log_OI = 12.060
+log_OI_err = 0.127
+
+

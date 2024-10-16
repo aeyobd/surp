@@ -1,0 +1,44 @@
+
+# ["morrison+16"]
+link = "https://ui.adsabs.harvard.edu/abs/2016ApJ...830..158M/abstract"
+
+notes = """
+Applies two different ionization corrections which are about 0.1 dex difference for C/O and a 0.3 dex total ionization correction.
+Also calculate column densities with aparent optical depth method.
+To use ICs, add the IC to the [X/H] value from dominant species to correct.
+"""
+
+
+
+[["galaxies"]]
+
+galaxy = "Q1202+3235"
+redshift = 4.977
+
+log_HI = 19.83
+log_HI_err = 0.10
+log_CII = 14.48
+log_CII_err = 0.05
+log_CIV = 13.91
+log_CIV_err = 0.04
+log_OI = 14.54
+log_OI_err = 0.07
+log_SiII = 13.21
+log_SiII_err = 0.03
+log_SiIV = 13.40
+log_SiIV_err = 0.02
+log_FeII = 12.86
+log_FeII_err = 0.12
+
+
+C_IC1 = -0.37
+C_IC2 = -0.47
+
+O_IC1 = 0
+O_IC2 = -0.01
+Si_IC1 = -0.40
+Si_IC2 = -0.37
+Fe_IC1 = -0.04
+Fe_IC2 = -0.10
+
+

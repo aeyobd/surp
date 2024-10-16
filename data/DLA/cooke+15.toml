@@ -1,0 +1,39 @@
+# ["cooke+15"]
+link = "https://ui.adsabs.harvard.edu/abs/2015ApJ...800...12C/abstract"
+
+notes = """
+the values are reported as individual ions; no corrrections in paper.
+"""
+
+[["galaxies"]]
+
+galaxy      = "J0035-0918"
+redshift    = 2.340
+log_HI      = 20.43
+log_HI_err  =  0.04
+log_CII     = 14.50
+log_CII_err =  0.15
+log_NI      = 13.37
+log_NI_err  =  0.05
+log_OI      = 14.68
+log_OI_err  =  0.06
+log_FeII    = 12.96
+log_FeII_err=  0.05
+
+
+[["galaxies"]]
+
+galaxy      = "J1111+1332"
+redshift    = 2.270
+log_HI      = 20.39
+log_HI_err  =  0.04
+log_CII     = 14.72
+log_CII_err =  0.09
+log_NI      = 13.53
+log_NI_err  =  0.02
+log_OI      = 15.16
+log_OI_err  =  0.07
+log_FeII    = 13.59
+log_FeII_err=  0.01
+
+

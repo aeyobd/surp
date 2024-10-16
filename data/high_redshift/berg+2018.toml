@@ -1,6 +1,4 @@
-
-["berg+2018"]
-notes = "a strongly lensed galaxy in CANDELS, observed with Keck LIRS. C is determined by ICF with CII and OII. O does not have a robust measurement here. referenced in berg+19"
+notes = "a strongly lensed galaxy in CANDELS, observed with Keck LIRS. C is determined by ICF with CII and OII. O does not have a robust measurement here, only quotes a lower limit. referenced in berg+19"
 link = "https://ui.adsabs.harvard.edu/abs/2018ApJ...859..164B/abstract"
 galaxy = "SL2S J0217-0513"
 log_M_star = 8.26
@@ -8,7 +6,8 @@ log_M_star_err = 0.1
 log_SFR = "22.5, 1.6"
 redshift = 1.84435
 redshift_err = 0.00066
-eps_o = "7.5, NaN"
+eps_o = 7.5
+eps_o_err = NaN
 log_c_o = -0.81
 log_c_o_err = 0.09
 log_n_o = "-1.48, 0.46"

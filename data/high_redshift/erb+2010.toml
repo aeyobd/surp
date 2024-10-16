@@ -1,0 +1,19 @@
+link = "https://ui.adsabs.harvard.edu/abs/2010ApJ...719.1168E/abstract"
+notes = """
+referenced in berg+19.
+An individual study of a high redshift, young, low-mass, unreddened, low-metallicity galaxy.
+
+Uses long Keck integrations. Measure CIII] 1907/1909 and a CIV line. 
+Cloudy models to create ionization fractions, determining an ionization correction of 1.7 pm 0.2. Note the extreme (but uncertain) ionization parameter.
+I chose the electron temperature oxygen abundance measurement.
+"""
+
+[["galaxies"]]
+galaxy = "Q2343-BX418"
+redshift = 2.3048
+eps_o = 7.8
+eps_o_err = 0.1
+log_c_o = -0.62
+log_c_o_err = 0.1
+log_u = -1.0
+log_u_err = 0.15

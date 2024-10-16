@@ -1,0 +1,51 @@
+# ["dessauges-zavadsky+03"]
+link = "https://ui.adsabs.harvard.edu/abs/2003MNRAS.345..447D/abstract"
+
+notes = """
+Contains 2 other maybe useful systems: Q1101−264 and Q2059−360.
+No ionization corrections. In analysis, shows that the ionization corrections are at the level of the abundance errors (< 0.2 dex).
+Q2059-360 has metal lines in the lyman alpha forest so have large errors...
+Also includes Si, Al.
+"""
+
+
+[["galaxies"]]
+
+galaxy      = "Q1101-264"
+redshift    =  1.838
+log_HI      = 19.50
+log_HI_err  =  0.05
+log_OI      = 14.55
+log_OI_err  =  0.05
+log_CII     = 15.06
+log_CII_err =  0.07
+log_FeII    = 13.51
+log_FeII_err=  0.02
+
+
+[["galaxies"]]
+
+galaxy      = "Q2059-360"
+redshift    =  2.507
+log_HI      = 20.21
+log_HI_err  =  0.10
+log_OI      = 15.54
+log_OI_err  =  0.21
+log_CII     = 14.87
+log_CII_err =  0.19
+log_FeII    = 13.47
+log_FeII_err=  0.03
+
+
+[["galaxies"]]
+
+galaxy      = "J2155+1358"
+redshift    =  4.212
+log_HI      = 19.61
+log_HI_err  =  0.10
+log_OI      = 14.50
+log_OI_err  =  0.05
+log_CII     = 13.95
+log_CII_err =  0.06
+log_FeII    = 12.93
+log_FeII_err=  0.23

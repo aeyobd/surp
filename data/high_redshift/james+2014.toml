@@ -1,0 +1,20 @@
+
+
+["james+2014"]
+link = "https://ui.adsabs.harvard.edu/abs/2014MNRAS.440.1794J/abstract"
+reshift = 1.433
+notes = """
+referenced in berg+19. Gravitationally lensed galaxy.
+Includes Ne, S, N if needed. Direct (Te) determination of oxygen abundance.
+Note that CIII and OIII likely arise from very different environments so high-z C/O may include significant selection effects and other problems.
+
+1908 CIII lines
+OII: λλ3727, 3729
+OIII: λλ4960, 5008
+"""
+
+eps_o = 7.82
+eps_o_err = 0.21
+ICF_c = 1.2
+log_c_o = -1.06
+log_c_o_err = 0.3

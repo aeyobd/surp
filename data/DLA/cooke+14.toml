@@ -1,0 +1,39 @@
+
+# ["cooke+14"]
+link = "https://ui.adsabs.harvard.edu/abs/2014ApJ...781...31C/abstract"
+notes = """
+Detects three clouds. CLoud 1b is essentially metal free, but I just include cloud 1a here for a difference of 0.2 dex
+on the average metallicity.
+"""
+
+[["galaxies"]]
+galaxy = "J1358+6522"
+redshift = 3.067259
+log_NHI = 20.21
+log_NHI_err = 0.06
+log_CII = 14.32
+log_CII_err = 0.06
+log_NI = 12.86
+log_NI_err = 0.06
+log_OI = 14.85
+log_OI_err = 0.02
+log_AlII = 11.93
+log_AlII_err = 0.03
+log_SiII = 13.44
+log_SiII_err = 0.02
+log_SiIII = 11.87
+log_SiIII_err = 0.04
+log_SII = 13.00
+log_SII_err =  0.08
+log_FeII = 13.09
+log_FeII_err = 0.02
+
+
+
+solar_scale = "asplund09"
+
+notes = """
+C measurements not reported in this paper ? but in Cooke+17.
+Does include actual measurements for one system, but these are also followed up.
+"""
+

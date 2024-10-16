@@ -1,0 +1,8 @@
+["vanzella+2016"]
+notes = """
+VLT-XShooter and MUSE spectroscopy. A 16x magnified galaxy in Abell S1063. Needs ionization correction and only report upper bounds on equivalent widths for CIII, OIII, etc.
+The galaxy is remarked as a potential galaxy to follow up on with JWST.
+"""
+link = "https://ui.adsabs.harvard.edu/abs/2016ApJ...821L..27V/abstract"
+galaxy = "ID11"
+redshift = 3.1169

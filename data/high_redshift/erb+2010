@@ -1,9 +1,0 @@
-["erb+2010"]
-link = "https://ui.adsabs.harvard.edu/abs/2010ApJ...719.1168E/abstract"
-galaxy = "Q2343-BX418,"
-redshift = 2.3048
-eps_o = 7.8
-eps_o_err = 0.1
-log_c_o = -0.62
-log_c_o_err = 0.1
-notes = "referenced in berg+19"

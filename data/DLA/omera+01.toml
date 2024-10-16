@@ -1,0 +1,43 @@
+
+# o'meara et al. 2001
+link = "https://ui.adsabs.harvard.edu/abs/2001ApJ...552..718O/abstract"
+notes = """
+Appears to be only measurement paper on system in cooke+2014
+CIV and SiIV are noted as possible blends.
+Notes that the high ionization absorption lines are likely from a different system, 
+so using our [C/O] = [CII/OI] should work as well.
+"""
+
+[["galaxies"]]
+
+galaxy = "HS 0105+1619"
+redshift = 2.535998
+redshift_err = 0.000007
+
+log_HI = 19.422
+log_HI_err = 0.009
+log_NI = 12.306
+log_NI_err = 0.060
+log_OI = 14.349
+log_OI_err = 0.024
+
+log_CII = 14.349
+log_CII_err = 0.069
+log_SiII = 13.156
+log_SiII_err = 0.012
+log_AlII = 11.870
+log_AlII_err = 0.040
+log_FeII = 12.913
+log_FeII_err = 0.087
+
+log_CIII = 13.716
+log_CIII_err = 0.032
+log_CIV = 13.277
+log_CIV_err = 0.019
+log_NII = 13.501
+log_NII_err = 0.013
+log_SiIII = 13.097
+log_SiIII_err = 0.037
+log_SiIV = 12.647
+log_SiIV_err = 0.053
+

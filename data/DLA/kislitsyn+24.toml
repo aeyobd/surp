@@ -1,0 +1,19 @@
+
+# ["kislitsyn+24"]
+link = "https://ui.adsabs.harvard.edu/abs/2024MNRAS.528.4068K/abstract"
+
+[["galaxies"]]
+galaxy = "J1332+0052"
+redshift = 3.4210863
+log_CII = 14.003
+log_CII_err = 0.01
+log_SiII = 13.157
+log_SiII_err = 0.09
+log_AlII = 11.949
+log_AlII_err = 0.017
+log_FeII = 12.664
+log_FeII_err = 0.05
+log_OI = 14.29
+log_OI_err = 0.02
+log_HI = 19.304
+log_HI_err = 0.004

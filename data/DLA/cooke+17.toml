@@ -1,0 +1,28 @@
+#["cooke+17"]
+link = "https://ui.adsabs.harvard.edu/abs/2017MNRAS.467..802C/abstract"
+
+notes = """
+No ionization corrections applied.
+
+Keck HIRES data. only detect CII, OI, SiII.
+Contains table of C/O values for other systems.
+"""
+
+[["galaxies"]]
+galaxy = "J0903+2628"
+redshift = 3.07759
+log_HI = 20.32
+log_HI_err = 0.05
+log_CII = 13.32
+log_CII_err = 0.03
+log_OI = 13.96
+log_OI_err = 0.02
+log_SiII = 12.62
+log_SiII_err = 0.01
+
+c_o = -0.38
+c_o_err = 0.03
+o_h = -3.05
+o_h_err = 0.05
+
+

@@ -1,6 +1,12 @@
-["perez-montero&amorin2017"]
+# perez-montero&amorin2017
 link = "https://ui.adsabs.harvard.edu/abs/2017MNRAS.467.1287P/abstract"
+
 notes = """
 Reanalyzes a selection of lyman break galaxies, HII regions, and local 
 starbursts using a new method
+
+This is mostly a methadology paper and does not actually include new galaxy measurements.
+There are a couple follow ups to this paper...
 """
+
+

@@ -1,0 +1,20 @@
+method = "CEL stack "
+link = "https://ui.adsabs.harvard.edu/abs/2021MNRAS.505.1382M/abstract"
+notes = """
+X-SHOOTER lynman alpha survey for redshift z=2 (XLS-z2). 
+35 galaxies in total but 20 in the stacked spectrum.
+
+I use their Te eps_o measurement for consistency, however they do
+calculate R23, O32 Ne3O2 methods. Note the direct Te method
+is by far the lowest and the highest eps_o measurement is 8.39.
+Uses perez-montero+amorin's method to derive log c/o
+"""
+
+[["galaxies"]]
+galaxy = "XLS-z2 stack"
+redshift = 2
+eps_o = 7.83
+eps_o_err = 0.06
+eps_o_err_sys = 0.14
+log_c_o = -0.8
+log_c_o_err = 0.2

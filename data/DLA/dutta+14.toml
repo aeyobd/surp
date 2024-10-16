@@ -1,0 +1,31 @@
+
+# ["dutta+14"]
+link = "https://ui.adsabs.harvard.edu/abs/2014MNRAS.440..307D/abstract"
+notes = """
+does not apply ionization corrections.
+"""
+
+[["galaxies"]]
+galaxy      = "J0035-0918"
+redshift    = 2.34006
+log_HI    = 20.55
+log_HI_err= 0.10
+log_CII   = 14.45
+log_CII_err=0.19
+log_OI    = 14.55
+log_OI_err= 0.14
+log_FeII  = 13.07
+log_FeII_err=0.04
+
+[["galaxies"]]
+galaxy      = "J0953-0504"
+redshift    = 4.20287
+log_HI    =  20.55
+log_HI_err=  0.10
+log_CII   =  13.93
+log_CII_err=0.02
+log_OI    =  14.69
+log_OI_err= 0.02
+log_FeII  = 13.07
+log_FeII_err= 0.19
+

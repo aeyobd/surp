@@ -1,0 +1,36 @@
+link = "https://ui.adsabs.harvard.edu/abs/2023ApJ...951L..17J/abstract"
+
+notes = """
+Jones + 2023
+similar to AC2022, but for a different galaxy
+
+C IV 1548.19
+C IV 1550.77
+C III] 1906.68
+C III] 1908.73
+and two O lines (CEL UV)
+
+Uses the direct Te method.
+Result:
+
+log(C/O) = -1.01 pm 0.12 (stat) pm 0.15 (sys)
+12 + log(O/H) = 7.39 pm 0.23
+
+Adopts the CIV + CIII / OIII as the nominal C/O abundance
+so systematically limited because they cannot constrain the ICF,
+resulting in the reported systematic error.
+"""
+
+
+[["galaxies"]]
+
+galaxy = "GLASS 150008"
+redshift = 6.22895
+redshift_err = 0.00007
+
+eps_o = 7.39
+eps_o_err = 0.23
+
+log_c_o = -1.01
+log_c_o_err = 0.12
+log_c_o_sys = 0.15

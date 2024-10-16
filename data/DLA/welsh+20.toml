@@ -1,0 +1,33 @@
+
+# ["welsh+20"]
+link = "https://ui.adsabs.harvard.edu/abs/2020MNRAS.494.1411W/abstract"
+
+notes = """
+ESPRESSSO data from VLT. Bound on C12/C13 > 0.37 !!
+
+HI column density from cooke+15.
+Errors are 1 sugna confidence limits.
+"""
+
+[["galaxies"]]
+galaxy = "J0035-0918"
+redshift = 2.340064
+
+log_c= -0.12
+log_c_err= 0.15
+o_h= -2.45
+o_h_err= 0.06
+
+log_HI = 20.43
+log_HI_err = 0.04
+log_CII = 14.29
+log_CII_err = 0.13
+log_NI = 13.37
+log_NI_err = 0.04
+log_OI = 14.67
+log_OI_err = 0.05
+log_MgII = 12.89
+log_MgII_err = 0.13
+log_FeII = 13.01
+log_FeII_err = 0.03
+

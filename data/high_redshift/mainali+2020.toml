@@ -1,0 +1,20 @@
+link = "https://ui.adsabs.harvard.edu/abs/2020MNRAS.494..719M/abstract"
+
+notes = """
+Explores 4 low mass (<10^8 stellar mass) lensed galaxies.
+Only have C III] measurements for the one included below as this one was followed up with Magellan/FIRE.
+The C measurement is based on a blended 1907/1909 line and nothing else.
+O based on O III] 1666.
+"""
+
+[[ "galaxies" ]]
+galaxy = "RXCJ0232−588"
+redshift = 1.6448
+
+eps_o = 7.60
+eps_o_err = 0.24
+log_c_o = -0.68
+log_c_o_err = 0.19
+
+log_u = -2.25
+log_u_err = 0.14

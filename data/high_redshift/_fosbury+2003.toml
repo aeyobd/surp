@@ -1,0 +1,13 @@
+# ["fosbury+2003"]
+notes = """
+Highly magnified/lensed, high star forming /HII galaxy.
+Do not attept to derive abundances. 
+High ionization: log U ~ -1
+"""
+
+link = "https://ui.adsabs.harvard.edu/abs/2003ApJ...596..797F/abstract"
+
+[["galaxies"]]
+redshift = 3.357
+galaxy = "pass"
+notes = "referenced in berg+19"

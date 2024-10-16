@@ -1,0 +1,107 @@
+# ["pettini+08"]
+
+link = "https://ui.adsabs.harvard.edu/abs/2008MNRAS.385.2011P/abstract"
+
+solar_scale = "asplund05"
+notes = """
+KECK/HIRES or UVES data.
+
+Run ionization corrections models and find they are at most ~0.2 dex for C/O. (see their fig. 5)
+Some other misc measured values.
+"""
+
+[["galaxies"]]
+galaxy      = "Q0913+072"
+redshift    =  2.618
+log_HI      =  20.34
+log_HI_err  =   0.04
+log_CII     =  13.98
+log_CII_err =   0.05
+log_NI      =  12.29
+log_NI_err  =   0.12
+log_OI      =  14.63
+log_OI_err  =   0.01
+log_AlII    =  11.78
+log_AlII_err=   0.03
+log_SiII    =  13.30
+log_SiII_err=   0.01
+log_FeII    =  12.99
+log_FeII_err=   0.01
+
+log_c_o     = -0.65
+c_o         = -0.36
+log_c_o_err =  0.05
+o_h         = -2.37
+o_h_err     =  0.04
+
+[["galaxies"]]
+galaxy      = "J1016+4040"
+redshift    =  2.816
+log_HI      = 19.90
+log_HI_err  =  0.11
+log_CII     = 13.66
+log_CII_err =  0.04
+log_NI      =   nan
+log_NI_err  =   nan
+log_OI      = 14.13
+log_OI_err  =  0.03
+log_AlII    =   nan
+log_AlII_err=   nan
+log_SiII    = 12.90
+log_SiII_err=  0.05
+log_FeII    =   nan
+log_FeII_err=   nan
+
+log_c_o     = -0.47
+c_o         = -0.21
+log_c_o_err =  0.05
+o_h         = -2.43
+o_h_err     =  0.11
+
+[["galaxies"]]
+galaxy      = "J1558+4053"
+redshift    =  2.553
+log_HI      = 20.30
+log_HI_err  =  0.04
+log_CII     = 14.22
+log_CII_err =  0.06
+log_NI      = 12.66
+log_NI_err  =  0.07
+log_OI      = 14.54
+log_OI_err  =  0.04
+log_AlII    = 11.92
+log_AlII_err=  0.06
+log_SiII    = 13.32
+log_SiII_err=  0.02
+log_FeII    = 13.07
+log_FeII_err=  0.06
+
+log_c_o     = -0.32
+c_o         = -0.06
+log_c_o_err =  0.07
+o_h         = -2.42
+o_h_err     =  0.06
+
+[["galaxies"]]
+galaxy      = "Q2206-199"
+redshift    =  2.076
+log_HI      = 20.43
+log_HI_err  =  0.04
+log_CII     = 14.41
+log_CII_err =  0.03
+log_NI      = 12.79
+log_NI_err  =  0.05
+log_OI      = 15.05
+log_OI_err  =  0.03
+log_AlII    = 12.18
+log_AlII_err=  0.01
+log_SiII    = 13.65
+log_SiII_err=  0.01
+log_FeII    = 13.33
+log_FeII_err=  0.01
+
+log_c_o     = -0.64
+c_o         = -0.38
+log_c_o_err =  0.04
+o_h         = -2.04
+o_h_err     =  0.05

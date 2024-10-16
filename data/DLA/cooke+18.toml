@@ -1,0 +1,20 @@
+# ["cooke+18"]
+link = "https://ui.adsabs.harvard.edu/abs/2018ApJ...855..102C/abstract"
+
+[["galaxies"]]
+redshift = 2.52564
+galaxy = "Q1243+307"
+log_HI = 19.761
+log_HI_err = 0.026
+log_CII = 13.663
+log_CII_err = 0.024
+log_OI = 13.681
+log_OI_err = 0.011
+log_AlII = 0.033
+log_AlII_err = 0.033
+log_SiII = 12.900
+log_SiII_err = 0.011
+log_SII = 12.59
+log_SII_err = 0.12
+log_FeII = 12.507
+log_FeII_err = 0.085

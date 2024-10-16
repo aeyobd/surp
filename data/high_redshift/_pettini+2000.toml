@@ -1,0 +1,12 @@
+["pettini+2000"]
+link = "https://ui.adsabs.harvard.edu/abs/2000ApJ...528...96P/abstract"
+notes = """
+referenced in berg+19
+The data is too noisy for CIII] 1909 :(, so not sure how to derive abbundance. 
+Do have emmision line for CII* 1336 and C IV 1550 and CI 1277 absorption lines.
+"""
+
+
+[["galaxies"]]
+galaxy = "MS 1512-cB58"
+redshift = 2.7268
