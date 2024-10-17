@@ -24,7 +24,9 @@ class interpolator:
             no_negative=False, 
             no_negative_mass="lowest", 
             low_z_flat=False,
-            kx=3, ky=1, s=None):
+            kx=3, ky=1, s=None,
+            yields=None, masses=None, metallicities=None,
+                 ):
         """
         interpolator(element, study="cristallo11", prefactor=1, mass_factor=1,
         interp_kind="log", no_negative=False, no_negative_mass="lowest",
@@ -70,9 +72,16 @@ class interpolator:
             Degree of the spline in the y-direction
         s : float
             Smoothing factor for the spline interpolation
-        """
 
-        yields, masses, metallicities = yield_grid(element, study = study)
+        yields : list
+            The yields to interpolate. If None, the yields will be read from the study.
+        masses : list
+            The masses associated with the yields. If None, the masses will be read from the study.
+        metallicities : list
+            The metallicities associated with the yields. If None, the metallicities will be read from the study.
+        """
+        if yields is None:
+            yields, masses, metallicities = yield_grid(element, study = study)
         yields = list(yields)
         masses = list(masses)
         metallicities = list(metallicities)
@@ -185,3 +194,10 @@ class interpolator:
         new = self.copy()
         new.prefactor *= a
         return new
+
+    def __rmul__(self, a):
+        return self.__mul__(a)
+
+    def __imul__(self, a):
+        self.prefactor *= a
+        return self

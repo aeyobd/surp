@@ -17,8 +17,6 @@ because these represent different things.
 """
 
 
-
-
 def solar_z(ele):
     """Solar abundance scale. Overloaded from VICE.
     Adds convenience definitions solar_z("H") = X_SUN and solar_z("M") = Z_SUN

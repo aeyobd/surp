@@ -537,7 +537,7 @@ cdef class Quadratic_CC(AbstractCC):
 
     y = A [M/H]^2 + zeta [M/H] + y0
 
-    note that we set the yield at the vertex to be constant down to Z=0
+    Where there is a lower limit at Z1, below which the yield is constant at y1
 
 
     Parameters
@@ -545,53 +545,61 @@ cdef class Quadratic_CC(AbstractCC):
     y0: the yield at solar
     zeta_0: the slope of the yield at solar
     A: the quadratic coefficient
+    Z1: the metallicity at which to transition to constant yield
+        defaults to the vertex of the quadratic.
+
 
     Attributes
     ----------
     vertex : the metallicity at which the yield is at extremum
-    y_v : the yield at the vertex
+    y1 : the low-metallicity yield.
     """
 
     cdef public double y0
     cdef public double A
     cdef public double zeta
-    cdef double vertex
-    cdef double y_v
+    cdef double Z1
+    cdef double y1
 
 
-    def __cinit__(self, double A=1e-3, double zeta=2e-3, double y0=3e-3):
+    def __cinit__(self, double A=1e-3, double zeta=2e-3, double y0=3e-3, double Z1=m.NAN):
         self.A = A
         self.zeta = zeta
         self.y0 = y0
 
-        if abs(A) < 1e-10:
-            self.vertex = -m.INFINITY
-            self.y_v = m.NAN
+        if m.isnan(Z1):
+            if abs(A) < 1e-10:
+                Z1 = 0
+                MH1 = -m.INFINITY
+            else:
+                MH1 = -zeta/(2*A)
+                Z1 = Z_SUN * 10**MH1
         else:
-            self.vertex = -zeta/(2*A)
-            self.y_v = A*self.vertex**2 + zeta*self.vertex + y0
+            MH1 = Z_to_MH(Z1)
 
+        self.Z1 = Z1
+        self.y1 = A*MH1**2 + zeta*MH1 + y0
 
     def __imul__(self, scale):
         self.A *= scale
         self.zeta *= scale
         self.y0 *= scale
-        self.y_v *= scale
+        self.y1 *= scale
         return self
 
 
     cpdef ccall(self, Z):
         cdef double M_H = Z_to_MH(Z)
-        if M_H > self.vertex:
+        if Z > self.Z1:
             return self.A*M_H**2 + self.zeta*M_H + self.y0
         else:
-            return self.y_v
+            return self.y1
 
     def __str__(self):
-        return f"{self.A:0.2e} MH^2 + {self.zeta:0.2e} MH + {self.y0:0.2e}"
+        return f"{self.A:0.2e} MH^2 + {self.zeta:0.2e} MH + {self.y0:0.2e} (Z > {self.Z1:0.2e}), {self.y1:0.2e} (Z < {self.Z1:0.2e})"
 
     def copy(self):
-        return Quadratic_CC(A=self.A, zeta=self.zeta, y0=self.y0)
+        return Quadratic_CC(A=self.A, zeta=self.zeta, y0=self.y0, Z1=self.Z1)
 
 
 
