@@ -218,6 +218,7 @@ class MWParams(AbstractParams):
     r:float # TODO determine
     tau_star_sfh_grad: float # TODO Determine this
 
+    seed:int = 0
 
     # calculated live
     N_star_tot:int = -1 # calculated by model

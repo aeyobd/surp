@@ -116,6 +116,7 @@ def create_migration(bins, params):
             filename=filename, 
             verbose=params.verbose,
             initial_final_filename="migration_initial_final.dat",
+            seed=params.seed,
         )
     elif kind == "hydrodisk":
         migration = hydrodiskstars(bins, N=params.N_star_tot)

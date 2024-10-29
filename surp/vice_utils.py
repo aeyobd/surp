@@ -1,4 +1,3 @@
-import random
 import re
 import os
 import numpy as np
@@ -27,8 +26,6 @@ def load_vice(name, zone_width, hydrodisk=False):
     vice.multioutput file
     """
 
-    print("setting magg+22 abundances")
-    surp.yields.set_magg22_scale()
     milkyway = vice.output(name)
     if hydrodisk:
         milkyway.stars["abs_z"] = calculate_z(milkyway)
@@ -102,7 +99,7 @@ def reduce_stars(multioutput):
     return df
 
 
-def create_star_sample(stars, cdf = None, num=N_SUBGIANTS, zone_width=0.1):
+def create_star_sample(stars, cdf = None, num=N_SUBGIANTS, zone_width=0.1, seed=-1):
     """
     creates a sample of stars given a dataframe of vice stars.
 
@@ -121,10 +118,17 @@ def create_star_sample(stars, cdf = None, num=N_SUBGIANTS, zone_width=0.1):
     if cdf is None:
         cdf = load_cdf()
 
-    sample = pd.DataFrame()
 
+    if seed >= 0:
+        rng = np.random.default_rng(seed)
+        print("setting seed to ", seed)
+    else:
+        rng = np.random.default_rng()
+
+    sample = pd.DataFrame()
     for _ in range(num):
-        sample = pd.concat((sample, rand_star(stars, cdf, zone_width)), ignore_index=True)
+        sample = pd.concat((sample, rand_star(stars, cdf, zone_width, rng=rng)), ignore_index=True)
+
     sample["C_MG_true"] = sample.C_MG
     sample["MG_H_true"] = sample.MG_H
     sample["MG_FE_true"] = sample.MG_FE
@@ -132,9 +136,9 @@ def create_star_sample(stars, cdf = None, num=N_SUBGIANTS, zone_width=0.1):
     sample["C_N_true"] = sample.C_N
     MH = sample.FE_H
     N = len(sample)
-    sample.C_MG += np.random.normal(0, c_mg_err(MH), N)
-    sample.MG_H += np.random.normal(0, mg_h_err(MH), N)
-    sample.MG_FE += np.random.normal(0, mg_fe_err(MH), N)
+    sample.C_MG += rng.normal(0, c_mg_err(MH), N)
+    sample.MG_H += rng.normal(0, mg_h_err(MH), N)
+    sample.MG_FE += rng.normal(0, mg_fe_err(MH), N)
 
     return sample
 
@@ -247,23 +251,23 @@ def load_cdf():
     return pd.read_csv(os.path.join(DATA_DIR, "R_subgiants_cdf.csv"))
 
 
-def rand_radii(cdf):
-    p = np.random.rand()
+def rand_radii(cdf, rng=np.random.default_rng()):
+    p = rng.uniform(0, 1)
     return cdf.R.loc[cdf.cdf > p].iloc[0]
 
 
-def rand_star(stars, cdf, width):
-    zone = R_to_zone(rand_radii(cdf), width)
-    return rand_star_in_zone(stars, zone)
+def rand_star(stars, cdf, width, rng=np.random.default_rng()):
+    zone = R_to_zone(rand_radii(cdf, rng=rng), width)
+    return rand_star_in_zone(stars, zone, rng=rng)
 
 
-def rand_star_in_zone(stars, zone):
+def rand_star_in_zone(stars, zone, rng=np.random.default_rng()):
     df = stars.loc[stars.zone_final == zone]
 
     size = len(df)
-    index = random.choices(np.arange(size), weights=df["mass"], k=1)
+    index = rng.choice(np.arange(size), p=df["mass"] / np.sum(df["mass"]))
 
-    return df.iloc[index]
+    return df.iloc[index:index+1]
 
 
 def polynomial(x, coeffs):

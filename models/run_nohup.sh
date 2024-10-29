@@ -27,7 +27,7 @@ fi
 echo removing files in model
 #rm -rf $MODEL_NAME/milkyway.vice
 rm -f $MODEL_NAME/model.json $MODEL_NAME/err.out $MODEL_NAME/log.out
-rm -f $MODEL_NAME/stars.csv $MODEL_NAME/*.pdf
+rm -f $MODEL_NAME/stars.csv $MODEL_NAME/*.pdf $MODEL_NAME/stars_all.csv
 
 
 echo submitting job $MODEL_NAME

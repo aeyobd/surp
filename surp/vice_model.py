@@ -17,15 +17,30 @@ class ViceModel():
     mdf: ``pd.DataFrame``
         A dataframe of metallicity distribution functions by radius
     stars: ``pd.DataFrame``
-    apogee_stars
     unfiltered_stars
     """
 
-    def __init__(self, stars_unsampled, history, mdf, zone_width, stars=None):
+    def __init__(self, stars_unsampled, history, mdf, zone_width, stars=None, seed=-1):
+        """
+        Parameters
+        ----------
+        stars_unsampled: ``pd.DataFrame``
+            A dataframe of stars
+        history: ``pd.DataFrame``
+            A dataframe of history
+        mdf: ``pd.DataFrame``
+            A dataframe of metallicity distribution functions by radius
+        zone_width: ``float``
+            The width of the zone
+        stars: ``pd.DataFrame``
+            A dataframe of stars (weighted samples...)
+        seed: ``int``
+            The seed for the random number generator if need to sample stars.
+        """
         self.stars_unsampled = pd.DataFrame(stars_unsampled)
 
         if stars is None:
-            stars = vice_utils.create_star_sample(self.stars_unsampled, zone_width=zone_width)
+            stars = vice_utils.create_star_sample(self.stars_unsampled, zone_width=zone_width, seed=seed)
 
         self.stars = pd.DataFrame(stars)
 
@@ -47,7 +62,7 @@ class ViceModel():
         return cls(d["stars_unsampled"], d["history"], d["mdf"], zone_width=None, stars=d["stars"])
 
     @classmethod
-    def from_vice(cls, filename, zone_width):
+    def from_vice(cls, filename, zone_width, **kwargs):
         name = os.path.splitext(filename)[0]
         json_name = f"{name}.json"
 
@@ -55,7 +70,7 @@ class ViceModel():
         history, mdf = vice_utils.reduce_history(output, zone_width=zone_width)
         stars_unsampled = vice_utils.reduce_stars(output)
 
-        return cls(stars_unsampled, history, mdf, zone_width)
+        return cls(stars_unsampled, history, mdf, zone_width, **kwargs)
 
 
     def save(self, filename, overwrite=False):
