@@ -12,6 +12,7 @@ results
 model.json
 *.mp4
 stars.csv
+stars_all.csv
 subgiants.csv
 apogee_*.csv
 galah_dwarfs.csv
