@@ -1,0 +1,11 @@
+[alpha]
+name = "fruity"
+
+[y0_cc]
+name = "const_cc"
+
+[zeta_cc]
+name = "piecelin_m2"
+
+[A_cc]
+name = "quadratic"
