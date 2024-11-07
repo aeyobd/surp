@@ -25,6 +25,7 @@ def main():
     names = []
     labels = []
     C_H_s = []
+    y_shifts = []
 
     for key, value in params.items():
         names.append(value["name"])
@@ -34,8 +35,13 @@ def main():
         else:
             C_H_s.append("AG_H")
 
+        if "y_shift" in value:
+            y_shifts.append(value["y_shift"])
+        else:
+            y_shifts.append(0)
 
-    model = make_multicomponent_model(names, labels, C_H_s)
+
+    model = make_multicomponent_model(names, labels, C_H_s, y_shifts)
     save_model(modeldir, model)
 
 
@@ -48,7 +54,7 @@ def load_subgiants():
 
     return df
 
-def make_multicomponent_model(names, labels, C_H_s):
+def make_multicomponent_model(names, labels, C_H_s, y_shifts):
     """
     Makes a multi-component model from the given names
     """
@@ -59,22 +65,31 @@ def make_multicomponent_model(names, labels, C_H_s):
     mg_h = {label: bin_mg_h(model)for label, model in zip(labels, models)}
     bin2d = {label: bin_2d(model) for label, model in zip(labels, models)}
 
+    for label, y_shift in zip(labels, y_shifts):
+        mg_fe[label]["med"] += y_shift
+        mg_h[label]["med"] += y_shift
+        bin2d[label]["med"] += y_shift
 
     df = load_subgiants()
     mg_fe_obs = bin_mg_fe(df, x="MG_FE", m_h="MG_H")
     mg_h_obs = bin_mg_h(df, x="MG_H")
+    bin2d_obs = bin_2d(df, x="MG_H", y="MG_FE")
 
     mg_fe = combine_dfs(mg_fe)
     mg_h = combine_dfs(mg_h)
+    bin2d = combine_dfs(bin2d, special_columns=["x", "y", "counts"])
 
     mg_fe["obs"] = mg_fe_obs.med
     mg_fe["obs_err"] = mg_fe_obs.err
     mg_h["obs"] = mg_h_obs.med
     mg_h["obs_err"] = mg_h_obs.err
+    bin2d["obs"] = bin2d_obs.med
+    bin2d["obs_err"] = bin2d_obs.err
 
     return {
         "mg_fe": mg_fe,
         "mg_h": mg_h,
+        "2d": bin2d,
         }
 
 def combine_dfs(dataframes, special_columns=["x", "counts"]):

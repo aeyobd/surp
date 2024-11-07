@@ -1,11 +1,25 @@
 [alpha]
 name = "analytic"
+prior = "Normal"
+prior_args = [1.0, 1.0]
+
 
 [y0_cc]
 name = "const_cc"
+prior = "Normal"
+prior_args = [2.0, 1.0]
+
+
 
 [zeta_cc]
 name = "piecelin_m2"
+y_shift = -0.002
+prior = "Normal"
+prior_args = [0.0, 2.0]
+
+
 
 [A_cc]
 name = "quadratic"
+prior = "Normal"
+prior_args = [0.0, 4.0]

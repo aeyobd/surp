@@ -1,55 +1,93 @@
 using CSV, DataFrames
-import CategoricalArrays: cut
-using StatsBase
-using OrderedCollections
 using Turing
-
-import NaNMath as nm
 using LinearAlgebra: diagm
+import TOML
 
 
-@model function n_component_model(x, y, y_e, x2, y2, y_e2, models, models2; m_h_0=mg_h_0)
-    y0_cc ~ Normal(2, 1)
-    α ~ Normal(2, 1)
-    ζ ~ Normal(0, 1)
-
-    Zc = y0_cc * models[:y0_cc] .+ α * models[:alpha] .+ ζ * models[:zeta_cc]
-
-    mu = Zc_to_C_H.(Zc) .- x
-    y1_pred = mu
-
-    Zc2 = y0_cc * models2[:y0_cc] .+ α * models2[:alpha] .+ ζ * models2[:zeta_cc]
-    mu2 = Zc_to_C_H.(Zc2) .- mg_h_0
-
-    
-    y ~ MvNormal(mu, diagm(y_e .^ 2))
-    y2 ~ MvNormal(mu2,  diagm(y_e2 .^ 2))
-end
-
-
-
-function load_model(modelname)
-    filename = "../$modelname/binned_ah.csv"
-    df_ah = CSV.read(filename, DataFrame)
-
-    filename = "../$modelname/binned_afe.csv"
-    df_afe = CSV.read(filename, DataFrame)
-
-    observed_ah = df_ah[:, "observed"]
-    observed_afe = df_afe[:, "observed"]
-
-    models_ah = Dict{String, Vector{Float64}}()
-    models_afe = Dict{String, Vector{Float64}}()
-
-    for col in names(df_ah)
-        if col != "observed"
-            models_ah[col] = df_ah[:, col]
-            models_afe[col] = df_afe[:, col]
-        end
+function main()
+    if length(ARGS) < 1
+        println("Usage: julia run_binned_mc.jl <modelname>")
+        return
     end
 
-    return observed_ah, observed_afe, models_ah, models_afe
+    modelname = ARGS[1]
+
+    @info "loading models"
+    ah, afe = load_binned_models(modelname)
+
+    @info "parsing parameters"
+    params = TOML.parsefile(joinpath(modelname, "params.toml"))
+
+    
+    labels = String[]
+    priors = Distribution{Univariate, Continuous}[]
+
+    for (key, val) in params
+        push!(labels, key)
+        prior = make_distribution(val["prior"], val["prior_args"])
+
+        push!(priors, prior)
+    end
+
+    println(priors)
+
+    @info "creating model"
+    model = n_component_model(ah, afe, labels, priors)
+
+    @info "running MCMC"
+    chain = sample(model, NUTS(0.65), 10_000)
+    samples = DataFrame(chain)
+
+    rename!(samples, ["params[$i]" => labels[i] for i in eachindex(labels)]...)
+
+    outfile = joinpath(modelname, "mcmc_samples.csv")
+    @info "writing output"
+    CSV.write(outfile, samples)
+
+    @info "done"
+end
+
+function make_distribution(kind, args)
+    dist = getproperty(Distributions, Symbol(kind))
+
+    return dist(args...)
+end
+
+
+"""
+Loads the binned models from a given model directory
+from the files `mg_fe_binned.csv` and `mg_h_binned.csv`
+"""
+function load_binned_models(modelname)
+    dir = "$modelname"
+
+    afe = CSV.read(dir * "/mg_fe_binned.csv", DataFrame)
+    ah = CSV.read(dir * "/mg_h_binned.csv", DataFrame)
+
+    return ah, afe
 end
 
 
 
+# Helper function to compute model contribution
+function compute_model_contribution(params, model)
+    return sum(p * model[key] for (p, key) in zip(params, keys(model)))
+end
+
+
+@model function n_component_model(models_ah, models_afe, labels, priors)
+    # Create parameters based on the specified priors
+    params ~ arraydist(priors)
+    
+    # Compute model contributions for each dataset
+    mu_ah = sum(p * models_ah[:, key] for (p, key) in zip(params, labels))
+    mu_afe = sum(p * models_afe[:, key] for (p, key) in zip(params, labels))
+    
+    # Data likelihoods
+    models_ah.obs ~ MvNormal(mu_ah, diagm(models_ah.obs_err .^ 2))
+    models_afe.obs ~ MvNormal(mu_afe, diagm(models_afe.obs_err .^ 2))
+end
+
+if abspath(PROGRAM_FILE) == @__FILE__
+    main()
+end
