@@ -2,15 +2,36 @@ using CSV, DataFrames
 using Turing
 using LinearAlgebra: diagm
 import TOML
+using ArgParse
+
+
+function get_args()
+    s = ArgParseSettings(
+        description = """runs a MCMC model from a binned multi-component multizone model
+        created with bin_models.py""",
+        version = "0.1.0",
+    )
+
+    @add_arg_table s begin
+        "modelname"
+            help="Input model name (a folder in this directory)"
+            required = true
+        "-n", "--num-steps"
+            help = "The number of steps to take in the MCMC"
+            arg_type = Float64
+            default = 10_000
+    end
+
+    args = parse_args(s)
+
+    args["num-steps"] = convert(Int, args["num-steps"])
+    return args
+end
 
 
 function main()
-    if length(ARGS) < 1
-        println("Usage: julia run_binned_mc.jl <modelname>")
-        return
-    end
-
-    modelname = ARGS[1]
+    args = get_args()
+    modelname = args["modelname"]
 
     @info "loading models"
     ah, afe = load_binned_models(modelname)
@@ -35,7 +56,7 @@ function main()
     model = n_component_model(ah, afe, labels, priors)
 
     @info "running MCMC"
-    chain = sample(model, NUTS(0.65), 10_000)
+    chain = sample(model, NUTS(0.65), args["num-steps"])
     samples = DataFrame(chain)
 
     rename!(samples, ["params[$i]" => labels[i] for i in eachindex(labels)]...)

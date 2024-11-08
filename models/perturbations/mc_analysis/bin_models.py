@@ -40,8 +40,20 @@ def main():
         else:
             y_shifts.append(0)
 
+    model = make_multicomponent_model(names, labels, C_H_s)
 
-    model = make_multicomponent_model(names, labels, C_H_s, y_shifts)
+    models_const = {key: val.y0_cc for key, val in model.items()}
+
+    print(y_shifts)
+    for shift, label in zip(y_shifts, labels):
+        if shift != 0:
+            print(shift)
+            print(label)
+            for group in models_const.keys():
+                dy = models_const[group] * shift 
+                print(model[group].keys())
+                model[group][label] += dy
+
     save_model(modeldir, model)
 
 
@@ -54,7 +66,7 @@ def load_subgiants():
 
     return df
 
-def make_multicomponent_model(names, labels, C_H_s, y_shifts):
+def make_multicomponent_model(names, labels, C_H_s):
     """
     Makes a multi-component model from the given names
     """
@@ -64,11 +76,6 @@ def make_multicomponent_model(names, labels, C_H_s, y_shifts):
     mg_fe = {label: bin_mg_fe(model)for label, model in zip(labels, models)}
     mg_h = {label: bin_mg_h(model)for label, model in zip(labels, models)}
     bin2d = {label: bin_2d(model) for label, model in zip(labels, models)}
-
-    for label, y_shift in zip(labels, y_shifts):
-        mg_fe[label]["med"] += y_shift
-        mg_h[label]["med"] += y_shift
-        bin2d[label]["med"] += y_shift
 
     df = load_subgiants()
     mg_fe_obs = bin_mg_fe(df, x="MG_FE", m_h="MG_H")
