@@ -13,7 +13,7 @@ No ionization corrections.
 redshift = 3.167
 
 galaxy = "J1337+3152"
-log_HI = 20.31
+log_HI = 20.41
 log_HI_err = 0.15
 log_OI = 14.43
 log_OI_err = 0.09

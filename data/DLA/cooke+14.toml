@@ -9,8 +9,9 @@ on the average metallicity.
 [["galaxies"]]
 galaxy = "J1358+6522"
 redshift = 3.067259
-log_NHI = 20.21
-log_NHI_err = 0.06
+# log H of both components added together  ptherwise 20.21
+log_HI = 20.48
+log_HI_err = 0.06
 log_CII = 14.32
 log_CII_err = 0.06
 log_NI = 12.86
