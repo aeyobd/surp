@@ -93,6 +93,22 @@ def make_multicomponent_model(names, labels, C_H_s):
     bin2d["obs"] = bin2d_obs.med
     bin2d["obs_err"] = bin2d_obs.err
 
+    N = len(mg_h)
+    mg_h = mg_h.dropna()
+    dN = N - len(mg_h)
+    print(f"Removed {dN} bins from mg_h")
+
+    N = len(mg_fe)
+    mg_fe = mg_fe.dropna()
+    dN = N - len(mg_fe)
+    print(f"Removed {dN} bins from mg_fe")
+
+    N = len(bin2d)
+    bin2d = bin2d.dropna()
+    dN = N - len(bin2d)
+    print(f"Removed {dN} bins from 2d")
+
+
     return {
         "mg_fe": mg_fe,
         "mg_h": mg_h,

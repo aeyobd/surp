@@ -1,0 +1,31 @@
+[alpha]
+name = "eta_2"
+C_H = "AG_H"
+prior = "Normal"
+prior_args = [1.0, 1.0]
+
+
+[y0_cc]
+name = "eta_2"
+C_H = "CD_H"
+
+prior = "Normal"
+prior_args = [2.0, 1.0]
+
+
+
+
+[zeta_cc]
+name = "eta_2"
+C_H = "IN_H"
+y_shift = -2
+prior = "Normal"
+prior_args = [0.0, 2.0]
+
+
+
+[A_cc]
+name = "eta_2"
+prior = "Normal"
+prior_args = [0.0, 4.0]
+C_H = "SN_H"

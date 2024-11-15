@@ -85,15 +85,11 @@ function load_binned_models(modelname)
     afe = CSV.read(dir * "/mg_fe_binned.csv", DataFrame)
     ah = CSV.read(dir * "/mg_h_binned.csv", DataFrame)
 
+    disallowmissing!(ah)
+    disallowmissing!(afe)
     return ah, afe
 end
 
-
-
-# Helper function to compute model contribution
-function compute_model_contribution(params, model)
-    return sum(p * model[key] for (p, key) in zip(params, keys(model)))
-end
 
 
 @model function n_component_model(models_ah, models_afe, labels, priors)
