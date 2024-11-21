@@ -24,34 +24,30 @@ def main():
 
     names = []
     labels = []
-    C_H_s = []
+    C_MG_s = []
     y_shifts = []
 
     for key, value in params.items():
         names.append(value["name"])
         labels.append(key)
-        if "C_H" in value:
-            C_H_s.append(value["C_H"])
+        if "C_MG" in value:
+            C_MG_s.append(value["C_MG"])
         else:
-            C_H_s.append("AG_H")
+            C_MG_s.append("AG_MG")
 
         if "y_shift" in value:
             y_shifts.append(value["y_shift"])
         else:
             y_shifts.append(0)
 
-    model = make_multicomponent_model(names, labels, C_H_s)
+    model = make_multicomponent_model(names, labels, C_MG_s)
 
     models_const = {key: val.y0_cc for key, val in model.items()}
 
-    print(y_shifts)
     for shift, label in zip(y_shifts, labels):
         if shift != 0:
-            print(shift)
-            print(label)
             for group in models_const.keys():
                 dy = models_const[group] * shift 
-                print(model[group].keys())
                 model[group][label] += dy
 
     save_model(modeldir, model)
@@ -59,19 +55,17 @@ def main():
 
 def load_subgiants():
     df = subgiants.copy()
-    df["C_H"] = df["C_FE"] + df["FE_H"]
-    df["C_H_ERR"] = df["C_FE_ERR"] + df["FE_H_ERR"]
-    df["z_c"] = gcem.brak_to_abund(df["C_H"], "c")
-    df["z_c_err"] = np.log(10) * df["C_H_ERR"] * df["z_c"]
+    df["z_c"] = gcem.brak_to_abund_ratio(df["C_MG"], "c", "mg")
+    df["z_c_err"] = np.log(10) * df["C_MG_ERR"] * df["z_c"]
 
     return df
 
-def make_multicomponent_model(names, labels, C_H_s):
+def make_multicomponent_model(names, labels, C_MG_s):
     """
     Makes a multi-component model from the given names
     """
 
-    models = [find_model(name, C_H) for name, C_H in zip(names, C_H_s)]
+    models = [find_model(name, C_MG) for name, C_MG in zip(names, C_MG_s)]
 
     mg_fe = {label: bin_mg_fe(model)for label, model in zip(labels, models)}
     mg_h = {label: bin_mg_h(model)for label, model in zip(labels, models)}
@@ -88,10 +82,13 @@ def make_multicomponent_model(names, labels, C_H_s):
 
     mg_fe["obs"] = mg_fe_obs.med
     mg_fe["obs_err"] = mg_fe_obs.err
+    mg_fe["obs_counts"] = mg_fe_obs.counts
     mg_h["obs"] = mg_h_obs.med
     mg_h["obs_err"] = mg_h_obs.err
+    mg_h["obs_counts"] = mg_h_obs.counts
     bin2d["obs"] = bin2d_obs.med
     bin2d["obs_err"] = bin2d_obs.err
+    bin2d["obs_counts"] = bin2d_obs.counts
 
     N = len(mg_h)
     mg_h = mg_h.dropna()
@@ -120,6 +117,7 @@ def combine_dfs(dataframes, special_columns=["x", "counts"]):
 
     for key, val in dataframes.items():
         df[key] = val.med
+        df[f"{key}_err"] = val.err
 
         for col in special_columns:
             if col in df.keys():
@@ -152,7 +150,7 @@ def bin_model(name):
 
 
 
-def find_model(name, C_H = "AG_H"):
+def find_model(name, C_MG = "AG_MG"):
     """
     Finds the pickled model with either the given name or the parameters 
     and returns the csv summary
@@ -160,7 +158,7 @@ def find_model(name, C_H = "AG_H"):
     
     file_name = "../" + name + "/stars.csv"
     model =  pd.read_csv(file_name, index_col=0)
-    model["z_c"] = gcem.brak_to_abund(model[C_H], "c")
+    model["z_c"] = gcem.brak_to_abund_ratio(model[C_MG], "c", "mg")
     return model
 
 
@@ -176,7 +174,7 @@ def bin_2d(df, x="MG_H_true", y="MG_FE_true", val="z_c"):
 
     results = grouped.agg(
         med=pd.NamedAgg(aggfunc="mean", column=val),
-        err=pd.NamedAgg(aggfunc=sde, column=val),        
+        err=pd.NamedAgg(aggfunc="std", column=val),        
         xmed=pd.NamedAgg(aggfunc="mean", column=x),
         ymed=pd.NamedAgg(aggfunc="mean", column=y),
         counts=pd.NamedAgg(aggfunc="count", column=val),
@@ -199,8 +197,6 @@ def bin_2d(df, x="MG_H_true", y="MG_FE_true", val="z_c"):
     return df
 
 
-def sde(x):
-    return np.std(x) / np.sqrt(len(x))
 
 def bin_mg_fe(df, x="MG_FE_true", val="z_c", n_min =3, m_h="MG_H_true", m_h_0 = -0.1, d_m_h=0.05):
     mg_bins = np.arange(0, 0.31, 0.05)
@@ -214,7 +210,7 @@ def bin_mg_fe(df, x="MG_FE_true", val="z_c", n_min =3, m_h="MG_H_true", m_h_0 = 
     results = grouped.agg(
         med=pd.NamedAgg(aggfunc="mean", column=val),
         xmed=pd.NamedAgg(aggfunc="mean", column=x),
-        err=pd.NamedAgg(aggfunc=sde, column=val),
+        err=pd.NamedAgg(aggfunc="std", column=val),
         counts=pd.NamedAgg(aggfunc="count", column=val),
     ).reset_index()
 
@@ -243,7 +239,7 @@ def bin_mg_h(df, x="MG_H_true", val="z_c", n_min =3):
     results = grouped.agg(
         med=pd.NamedAgg(aggfunc="mean", column=val),
         xmed=pd.NamedAgg(aggfunc="mean", column=x),
-        err=pd.NamedAgg(aggfunc=sde, column=val),
+        err=pd.NamedAgg(aggfunc="std", column=val),
         counts=pd.NamedAgg(aggfunc="count", column=val),
     ).reset_index()
 

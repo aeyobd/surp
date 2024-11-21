@@ -1,13 +1,13 @@
 [alpha]
 name = "fiducial"
-C_H = "AG_H"
+C_MG = "AG_MG"
 prior = "Normal"
 prior_args = [1.0, 1.0]
 
 
 [y0_cc]
 name = "fiducial"
-C_H = "CD_H"
+C_MG = "CD_MG"
 
 prior = "Normal"
 prior_args = [2.0, 1.0]
@@ -17,7 +17,7 @@ prior_args = [2.0, 1.0]
 
 [zeta_cc]
 name = "fiducial"
-C_H = "IN_H"
+C_MG = "IN_MG"
 y_shift = -2
 prior = "Normal"
 prior_args = [0.0, 2.0]
@@ -28,4 +28,4 @@ prior_args = [0.0, 2.0]
 name = "fiducial"
 prior = "Normal"
 prior_args = [0.0, 4.0]
-C_H = "SN_H"
+C_MG = "SN_MG"

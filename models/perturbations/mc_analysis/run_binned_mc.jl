@@ -33,24 +33,11 @@ function main()
     args = get_args()
     modelname = args["modelname"]
 
-    @info "loading models"
+    @info "loading parameters and models"
     ah, afe = load_binned_models(modelname)
 
-    @info "parsing parameters"
     params = TOML.parsefile(joinpath(modelname, "params.toml"))
-
-    
-    labels = String[]
-    priors = Distribution{Univariate, Continuous}[]
-
-    for (key, val) in params
-        push!(labels, key)
-        prior = make_distribution(val["prior"], val["prior_args"])
-
-        push!(priors, prior)
-    end
-
-    println(priors)
+    labels, priors = make_labels_priors(params)
 
     @info "creating model"
     model = n_component_model(ah, afe, labels, priors)
@@ -59,20 +46,33 @@ function main()
     chain = sample(model, NUTS(0.65), args["num-steps"])
     samples = DataFrame(chain)
 
+    @info "writing output"
+    # give columns nicer names 
     rename!(samples, ["params[$i]" => labels[i] for i in eachindex(labels)]...)
 
     outfile = joinpath(modelname, "mcmc_samples.csv")
-    @info "writing output"
     CSV.write(outfile, samples)
 
-    @info "done"
 end
 
 function make_distribution(kind, args)
     dist = getproperty(Distributions, Symbol(kind))
-
     return dist(args...)
 end
+
+function make_labels_priors(params)
+    labels = String[]
+    priors = Distribution{Univariate, Continuous}[]
+
+    for (key, val) in params
+        prior = make_distribution(val["prior"], val["prior_args"])
+        push!(labels, key)
+        push!(priors, prior)
+    end
+
+    return labels, priors
+end
+
 
 
 """
@@ -99,10 +99,18 @@ end
     # Compute model contributions for each dataset
     mu_ah = sum(p * models_ah[:, key] for (p, key) in zip(params, labels))
     mu_afe = sum(p * models_afe[:, key] for (p, key) in zip(params, labels))
-    
+    sem_ah = sum(p * models_ah[:, Symbol("$(key)_err")] ./ sqrt.(models_ah[:, Symbol("_counts")])  for (p, key) in zip(params, labels))
+    sem_afe = sum(p * models_afe[:, Symbol("$(key)_err")] ./ sqrt.(models_afe[:, Symbol("_counts")]) for (p, key) in zip(params, labels))
+
+    sigma_ah = models_ah.obs_err ./ sqrt.(models_ah.obs_counts)
+    sigma_afe = models_afe.obs_err ./ sqrt.(models_afe.obs_counts)
+
+    sigma2_ah = @. sigma_ah^2 + sem_ah^2 
+    sigma2_afe = @. sigma_afe^2 + sem_afe^2
+
     # Data likelihoods
-    models_ah.obs ~ MvNormal(mu_ah, diagm(models_ah.obs_err .^ 2))
-    models_afe.obs ~ MvNormal(mu_afe, diagm(models_afe.obs_err .^ 2))
+    models_ah.obs ~ MvNormal(mu_ah, diagm(sigma2_ah))
+    models_afe.obs ~ MvNormal(mu_afe, diagm(sigma2_afe))
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__
