@@ -22,12 +22,19 @@ def main():
     with open(paramfile) as f:
         params = toml.load(f)
 
+    if "datafile" in params:
+        datafile = params["datafile"]
+    else:
+        datafile = None
+
     names = []
     labels = []
     C_MG_s = []
     y_shifts = []
 
     for key, value in params.items():
+        if type(value) != dict:
+            continue
         names.append(value["name"])
         labels.append(key)
         if "C_MG" in value:
@@ -40,7 +47,7 @@ def main():
         else:
             y_shifts.append(0)
 
-    model = make_multicomponent_model(names, labels, C_MG_s)
+    model = make_multicomponent_model(names, labels, C_MG_s, datafile=datafile)
 
     models_const = {key: val.y0_cc for key, val in model.items()}
 
@@ -53,14 +60,21 @@ def main():
     save_model(modeldir, model)
 
 
-def load_subgiants():
-    df = subgiants.copy()
+def load_observations(datafile=None):
+
+    if datafile is None:
+        df = subgiants.copy()
+    elif datafile == "vincenzo+2021":
+        df = surp.vincenzo2021()
+    else:
+        df = pd.read_csv(datafile)
+
     df["z_c"] = gcem.brak_to_abund_ratio(df["C_MG"], "c", "mg")
     df["z_c_err"] = np.log(10) * df["C_MG_ERR"] * df["z_c"]
 
     return df
 
-def make_multicomponent_model(names, labels, C_MG_s):
+def make_multicomponent_model(names, labels, C_MG_s, datafile=None):
     """
     Makes a multi-component model from the given names
     """
@@ -71,7 +85,7 @@ def make_multicomponent_model(names, labels, C_MG_s):
     mg_h = {label: bin_mg_h(model)for label, model in zip(labels, models)}
     bin2d = {label: bin_2d(model) for label, model in zip(labels, models)}
 
-    df = load_subgiants()
+    df = load_observations(datafile)
     mg_fe_obs = bin_mg_fe(df, x="MG_FE", m_h="MG_H")
     mg_h_obs = bin_mg_h(df, x="MG_H")
     bin2d_obs = bin_2d(df, x="MG_H", y="MG_FE")

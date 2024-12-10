@@ -104,3 +104,6 @@ mcmc_samples.csv
 mg_fe_binned.csv
 mg_h_binned.csv
 2d_binned.csv
+
+carbon_paper/mcmc_samples
+*.csv

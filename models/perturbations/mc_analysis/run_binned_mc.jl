@@ -37,6 +37,7 @@ function main()
     ah, afe = load_binned_models(modelname)
 
     params = TOML.parsefile(joinpath(modelname, "params.toml"))
+    params = Dict(key => val for (key, val) in params if val isa Dict)
     labels, priors = make_labels_priors(params)
 
     @info "creating model"

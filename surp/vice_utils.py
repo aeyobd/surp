@@ -134,11 +134,16 @@ def create_star_sample(stars, cdf = None, num=N_SUBGIANTS, zone_width=0.1, seed=
     sample["MG_FE_true"] = sample.MG_FE
     sample["FE_H_true"] = sample.FE_H
     sample["C_N_true"] = sample.C_N
+
     MH = sample.FE_H
+    sample["C_MG_err"] = c_mg_err(MH)
+    sample["MG_H_err"] = mg_h_err(MH)
+    sample["MG_FE_err"] = mg_fe_err(MH)
+
     N = len(sample)
-    sample.C_MG += rng.normal(0, c_mg_err(MH), N)
-    sample.MG_H += rng.normal(0, mg_h_err(MH), N)
-    sample.MG_FE += rng.normal(0, mg_fe_err(MH), N)
+    sample.C_MG += rng.normal(0, sample.C_MG_err, N)
+    sample.MG_H += rng.normal(0, sample.MG_H_err, N)
+    sample.MG_FE += rng.normal(0, sample.MG_FE_err, N)
 
     return sample
 
