@@ -43,6 +43,7 @@ def set_magg22_scale(verbose=True, isotopic=False):
         print("Isotopic c12/c13 abundances set in hg and tl")
 
 
+
 def set_defaults() -> None:
     """Sets the constant default yield settings used in the carbon paper"""
     sneia.settings["c"] = 0
@@ -67,7 +68,7 @@ def set_defaults() -> None:
 
 
 
-def set_yields(params=None, verbose=True, **kwargs):
+def set_yields(params=None, verbose=False, **kwargs):
     """ 
     set_yields(params, verbose=False, **kwargs)
     Ses the yields and abundace scale for the C project. """
@@ -179,7 +180,18 @@ def print_yields():
 
 
 """
-Calculates the current yield at a given metallicity.
+Calculates the current yield at a given metallicity using VICEs 
+SSP function (i.e. at 10 Gyr)
+
+Parameters
+----------
+Z : float
+    The metallicity at which to calculate the yield
+ele : str [default="c"]
+    The element for which to calculate the yield
+kind : str [default="all"]
+    The kind of yield to calculate. Options are "all", "cc", "ia" or "agb" for alll yields, cc yields, ia yields, or agb yields respectively.
+
 """
 def calc_y(Z=Z_SUN, ele="c", kind="all"):
     if hasattr(Z, "__len__"):
@@ -205,8 +217,14 @@ def _calc_y_of_kind(Z, ele, kind):
 
     return y
 
+def _calc_y(Z, ele="c"):
+    m_c, times = vice.single_stellar_population(ele, Z=Z, mstar=1)
+    return m_c[-1]
 
-""" Copies the current yields for an element. Used for resetting after calculations"""
+
+""" Copies the current yields for an element. Used for resetting after calculations
+Returns the values of the yields from vice as a tuple for CCSNe, AGB, and SNe Ia
+"""
 def copy_current_yields(ele):
     ycc = vice.yields.ccsne.settings[ele]
     yagb = vice.yields.agb.settings[ele]
@@ -223,7 +241,4 @@ def reset_yields(ele, yields):
     vice.yields.sneia.settings[ele] = yia
 
 
-def _calc_y(Z, ele="c"):
-    m_c, times = vice.single_stellar_population(ele, Z=Z, mstar=1)
-    return m_c[-1]
 

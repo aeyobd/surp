@@ -1,4 +1,8 @@
 datafile = "~/surp/carbon_paper/data_analysis/gso_dwarfs.csv"
+mg_h_bins = [-0.5, -0.3, -0.1, 0.1, 0.3, 0.5]
+mg_fe_bins = [-0.2, 0.0, 0.2, 0.4]
+
+mg_fe_shift = -0.2
 
 [alpha]
 name = "fiducial"
