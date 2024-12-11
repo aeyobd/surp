@@ -275,6 +275,14 @@ def rand_star_in_zone(stars, zone, rng=np.random.default_rng()):
     return df.iloc[index:index+1]
 
 
+    return s
+
+    
+
+# APOGEE DR17 pipeline (Holzman et al.) is not published yet
+# These are simple fits to the reported uncertanties
+# for the subgiant sample.
+
 def polynomial(x, coeffs):
     s = 0
     N = len(coeffs)
@@ -282,11 +290,7 @@ def polynomial(x, coeffs):
         power = (N - i - 1)
         s += coeffs[i] * x**(N - i - 1)
 
-    return s
 
-    
-
-# TODO: replace these with polynomials from Jonsson + 2020
 def fe_h_err(Fe_H):
     return np.maximum(0.005, polynomial(Fe_H, [-0.00557748, 0.00831548]))
 
@@ -303,11 +307,17 @@ def mg_fe_err(Fe_H):
 
 
 def calculate_z(output):
+    """
+    Calculate the absolute z height of the stars in a VICE hydrodiskstars output.
+    """
     analog_data = analogdata(output.name + "_analogdata.out")
     return [np.abs(row[-1]) for row in analog_data][:output.stars.size[0]]
 
 
 def analogdata(filename):
+    """
+    Load the analogdata file from a VICE hydrodiskstars output.
+    """
     # from VICE/src/utils
     # last column of analogdata is z_height_final
     data = []

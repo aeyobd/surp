@@ -1,7 +1,6 @@
 import numpy as np
 
 
-
 class SFHModel:
     """
     An Abstract SFH Model.
@@ -23,6 +22,7 @@ class static(SFHModel):
         static()
 
     The constant SFH model from Johnson et al. (2021). 
+    Returns 1. unless norm is set.
     """
 
     def __init__(self):
@@ -47,7 +47,7 @@ class insideout(SFHModel):
         The decay timescale of the SFH model.
     """
 
-    def __init__(self, tau_rise=2.0, tau_sfh=5):
+    def __init__(self, *, tau_rise=2.0, tau_sfh=5):
         self.tau_sfh = tau_sfh
         self.tau_rise = tau_rise
         self.norm = 1
@@ -90,7 +90,7 @@ class lateburst(SFHModel):
 
     """
 
-    def __init__(self, tau_sfh, burst_size=1.5, 
+    def __init__(self, *, tau_sfh, burst_size=1.5, 
                  burst_width=1, burst_time=11.2, tau_rise=2.0):
         self.tau = tau_sfh
         self.tau_rise = tau_rise
@@ -171,67 +171,108 @@ class twoexp(SFHModel):
     A double exponential star formation history mimicing the two infall
     model. See Spitoni et al. (2019, 2020, 2022) and similar papers for 
     the motivation.
+    The SFH is given by:
+
+    ```math
+    SFH = A_1 * exp(-t/tau1) + A_2 * A_{21} * exp(-(t-t1)/tau2) \theta(t-t1)
+    ```
+    where `C1` is 
+    ```math
+    A_i = 1 / (tau_i * (1 - exp(-t2/tau_i)))
+    ```
+
+    which gives the ratio between the total density of the thin and thick disk.
 
     Parameters
     ----------
-    t1 : float [default 4.1]
-        The time of the thick disk formation
-    t2 : float [default 13.2]
-        The present-day time
+    tend : float [default 13.2]
+        The present-day time (used for normalization between components)
+    t1 : float [default 0]
+        The time component 1 stars forming
+    t2: float [default 4.1]
+        The time component 2 stars forming
     tau1 : float [default 2]
-        The decay timescale for the thick disk
+        The decay timescale for component 1
     tau2 : float [set from insideout.timescale]
-        The decay timescale for the thin disk
-    A21 : float [default 3.47]
-        The ratio between thin and thick disk populations
+        The decay timescale for component 2
+    A2 : float [default 3.47]
+        The scale factor for component 2 (relative to component 1).
     """
 
-    def __init__(self, tau1=2, tau2=1, A21=3.47, t1=4.1, t2=13.2):
+    def __init__(self, *, tau1=2, tau2=1, A2=3.47, t1=0, t2=4.1, tend=13.2):
         self.norm = 1
 
-        self.A = 1 / (tau1 * (1 - np.exp(-t2/tau1)))
-        self.B = A21 / (tau2 * (1 - np.exp(-(t2-t1)/tau2)))
+        # relative normalization of components
+        self.A = 1 / (tau1 * (1 - np.exp(-(tend - t1)/tau1)))
+        self.B = A2 / (tau2 * (1 - np.exp(-(tend - t2)/tau2)))
+
+        # keep for sanity
+        self.tend = tend
+        self.A2 = A2
+
         self.t1 = t1
         self.t2 = t2
         self.tau1 = tau1
         self.tau2 = tau2
 
     def __call__(self, time):
-        sfr = self.A * np.exp(-time/self.tau1)
-        sfr += (time > self.t1) * self.B * np.exp(-(time-self.t1)/self.tau2)
-        return sfr
+        sfr = self.A * np.exp(-(time - self.t1)/self.tau1) * (time > self.t1)
+        sfr += self.B * np.exp(-(time - self.t2)/self.tau2) * (time > self.t2)
+
+        return sfr * self.norm
+
+    def __str__(self):
+        return f"sfh ∝ truncexp(t,{self.t1},{self.tau1}) + {self.A2} truncexp(t,{self.t2},{self.tau2})"
 
 
 class threeexp(SFHModel):
     """
     A triple exponential star formation history mimicing the three infall.
 
+
     Parameters
     ----------
-    t1 : float [default 4.1]
-        The time of the transition from thin to thick
-    t2 : float [default 11.2]
-        The time of the lateburst
-    t3 : float [default 13.2]
-        The present-day time
+    tend : float [default 13.2]
+        The present-day time (used for normalization between components)
+    t1 : float [default 0]
+        The time component 1 stars forming
+    t2: float [default 4.1]
+        The time component 2 stars forming
+    t3: float [default 8.2]
+        The time component 3 stars forming
 
     tau1 : float [default 2]
-        The decay timescale for the thick disk
-    tau2 : float [default 1]
-        The decay timescale for the thin disk
-    tau3 : float [default 0.1]
-        The decay timescale for the late burst
-    A21 : float [default 3.47]
-        The ratio between thin and thick disk populations
-    A32 : float [default 1.5]
-        The ratio between thin disk and lateburst populations
+        The decay timescale for component 1
+    tau2 : float [set from insideout.timescale]
+        The decay timescale for component 2
+    tau3 : float [set from insideout.timescale]
+        The decay timescale for component 3
+
+    A2 : float [default 3.47]
+        The scale factor for component 2 (relative to component 1).
+    A3 : float [default 3.47]
+        The scale factor for component 3 (relative to component 1).
     """
-    def __init__(self, tau1=2, tau2=1, tau3=0.1, A21=3.47, A32=1.5, t1=4.1, t2=13.2, t3=13.3):
+
+    def __init__(self, *, 
+                 tau1=2, tau2=1, tau3=1, 
+                 A2=3.47, A3=3.47, 
+                 t1=0, t2=4.1, t3=8.2, 
+                 tend=13.2
+                ):
+
         self.norm = 1
 
-        self.A = 1 / (tau1 * (1 - np.exp(-t3/tau1)))
-        self.B = A21 / (tau2 * (1 - np.exp(-(t3-t1)/tau2)))
-        self.C = A32 * A21 / (tau3 * (1 - np.exp(-(t3-t2)/tau3)))
+        # relative normalization of components
+        self.A = 1 / (tau1 * (1 - np.exp(-(tend - t1)/tau1)))
+        self.B = A2 / (tau2 * (1 - np.exp(-(tend - t2)/tau2)))
+        self.C = A3 / (tau3 * (1 - np.exp(-(tend - t3)/tau3)))
+
+        # keep for sanity
+        self.tend = tend
+        self.A2 = A2
+        self.A3 = A3
+
         self.t1 = t1
         self.t2 = t2
         self.t3 = t3
@@ -240,11 +281,19 @@ class threeexp(SFHModel):
         self.tau3 = tau3
 
     def __call__(self, time):
-        sfr = self.A * np.exp(-time/self.tau1)
-        sfr += (time > self.t1) * self.B * np.exp(-(time-self.t1)/self.tau2)
-        sfr += (time > self.t2) * self.C * np.exp(-(time-self.t2)/self.tau3)
-        return sfr
+        sfr = self.A * np.exp(-(time - self.t1)/self.tau1) * (time > self.t1)
+        sfr += self.B * np.exp(-(time - self.t2)/self.tau2) * (time > self.t2)
+        sfr += self.C * np.exp(-(time - self.t3)/self.tau3) * (time > self.t3)
+        return sfr * self.norm
 
+    def __str__(self):
+        return "sfh ∝ truncexp(t,{self.t1},{self.tau1}) + {self.A2} truncexp(t,{self.t2},{self.tau2}) + {self.A3} truncexp(t,{self.t3},{self.tau3})"
 
 def _gaussian(x, mu, sigma):
+    """
+    _gaussian(x, mu, sigma)
+
+    unnormalized gaussian function with mean mu and width sigma
+    used for lateburst SFH
+    """
     return np.exp(-0.5 * (x - mu)**2 / sigma**2)
