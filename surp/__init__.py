@@ -29,17 +29,5 @@ def check_dependencies(dependencies):
 
 
 
-missing_opt_deps = check_dependencies(['matplotlib', 'seaborn'])
-
-if not missing_opt_deps:
-    from . import plots
-else:
-    print(f"""Missing dependencies for `plots` module: 
-    {', '.join(missing_opt_deps)}. 
-The `plots` module will not be available.""")
-
-
-
-
 subgiants = _read_subgiants()
 

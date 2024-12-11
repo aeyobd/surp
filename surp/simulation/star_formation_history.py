@@ -162,15 +162,6 @@ def get_sfh_timescale(radius, Re = 5):
 
 
 
-def midpoints(array):
-    a = np.array(array)
-    return 1/2*(a[1:] + a[:-1])
-
-
-def delta(array):
-    a = np.array(array)
-    return a[1:] - a[:-1]
-
 
 
 
@@ -247,13 +238,39 @@ def _read_sanchez_data():
 
 
 def normalized_gradient(params, gradient=BG16_stellar_density):
+    """
+    Returns the normalized gradient of the stellar surface density profile,
+    i.e. the mass gradient in each bin.
+    """
     radial_bins = np.array(params.radial_bins)
 
     radii = midpoints(radial_bins)
     unnorm = gradient(radii, params)
     unnorm = np.where(radii > params.max_sf_radius, 0, unnorm)
 
-    areas = np.pi * (radial_bins[1:]**2 - radial_bins[:-1]**2)
+    areas = np.pi * delta(radial_bins**2)
     radius_integral = np.sum(unnorm * areas)
 
     return params.M_star_MW / radius_integral * unnorm
+
+
+def midpoints(array):
+    """
+        midpoints(array)
+
+    Returns the midpoints of each consecutive pair of elements in the input.
+    """
+    a = np.array(array)
+    return 1/2*(a[1:] + a[:-1])
+
+
+def delta(array):
+    """
+        delta(array)
+
+    Returns the difference between each consecutive pair of elements in the
+    input.
+    """
+    a = np.array(array)
+    return a[1:] - a[:-1]
+

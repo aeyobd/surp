@@ -7,7 +7,7 @@ try:
     from vice.toolkit.rand_walk.rand_walk_stars import rand_walk_stars 
     from vice.toolkit.analytic_migration.analytic_migration_2d import analytic_migration_2d
 except ImportError:
-    print("modified vice not installed, fancy migration not available")
+    print("Daniel's vice fork not installed, analytic/gaussian migration not available")
 
 from vice.toolkit.hydrodisk.hydrodiskstars import hydrodiskstars 
 

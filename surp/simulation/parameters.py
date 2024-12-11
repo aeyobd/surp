@@ -29,8 +29,6 @@ class MWParams(AbstractParams):
         The number of stars to create during each timestep in each zone of the model.
 
     sfh_model: ``str``
-        Can be one of diffusion (most physical), linear, post-process, ???
-
         The star formation specification. 
         Accepable values are
         - "insideout"

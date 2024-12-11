@@ -14,7 +14,6 @@ import vice
 import arya
 
 from surp import ViceModel, subgiants
-from surp import plots as sp
 import surp
 import surp.gce_math as gcem
 from surp.yields import calc_y
@@ -125,8 +124,8 @@ def plot_cooh(df):
     sns.scatterplot(df, x="MG_H", y="AG_MG", hue="r_origin", s=0.3, alpha=1,
             legend=False, edgecolor="none", palette="arya_r", rasterized=True)
 
-    df = sp.filter_high_alpha(df)
-    df = sp.filter_high_alpha(subgiants)
+    df = surp.filter_high_alpha(df)
+    df = surp.filter_high_alpha(subgiants)
     sns.kdeplot(df, x="MG_H", y="C_MG", color="k", zorder=3)
 
     plt.xlim(-0.8, 0.8)
@@ -153,10 +152,10 @@ def plot_cooh_hilo(stars):
     plt.ylabel("[C/Mg]")
 
 def plot_coofe(stars, mh0=-0.1):
-    df = sp.filter_metallicity(subgiants)
+    df = surp.filter_metallicity(subgiants)
     sns.kdeplot(df, x="MG_FE", y="AG_MG", color="k", zorder=3)
 
-    df = sp.filter_metallicity(stars)
+    df = surp.filter_metallicity(stars)
     plt.scatter(df["MG_FE"], df["AG_MG"], c=df["r_origin"], s=0.3, zorder=2, rasterized=True,)
 
     plot_eq_caafe()
@@ -243,7 +242,7 @@ def plot_binned_caafe(model):
                    stat="median")
     
 def plot_binned_caafe_slice(model, w=0, c0=-0.1):
-    df = surp.plots.filter_metallicity(model, c=-0.1, w=5)
+    df = surp.filter_metallicity(model, c=-0.1, w=5)
     arya.medianplot(model, "MG_FE", "AG_MG", numbins=12, color="k", 
         stat="median")
 
