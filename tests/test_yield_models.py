@@ -3,11 +3,27 @@ from pytest import approx
 
 import numpy as np
 
+import vice
 from surp.yield_models import LinAGB, ZeroAGB, C_AGB_Model
 import surp.yield_models as ym
 from surp import gce_math as gcem
+import surp
 
 
+def mdot_emperical_larson(age, h=1e-8, postMS=0.1):
+    return 1/h * (vice.mlr.larson1974(age, which="age", postMS=postMS) - 
+                  vice.mlr.larson1974(age - h, which="age", postMS=postMS) )
+
+def test_mdot_larson():
+    ages = np.linspace(0.08, 100, 100)
+    postMS = 0.0
+    expected = [mdot_emperical_larson(age, postMS=postMS) for age in ages]
+    actual = [ym.mdot_larson1974(age, postMS=postMS) for age in ages]
+    assert actual == approx(expected, rel=1e-4)
+    postMS = 0.1
+    expected = [mdot_emperical_larson(age, postMS=postMS) for age in ages]
+    actual = [ym.mdot_larson1974(age, postMS=postMS) for age in ages]
+    assert actual == approx(expected, rel=1e-4)
 
 def model_rscales(model, Ms, Zs, factor=0.1234):
     yagb = model
@@ -123,12 +139,58 @@ def test_lin_agb_nonreal():
 # ===================== C AGB =====================
 
 
-def test_c_agb_integrated(Zs):
-    pass
+def test_c_agb_integrated():
+    y0 = 0.003
+    zeta = -0.001
+    model = ym.C_AGB_Model(y0=y0, zeta=zeta)
+    Zs = [1e-6, 1e-4, 1e-3, 2e-3, 1e-2, 2e-2]
+
+    expected = y0 + zeta * gcem.Z_to_MH(Zs)
+    vice.yields.agb.settings["c"] = model
+    actual = surp.yields.calc_y(Zs, kind="agb", t_end=15)
+    assert actual == approx(expected, rel=3e-2)
+
 
 def test_c_agb_dtd(Zs):
-    pass
+    tau_agb = 2
+    t_D = 0.15
+    t_D = max(t_D, 0.04683040043038564) # 8 solar mass
+    gamma = 0
+    m_low = 0.08
 
+    model = ym.C_AGB_Model(y0=0.003, zeta=0, 
+        tau_agb=tau_agb, t_D=t_D, gamma=gamma, m_low=m_low)
+
+    t_max = vice.mlr.larson1974(m_low)
+    vice.yields.agb.settings["c"] = model
+    vice.yields.ccsne.settings["c"] = 0
+    vice.yields.sneia.settings["c"] = 0
+
+    actual, times = vice.single_stellar_population("c", Z=gcem.Z_SUN, mstar=1, time=10, dt=0.001)
+    skip = 30
+    actual = actual[skip:]
+    times = times[skip:]
+
+
+    def R_int_0(t):
+        ta = tau_agb
+        if t > t_max - t_D:
+            return R_int_0(t_max - t_D)
+        if t < 0:
+            return 0
+
+        return 1/ta * (1 - np.exp(-t/ta)) 
+
+    expected = [R_int_0(t - t_D) for t in times]
+    scale =  actual[-1]/expected[-1]
+    expected = [scale * R  for R in expected]
+
+    assert actual == approx(expected, abs=1e-4)
+
+    def R_int(t):
+        x = np.array(t) 
+        ta = tau_agb
+        return 1/ta * (2 - ( (x/ta)**2 + 2*(x/ta) + 2) * np.exp(-x/ta)) * (t > 0) * (t < t_max)
 # ===================== CCSNe =====================
 def test_zeta_to_slope():
     zeta = 0.0562

@@ -16,6 +16,34 @@ class SFHModel:
         Returns the SFH model at a given time.
     """
 
+    def __init__(self):
+        self.norm = 1
+
+
+    def __call__(self, time):
+        raise NotImplementedError
+
+    def __str__(self):
+        raise NotImplementedError
+
+    def __repr__(self):
+        return self.__str__()
+
+    @property
+    def norm(self):
+        """
+        The normalization of the SFH model. Default is 1.
+        """
+        return self._norm
+
+    @norm.setter
+    def norm(self, value):
+        assert np.isreal(value), f"norm must be real, got {value}"
+        assert value > 0, f"norm must be positive, got {value}"
+        self._norm = value
+
+
+
 
 class static(SFHModel):
     r"""
@@ -26,10 +54,13 @@ class static(SFHModel):
     """
 
     def __init__(self):
-        self.norm = 1
+        super().__init__()
 
     def __call__(self, time=0):
         return self.norm
+    
+    def __str__(self):
+        return "sfh ∝ 1"
 
 
 class insideout(SFHModel):
@@ -48,6 +79,7 @@ class insideout(SFHModel):
     """
 
     def __init__(self, *, tau_rise=2.0, tau_sfh=5):
+        super().__init__()
         self.tau_sfh = tau_sfh
         self.tau_rise = tau_rise
         self.norm = 1
@@ -92,6 +124,7 @@ class lateburst(SFHModel):
 
     def __init__(self, *, tau_sfh, burst_size=1.5, 
                  burst_width=1, burst_time=11.2, tau_rise=2.0):
+        super().__init__()
         self.tau = tau_sfh
         self.tau_rise = tau_rise
         self.burst_time = burst_time
@@ -99,8 +132,6 @@ class lateburst(SFHModel):
         self.burst_size = burst_size
 
         self._insideout = insideout(tau_sfh=tau_sfh, tau_rise=tau_rise)
-
-        self.norm = 1
 
     def __call__(self, t):
         burst = _gaussian(t, self.burst_time, self.burst_width)
@@ -111,6 +142,8 @@ class lateburst(SFHModel):
 
         return sfr
 
+    def __str__(self):
+        return f"sfh ∝ insideout + burst(t={self.burst_time},w={self.burst_width},A={self.burst_size})"
 
 
 class exp_sfh(SFHModel):
@@ -128,7 +161,7 @@ class exp_sfh(SFHModel):
 
     def __init__(self, tau_sfh=5):
         self.tau_sfh = tau_sfh
-        self.norm = 1
+        super().__init__()
 
 
     def __call__(self, time):
@@ -153,8 +186,8 @@ class linexp(SFHModel):
     """
 
     def __init__(self, tau_sfh=5):
+        super().__init__()
         self.tau_sfh = tau_sfh
-        self.norm = 1
 
     def __call__(self, time):
         sfr = (time/self.tau_sfh) * np.exp(-time / self.tau_sfh)
@@ -200,7 +233,7 @@ class twoexp(SFHModel):
     """
 
     def __init__(self, *, tau1=2, tau2=1, A2=3.47, t1=0, t2=4.1, tend=13.2):
-        self.norm = 1
+        super().__init__()
 
         # relative normalization of components
         self.A = 1 / (tau1 * (1 - np.exp(-(tend - t1)/tau1)))
@@ -260,8 +293,7 @@ class threeexp(SFHModel):
                  t1=0, t2=4.1, t3=8.2, 
                  tend=13.2
                 ):
-
-        self.norm = 1
+        super().__init__()
 
         # relative normalization of components
         self.A = 1 / (tau1 * (1 - np.exp(-(tend - t1)/tau1)))
@@ -288,6 +320,8 @@ class threeexp(SFHModel):
 
     def __str__(self):
         return "sfh ∝ truncexp(t,{self.t1},{self.tau1}) + {self.A2} truncexp(t,{self.t2},{self.tau2}) + {self.A3} truncexp(t,{self.t3},{self.tau3})"
+
+
 
 def _gaussian(x, mu, sigma):
     """

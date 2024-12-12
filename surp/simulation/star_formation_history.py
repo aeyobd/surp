@@ -16,16 +16,19 @@ class star_formation_history:
 
     The star formation history (SFH) of the model galaxy. This object will be
     used as the ``evolution`` attribute of the milky way model.
+
+    Initialized from a MWParams object. 
+    The object can then be called with a radius and time to return the star
+    formation rate.
     """
 
     def __init__(self, params):
         self._radii = midpoints(params.radial_bins)
         self._params = params
-        self.create_sfhs()
-        self.normalize()
+        self._create_sfhs()
+        self._normalize()
 
-
-    def create_sfhs(self):
+    def _create_sfhs(self):
         self._evol = []
 
         for i in range(len(self)):
@@ -33,7 +36,7 @@ class star_formation_history:
             evol = create_sfh_model(r, self._params)
             self._evol.append(evol)
 
-    def normalize(self):
+    def _normalize(self):
         masses = normalized_gradient(self._params)
         dt = self._params.timestep
         self._coeffs = np.ones(len(self))
@@ -44,10 +47,6 @@ class star_formation_history:
                 t = j * dt
                 time_integral += self._evol[i](t) * dt * 1.e9 # yr to Gyr
             self._coeffs[i] = masses[i] / (time_integral * (1 - self._params.r))
-
-
-    def __len__(self):
-        return len(self._radii)
 
     def __call__(self, radius, time):
         # The milkyway object will always call this with a radius in the
@@ -66,6 +65,8 @@ class star_formation_history:
                 self._evol[-2](time), self._radii[-1], self._evol[-1](time),
                 radius)
 
+    def __len__(self):
+        return len(self._radii)
 
     def __str__(self):
         return f"{self._params.sfh_model}"
@@ -76,6 +77,20 @@ class star_formation_history:
 
 
 def create_sfh_model(radius, params): 
+    """
+    create_sfh_model(radius, params)
+
+    Create a star formation history model at a given radius given the
+    MWParams object.
+
+    Returns subclass of SFHModel.
+
+    Replaces values of `sanchez` in kwargs with the appropriate timescale for the radius (muplitiplied by a number if there is a float in the string.
+
+    For the twoinfall model, the A2 parameter is scaled to the thin/thick ratio as well,
+    but not for twoexp.
+    """
+
     tau_sfh = get_sfh_timescale(radius, Re = params.Re)
 
     kwargs = copy(params.sfh_kwargs)
@@ -103,14 +118,11 @@ def create_sfh_model(radius, params):
 
         At = np.exp(-(radius - r_sun) / r_t)
         AT = np.exp(-(radius - r_sun) / r_T)
-        A21 = kwargs["A21"] * At/AT  * t_T
-        print(f"t_T = {t_T}")
-        print(f"At/AT = {At/AT}")
-        print(f"r = {radius}")
-        print(f"A21 = {A21}")
-        print(f"tau2 = {kwargs['tau2']}")
-        print()
-        sfh = sfh_models.twoexp(A21 = A21, t1=kwargs["t1"], tau1=kwargs["tau1"], tau2=kwargs["tau2"])
+        kwargs["A2"] = kwargs["A2"] * At/AT  * t_T
+        if params.sfh_model == "twoinfall":
+            kwargs.pop("nu1")
+            kwargs.pop("nu2")
+        sfh = sfh_models.twoexp(**kwargs)
 
     elif name == "linexp":
         sfh = sfh_models.linexp(**kwargs)
@@ -167,8 +179,13 @@ def get_sfh_timescale(radius, Re = 5):
 
 def BG16_stellar_density(radius, params):
     r"""
+    BG16_stellar_density(radius, params)
+
     The gradient in stellar surface density defined in Bland-Hawthorn &
     Gerhard (2016) [1]_.
+
+    The characteristic values `thin_disk_scale_radius`, `thick_disk_scale_radius`, and
+    `thin_to_thick_ratio` are taken from the MWParams object.
     
     Parameters
     ----------
@@ -239,8 +256,15 @@ def _read_sanchez_data():
 
 def normalized_gradient(params, gradient=BG16_stellar_density):
     """
+    normalized_gradient(params, gradient=BG16_stellar_density)
+
+
     Returns the normalized gradient of the stellar surface density profile,
     i.e. the mass gradient in each bin.
+
+    params should be an instance of MWParams.
+    gradient is a function accepting the radius and params as arguments, 
+    returning the 2D surface density at the radius.
     """
     radial_bins = np.array(params.radial_bins)
 
@@ -256,7 +280,7 @@ def normalized_gradient(params, gradient=BG16_stellar_density):
 
 def midpoints(array):
     """
-        midpoints(array)
+    midpoints(array)
 
     Returns the midpoints of each consecutive pair of elements in the input.
     """
@@ -266,7 +290,7 @@ def midpoints(array):
 
 def delta(array):
     """
-        delta(array)
+    delta(array)
 
     Returns the difference between each consecutive pair of elements in the
     input.

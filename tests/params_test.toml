@@ -39,7 +39,7 @@ mode = "ifr"
 [sfh_kwargs]
 tau1 = 1
 tau2 = 2
-t1 = 4
-A21 = 2
+t2 = 4
+A2 = 2
 nu1 = 1
 nu2 = 2

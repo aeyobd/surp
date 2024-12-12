@@ -37,7 +37,7 @@ def set_sf_law(model, params):
             elif params.sf_law == "twoinfall":
                 kwargs = params.sfh_kwargs
                 model.zones[i].tau_star = twoinfall_sf_law(area,
-                    nu1=kwargs["nu1"], nu2=kwargs["nu2"], t1=kwargs["t1"]
+                    nu1=kwargs["nu1"], nu2=kwargs["nu2"], t2=kwargs["t2"]
                     )
             elif params.sf_law == "J21":
                 model.zones[i].tau_star = J21_sf_law(area, mode="sfr", present_day_molecular=params.tau_star0)
@@ -67,22 +67,22 @@ def conroy_sf_law(area=None):
     return inner
 
 
-def twoinfall_sf_law(area=None, t1=4.1, nu1=2, nu2=1):
+def twoinfall_sf_law(area=None, t2=4.1, nu1=2, nu2=1):
     def inner(t, m):
-        tau_st = twoinfall_tau_star(t, t1, nu1, nu2)
+        tau_st = twoinfall_tau_star(t, t2, nu1, nu2)
         return tau_st
     return inner
     
 
-def twoinfall_tau_star(t, t1, nu1, nu2):
+def twoinfall_tau_star(t, t2, nu1, nu2):
     """
-        twoinfall_tau_star(t, t1, nu1, nu2)
+        twoinfall_tau_star(t, t2, nu1, nu2)
 
     Returns the star formation timescale at time t for a two-infall model.
 
     Parameters
     ----------
-    t1: time of transition
+    t2: time of transition
     nu1: star formation efficienty before transition
     nu2: star formation efficiency after transition
 
@@ -91,7 +91,7 @@ def twoinfall_tau_star(t, t1, nu1, nu2):
     tau_star: float
         The star formation timescale at time t. (1/nu)
     """
-    if t < t1:
+    if t < t2:
         return 1/nu1
     else:
         return 1/nu2

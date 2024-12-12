@@ -24,6 +24,34 @@ cdef double Z_to_MH(double Z):
     return (-8 if Z < 1e-8*Z_SUN else m.log10(Z / Z_SUN))
 
 
+cpdef double mdot_larson1974(double age, double postMS=0.1):
+    r"""
+    mdot_larson1974(time)
+
+    The derivative of the Larson 1974 mass - lifetime relationship wrt time.
+    See also vice.mlr.larson1974 
+    
+    ```math
+    \dot{m} = - \frac{m}{t} \frac{1}{\sqrt{\beta^2 - 4(\alpha - \log_{10}(t))\gamma}}
+    ```
+
+    """
+    cdef alpha = 1.00
+    cdef beta = -3.42
+    cdef gamma = 0.88
+    
+    cdef lt = m.log10(age) - m.log10(1 + postMS)
+    cdef det = beta**2 - 4*(alpha - lt) * gamma
+
+    if det <= 0:
+        print("Warning: negative determinant in mdot_larson1974")
+        return 0.
+
+    cdef double mass = vice.mlr.larson1974(age, which="age", postMS=postMS)
+
+
+    return - (mass / age) / m.sqrt(det)
+
 
 """
 Given zeta (the logarithmic slope d y / d log10 Z), returns
@@ -223,11 +251,13 @@ cdef class C_AGB_Model(AbstractAGB):
     cdef public double A_agb
     cdef public double m_low, m_hm, m_high
     cdef public double gamma, zeta_tau
+    cdef public double postMS
 
     def __cinit__(self, double y0 = 0.0004, double zeta=-0.0002, 
             double tau_agb=0.3, double t_D = 0.15, mlr=vice.mlr.larson1974, 
             double gamma=2, double zeta_tau=0, 
             double m_low = 1.2, 
+            double postMS = 0.1,
             imf=vice.imf.kroupa):
 
         self.m_low = m_low
@@ -241,7 +271,7 @@ cdef class C_AGB_Model(AbstractAGB):
         self.zeta = zeta
         self.gamma = gamma
         self.zeta_tau = zeta_tau
-
+        self.postMS = postMS
         self.mlr = mlr
         self.imf = imf
 
@@ -273,8 +303,8 @@ cdef class C_AGB_Model(AbstractAGB):
     cdef y_unnorm(self, double m, double Z):
         if m < self.m_low or m > self.m_high:
             return 0
-        t = self.mlr(m)
-        return 1/m * t * 1/self.imf(m) * self.R(t, Z)
+        t = self.mlr(m, self.postMS)
+        return 1/m * (-1/mdot_larson1974(t, postMS=self.postMS)) * 1/self.imf(m) * self.R(t, Z)
 
 
     cpdef double ccall(self, double m, double Z):

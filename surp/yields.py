@@ -193,16 +193,16 @@ kind : str [default="all"]
     The kind of yield to calculate. Options are "all", "cc", "ia" or "agb" for alll yields, cc yields, ia yields, or agb yields respectively.
 
 """
-def calc_y(Z=Z_SUN, ele="c", kind="all"):
+def calc_y(Z=Z_SUN, ele="c", kind="all", t_end=10):
     if hasattr(Z, "__len__"):
-        y = np.array( [_calc_y_of_kind(z, ele, kind) for z in Z ] )
+        y = np.array( [_calc_y_of_kind(z, ele, kind, t_end=t_end) for z in Z ] )
     else:
-        y = _calc_y_of_kind(Z, ele, kind)
+        y = _calc_y_of_kind(Z, ele, kind, t_end=t_end)
 
     return y
 
 
-def _calc_y_of_kind(Z, ele, kind):
+def _calc_y_of_kind(Z, ele, kind, t_end=10):
     yields = copy_current_yields(ele)
     if kind != "all":
         if -1 == kind.find("cc"):
@@ -212,13 +212,13 @@ def _calc_y_of_kind(Z, ele, kind):
         if -1 == kind.find("agb"):
             vice.yields.agb.settings[ele] = ZeroAGB()
 
-    y = _calc_y(Z, ele)
+    y = _calc_y(Z, ele, t_end=t_end)
     reset_yields(ele, yields)
 
     return y
 
-def _calc_y(Z, ele="c"):
-    m_c, times = vice.single_stellar_population(ele, Z=Z, mstar=1)
+def _calc_y(Z, ele="c", t_end=10):
+    m_c, times = vice.single_stellar_population(ele, Z=Z, mstar=1, time=t_end)
     return m_c[-1]
 
 
