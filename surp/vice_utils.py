@@ -136,6 +136,8 @@ def create_star_sample(stars, cdf = None, num=N_SUBGIANTS, zone_width=0.1, seed=
     sample["C_N_true"] = sample.C_N
 
     MH = sample.FE_H
+    print("MH", MH)
+    print("nans", np.sum(np.isnan(MH)))
     sample["C_MG_err"] = c_mg_err(MH)
     sample["MG_H_err"] = mg_h_err(MH)
     sample["MG_FE_err"] = mg_fe_err(MH)
@@ -289,6 +291,7 @@ def polynomial(x, coeffs):
     for i in range(N):
         power = (N - i - 1)
         s += coeffs[i] * x**(N - i - 1)
+    return s
 
 
 def fe_h_err(Fe_H):

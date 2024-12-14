@@ -39,7 +39,13 @@ def test_create_sfh_model():
     # test sanchez
     # test twoinfall model scalings...
 
-
+def test_r_max_sfh():
+    for params in [PARAMS, PARAMS2]:
+        sfh = sfh_utils.star_formation_history(params)
+        for dR in [0.01, 1, 5]:
+            R = PARAMS.max_sf_radius + dR
+            t = [0, 1, 2, 3, 4, 5]
+            assert [sfh(R, t) for t in t] == approx([0] * len(t))
 
 def test_get_sfh_timescale():
     assert sfh_utils.get_sfh_timescale(8) == approx(15, rel=0.1)

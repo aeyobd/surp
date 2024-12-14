@@ -20,6 +20,16 @@ class star_formation_history:
     Initialized from a MWParams object. 
     The object can then be called with a radius and time to return the star
     formation rate.
+
+    Depends on:
+    - params.radial_bins
+    - params.max_sf_radius
+    - params.r
+    - params.timestep
+    
+    And passes parameters to:
+    - normalized_gradient
+    - create_sfh_model
     """
 
     def __init__(self, params):
@@ -89,6 +99,16 @@ def create_sfh_model(radius, params):
 
     For the twoinfall model, the A2 parameter is scaled to the thin/thick ratio as well,
     but not for twoexp.
+
+    Depends on:
+    - params.sfh_model
+    - params.sfh_kwargs
+    - params.Re
+    - params.thin_disk_scale_radius
+    - params.thick_disk_scale_radius
+    - params.thin_to_thick_ratio
+    - params.r_sun
+
     """
 
     tau_sfh = get_sfh_timescale(radius, Re = params.Re)
@@ -184,8 +204,10 @@ def BG16_stellar_density(radius, params):
     The gradient in stellar surface density defined in Bland-Hawthorn &
     Gerhard (2016) [1]_.
 
-    The characteristic values `thin_disk_scale_radius`, `thick_disk_scale_radius`, and
-    `thin_to_thick_ratio` are taken from the MWParams object.
+    Depends on
+    - params.thin_disk_scale_radius
+    - params.thick_disk_scale_radius
+    - params.thin_to_thick_ratio
     
     Parameters
     ----------
@@ -262,9 +284,13 @@ def normalized_gradient(params, gradient=BG16_stellar_density):
     Returns the normalized gradient of the stellar surface density profile,
     i.e. the mass gradient in each bin.
 
-    params should be an instance of MWParams.
     gradient is a function accepting the radius and params as arguments, 
     returning the 2D surface density at the radius.
+
+    Depends on:
+    - params.radial_bins
+    - params.max_sf_radius
+    - params.M_star_MW
     """
     radial_bins = np.array(params.radial_bins)
 

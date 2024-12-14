@@ -151,7 +151,7 @@ def test_c_agb_integrated():
     assert actual == approx(expected, rel=3e-2)
 
 
-def test_c_agb_dtd(Zs):
+def test_c_agb_dtd_gamma0(Zs):
     tau_agb = 2
     t_D = 0.15
     t_D = max(t_D, 0.04683040043038564) # 8 solar mass
@@ -187,10 +187,38 @@ def test_c_agb_dtd(Zs):
 
     assert actual == approx(expected, abs=1e-4)
 
+def test_c_agb_dtd_gamma2(Zs):
+    tau_agb = 1.2
+    t_D = 0.25
+    t_D = max(t_D, 0.04683040043038564) # 8 solar mass
+    gamma = 2
+    m_low = 0.08
+
+    model = ym.C_AGB_Model(y0=0.003, zeta=0, 
+        tau_agb=tau_agb, t_D=t_D, gamma=gamma, m_low=m_low)
+
+    t_max = vice.mlr.larson1974(m_low)
+    vice.yields.agb.settings["c"] = model
+    vice.yields.ccsne.settings["c"] = 0
+    vice.yields.sneia.settings["c"] = 0
+
+    actual, times = vice.single_stellar_population("c", Z=gcem.Z_SUN, mstar=1, time=10, dt=0.001)
+    skip = 30
+    actual = actual[skip:]
+    times = times[skip:]
+
+
     def R_int(t):
         x = np.array(t) 
         ta = tau_agb
         return 1/ta * (2 - ( (x/ta)**2 + 2*(x/ta) + 2) * np.exp(-x/ta)) * (t > 0) * (t < t_max)
+
+    expected = [R_int(t - t_D) for t in times]
+    scale =  actual[-1]/expected[-1]
+    expected = [scale * R  for R in expected]
+
+    assert actual == approx(expected, abs=1e-4)
+
 # ===================== CCSNe =====================
 def test_zeta_to_slope():
     zeta = 0.0562

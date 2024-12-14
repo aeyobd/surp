@@ -13,9 +13,11 @@ class MWParams(AbstractParams):
 
     A struct storing the parameters to surp.create_model with. 
 
-
     Parameters
     ----------
+
+    ## VICE parameters
+
     filename: ``str``
         The name of the model (outputed to filename.vice). 
 
@@ -28,54 +30,17 @@ class MWParams(AbstractParams):
     n_stars: ``int``
         The number of stars to create during each timestep in each zone of the model.
 
-    sfh_model: ``str``
-        The star formation specification. 
-        Accepable values are
-        - "insideout"
-        - "constant"
-        - "lateburst"
-        - "outerburst"
-        - "twoexp"
-        - "threeexp"
-
-    n_stars: ``int``
-        The number of stars to create during each timestep of the model.
-
     verbose: ``bool``
         Whether to print out the progress of the model
 
-    migration_mode: ``str``
-        The migration mode to use. Options are
-        - "diffusion"
-        - "post-process"
-
-    migration: ``str``
-        The migration mode to use. Options are
-        - "hydrodisk"
-        - "gaussian"
-        - "rand_walk"
-
     simple: ``bool``
-        Use a simple migration mode
-
-    sigma_R: ``bool``
-        Strength of migration for gaussian and random walk migration
-
-    save_migration: ``bool``
-        If true, writes the migration history to a file
+        Use a simple migration model. Also set to True if migration_mode is "post-process"
 
     smoothing: ``string``
         See vice documentation. 
 
     imf: ``string``
-        Initial mass function. May be kroupa, salpeter
-        or (TODO chabrier)
-
-    m_upper: ``float``
-        The upper mass limit of the IMF
-
-    m_lower: ``float``
-        The lower mass limit of the IMF
+        Initial mass function. May be kroupa, salpeter, or chabrier
 
     RIa: ``string``
         The SNeIa delay time distribution. May be "exp" or "plaw"
@@ -86,23 +51,52 @@ class MWParams(AbstractParams):
     tau_ia: ``float``
         The timescale of type Ia supernovae in Gyr
 
-    sf_law: ``string``
-        The star formation law to use. 
-        - "J21"
-        - "C22"
-        - "twoinfall"
-    tau_star0: ``float``
-        The star formation timescale at t=0
+    m_upper: ``float``
+        The upper mass limit of the IMF
 
-    Re: ``float``
-        The scale radius of the galaxy
+    m_lower: ``float``
+        The lower mass limit of the IMF
 
-    sfh_model: ``string``
-        The star formation history model to use. Implemented are
+    migration_mode: ``str``
+        The migration mode to use. Only matters if migration = "hydrodisk", 
+        Options are
+        - "diffusion"
+        - "post-process"
+
+    N_star_tot: ``int``
+        The total number of stars to create in the model. 
+        Only matters if migration = "hydrodisk"
+        If left as default (-1), it will be calculated based on the other parameters.
+
+    mode: ``str=""``
+        The mode of the model. Can be sfr, ifr, or gas. 
+        If left as default (""), it will be set depending on the sf_model.
+
+    ## Additional parameters
+
+
+    migration: ``str``
+        The migration mode to use. Options are
+        - "hydrodisk"
+        - "gaussian"
+        - "rand_walk"
+
+    sigma_R: ``bool``
+        Strength of migration for random walk migration (and TODO gaussian...)
+
+    save_migration: ``bool``
+        If true, writes the migration history to the file star_migration.dat.
+
+
+    sfh_model: ``str``
+        The star formation specification. 
+        Accepable values are
         - "insideout"
-        - "lateburst"
         - "constant"
-        - "twoinfall"
+        - "lateburst"
+        - "twoexp"
+        - "threeexp"
+        - "twoinfall" (also changes ...)
 
     sfh_kwargs: ``dict``
         kwargs passed to surp.simulation.star_formation_history....
@@ -110,11 +104,20 @@ class MWParams(AbstractParams):
     max_sf_radius: ``float``
         The radius in kpc beyond which the SFR = 0
 
-    mode:str = "" # updated depending on sfh_model
+    Re: ``float``
+        The scale radius of the galaxy. Used to apply Sanchez star formation.
 
+    sf_law: ``string``
+        The star formation law to use. 
+        - "J21"
+        - "conroy"
+        - "twoinfall"
+
+    tau_star0: ``float``
+        The star formation timescale at t=0 for J21 sf_law.
 
     M_star_MW: ``float``
-        The stellar mass of Milky Way (Licquia & Newman 2015, ApJ, 806, 96)
+        The stellar mass of Milky Way. Used to normalize SFH.
 
     thin_disk_scale_radius: ``float``
         The scale radius of the thin disk in kpc
@@ -126,28 +129,44 @@ class MWParams(AbstractParams):
         The ratio of the thin to thick disk surface density at r = 0kpc, not solar radius
 
     r_sun: ``float``
-        The distance of the sun from the galactic center in kpc
+        The distance of the sun from the galactic center in kpc.
+        Used for twoinfall model only to calculate thin/thick ratio at solar postion.
 
-    # TODO: outflow go to kwargs...
+    MH_grad_R0: ``float``
+        Transition radius for the metallicity gradient
 
-    # outflow settings
-    MH_grad_R0:float
-    MH_grad_MH0:float
-    MH_grad_in:float
-    MH_grad_out:float
+    MH_grad_MH0: ``float``
+        Metallicity at the transition radius
+
+    MH_grad_in: ``float``
+        Metallicity gradient inside the transition radius
+
+    MH_grad_out: ``float``
+        Metallicity gradient outside the transition radius
+
     eta_scale: ``float``
         additional factor which to multiply y_mg by when setting outflow scale. Increases outflows appropriately
 
-    r:float # TODO determine
-    tau_star_sfh_grad: float # TODO Determine this
+    r: ``float``
+        Estimate of the return fraction for normalizing the stellar gradient
+        and mass loading.
+
+    tau_star_sfh_grad: ``float``
+        The scale factor on tau_star/tau_sfh*R term used for the gradient (i.e. approximation of tau_star/tau_sfh ~ R).
+        Likely should be zero.
+
+    seed: ``int`` = 0
+        The random number seed.
 
     
-    Calculated Parameters / Attributes
+    Attributes
     ---------------------
-    N_star_tot:int = -1 # calculated by model
         
-    radial_bins
-    times
+    radial_bins: ``list``
+        The radial bins for the model.
+
+    times: ``np.ndarray``
+        The time for each timestep for the model.
 
 
     Methods
@@ -167,9 +186,11 @@ class MWParams(AbstractParams):
     """
 
     filename:str
-    zone_width:float
 
+    zone_width:float
+    timestep:float
     n_stars:int
+
     simple:bool
     verbose:bool
 
@@ -178,33 +199,29 @@ class MWParams(AbstractParams):
     sigma_R:float
     save_migration:bool
 
-    imf:str
+    smoothing:float
 
-    timestep:float
+    imf:str
     t_d_ia:float
     RIa:str
-    smoothing:float
     tau_ia:float
     m_upper:float
     m_lower:float
 
-
-    sf_law:str
-    tau_star0:float
-    Re:float
-
     sfh_model:str
     sfh_kwargs:dict
     max_sf_radius:float
+    Re:float
 
-    # Stellar mass of Milky Way (Licquia & Newman 2015, ApJ, 806, 96)
+    sf_law:str
+    tau_star0:float
+
     M_star_MW:float
-
     thin_disk_scale_radius:float
     thick_disk_scale_radius:float
     thin_to_thick_ratio:float
 
-    r_sun:float # kpc, GRAVITY Collaboration 2018
+    r_sun:float
 
 
     # outflow settings
@@ -213,14 +230,14 @@ class MWParams(AbstractParams):
     MH_grad_in:float
     MH_grad_out:float
     eta_scale:float
-    r:float # TODO determine
-    tau_star_sfh_grad: float # TODO Determine this
+    r:float
+    tau_star_sfh_grad: float
 
     seed:int = 0
 
     # calculated live
-    N_star_tot:int = -1 # calculated by model
-    mode:str = "" # updated depending on sfh_model
+    N_star_tot:int = -1
+    mode:str = ""
 
 
     def __post_init__(self):

@@ -16,88 +16,22 @@ from ..yields import set_yields
 from .._globals import Z_SUN
 from surp.yield_models import chabrier
 
-
-
-def set_sf_law(model, params):
-    for zone in model.zones:
-       zone.Mg0 = 0.
-    
-    tot_area = 0  # sanity check for me
-
-    for i in range(model.n_zones):
-        R1 = model.annuli[i]
-        R2 = model.annuli[i+1]
-        R = (R1 + R2)/2
-        area = np.pi * (R2**2 - R1**2)
-        tot_area += area
-        if R <= params.max_sf_radius:
-
-            if params.sf_law == "conroy22":
-                model.zones[i].tau_star = conroy_sf_law(area)
-            elif params.sf_law == "twoinfall":
-                kwargs = params.sfh_kwargs
-                model.zones[i].tau_star = twoinfall_sf_law(area,
-                    nu1=kwargs["nu1"], nu2=kwargs["nu2"], t2=kwargs["t2"]
-                    )
-            elif params.sf_law == "J21":
-                model.zones[i].tau_star = J21_sf_law(area, mode="sfr", present_day_molecular=params.tau_star0)
-            else:
-                raise ValueError("SF law not known ", params.sf_law)
-
-    tot_area_exp = np.pi * (model.annuli[-1]**2 - model.annuli[0]**2)
-    relerr = abs(tot_area - tot_area_exp) / tot_area_exp
-    assert relerr < 1e-3, f"Area {tot_area} does not match expected {tot_area_exp} within 1e-3"
-
-
-
-def conroy_tau_star(t):
-    if t < 2.5:
-        tau_st = 50
-    elif 2.5 <= t < 3.7:
-        tau_st = 50/(1+3*(t-2.5))**2
-    else:
-        tau_st = 2.36
-    return tau_st
-
-
-def conroy_sf_law(area=None):
-    def inner(t):
-        tau_st = conroy_tau_star(t)
-        return tau_st #J21_sf_law(area, tau_st)(t, m)
-    return inner
-
-
-def twoinfall_sf_law(area=None, t2=4.1, nu1=2, nu2=1):
-    def inner(t, m):
-        tau_st = twoinfall_tau_star(t, t2, nu1, nu2)
-        return tau_st
-    return inner
-    
-
-def twoinfall_tau_star(t, t2, nu1, nu2):
-    """
-        twoinfall_tau_star(t, t2, nu1, nu2)
-
-    Returns the star formation timescale at time t for a two-infall model.
-
-    Parameters
-    ----------
-    t2: time of transition
-    nu1: star formation efficienty before transition
-    nu2: star formation efficiency after transition
-
-    Returns
-    -------
-    tau_star: float
-        The star formation timescale at time t. (1/nu)
-    """
-    if t < t2:
-        return 1/nu1
-    else:
-        return 1/nu2
-
-
 def create_migration(bins, params):
+    """
+    create_migration(bins, params)
+
+    Create the migration object for the model galaxy.
+
+    Depends on 
+    - params.migration: the type of migration to use
+    - params.save_migration: whether to save the migration data 
+    - params.n_stars: the number of stars to produce per timestep (gaussian and random walk)
+    - params.timestep: the timestep of the model
+    - params.sigma_R: the standard deviation of the migration in R 
+    - params.verbose: whether to print verbose output (gaussian only)
+    - params.seed: the seed for the migration (gaussian only)
+    - params.N_star_tot: the total number of stars in the model (hydrodisk only)
+    """
     kind = params.migration
     if params.save_migration:
         filename="star_migration.dat"
@@ -126,10 +60,120 @@ def create_migration(bins, params):
     return migration
 
 
+def set_sf_law(model, params):
+    """
+    set_sf_law(model, params)
+
+    Set the star formation law for the model galaxy for each zone.
+
+    Depends on
+    - params.sf_law: the star formation law to use. Options are "conroy22", "twoinfall", "J21"
+    - params.tau_star0: the present day molecular gas depletion time (J21 only)
+
+    Additionally for params.sf_law = "twoinfall":
+    - params.sfh_kwargs: the parameters for the twoinfall model. Uses 
+    nu1, nu2, t2 to set the sfh model.
+
+    """
+    for zone in model.zones:
+       zone.Mg0 = 0.
+    
+    tot_area = 0  # sanity check for me
+
+    for i in range(model.n_zones):
+        R1 = model.annuli[i]
+        R2 = model.annuli[i+1]
+        R = (R1 + R2)/2
+        area = np.pi * (R2**2 - R1**2)
+        tot_area += area
+
+        if params.sf_law == "conroy22":
+            model.zones[i].tau_star = conroy_sf_law(area)
+        elif params.sf_law == "twoinfall":
+            kwargs = params.sfh_kwargs
+            model.zones[i].tau_star = twoinfall_sf_law(area,
+                nu1=kwargs["nu1"], nu2=kwargs["nu2"], t2=kwargs["t2"]
+                )
+        elif params.sf_law == "J21":
+            model.zones[i].tau_star = J21_sf_law(area, mode=params.mode, 
+                present_day_molecular=params.tau_star0
+                )
+        else:
+            raise ValueError("SF law not known ", params.sf_law)
+
+    tot_area_exp = np.pi * (model.annuli[-1]**2 - model.annuli[0]**2)
+    relerr = abs(tot_area - tot_area_exp) / tot_area_exp
+    assert relerr < 1e-3, f"Area {tot_area} does not match expected {tot_area_exp} within 1e-3"
+
+
+
+def conroy_tau_star(t):
+    if t < 2.5:
+        tau_st = 50
+    elif 2.5 <= t < 3.7:
+        tau_st = 50/(1+3*(t-2.5))**2
+    else:
+        tau_st = 2.36
+    return tau_st
+"sfr"
+
+
+class conroy_sf_law:
+    def __init__(self, area=None):
+        self.area = area
+
+    def __call__(self, t):
+        tau_st = conroy_tau_star(t)
+        return tau_st
+
+    def __str__(self):
+        return "Conroy22"
+
+
+class twoinfall_sf_law:
+    """
+    twoinfall_tau_star(t2, nu1, nu2)
+
+    Returns the star formation timescale at time t for a two-infall model.
+
+    Parameters
+    ----------
+    t2: time of transition
+    nu1: star formation efficienty before transition
+    nu2: star formation efficiency after transition
+
+    """
+    def __init__(self, area=None, *, t2=4.1, nu1=2, nu2=1):
+        self.area = area
+        self.t2 = t2
+        self.nu1 = nu1
+        self.nu2 = nu2
+
+    def __call__(self, t):
+        if t < self.t2:
+            tau_st = 1/self.nu1
+        else:
+            tau_st = 1/nu2
+        return tau_st
+
+    def __str__(self):
+        return f"Two-infall SF law, t2={self.t2}, nu1={self.nu1}, nu2={self.nu2}"
+
+    
+
+
+
 
 class MH_grad:
     def __init__(self, params):
-        """Metallicity gradient of galaxy from Hayden et al. 2014"""
+        """Metallicity gradient of galaxy from Hayden et al. 2014.
+
+        Depends on
+        - params.MH_grad_R0: the transition radius of the gradient.
+        - params.MH_grad_MH0: the metallicity at R0
+        - params.MH_grad_in: the gradient inside the solar radius
+        - params.MH_grad_out: the gradient outside the solar radius
+        """
         self.R0 = params.MH_grad_R0
         self.MH_0 = params.MH_grad_MH0
         self.zeta_in = params.MH_grad_in
@@ -147,9 +191,14 @@ class MH_grad:
 
 class mass_loading:
     """A class which represents the mass loading profile of galaxy. Set yields before calling this
-    params.eta_scale scales the assumed yield setting used here. approximantly multiplies eta by this value
-    params.r is the approximated return fraction
-    params.tau_star_sfh_grad is the linear approximation of tau_star / tau_sfh ~ R.
+
+    Depends on
+    - params.eta_scale: scales the assumed yield setting used here. approximantly multiplies eta by this value
+    - params.r: is the approximated return fraction
+    - params.tau_star_sfh_grad: is the linear approximation of tau_star / tau_sfh ~ R.
+    and additional parameter sent to MH_grad. 
+
+    Since the gradient tends to be slightly underproduced where tau_star/tau_sfh would be highest (inner galaxy) where eta->0, this is best simply set to zero.
     """
     def __init__(self, params):
         r = params.r
@@ -175,6 +224,12 @@ class mass_loading:
 
 
 def get_imf(params):
+    """return the IMF for the model galaxy based on the parameters.
+    Only supports salpeter, kroupa, chabrier. 
+
+    Depends on
+    - params.imf: the IMF to use
+    """
     if params.imf == "salpeter":
         return params.imf
     elif params.imf == "kroupa":

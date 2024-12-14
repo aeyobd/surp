@@ -87,10 +87,13 @@ def check_model_params(model, params):
     assert model.verbose == params.verbose
     assert model.simple == params.simple
     assert model.elements == ("fe", "o", "mg", "n", "c")
+    assert model.IMF == params.imf
     assert isinstance(model.mass_loading, surp.simulation.properties.mass_loading)
     assert model.dt == params.timestep
     assert model.delay == params.t_d_ia
     assert model.RIa == params.RIa
+    assert model.smoothing == params.smoothing
+    assert model.tau_ia == params.tau_ia
     assert model.m_upper == params.m_upper
     assert model.m_lower == params.m_lower
     assert model.Z_solar == 0.016
@@ -112,3 +115,4 @@ def test_sfh():
     # for example, the normalization.
     # here, we just check some functional evolution
     sfh = MODEL.evolution
+    assert isinstance(sfh, surp.simulation.star_formation_history.star_formation_history)
