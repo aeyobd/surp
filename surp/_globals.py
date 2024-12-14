@@ -13,7 +13,7 @@ Z_SUN = 0.016  # 0.0176 in paper
 Y_SUN  = 0.274 # 0.2734 in paper
 X_SUN = 0.71 # 0.709 inferred
 
-ELEMENTS = ["c", "n", "o", "mg", "fe"]
+ELEMENTS = ["c", "n", "mg", "fe"]
 
 AGB_MODELS = ["cristallo11", "ventura13", "karakas16", "pignatari16"]
 
