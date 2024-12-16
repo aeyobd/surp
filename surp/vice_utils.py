@@ -8,9 +8,11 @@ import surp
 from ._globals import ELEMENTS, DATA_DIR, N_SUBGIANTS
 
 
-
 def load_vice(name, zone_width, hydrodisk=False):
-    """Loads a vice.milkyway model output at the location name
+    """
+    load_vice(name, zone_width, hydrodisk=False)
+
+    Loads a vice.milkyway model output at the location name.
 
     Parameters
     ----------
@@ -32,15 +34,17 @@ def load_vice(name, zone_width, hydrodisk=False):
     else:
         milkyway.stars["abs_z"] = [0 for _ in milkyway.stars["zone_origin"]]
 
-    milkyway.stars["R_origin"] = zone_to_R(np.array(milkyway.stars["zone_origin"]), zone_width)
-    milkyway.stars["R_final"] = zone_to_R(np.array(milkyway.stars["zone_final"]), zone_width)
+    milkyway.stars["R_origin"] = zone_to_R(milkyway.stars["zone_origin"], zone_width)
+    milkyway.stars["R_final"] = zone_to_R(milkyway.stars["zone_final"], zone_width)
 
     return milkyway
 
 
 
-def reduce_history(multioutput, zone_width=0.1):
+def reduce_history(multioutput, zone_width):
     """
+    reduce_history(multioutput, zone_width)
+
     Returns a pandas DF object representing the entire history class
     """
     history_cols = multioutput.zones["zone0"].history.keys()
@@ -55,7 +59,7 @@ def reduce_history(multioutput, zone_width=0.1):
     N = len(keys)
     for i in range(N):
         zone = multioutput.zones[keys[i]]
-        zone_idx = zone_to_int(keys[i])
+        zone_idx = _zone_to_int(keys[i])
         R = zone_to_R(zone_idx, zone_width=zone_width)
 
         df = pd.DataFrame(zone.history.todict())
@@ -75,7 +79,12 @@ def reduce_history(multioutput, zone_width=0.1):
 
 
 
-def zone_to_int(zone: str):
+def _zone_to_int(zone: str):
+    """
+    _zone_to_int(zone: str)
+
+    Converts a zone string (format e.g. "zone15") to an integer.
+    """
     matches = re.findall(r'\d+', zone)
 
     if len(matches) != 1:
@@ -89,17 +98,63 @@ def zone_to_int(zone: str):
     return i
 
 
+def ssp_weight(mass, metallicity, age):
+    """A functional form for the weight of finding a sampled star from an SSP given its age and metallicity"""
 
-def reduce_stars(multioutput):
+    return np.where(age < 2, 0, 1) * mass
+
+
+def reduce_stars(multioutput, *,  weight_function=ssp_weight):
+    """
+    reduce_stars(multioutput)
+
+    Returns a pandas DF object representing the entire stars class.
+    Additionally, renames abundances to be in apogee-like format
+
+    weight_function : function = ssp_weight
+        A function that takes in np vectors of mass, metallicity, and age
+        and returns a weight for each star in the sample.
+    """
     df = pd.DataFrame(multioutput.stars.todict())
     df = rename_columns(df)
     drop_z_cols(df)
     df = order_abundance_ratios(df)
     df["high_alpha"] = surp.gce_math.is_high_alpha(df.MG_FE, df.MG_H)
+    df["weight"] = weight_function(df.mass, df.FE_H, df.age)
+
     return df
 
+# APOGEE DR17 pipeline (Holzman et al.) is not published yet
+# These are simple fits to the reported uncertanties
+# for the subgiant sample.
 
-def create_star_sample(stars, cdf = None, num=N_SUBGIANTS, zone_width=0.1, seed=-1):
+def polynomial(x, coeffs):
+    s = 0
+    N = len(coeffs)
+    for i in range(N):
+        power = (N - i - 1)
+        s += coeffs[i] * x**(N - i - 1)
+    return s
+
+
+def fe_h_err(Fe_H):
+    return np.maximum(0.005, polynomial(Fe_H, [-0.00557748, 0.00831548]))
+
+def c_mg_err(Fe_H):
+    return np.maximum(0.01, polynomial(Fe_H, [-0.03789911, 0.03505672]))
+
+def mg_h_err(Fe_H):
+    return np.maximum(0.01, polynomial(Fe_H,[0.06521454,0.00522015,0.03381753]))
+
+
+def mg_fe_err(Fe_H):
+    return np.maximum(0.005, polynomial(Fe_H,[ 0.00792663,-0.00801737, 0.0138201 ]))
+
+
+def create_star_sample(stars, cdf = None, num=N_SUBGIANTS, 
+        zone_width=0.1, seed=-1, 
+        c_mg_err=c_mg_err, mg_h_err=mg_h_err, mg_fe_err=mg_fe_err,
+        ):
     """
     creates a sample of stars given a dataframe of vice stars.
 
@@ -150,15 +205,17 @@ def create_star_sample(stars, cdf = None, num=N_SUBGIANTS, zone_width=0.1, seed=
     return sample
 
 
-def R_to_zone(r: float, zone_width):
+@np.vectorize
+def R_to_zone(r, zone_width):
     return int(np.floor(r/zone_width))
 
-
-def zone_to_R(zone: int, zone_width):
+@np.vectorize
+def zone_to_R(zone, zone_width):
     return (zone + 1/2) * zone_width
 
 
 def ele_columns():
+    """Returns a list of all possible element columns in the form of apogee_names in the ideal order."""
     cols = []
     N = len(ELEMENTS)
 
@@ -188,10 +245,12 @@ def invert_name(col):
     else:
         raise ValueError("not valid column name", col)
 
+
 def is_ele(ele):
     if ele.lower() == "h":
         return True
     return ele.lower() in vice.solar_z.keys()
+
 
 def extract_eles(col):
     matches = col.split("_")
@@ -204,6 +263,7 @@ def extract_eles(col):
 
 
 def order_abundance_ratios(df):
+    """Flips abundance ratios to correspond to the order of the elements in ELEMENTS"""
     cols = df.keys()
     ele_cols = ele_columns()
 
@@ -218,19 +278,21 @@ def order_abundance_ratios(df):
     return df
 
 
-def is_z_col(col):
-    r = re.compile(r"z\([a-z]{1,2}\)")
-    return r.match(col)
-
-
 def drop_z_cols(df):
+    """Removes abundance columns from the dataframe inplace (in the form z(x))"""
     for col in df.keys():
         if is_z_col(col):
             df.drop(col, axis=1, inplace=True)
 
+def is_z_col(col):
+    """is the column in vice's z(x) abundance format"""
+    r = re.compile(r"z\([a-z]{1,2}\)")
+    return r.match(col)
 
 
 def rename_columns(df):
+    """Renames the abundance-ratio columns of the dataframe to be in
+    apogee-like format"""
     new_cols = []
     for col in df.keys():
         if is_abund_ratio(col):
@@ -243,77 +305,64 @@ def rename_columns(df):
     df.columns = new_cols
     return df
     
-
-
 def is_abund_ratio(col):
+    """is the column in vice's abundance ratio format"""
     r = re.compile(r"\[[a-z]{1,2}/[a-z]{1,2}\]")
     if r.match(col):
         return True
     return False
 
 
-
-
 def load_cdf():
+    """Loads the CDF of radii for the subgiant sample."""
     return pd.read_csv(os.path.join(DATA_DIR, "R_subgiants_cdf.csv"))
 
 
 def rand_radii(cdf, rng=np.random.default_rng()):
+    """Randomly selects a radius from the CDF."""
     p = rng.uniform(0, 1)
     return cdf.R.loc[cdf.cdf > p].iloc[0]
 
 
 def rand_star(stars, cdf, width, rng=np.random.default_rng()):
+    """Randomly selects a star from the given stars dataframe."""
     zone = R_to_zone(rand_radii(cdf, rng=rng), width)
     return rand_star_in_zone(stars, zone, rng=rng)
 
 
 def rand_star_in_zone(stars, zone, rng=np.random.default_rng()):
+    """
+    Randomly selects a star from the given zone, 
+    returned as a single-row dataframe.
+    """
     df = stars.loc[stars.zone_final == zone]
 
     size = len(df)
-    index = rng.choice(np.arange(size), p=df["mass"] / np.sum(df["mass"]))
+    weights = df["weight"] / np.sum(df["weight"])
+    index = rng.choice(np.arange(size), p=weights)
 
     return df.iloc[index:index+1]
 
-
-    return s
-
     
 
-# APOGEE DR17 pipeline (Holzman et al.) is not published yet
-# These are simple fits to the reported uncertanties
-# for the subgiant sample.
-
-def polynomial(x, coeffs):
-    s = 0
-    N = len(coeffs)
-    for i in range(N):
-        power = (N - i - 1)
-        s += coeffs[i] * x**(N - i - 1)
-    return s
 
 
-def fe_h_err(Fe_H):
-    return np.maximum(0.005, polynomial(Fe_H, [-0.00557748, 0.00831548]))
 
-def c_mg_err(Fe_H):
-    return np.maximum(0.01, polynomial(Fe_H, [-0.03789911, 0.03505672]))
+def get_R_z_ini_fin_analytic_2d(filename):
+    """
+    get_R_z_ini_fin_analytic_2d(filename)
 
-def mg_h_err(Fe_H):
-    return np.maximum(0.01, polynomial(Fe_H,[0.06521454,0.00522015,0.03381753]))
-
-
-def mg_fe_err(Fe_H):
-    return np.maximum(0.005, polynomial(Fe_H,[ 0.00792663,-0.00801737, 0.0138201 ]))
-
+    Returns the R, z, initial, and final radii of stars
+    from the analytic_migration_2d class.
+    """
+    pass
 
 
 def calculate_z(output):
     """
     Calculate the absolute z height of the stars in a VICE hydrodiskstars output.
     """
-    analog_data = analogdata(output.name + "_analogdata.out")
+    analog_data = analogdata(output.name + "_star_migration.dat")
     return [np.abs(row[-1]) for row in analog_data][:output.stars.size[0]]
 
 

@@ -1,20 +1,22 @@
 import numpy as np
 
 import vice
-from vice.toolkit import J21_sf_law
 
 try:
     from vice.toolkit.rand_walk.rand_walk_stars import rand_walk_stars 
     from vice.toolkit.analytic_migration.analytic_migration_2d import analytic_migration_2d
+    from vice.toolkit.analytic_migration.migration_models import final_positions_gaussian_py
 except ImportError:
     print("Daniel's vice fork not installed, analytic/gaussian migration not available")
 
 from vice.toolkit.hydrodisk.hydrodiskstars import hydrodiskstars 
+from vice.toolkit import J21_sf_law
 
 from .star_formation_history import star_formation_history 
 from ..yields import set_yields
 from .._globals import Z_SUN
 from surp.yield_models import chabrier
+
 
 def create_migration(bins, params):
     """
@@ -25,7 +27,8 @@ def create_migration(bins, params):
     Depends on 
     - params.migration: the type of migration to use
     - params.save_migration: whether to save the migration data 
-    - params.n_stars: the number of stars to produce per timestep (gaussian and random walk)
+    - params.n_stars: the number of stars to produce per timestep (gaussian and
+        random walk)
     - params.timestep: the timestep of the model
     - params.sigma_R: the standard deviation of the migration in R 
     - params.verbose: whether to print verbose output (gaussian only)
@@ -34,7 +37,7 @@ def create_migration(bins, params):
     """
     kind = params.migration
     if params.save_migration:
-        filename="star_migration.dat"
+        filename=params.filename + "_star_migration.dat"
     else:
         filename = None
 
@@ -43,6 +46,10 @@ def create_migration(bins, params):
             name=filename, sigma_R=params.sigma_R
             )
     elif kind == "gaussian":
+        final_positions = final_positions_gaussian_py(
+                seed=params.seed, 
+                **params.migration_kwargs
+            )
         migration = analytic_migration_2d(
             bins, 
             dt=params.timestep, 
@@ -51,9 +58,12 @@ def create_migration(bins, params):
             verbose=params.verbose,
             initial_final_filename="migration_initial_final.dat",
             seed=params.seed,
+            final_positions=final_positions,
+            migration_mode=params.migration_mode,
         )
     elif kind == "hydrodisk":
-        migration = hydrodiskstars(bins, N=params.N_star_tot)
+        migration = diskmigration(bins, N=params.N_star_tot,
+                mode=params.migration_mode, filename=filename)
     else:
         raise ValueError("migration mode not known", kind)
 
@@ -67,7 +77,8 @@ def set_sf_law(model, params):
     Set the star formation law for the model galaxy for each zone.
 
     Depends on
-    - params.sf_law: the star formation law to use. Options are "conroy22", "twoinfall", "J21"
+    - params.sf_law: the star formation law to use. Options are "conroy22",
+      "twoinfall", "J21"
     - params.tau_star0: the present day molecular gas depletion time (J21 only)
 
     Additionally for params.sf_law = "twoinfall":
@@ -88,15 +99,14 @@ def set_sf_law(model, params):
         tot_area += area
 
         if params.sf_law == "conroy22":
-            model.zones[i].tau_star = conroy_sf_law(area)
+            model.zones[i].tau_star = conroy_sf_law(area, **params.sf_law_kwargs)
         elif params.sf_law == "twoinfall":
-            kwargs = params.sfh_kwargs
             model.zones[i].tau_star = twoinfall_sf_law(area,
-                nu1=kwargs["nu1"], nu2=kwargs["nu2"], t2=kwargs["t2"]
+                **params.sf_law_kwargs
                 )
         elif params.sf_law == "J21":
             model.zones[i].tau_star = J21_sf_law(area, mode=params.mode, 
-                present_day_molecular=params.tau_star0
+                    **params.sf_law_kwargs
                 )
         else:
             raise ValueError("SF law not known ", params.sf_law)
@@ -119,6 +129,17 @@ def conroy_tau_star(t):
 
 
 class conroy_sf_law:
+    r"""
+    conroy_sf_law()
+
+    Creates a callable class returning the star formation timescale at time t
+    for the Conroy et al. 2022[1] model.
+
+    .. math:: \tau_{\star} = \begin{cases} 50 & t < 2.5 \\ \frac{50}{(1+3(t-2.5))^2} & 2.5 \leq t < 3.7 \\ 2.36 & t \geq 3.7 \end{cases}
+
+    
+    [^1]: Conroy, C., et al. 2022, arXiv:2202.02989
+    """
     def __init__(self, area=None):
         self.area = area
 
@@ -141,7 +162,6 @@ class twoinfall_sf_law:
     t2: time of transition
     nu1: star formation efficienty before transition
     nu2: star formation efficiency after transition
-
     """
     def __init__(self, area=None, *, t2=4.1, nu1=2, nu2=1):
         self.area = area
@@ -153,7 +173,7 @@ class twoinfall_sf_law:
         if t < self.t2:
             tau_st = 1/self.nu1
         else:
-            tau_st = 1/nu2
+            tau_st = 1/self.nu2
         return tau_st
 
     def __str__(self):
@@ -193,12 +213,15 @@ class mass_loading:
     """A class which represents the mass loading profile of galaxy. Set yields before calling this
 
     Depends on
-    - params.eta_scale: scales the assumed yield setting used here. approximantly multiplies eta by this value
+    - params.eta_scale: scales the assumed yield setting used here.
+      approximantly multiplies eta by this value
     - params.r: is the approximated return fraction
     - params.tau_star_sfh_grad: is the linear approximation of tau_star / tau_sfh ~ R.
     and additional parameter sent to MH_grad. 
 
-    Since the gradient tends to be slightly underproduced where tau_star/tau_sfh would be highest (inner galaxy) where eta->0, this is best simply set to zero.
+    Since the gradient tends to be slightly underproduced where
+    tau_star/tau_sfh would be highest (inner galaxy) where eta->0, this is best
+    simply set to zero.
     """
     def __init__(self, params):
         r = params.r
@@ -240,3 +263,95 @@ def get_imf(params):
         raise ValueError("IMF not known", params.imf)
 
 
+
+
+
+class diskmigration(hydrodiskstars):
+
+	r"""
+	A ``hydrodiskstars`` object which writes extra analog star particle data to
+	an output file.
+
+	Parameters
+	----------
+	radbins : array-like
+		The bins in galactocentric radius in kpc corresponding to each annulus.
+	mode : ``str`` [default : "linear"]
+		A keyword denoting the time-dependence of stellar migration.
+		Allowed values:
+
+		- "diffusion"
+		- "linear"
+		- "sudden"
+		- "post-process"
+
+	filename : ``str`` [default : "stars.out"]
+		The name of the file to write the extra star particle data to.
+
+	Attributes
+	----------
+	write : ``bool`` [default : False] 	
+		A boolean describing whether or not to write to an output file when
+		the object is called. The ``multizone`` object, and by extension the
+		``milkyway`` object, automatically switch this attribute to True at the
+		correct time to record extra data.
+	"""
+
+	def __init__(self, radbins, mode = "diffusion", filename = "stars.out",
+		**kwargs):
+		super().__init__(radbins, mode = mode, **kwargs)
+		if isinstance(filename, str):
+			self._file = open(filename, 'w')
+			self._file.write("# zone_origin\ttime_origin\tanalog_id\tzfinal\n")
+		else:
+			raise TypeError("Filename must be a string. Got: %s" % (
+				type(filename)))
+
+		# use only disk stars in these simulations
+		self.decomp_filter([1, 2])
+
+		# Multizone object automatically swaps this to True in setting up
+		# its stellar population zone histories
+		self.write = False
+
+	def __call__(self, zone, tform, time):
+		if tform == time:
+			super().__call__(zone, tform, time) # reset analog star particle
+			if self.write:
+				if self.analog_index == -1:
+					# finalz = 100
+					finalz = 0
+					analog_id = -1
+				else:
+					finalz = self.analog_data["zfinal"][self.analog_index]
+					analog_id = self.analog_data["id"][self.analog_index]
+				self._file.write("%d\t%.2f\t%d\t%.2f\n" % (zone, tform,
+					analog_id, finalz))
+			else: pass
+			return zone
+		else:
+			return super().__call__(zone, tform, time)
+
+	def close_file(self):
+		r"""
+		Closes the output file - should be called after the multizone model
+		simulation runs.
+		"""
+		self._file.close()
+
+	@property
+	def write(self):
+		r"""
+		Type : bool
+
+		Whether or not to write out to the extra star particle data output
+		file. For internal use by the vice.multizone object only.
+		"""
+		return self._write
+
+	@write.setter
+	def write(self, value):
+		if isinstance(value, bool):
+			self._write = value
+		else:
+			raise TypeError("Must be a boolean. Got: %s" % (type(value)))

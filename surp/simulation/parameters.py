@@ -57,11 +57,6 @@ class MWParams(AbstractParams):
     m_lower: ``float``
         The lower mass limit of the IMF
 
-    migration_mode: ``str``
-        The migration mode to use. Only matters if migration = "hydrodisk", 
-        Options are
-        - "diffusion"
-        - "post-process"
 
     N_star_tot: ``int``
         The total number of stars to create in the model. 
@@ -79,13 +74,20 @@ class MWParams(AbstractParams):
         The migration mode to use. Options are
         - "hydrodisk"
         - "gaussian"
-        - "rand_walk"
+        - "rand_walk" (highly experimental)
 
-    sigma_R: ``bool``
-        Strength of migration for random walk migration (and TODO gaussian...)
+    migration_mode: ``str``
+        The migration mode to use. This is set as an attribute
+        on the milkyway object (used if migration = "hydrodisk").
+        Otherwise, this is passed to gaussian if that migration.
+        For hydrodisk, may be "diffusion" or "post-process".
+        For gaussian, may be "linear" or "sqrt".
 
     save_migration: ``bool``
         If true, writes the migration history to the file star_migration.dat.
+
+    migration_kwargs: ``dict``
+        kwargs passed to the migration function.
 
 
     sfh_model: ``str``
@@ -113,8 +115,8 @@ class MWParams(AbstractParams):
         - "conroy"
         - "twoinfall"
 
-    tau_star0: ``float``
-        The star formation timescale at t=0 for J21 sf_law.
+    sf_law_kwargs: ``dict``
+        kwargs passed to surp.simulation.star_formation_law....
 
     M_star_MW: ``float``
         The stellar mass of Milky Way. Used to normalize SFH.
@@ -194,10 +196,10 @@ class MWParams(AbstractParams):
     simple:bool
     verbose:bool
 
-    migration_mode:str
     migration:str
-    sigma_R:float
+    migration_mode:str
     save_migration:bool
+    migration_kwargs:dict
 
     smoothing:float
 
@@ -214,7 +216,7 @@ class MWParams(AbstractParams):
     Re:float
 
     sf_law:str
-    tau_star0:float
+    sf_law_kwargs:dict
 
     M_star_MW:float
     thin_disk_scale_radius:float

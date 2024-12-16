@@ -1,21 +1,19 @@
 import surp
 import vice
 import os
+from pytest import approx
 
 def get_test_params():
     params = surp.simulation.MWParams(
         filename = "test",
-        zone_width = 3.3,
+        zone_width = 10,
         n_stars = 2,
         simple = False,
         verbose = True,
-        migration_mode = "diffusion",
-        migration = "gaussian",
-        sigma_R = 0.83,
-        save_migration=False,
+
         mode = "sfr",
         imf = "kroupa",
-        timestep=0.2,
+        timestep=5,
         t_d_ia = 0.15,
         RIa = "plaw",
         smoothing = 0.00,
@@ -23,8 +21,22 @@ def get_test_params():
         m_lower = 0.08,
         m_upper = 100,
 
+        migration = "gaussian",
+        migration_mode = "sqrt",
+        save_migration=False,
+        migration_kwargs = dict(
+            sigma_r8 = 1.2,
+            tau_power = 0.4,
+            R_power = 0.2,
+            hz_s = 0.05,
+            tau_s_z = 2.2,
+            R_s = 5.1,
+            ),
+
         sf_law = "J21",
-        tau_star0 = 2.0,
+        sf_law_kwargs = dict(
+            present_day_molecular = 2.1,
+            ),
         Re = 5.5,
 
         sfh_model = "insideout",
@@ -77,10 +89,6 @@ def test_create_model():
     assert isinstance(MODEL2, vice.milkyway)
 
 
-def test_run():
-    MODEL.run(PARAMS.times, overwrite=True, pickle=True)
-    assert os.path.exists("test.vice")
-
 
 def check_model_params(model, params):
     assert model.name == params.filename
@@ -97,6 +105,12 @@ def check_model_params(model, params):
     assert model.m_upper == params.m_upper
     assert model.m_lower == params.m_lower
     assert model.Z_solar == 0.016
+
+    assert model.annuli[0] == 0
+    assert model.annuli[-1] >= 20
+    dr_model = [model.annuli[i+1] - model.annuli[i] for i in range(len(model.annuli)-1)]
+    dr_expected = [params.zone_width]*(len(model.annuli) - 1)
+    assert dr_model == approx(dr_expected)
 
 
 def test_check_model_params():
@@ -116,3 +130,13 @@ def test_sfh():
     # here, we just check some functional evolution
     sfh = MODEL.evolution
     assert isinstance(sfh, surp.simulation.star_formation_history.star_formation_history)
+
+def test_run():
+    MODEL.run(PARAMS.times, overwrite=True, pickle=True)
+    assert os.path.exists("test.vice")
+
+    MODEL2.run(PARAMS2.times, overwrite=True, pickle=True)
+    assert os.path.exists("test2.vice")
+
+    # close migration to flush the data to disk for later
+    MODEL2.migration.stars.close_file()

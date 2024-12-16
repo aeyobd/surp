@@ -3,6 +3,7 @@ import json
 import os
 
 from . import vice_utils
+from ._globals import N_SUBGIANTS
 
 
 class ViceModel():
@@ -20,7 +21,8 @@ class ViceModel():
     unfiltered_stars
     """
 
-    def __init__(self, stars_unsampled, history, mdf, zone_width, stars=None, seed=-1):
+    def __init__(self, stars_unsampled, history, mdf, zone_width, 
+                 stars=None, seed=-1, num_stars=N_SUBGIANTS, cdf=None):
         """
         Parameters
         ----------
@@ -40,7 +42,10 @@ class ViceModel():
         self.stars_unsampled = pd.DataFrame(stars_unsampled)
 
         if stars is None:
-            stars = vice_utils.create_star_sample(self.stars_unsampled, zone_width=zone_width, seed=seed)
+            stars = vice_utils.create_star_sample(self.stars_unsampled,
+                zone_width=zone_width,
+                seed=seed, num=num_stars, cdf=cdf,
+            )
 
         self.stars = pd.DataFrame(stars)
 
@@ -62,11 +67,11 @@ class ViceModel():
         return cls(d["stars_unsampled"], d["history"], d["mdf"], zone_width=None, stars=d["stars"])
 
     @classmethod
-    def from_vice(cls, filename, zone_width, **kwargs):
+    def from_vice(cls, filename, zone_width, hydrodisk=False, **kwargs):
         name = os.path.splitext(filename)[0]
         json_name = f"{name}.json"
 
-        output = vice_utils.load_vice(filename, zone_width=zone_width)
+        output = vice_utils.load_vice(filename, zone_width=zone_width, hydrodisk=hydrodisk)
         history, mdf = vice_utils.reduce_history(output, zone_width=zone_width)
         stars_unsampled = vice_utils.reduce_stars(output)
 

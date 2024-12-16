@@ -34,6 +34,7 @@ class star_formation_history:
 
     def __init__(self, params):
         self._radii = midpoints(params.radial_bins)
+        self._bins = params.radial_bins
         self._params = params
         self._create_sfhs()
         self._normalize()
@@ -53,10 +54,12 @@ class star_formation_history:
 
         for i in range(len(self)):
             time_integral = 0
-            for j in range(int(END_TIME / dt)):
+            for j in range(int(END_TIME / dt) + 1):
                 t = j * dt
-                time_integral += self._evol[i](t) * dt * 1.e9 # yr to Gyr
-            self._coeffs[i] = masses[i] / (time_integral * (1 - self._params.r))
+                time_integral += self._evol[i](t) * dt
+
+            norm = time_integral * (1 - self._params.r)  * 1e9 # yr to Gyr
+            self._coeffs[i] = masses[i] / norm
 
     def __call__(self, radius, time):
         # The milkyway object will always call this with a radius in the
@@ -64,9 +67,12 @@ class star_formation_history:
         if radius > self._params.max_sf_radius:
             return 0
 
-        idx = get_bin_number(self._radii, radius)
+        if radius not in self._radii and radius != 1:
+            print(f"Warning: radius {radius} not in radii array")
 
-        if idx != -1:
+        idx = get_bin_number(self._bins, radius)
+
+        if idx != -1 and idx < len(self)- 1:
             return self._coeffs[idx] * interpolate(self._radii[idx],
                 self._evol[idx](time), self._radii[idx + 1],
                 self._evol[idx + 1](time), radius)
@@ -97,8 +103,8 @@ def create_sfh_model(radius, params):
 
     Replaces values of `sanchez` in kwargs with the appropriate timescale for the radius (muplitiplied by a number if there is a float in the string.
 
-    For the twoinfall model, the A2 parameter is scaled to the thin/thick ratio as well,
-    but not for twoexp.
+    For the twoinfall model only, the A2 parameter is additionally scaled by the 
+    local thin/thick ratio relative to solar.
 
     Depends on:
     - params.sfh_model
@@ -139,9 +145,6 @@ def create_sfh_model(radius, params):
         At = np.exp(-(radius - r_sun) / r_t)
         AT = np.exp(-(radius - r_sun) / r_T)
         kwargs["A2"] = kwargs["A2"] * At/AT  * t_T
-        if params.sfh_model == "twoinfall":
-            kwargs.pop("nu1")
-            kwargs.pop("nu2")
         sfh = sfh_models.twoexp(**kwargs)
 
     elif name == "linexp":

@@ -17,7 +17,7 @@ ELEMS = ["c", "n", "o", "mg", "fe"]
 
 
 
-def set_magg22_scale(verbose=True, isotopic=False):
+def set_magg22_scale(verbose=True):
     """Sets the solar_z values of c, o, mg, fe, and n to magg++2022
     If isotopic is true, sets isotopic c12 and c13 abundances using
     the ratio of 89.3 ± 0.2 quoted in Asplund et al. 2021 from Meija et al. 2016)
@@ -32,15 +32,6 @@ def set_magg22_scale(verbose=True, isotopic=False):
     if verbose:
         print("yields set to Magg et al. 2022 abundances")
 
-    if isotopic:
-        c12_c13 = 89.3
-        c13 = vice.solar_z["c"] / (1 + c12_c13)
-        c12 = c13 * c12_c13
-        assert c12 + c13 == vice.solar_z["c"]
-        assert c12 / c13 == c12_c13
-        vice.solar_z["hg"] = c12
-        vice.solar_z["tl"] = c13
-        print("Isotopic c12/c13 abundances set in hg and tl")
 
 
 

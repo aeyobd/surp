@@ -4,9 +4,8 @@ n_stars = 1
 simple = false
 verbose = false
 N_star_tot = 204600
-migration_mode = "diffusion"
+migration_mode = "sqrt"
 migration = "gaussian"
-sigma_R = 1.27
 save_migration = false
 mode = "sfr"
 imf = "kroupa"
@@ -18,11 +17,10 @@ tau_ia = 1.5
 m_upper = 100
 m_lower = 0.08
 sf_law = "J21"
-tau_star0 = 2.0
 Re = 5
 sfh_model = "insideout"
 max_sf_radius = 15.5
-M_star_MW = 51700000000.0
+M_star_MW = 51_700_000_000.0
 thin_disk_scale_radius = 2.5
 thick_disk_scale_radius = 2.0
 thin_to_thick_ratio = 3.7
@@ -38,3 +36,12 @@ tau_star_sfh_grad = 0
 [sfh_kwargs]
 tau_sfh = "sanchez"
 tau_rise = 2
+
+[sf_law_kwargs]
+present_day_molecular = 2.0
+
+[migration_kwargs]
+sigma_r8 = 3.6
+tau_power = 0.5
+R_power = 0
+hz_s = 0

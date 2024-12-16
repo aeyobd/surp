@@ -97,7 +97,7 @@ model.json
 stars.csv
 
 *walks.dat
-star_migration.dat
+*_migration.dat
 migration_initial_final.dat
 
 mcmc_samples.csv
@@ -107,3 +107,4 @@ mg_h_binned.csv
 
 carbon_paper/mcmc_samples
 *.csv
+
