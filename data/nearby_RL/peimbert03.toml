@@ -1,0 +1,19 @@
+link = "https://ui.adsabs.harvard.edu/abs/2003ApJ...584..735P"
+notes = """
+Abundances for 30-Doradus in the LMC. 
+VLT UVES observations of RL lines.
+Calculate ICF and multiple temperature regions.
+"""
+
+galaxy = "LMC"
+class = "?"
+object = "30-Dor"
+eps_c = 8.05
+c_err = 0.05
+eps_n = 7.21
+n_err = 0.08
+eps_o = 8.54
+o_err = 0.06
+eps_fe = 6.39
+fe_err = 0.2
+

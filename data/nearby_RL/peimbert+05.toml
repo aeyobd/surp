@@ -1,0 +1,16 @@
+
+link = "https://ui.adsabs.harvard.edu/abs/2005ApJ...634.1056P"
+notes = """
+VLT FORS observations of two regions in local group irregular galaxy NGC 6822.
+ICF from garnett et al. 1995
+RL abundances.
+"""
+galaxy = "NGC-6822"
+class = "D/Ir"
+object = "region V"
+eps_c = 8.01
+c_err = 0.12
+eps_n = 6.85
+n_err = 0.15
+eps_o = 8.37
+o_err = 0.09

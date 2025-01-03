@@ -3,6 +3,9 @@ notes = """HST UV + optical ground based spectra of local star-forming dwarf gal
 with He II emission.
 The IDs are non-standard and are from Shirazi & Brinchmann 2012.
 Errors are approximate here since they report asymmetric error bars.
+
+CEL carbon,, O abundances from direct Te method.
+Do use photoionization models to derive C/O ratios.
 """
 
 galaxy  = ["SB2",   "SB36", "SB80","SB82", "SB110","SB111","SB179","SB182","SB191","SB198"  ]
