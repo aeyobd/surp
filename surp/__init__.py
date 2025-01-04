@@ -17,17 +17,4 @@ from .subgiants import _read_subgiants
 from .vincenzo import vincenzo2021 
 
 
-
-def check_dependencies(dependencies):
-    missing = []
-    for package in dependencies:
-        try:
-            __import__(package)
-        except ImportError:
-            missing.append(package)
-    return missing
-
-
-
 subgiants = _read_subgiants()
-

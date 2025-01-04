@@ -108,3 +108,6 @@ mg_h_binned.csv
 carbon_paper/mcmc_samples
 *.csv
 
+test.json
+test2.json
+

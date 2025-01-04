@@ -8,9 +8,9 @@ import surp
 from ._globals import ELEMENTS, DATA_DIR, N_SUBGIANTS
 
 
-def load_vice(name, zone_width, hydrodisk=False):
+def load_vice(name, zone_width, migration_data=None):
     """
-    load_vice(name, zone_width, hydrodisk=False)
+    load_vice(name, zone_width, migration_data=None)
 
     Loads a vice.milkyway model output at the location name.
 
@@ -18,8 +18,9 @@ def load_vice(name, zone_width, hydrodisk=False):
     ----------
     name : str
         the name of the model to load
-    hydrodisk : bool = False
-        if hydrodisk, than reads in abs_z from  analogdata
+    migration_data : str
+        The mode in which to read the migration data. 
+        May be "analytic" or "hydrodisk".
     zone_width : float
         The width of the zones to convert to R (assumed linear...)
 
@@ -29,13 +30,21 @@ def load_vice(name, zone_width, hydrodisk=False):
     """
 
     milkyway = vice.output(name)
-    if hydrodisk:
+    if migration_data == "hydrodisk":
         milkyway.stars["abs_z"] = calculate_z(milkyway)
+    elif migration_data == "analytic":
+        df = get_analytic_migration_ini_fin("migration_initial_final.dat")
+        df.set_index(["i", "zone", "n"], inplace=True)
+        df.sort_index(inplace=True)
+        milkyway.stars["abs_z"] = np.abs(df["z_final"].values)
+        milkyway.stars["R_origin"] = df["R_birth"].values
+        milkyway.stars["R_final"] = df["R_final"].values
     else:
         milkyway.stars["abs_z"] = [0 for _ in milkyway.stars["zone_origin"]]
 
-    milkyway.stars["R_origin"] = zone_to_R(milkyway.stars["zone_origin"], zone_width)
-    milkyway.stars["R_final"] = zone_to_R(milkyway.stars["zone_final"], zone_width)
+    if migration_data != "analytic":
+        milkyway.stars["R_origin"] = zone_to_R(milkyway.stars["zone_origin"], zone_width)
+        milkyway.stars["R_final"] = zone_to_R(milkyway.stars["zone_final"], zone_width)
 
     return milkyway
 
@@ -167,7 +176,9 @@ def create_star_sample(stars, cdf = None, num=N_SUBGIANTS,
         - MG_H
         - MG_FE
         - FE_H
-        - C_N
+    cdf : pd.DataFrame
+        The CDF of radii for the subgiants. Should have columns "R" and "cdf".
+
 
     """
     if cdf is None:
@@ -188,11 +199,8 @@ def create_star_sample(stars, cdf = None, num=N_SUBGIANTS,
     sample["MG_H_true"] = sample.MG_H
     sample["MG_FE_true"] = sample.MG_FE
     sample["FE_H_true"] = sample.FE_H
-    sample["C_N_true"] = sample.C_N
 
     MH = sample.FE_H
-    print("MH", MH)
-    print("nans", np.sum(np.isnan(MH)))
     sample["C_MG_err"] = c_mg_err(MH)
     sample["MG_H_err"] = mg_h_err(MH)
     sample["MG_FE_err"] = mg_fe_err(MH)
@@ -348,25 +356,27 @@ def rand_star_in_zone(stars, zone, rng=np.random.default_rng()):
 
 
 
-def get_R_z_ini_fin_analytic_2d(filename):
+def get_analytic_migration_ini_fin(filename):
     """
-    get_R_z_ini_fin_analytic_2d(filename)
+    get_analytic_migration_ini_fin(filename)
 
     Returns the R, z, initial, and final radii of stars
     from the analytic_migration_2d class.
     """
-    pass
+
+    df = pd.read_csv(filename)
+    return df
 
 
 def calculate_z(output):
     """
     Calculate the absolute z height of the stars in a VICE hydrodiskstars output.
     """
-    analog_data = analogdata(output.name + "_star_migration.dat")
+    analog_data = load_analogdata(output.name + "_star_migration.dat")
     return [np.abs(row[-1]) for row in analog_data][:output.stars.size[0]]
 
 
-def analogdata(filename):
+def load_analogdata(filename):
     """
     Load the analogdata file from a VICE hydrodiskstars output.
     """

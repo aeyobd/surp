@@ -14,7 +14,6 @@ import vice
 import arya
 
 from surp import ViceModel, subgiants
-from surp import plots as sp
 import surp
 import surp.gce_math as gcem
 from surp.yields import calc_y
