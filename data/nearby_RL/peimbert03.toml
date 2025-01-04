@@ -5,15 +5,16 @@ VLT UVES observations of RL lines.
 Calculate ICF and multiple temperature regions.
 """
 
+[["regions"]]
 galaxy = "LMC"
 class = "?"
-object = "30-Dor"
-eps_c = 8.05
-c_err = 0.05
-eps_n = 7.21
-n_err = 0.08
-eps_o = 8.54
-o_err = 0.06
-eps_fe = 6.39
-fe_err = 0.2
+region = "30-Dor"
+eps_C = 8.05
+eps_C_err = 0.05
+eps_N = 7.21
+eps_N_err = 0.08
+eps_O = 8.54
+eps_O_err = 0.06
+eps_Fe = 6.39
+eps_Fe_err = 0.2
 

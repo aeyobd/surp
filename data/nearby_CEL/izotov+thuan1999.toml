@@ -1,0 +1,83 @@
+link = "https://ui.adsabs.harvard.edu/abs/1999ApJ...511..639I/abstract"
+notes = """sample of BCG under HST. C for seven galaxies referenced in berg+19
+I average the measurements of I Zw 18 NW and SE regions, and for N5253 I average the two HII regions and the UV-1 region. The valueas are statistically consistent for each region.
+As such C is derived from the 1906, 1909 lines. 
+O++ for C/O is derived from 4959+5007 lines. 
+So C/O derivations are for CEL
+All galaxies are BCDG
+ICFs are < 0.05 dex
+
+Use an assembly of observations from Garnett et al. (1995, 1995a, 1997), 
+Kobulnicky et al. (1997), Kobulnicky & Skillman (1997), and Thuan et al. (1999)
+
+"""
+
+[["regions"]]
+region = "I Zw 18"
+T_e     = 20500
+T_e_err = 900
+ICF_C_O = 1.08
+log_C_O = -0.755
+log_C_O_err=0.07
+eps_O = 7.12
+eps_O_err=0.04
+
+[["regions"]]
+region = "SBS 0335-052"
+T_e     = 19300
+T_e_err = 100
+ICF_C_O = 1.21
+log_C_O = -0.83
+log_C_O_err=0.08
+eps_O = 7.32
+eps_O_err=0.01
+
+[["regions"]]
+region = "SBS 1415+437"
+T_e     = 16600
+T_e_err = 200
+ICF_C_O = 1.05
+log_C_O = -0.78
+log_C_O_err=0.10
+eps_O = 7.60
+eps_O_err=0.01
+
+[["regions"]]
+region = "UM 469"
+T_e     = 12800
+T_e_err = 800
+ICF_C_O = 1.00
+log_C_O = -0.45
+log_C_O_err=0.20
+eps_O = 7.97
+eps_O_err=0.05
+
+[["regions"]]
+region = "NGC 4861"
+T_e     = 14200
+T_e_err = 400
+ICF_C_O = 1.11
+log_C_O = -0.38
+log_C_O_err=0.16
+eps_O = 8.03
+eps_O_err=0.02
+
+[["regions"]]
+region = "T1345-420"
+T_e     = 12500
+T_e_err = 700
+ICF_C_O = 1.11
+log_C_O = -0.61
+log_C_O_err=0.16
+eps_O = 8.11
+eps_O_err=0.05
+
+[["regions"]]
+region = "NGC 5253"
+T_e     = 11490
+T_e_err = 600
+ICF_C_O = 1.05
+log_C_O = -0.56
+log_C_O_err=0.13
+eps_O = 8.16
+eps_O_err=0.05

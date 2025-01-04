@@ -1,0 +1,80 @@
+# double check..o
+link = "https://ui.adsabs.harvard.edu/abs/1995ApJ...443...64G/abstract"
+notes = """
+Regions in dwarf galaxies. Also companion paper in same year but focused on Si.
+
+1907/1909 CIII] lines and 1666 OIII] lines (CEL)
+Partially reanalyzed in izotov+thuan1999
+I Zw 18 is only upper limit, so excluded.
+"""
+
+[["regions"]]
+region = "30 Dor"
+galaxy = "LMC"
+log_O_H = -3.70
+log_O_H_err = 0.10
+T_e = 10_400
+T_e_err = 400
+ICF_C_O = 1.06
+ICF_C_O_err = 0.14
+log_C_O = -0.48
+log_C_O_err = 0.26
+
+[["regions"]]
+region = "SMC N88A"
+galaxy = "SMC"
+log_O_H = -3.91
+log_O_H_err = 0.04
+T_e = 14_000
+T_e_err = 500
+ICF_C_O = 1.33
+ICF_C_O_err = 0.48
+log_C_O = -0.72
+log_C_O_err = 0.17
+
+[["regions"]]
+region = "NGC 2363"
+log_O_H = -4.08
+log_O_H_err = 0.04
+T_e = 14_800
+T_e_err = 500
+ICF_C_O = 1.31
+ICF_C_O_err = 0.45
+log_C_O = -0.63
+log_C_O_err = 0.15
+
+
+[["regions"]]
+region = "C1543+091"
+galaxy = "I Zw 18"
+log_O_H = -4.24
+log_O_H_err = 0.10
+T_e = 16_100
+T_e_err = 500
+ICF_C_O = 1.20
+ICF_C_O_err = 0.30
+log_C_O = -0.81
+log_C_O_err = 0.15
+
+[["regions"]]
+region = "T1214-277"
+log_O_H = -4.41
+log_O_H_err = 0.05
+T_e = 17_800
+T_e_err = 800
+ICF_C_O = 1.32
+ICF_C_O_err = 0.45
+log_C_O = -0.80
+log_C_O_err = 0.28
+
+
+[["regions"]]
+region = "SBS 0335-052"
+log_O_H = -4.64
+log_O_H_err = 0.06
+T_e = 19_500
+T_e_err = 800
+ICF_C_O = 1.21
+ICF_C_O_err = 0.31
+log_C_O = -0.94
+log_C_O_err = 0.17

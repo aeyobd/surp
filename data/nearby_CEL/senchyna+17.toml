@@ -8,8 +8,73 @@ CEL carbon,, O abundances from direct Te method.
 Do use photoionization models to derive C/O ratios.
 """
 
-galaxy  = ["SB2",   "SB36", "SB80","SB82", "SB110","SB111","SB179","SB182","SB191","SB198"  ]
-eps_O   = [ 7.81,    7.92,   8.24,  7.91,   8.17,   7.81,   8.35,   8.01,   8.30,   8.48    ]
-eps_O_err=[ 0.07,    0.04,   0.06,  0.04,   0.08,   0.08,   0.07,   0.04,   0.07,   0.11    ]
-log_C_O = [-1.36,   -0.81,  -0.74,  -0.52,  -0.68,  -1.02,  -1.01,  -0.75,  -0.74,  -0.80   ]
-log_C_O_err=[0.06,  0.20,   0.45,   0.04,   0.3,    0.15,   0.14,   0.09,   0.09,   0.20    ]
+[["regions"]]
+region = "SB2"
+eps_O = 7.81
+eps_O_err = 0.07
+log_C_O = -1.36
+log_C_O_err = 0.06
+
+[["regions"]]
+region = "SB36"
+eps_O = 7.92
+eps_O_err = 0.04
+log_C_O = -0.81
+log_C_O_err = 0.20
+
+[["regions"]]
+region = "SB80"
+eps_O = 8.24
+eps_O_err = 0.06
+log_C_O = -0.74
+log_C_O_err = 0.45
+
+[["regions"]]
+region = "SB82"
+eps_O = 7.91
+eps_O_err = 0.04
+log_C_O = -0.52
+log_C_O_err = 0.04
+
+[["regions"]]
+region = "SB110"
+eps_O = 8.17
+eps_O_err = 0.08
+log_C_O = -0.68
+log_C_O_err = 0.3
+
+[["regions"]]
+region = "SB111"
+eps_O = 7.81
+eps_O_err = 0.08
+log_C_O = -1.02
+log_C_O_err = 0.15
+
+[["regions"]]
+region = "SB179"
+eps_O = 8.35
+eps_O_err = 0.07
+log_C_O = -1.01
+log_C_O_err = 0.14
+
+[["regions"]]
+region = "SB182"
+eps_O = 8.01
+eps_O_err = 0.04
+log_C_O = -0.75
+log_C_O_err = 0.09
+
+[["regions"]]
+region = "SB191"
+eps_O = 8.30
+eps_O_err = 0.07
+log_C_O = -0.74
+log_C_O_err = 0.09
+
+[["regions"]]
+region = "SB198"
+eps_O = 8.48
+eps_O_err = 0.11
+log_C_O = -0.80
+log_C_O_err = 0.20
+

@@ -1,0 +1,35 @@
+notes = """
+RL for extragalactic H II regions
+ISIS spectrograph on Herschel telescope
+"""
+
+
+[["regions"]]
+galaxy = "M33"
+region = "NGC 604"
+class = "spiral"
+
+[["regions"]]
+region = "NGC 5461"
+galaxy = "M 101"
+class = "spiral"
+
+[["regions"]]
+galaxy = "M 101"
+region = "NGC 5471"
+class = "spiral"
+
+eps_c = 7.79
+c_err = NaN
+eps_n = 6.51
+n_err = 0.15
+eps_o = 8.23
+o_err = 0.05
+eps_fe = 6.36
+fe_err = 0.09
+
+
+[["regions"]]
+galaxy = "NGC 2366"
+region = "NGC 2363"
+class = "dwarf (magellanic)"
