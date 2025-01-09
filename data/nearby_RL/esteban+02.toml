@@ -1,7 +1,14 @@
 notes = """
 RL for extragalactic H II regions
 ISIS spectrograph on Herschel telescope
+
+No He II => O IV is minimal so oxygen abundance is just OII + OIII.
+C is derived from CII 4267 recombination line + ICs near unity from garnett ++.
+Values without uncertanties are very low signal to noise. All C derived values assume t^2 value > 0. 
+Contains also N, S, Ar abundances.
 """
+
+citation = "Esteban C, Peimbert M, Torres-Peimbert S, Rodríguez M. 2002. ApJ. 581(1):241–57"
 
 
 [["regions"]]
@@ -9,27 +16,50 @@ galaxy = "M33"
 region = "NGC 604"
 class = "spiral"
 
-[["regions"]]
-region = "NGC 5461"
-galaxy = "M 101"
-class = "spiral"
+eps_C = 8.44
+eps_C_err = 0.06
+eps_O = 8.66 
+eps_O_err = 0.10
+eps_Fe = 6.43
+eps_Fe_err = 0.09
 
 [["regions"]]
-galaxy = "M 101"
+region = "NGC 5461"
+galaxy = "M101"
+class = "spiral"
+
+eps_C = 8.40
+eps_C_err = 0.10
+eps_O = 8.81
+eps_O_err = 0.12
+eps_Fe = 6.75
+eps_Fe_err = 0.08
+
+[["regions"]]
+galaxy = "M101"
 region = "NGC 5471"
 class = "spiral"
 
-eps_c = 7.79
-c_err = NaN
-eps_n = 6.51
-n_err = 0.15
-eps_o = 8.23
-o_err = 0.05
-eps_fe = 6.36
-fe_err = 0.09
+eps_C = 7.79
+eps_C_err = NaN
+eps_N = 6.70
+eps_N_err = 0.15
+eps_O = 8.23
+eps_O_err = NaN
+eps_Fe = 6.36
+eps_Fe_err = 0.09
 
 
 [["regions"]]
 galaxy = "NGC 2366"
 region = "NGC 2363"
-class = "dwarf (magellanic)"
+class = "magellanic"
+
+eps_C = 7.62
+eps_C_err = NaN
+eps_N = 6.70
+eps_N_err = 0.12
+eps_O = 8.20
+eps_O_err = 0.11
+eps_Fe = 6.16
+eps_Fe_err = 0.08

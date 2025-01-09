@@ -7,8 +7,8 @@ RL abundances.
 """
 
 [["regions"]]
-galaxy = "NGC-6822"
-class = "D/Ir"
+galaxy = "NGC 6822"
+class = "dwarf"
 region = "region V"
 eps_C = 8.01
 eps_C_err = 0.12

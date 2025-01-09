@@ -1,7 +1,5 @@
 # Toribio San Cipriano et al. 2017
-
 # RL and CEL derived abundances for HII regions in the LMC and SMC 
-
 # Note that the C2+ CEL abundances are derived from other studies
 # (like garnett 1995 and dunfour et al. 1982). 
 # Observations are made using UVES
@@ -9,13 +7,13 @@
 # O2+ from RL at 4650.
 # abundance discrepency factors are ~ 0.3 dex 
 # ionization corrections from garnett et al. 1999?
-galaxy  object      eps_o   eps_o_err   eps_o_cel   eps_o_cel_err   log_c_o log_c_o_err     log_c_o_cel log_c_o_cel_err
-LMC     30Dor       8.53    0.04        8.39        0.01            -0.50   0.06            -0.58       0.04
-LMC     N44C        8.58    0.02        8.31        0.03            -0.43   0.03            NaN         NaN
-LMC     IC2111      8.61    0.07        8.43        0.04            -0.42   0.08            -0.43       0.04
-LMC     NGC1714     8.56    0.07        8.37        0.04            -0.45   0.07            -0.47       0.04
-LMC     N11B        8.59    0.02        8.39        0.03            -0.48   0.04            NaN         NaN 
-SMC     N66A        8.35    0.03        8.00        0.02            -0.67   0.06            -0.86       0.02
-SMC     N81         8.34    0.02        8.01        0.02            -0.67   0.04            -0.91       0.02
-SMC     NGC456      8.36    0.09        8.06        0.05            -0.62   0.19            NaN         NaN
-SMC     N88A        8.22    0.02        7.94        0.03            -0.54   0.03            -0.72       0.17
+galaxy	region	eps_o	eps_o_err	eps_o_cel	eps_o_cel_err	log_c_o	log_c_o_err	log_c_o_cel	log_c_o_cel_err
+LMC	30 Dor	8.53	0.04	8.39	0.01	-0.50	0.06	-0.58	0.04
+LMC	N44C	8.58	0.02	8.31	0.03	-0.43	0.03	NaN	NaN
+LMC	IC 2111	8.61	0.07	8.43	0.04	-0.42	0.08	-0.43	0.04
+LMC	NGC 1714	8.56	0.07	8.37	0.04	-0.45	0.07	-0.47	0.04
+LMC	N11B	8.59	0.02	8.39	0.03	-0.48	0.04	NaN	NaN
+SMC	N66A	8.35	0.03	8.00	0.02	-0.67	0.06	-0.86	0.02
+SMC	N81	8.34	0.02	8.01	0.02	-0.67	0.04	-0.91	0.02
+SMC	NGC 456	8.36	0.09	8.06	0.05	-0.62	0.19	NaN	NaN
+SMC	N88A	8.22	0.02	7.94	0.03	-0.54	0.03	-0.72	0.17

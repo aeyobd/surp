@@ -1,15 +1,21 @@
-galaxy		    class	object		eps_c	c_err	eps_n	n_err	eps_o	o_err	eps_fe	fe_err
-M31		        S	    K932		8.46	0.13	7.63	0.06	8.62	0.03	5.90	0.09
-M33		        Sc	    NGC-595		8.53	0.12	7.53	0.10	8.69	0.05	5.55	0.21
-M33		        Sc	    NGC-604		8.40	0.11	7.49	0.07	8.60	0.03	5.94	0.11
-NGC-2366	    Ir	    NGC-2363	7.75	0.09	6.70	0.10	8.04	0.05	5.71	0.23
-NGC-2403	    Sc	    VS-24		8.46	0.24	7.35	0.07	8.37	0.04	5.71	0.19
-NGC-2403	    Sc	    VS-38		8.50	0.15	7.23	0.11	8.29	0.05	5.58	0.35
-NGC-2403	    Sc	    VS-44		8.32	0.18	7.52	0.08	8.61	0.04	6.13	0.12
-M101		    Sc	    H1013		8.67	0.12	7.82	0.19	8.73	0.09	5.98	0.26
-M101		    Sc	    NGC-5461	8.30	0.20	7.54	0.11	8.49	0.06	6.15	0.21
-M101		    Sc	    NGC-5447	8.20	0.12	7.39	0.13	8.52	0.06	6.23	0.35
-NGC-1741	    Im-D	Zone-C		NaN	    NaN	    7.36	0.18	8.41	0.06	5.95	0.25
-NGC-4395	    SA(s)m	Reg-70		NaN	    NaN	    6.56	0.28	8.09	0.15	5.97	0.42
-NGC-4861	    Im/BCD	Brightest	NaN	    NaN	    6.56	0.28	8.05	0.04	5.45	0.33
-M83		        SABc	Nucleus		NaN	    NaN	    8.51	0.15	8.97	0.08	NaN	    NaN
+# Esteban C, Bresolin F, Peimbert M, García-Rojas J, Peimbert A, Mesa-Delgado A. 2009. ApJ. 700(1):654–78
+# 
+# Recombination lines
+# KECK HIRES spectroscopy
+# C lines include 4267 6578, and 7231/7236	(with various numbers of detections)
+# ICFs from garnett+1999
+galaxy	class	region	eps_c	c_err	eps_n	n_err	eps_o	o_err	eps_fe	fe_err
+M31	spiral	K932	8.46	0.13	7.63	0.06	8.62	0.03	5.90	0.09
+M33	spiral	NGC 595	8.53	0.12	7.53	0.10	8.69	0.05	5.55	0.21
+M33	spiral	NGC 604	8.40	0.11	7.49	0.07	8.60	0.03	5.94	0.11
+NGC 2366	magellanic	NGC-2363	7.75	0.09	6.70	0.10	8.04	0.05	5.71	0.23
+NGC 2403	spiral	VS 24	8.46	0.24	7.35	0.07	8.37	0.04	5.71	0.19
+NGC 2403	spiral	VS 38	8.50	0.15	7.23	0.11	8.29	0.05	5.58	0.35
+NGC 2403	spiral	VS 44	8.32	0.18	7.52	0.08	8.61	0.04	6.13	0.12
+M101	spiral	H1013	8.67	0.12	7.82	0.19	8.73	0.09	5.98	0.26
+M101	spiral	NGC 5461	8.30	0.20	7.54	0.11	8.49	0.06	6.15	0.21
+M101	spiral	NGC 5447	8.20	0.12	7.39	0.13	8.52	0.06	6.23	0.35
+NGC 1741	Im-D	Zone C	NaN	NaN	7.36	0.18	8.41	0.06	5.95	0.25
+NGC 4395	SA(s)m	Reg 70	NaN	NaN	6.56	0.28	8.09	0.15	5.97	0.42
+NGC 4861	BCD	Brightest	NaN	NaN	6.56	0.28	8.05	0.04	5.45	0.33
+M83	spiral	Nucleus	NaN	NaN	8.51	0.15	8.97	0.08	NaN	NaN

@@ -7,8 +7,8 @@ Calculate ICF and multiple temperature regions.
 
 [["regions"]]
 galaxy = "LMC"
-class = "?"
-region = "30-Dor"
+class = "magellanic"
+region = "30 Dor"
 eps_C = 8.05
 eps_C_err = 0.05
 eps_N = 7.21

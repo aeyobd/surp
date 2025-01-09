@@ -1,3 +1,69 @@
 link = "https://ui.adsabs.harvard.edu/abs/1999ApJ...513..168G/abstract"
+notes = """
+HII regions in M101 and NGC 2403.
+CEL lines
+Ionization corrections shown to be < 0.1 dex for C.
+M101 regions also observed in Skillman et al. but are RLs in this case...
+NGC 2403 regions observed in Esteban  et al. (2009) in RL.
+One problem is that the extinction is undetermined. They calculate values for both Rv = 3.1 and Rv=5, so I take the average of these values and add half the difference to the uncertanties in quadrature.
 
+HST FOS
+
+Lines:
+- C III] 1907/1909
+- C II] 2325
+- O III] 1666
+- [O II] 2470
+- [O II] 3727
+- [O III] 4363
+- [O III] 4959/5007
+"""
+
+[["regions"]]
+region = "NGC 5455"
+galaxy = "M101"
+log_O_H = -3.61
+log_O_H_err = 0.03
+log_C_O = -0.32
+log_C_O_err = 0.15
+
+[["regions"]]
+region = "NGC 5461"
+galaxy = "M101"
+log_O_H = -3.49
+log_O_H_err = 0.03
+log_C_O = -0.20
+log_C_O_err = 0.21
+
+[["regions"]]
+region = "NGC 5471"
+galaxy = "M101"
+log_O_H = -3.94
+log_O_H_err = 0.03
+log_C_O = -0.685
+log_C_O_err = 0.052
+
+[["regions"]]
+region = "VS 38"
+galaxy = "NGC 2403"
+log_O_H = -3.42
+log_O_H_err = 0.05
+log_C_O = -0.38
+log_C_O_err = 0.13
+
+[["regions"]]
+region = "VS 44"
+galaxy = "NGC 2403"
+log_O_H = -3.50
+log_O_H_err = 0.04
+log_C_O = -0.40
+log_C_O_err = 0.14
+
+[["regions"]]
+region = "VS 9"
+galaxy = "NGC 2403"
+log_O_H = -3.84
+log_O_H_err = 0.03
+log_C_O = -0.59
+log_C_O_err = 0.19
 

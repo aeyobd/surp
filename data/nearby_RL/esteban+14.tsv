@@ -1,10 +1,17 @@
-galaxy		    class	object		eps_c	c_err	eps_n	n_err	eps_o	o_err	eps_fe	fe_err
-NGC-6822	    D/Ir	?		    7.83	0.10	6.94	0.09	8.35	0.05	6.05	0.17
-NGC-5408	    ?	    ?		    7.59	0.15	6.72	0.08	8.21	0.04	6.03	0.10
-Tol-1924-416 	?	    ?		    NaN     NaN	    6.59	0.06	7.99	0.02	6.05	0.10
-NGC-3125 	    ?	    ?		    8.18	NaN	    7.48	0.12	8.69	0.08	6.94	0.22
-Mrk-1271 	    ?	    ?		    8.27	NaN	    7.17	0.30	8.71	0.13	6.22	0.36
-POX-4 		    ?	    ?		    8.11	NaN	    6.63	0.07	8.09	0.02	5.98	0.13
-SDSS-J1253-0312	?	    ?		    7.70	NaN	    7.14	0.08	7.99	0.02	6.28	0.11
-Tol-1457-0312 	?	    ?		    NaN	    NaN	    6.78	0.06	8.21	0.02	6.28	0.12
-He-2-10 	    ?	    ?		    NaN	    NaN	    7.67	0.14	8.55	0.02	6.34	0.16
+# Esteban C, García-Rojas J, Carigi L, Peimbert M, Bresolin F, et al. 2014. MNRAS. 443(1):624–47
+# 
+# Low metallicity SF galaxies
+# Recombination lines
+# VLT UVES
+# Only detect CII 4267 (low S/N typically).
+# 
+galaxy	class	region	eps_c	c_err	eps_n	n_err	eps_o	o_err	eps_fe	fe_err
+NGC 6822	dwarf	centre	7.83	0.10	6.94	0.09	8.35	0.05	6.05	0.17
+NGC 5408	dwarf	centre	7.59	0.15	6.72	0.08	8.21	0.04	6.03	0.10
+Tol 1924-416 	?	centre	NaN	NaN	6.59	0.06	7.99	0.02	6.05	0.10
+NGC 3125 	?	centre	8.18	NaN	7.48	0.12	8.69	0.08	6.94	0.22
+Mrk 1271 	?	centre	8.27	NaN	7.17	0.30	8.71	0.13	6.22	0.36
+POX 4 	?	centre	8.11	NaN	6.63	0.07	8.30	NaN	5.98	0.13
+SDSS J1253-0312	?	centre	7.70	NaN	7.14	0.08	7.99	0.02	6.28	0.11
+Tol 1457-0312 	?	centre	NaN	NaN	6.78	0.06	8.21	0.02	6.28	0.12
+He 2-10 	?	centre	NaN	NaN	7.67	0.14	8.55	0.02	6.34	0.16
