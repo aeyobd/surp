@@ -1,5 +1,8 @@
-["iani+2023"]
+
 link = "https://ui.adsabs.harvard.edu/abs/2023MNRAS.518.5018I/abstract"
+
+[["galaxies"]]
+
 galaxy = "abell2895b"
 redshift = 3.72096
 redshift_err = 0.00012

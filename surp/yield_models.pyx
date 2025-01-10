@@ -79,18 +79,15 @@ cpdef chabrier(double mass):
 
     cdef double xi
 
+    cdef double A2 = 4.43e-2
+    cdef double gamma2 = 1.3
+
     if mass < 0.08:
         xi = 0.
     elif mass < 1:
         xi = A1 * m.exp( -(logm - m.log10(mc))**2 / (2*sigma**2))
-    elif logm < 0.54:
-        xi = 0.044 * mass**-4.37
-    elif logm < 1.26:
-        xi = 0.015 * mass**-3.53
-    elif logm < 1.8:
-        xi = 2.5e-4 * mass**-2.11
     else:
-        xi = 0.
+        xi = A2 * mass**-gamma2
 
     return xi / (m.log(10) * mass)
     

@@ -1,0 +1,4 @@
+inherits = "../yield_params.toml"
+alpha_c_agb = 1.63
+y0_c_cc = 0.00215
+zeta_c_cc = 0.00212

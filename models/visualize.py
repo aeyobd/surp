@@ -283,7 +283,7 @@ def plot_sz_caafe(eta=0.5, tau_sfh=15, tau_star=3.2,  **kwargs):
         warnings.simplefilter("ignore")
         sz, h = run_singlezone(eta=eta, tau_sfh=tau_sfh, tau_star=tau_star)
 
-    plt.plot(h.O_FE, h.C_O, **kwargs)
+    plt.plot(h.MG_FE, h.C_MG, **kwargs)
     return sz
 
 

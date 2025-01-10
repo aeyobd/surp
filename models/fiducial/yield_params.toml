@@ -1,10 +1,10 @@
 yield_scale = 1
 mlr = "larson1974"
-y0_c_cc = 0.0022027168
+y0_c_cc = 0.00201
 y_c_cc = "Quadratic"
-zeta_c_cc = 0.0019627619263157896
+zeta_c_cc = 0.00227
 Y_c_agb = "cristallo11"
-alpha_c_agb = 1.4491557894736842
+alpha_c_agb = 2.04
 y_c_ia = 0
 Y_n_agb = "A"
 eta_n_agb = 0.000502
@@ -15,7 +15,7 @@ y_fe_ia = 0.00077
 y_fe_cc = 0.000473
 
 [kwargs_c_cc]
-A = 0.0036930257999999994
+A = 0.00253
 
 [kwargs_c_agb]
 mass_factor = 1

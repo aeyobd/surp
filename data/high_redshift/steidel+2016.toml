@@ -1,6 +1,13 @@
-["steidel+2016"]
 link = "https://ui.adsabs.harvard.edu/abs/2016ApJ...826..159S/abstract"
-galaxy = "stack"
+
+notes = """
+Far UV-optical rest frame observations.
+Keck LRIS, MOSFIRE.
+30 star forming galaxies.
+"""
+
+[["galaxies"]]
+galaxy = "MOSFIRE stack"
 redshift = 2.4
 redshift_err = 0.11
 eps_o = 8.38

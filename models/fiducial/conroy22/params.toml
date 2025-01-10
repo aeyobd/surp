@@ -6,3 +6,5 @@ mode = "ifr"
 
 [sfh_kwargs]
 tau_sfh = "sanchez"
+
+[sf_law_kwargs]

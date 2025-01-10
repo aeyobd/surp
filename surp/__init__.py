@@ -13,7 +13,7 @@ from ._globals import *
 
 from .vice_model import ViceModel
 
-from .subgiants import _read_subgiants
+from .subgiants import _read_subgiants, filter_high_alpha, filter_metallicity
 from .vincenzo import vincenzo2021 
 
 

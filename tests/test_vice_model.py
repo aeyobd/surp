@@ -33,7 +33,7 @@ def test_load_vice_model():
     VICE_OUT2 = vice.output("test2.vice")
     assert isinstance(VICE_OUT2, vice.multioutput)
 
-    SURP_VICE2 = surp.ViceModel.from_vice("test2.vice", PARAMS.zone_width, hydrodisk=True, num_stars=300, migration_data="hydrodisk")
+    SURP_VICE2 = surp.ViceModel.from_vice("test2.vice", PARAMS.zone_width, num_stars=300, migration_data="hydrodisk")
     assert isinstance(SURP_VICE2, surp.ViceModel)
     assert len(SURP_VICE2.stars) == 300
 
