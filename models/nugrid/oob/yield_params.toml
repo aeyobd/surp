@@ -1,7 +1,7 @@
-inherits = "../../fiducial/yield_params.toml"
-y0_c_cc = 0.0024
-zeta_c_cc = 0.00135892
+inherits = "../yield_params.toml"
+y0_c_cc = 0.00178
+zeta_c_cc = 0.00162
 alpha_c_agb = 1.0
 
 [kwargs_c_cc]
-A = 0.0016
+A = 0.00301
