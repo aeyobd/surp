@@ -10,19 +10,6 @@ struct ConstDist  <: ContinuousUnivariateDistribution
     mean::Float64
 end
 
-function Base.rand(rng::AbstractRNG, d::ConstDist)
-    return d.mean
-end
-
-Distributions.minimum(d::ConstDist) = d.mean
-Distributions.maximum(d::ConstDist) = d.mean
-Distributions.logpdf(d::ConstDist, x) = x == d.mean ? 0.0 : -Inf
-Distributions.cdf(d::ConstDist, x) = x < d.mean ? 0.0 : 1.0
-Distributions.sampler(d::ConstDist) = d
-Distributions.insupport(d::ConstDist, x) = x == d.mean
-Distributions.quantile(d::ConstDist, p) = d.mean
-
-
 function get_args()
     s = ArgParseSettings(
         description = """runs a MCMC model from a binned multi-component multizone model
@@ -139,6 +126,7 @@ end
         
 
     params ~ arraydist(priors[.!is_const])
+    sigma_int ~ LogNormal(-3, 1) # mean of 0.05 dex
 
     const_params = [p.mean for p in priors[is_const]]
     all_params = vcat(const_params, params)
@@ -152,8 +140,8 @@ end
     sigma_ah = models_ah.obs_err ./ sqrt.(models_ah.obs_counts)
     sigma_afe = models_afe.obs_err ./ sqrt.(models_afe.obs_counts)
 
-    sigma2_ah = @. sigma_ah^2 + sem_ah^2 
-    sigma2_afe = @. sigma_afe^2 + sem_afe^2
+    sigma2_ah = @. sigma_ah^2 + sem_ah^2 + sigma_int^2
+    sigma2_afe = @. sigma_afe^2 + sem_afe^2 + sigma_int^2
 
     # Data likelihoods
     models_ah.obs ~ MvNormal(mu_ah, diagm(sigma2_ah))
