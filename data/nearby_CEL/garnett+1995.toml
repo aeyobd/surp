@@ -11,6 +11,7 @@ I Zw 18 is only upper limit, so excluded.
 [["regions"]]
 region = "30 Dor"
 galaxy = "LMC"
+class = "magellanic"
 log_O_H = -3.70
 log_O_H_err = 0.10
 T_e = 10_400
@@ -23,6 +24,7 @@ log_C_O_err = 0.26
 [["regions"]]
 region = "SMC N88A"
 galaxy = "SMC"
+class = "magellanic"
 log_O_H = -3.91
 log_O_H_err = 0.04
 T_e = 14_000
@@ -34,6 +36,7 @@ log_C_O_err = 0.17
 
 [["regions"]]
 region = "NGC 2363"
+class = "magellanic"
 log_O_H = -4.08
 log_O_H_err = 0.04
 T_e = 14_800
@@ -47,6 +50,7 @@ log_C_O_err = 0.15
 [["regions"]]
 region = "C1543+091"
 galaxy = "I Zw 18"
+class = "dwarf"
 log_O_H = -4.24
 log_O_H_err = 0.10
 T_e = 16_100
@@ -57,7 +61,8 @@ log_C_O = -0.81
 log_C_O_err = 0.15
 
 [["regions"]]
-region = "T1214-277"
+region = "Tol 1214-277"
+class = "dwarf"
 log_O_H = -4.41
 log_O_H_err = 0.05
 T_e = 17_800
@@ -70,6 +75,7 @@ log_C_O_err = 0.28
 
 [["regions"]]
 region = "SBS 0335-052"
+class = "dwarf" 
 log_O_H = -4.64
 log_O_H_err = 0.06
 T_e = 19_500

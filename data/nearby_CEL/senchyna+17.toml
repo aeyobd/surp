@@ -9,70 +9,98 @@ Do use photoionization models to derive C/O ratios.
 """
 
 [["regions"]]
-region = "SB2"
+id = "SB2"
+region = "centre"
+galaxy = "SDSS J094401.87-003832.1"
+class = "dwarf"
 eps_O = 7.81
 eps_O_err = 0.07
 log_C_O = -1.36
 log_C_O_err = 0.06
 
 [["regions"]]
-region = "SB36"
+id = "SB36"
+region = "centre"
+galaxy = "SDSS J102429.25+052450.9"
 eps_O = 7.92
 eps_O_err = 0.04
 log_C_O = -0.81
 log_C_O_err = 0.20
 
 [["regions"]]
-region = "SB80"
+id = "SB80"
+galaxy = "UGC 5189"
+region = "SDSS J094256.74+092816.2,"
 eps_O = 8.24
 eps_O_err = 0.06
 log_C_O = -0.74
 log_C_O_err = 0.45
 
 [["regions"]]
-region = "SB82"
+id = "SB82"
+region = "Mrk 193"
+galaxy = "Mrk 193"
+class = "dwarf"
 eps_O = 7.91
 eps_O_err = 0.04
 log_C_O = -0.52
 log_C_O_err = 0.04
 
 [["regions"]]
-region = "SB110"
+id = "SB110"
+galaxy = "SDSS J094252.78+354726.0"
+region = "centre"
+class = "dwarf"
 eps_O = 8.17
 eps_O_err = 0.08
 log_C_O = -0.68
 log_C_O_err = 0.3
 
 [["regions"]]
-region = "SB111"
+id = "SB111"
+galaxy = "LEDA 41360"
+region = "centre"
+class = "dwarf"
 eps_O = 7.81
 eps_O_err = 0.08
 log_C_O = -1.02
 log_C_O_err = 0.15
 
 [["regions"]]
-region = "SB179"
+id = "SB179"
+galaxy = "IC 700"
+region = "LEDA 35380"
+class = "spiral"
 eps_O = 8.35
 eps_O_err = 0.07
 log_C_O = -1.01
 log_C_O_err = 0.14
 
 [["regions"]]
-region = "SB182"
+id = "SB182"
+region = "centre"
+galaxy = "LEDA 36857"
+class = "dwarf"
 eps_O = 8.01
 eps_O_err = 0.04
 log_C_O = -0.75
 log_C_O_err = 0.09
 
 [["regions"]]
-region = "SB191"
+id = "SB191"
+region = "Mrk 1315"
+galaxy = "NGC 4204"
+class = "spiral"
 eps_O = 8.30
 eps_O_err = 0.07
 log_C_O = -0.74
 log_C_O_err = 0.09
 
 [["regions"]]
-region = "SB198"
+id = "SB198"
+region = "SDSS J122225.79+043404.7"
+galaxy = "NGC 4301"
+class = "spiral"
 eps_O = 8.48
 eps_O_err = 0.11
 log_C_O = -0.80

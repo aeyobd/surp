@@ -12,7 +12,7 @@ name = "fiducial"
 C_MG = "CD_MG"
 
 prior = "Normal"
-prior_args = [2.0, 1.0]
+prior_args = [2.0, 2.0]
 
 
 

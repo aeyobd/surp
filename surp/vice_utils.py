@@ -110,7 +110,7 @@ def _zone_to_int(zone: str):
 def ssp_weight(mass, metallicity, age):
     """A functional form for the weight of finding a sampled star from an SSP given its age and metallicity"""
 
-    return np.where(age < 2, 0, 1) * mass
+    return mass
 
 
 def reduce_stars(multioutput, *,  weight_function=ssp_weight):

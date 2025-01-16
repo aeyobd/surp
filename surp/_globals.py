@@ -15,7 +15,7 @@ X_SUN = 0.71 # 0.709 inferred
 
 ELEMENTS = ["c", "n", "mg", "fe"]
 
-AGB_MODELS = ["cristallo11", "ventura13", "karakas16", "pignatari16"]
+AGB_MODELS = ["cristallo11", "ventura13", "karakas16", "battino19"]
 
 def _find_data_dir():
     """Dynamically determines data directory whe n library is imported"""

@@ -14,6 +14,7 @@ Kobulnicky et al. (1997), Kobulnicky & Skillman (1997), and Thuan et al. (1999)
 
 [["regions"]]
 region = "I Zw 18"
+class = "dwarf"
 T_e     = 20500
 T_e_err = 900
 ICF_C_O = 1.08
@@ -24,6 +25,7 @@ eps_O_err=0.04
 
 [["regions"]]
 region = "SBS 0335-052"
+class = "dwarf"
 T_e     = 19300
 T_e_err = 100
 ICF_C_O = 1.21
@@ -34,6 +36,7 @@ eps_O_err=0.01
 
 [["regions"]]
 region = "SBS 1415+437"
+class = "dwarf"
 T_e     = 16600
 T_e_err = 200
 ICF_C_O = 1.05
@@ -44,6 +47,7 @@ eps_O_err=0.01
 
 [["regions"]]
 region = "UM 469"
+class = "dwarf"
 T_e     = 12800
 T_e_err = 800
 ICF_C_O = 1.00
@@ -54,6 +58,7 @@ eps_O_err=0.05
 
 [["regions"]]
 region = "NGC 4861"
+class = "dwarf" # bcdg
 T_e     = 14200
 T_e_err = 400
 ICF_C_O = 1.11
@@ -63,7 +68,8 @@ eps_O = 8.03
 eps_O_err=0.02
 
 [["regions"]]
-region = "T1345-420"
+region = "Tol 1345-420"
+class = "dwarf"
 T_e     = 12500
 T_e_err = 700
 ICF_C_O = 1.11
@@ -74,6 +80,7 @@ eps_O_err=0.05
 
 [["regions"]]
 region = "NGC 5253"
+class = "dwarf"
 T_e     = 11490
 T_e_err = 600
 ICF_C_O = 1.05
