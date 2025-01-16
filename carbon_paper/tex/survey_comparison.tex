@@ -8,6 +8,8 @@
 \usepackage{newtxtext,newtxmath}
 \usepackage{anyfontsize}
 \usepackage{aas_macros}
+\usepackage{longtable}
+\usepackage{booktabs}
 % Depending on your LaTeX fonts installation, you might get better results with one of these:
 %\usepackage{mathptmx}
 %\usepackage{txfonts}
@@ -97,7 +99,7 @@
 
 
 
-This document is a summary of the differences between measurements and surveys as it is related to C. Below, we provide brief descriptions of the relavant characteristics of C determination and survey properties.
+This document is a work-in-progress summary of the differences between measurements and surveys as it is related to C. We provide brief descriptions of the abundance determination methods and survey characteristics.
 
 Some relevant literature comparing surveys includes \citet{hegedhus+2023}, and \dots.
 
@@ -122,7 +124,7 @@ We do not renormalize surveys and instead use reported abundances. Each survey s
     \centering
     \includegraphics[width=\textwidth]{figures/cmg_other_surveys.pdf}
     \caption{Binned median trends for several surveys.
-    With the exception of GALAH (see text), all samples agree up to a normalization for \caah\, and, even more encouragingly, samples approximately trace out the same trend in \caafe.}
+    All samples agree up to a normalization for \caah\, and, even more encouragingly, samples approximately trace out the same trend in \caafe.}
     \label{fig:other_surveys}
 \end{figure*}
 
@@ -177,12 +179,12 @@ which result in trends very similar to the general survey (except for a \~ 0.2 d
 The Galactic Archeology XXX with HERMES survey \citep{DeSilva2015, Martell2017}
 is a high-resolution ($R\sim 50,000$), large ($10^5?$ stars), optical (lambda in ...) survey predominantly targeting local dwarfs.
 
-GALAH is perhaps the strongest outlier in terms of the infered \caah\ trend: predicting a steep negative slope of > 0.5 (compared to < 0.1 for APOGEE)
-However, GALAH may not be the ideal survey for measuring C. Reported C measurments have low completion (50\% or down to 20 \% at lower metallicities) and are based on one weak line (6587.6100Å, in supplemental material of DR3 paper).
+GALAH DR4 substantially improves the C abundances. 
+
+DR3 was a strong outlier in terms of \caah. DR3 reported C measurments have low completion (50\% or down to 20 \% at lower metallicities) and are based on one weak line (6587.6100Å, in supplemental material of DR3 paper).
 So, whlikely observational effects of lower detection rates for metal poor stars, but also strong systematic from APOGEE. Reference Emily's appendix
 GALAH is the one survey which could be consistent with a very different abundance trend in the milky way, declining from +0.3 to -0.2 across the sampled range. 
 Crossmatches with apogee reveal that completion is not the whole story-and stars with C abundances measured in both surveys exhibit a similar systematic trend with metallicity. 
-\dbnote{Note how results would be affected if using Galah instead}
 GALAH consideres NLTE for O, Mg, and Fe, (among others) but not C, using the SME code on a small sample, then applied to the whole survey using the Cannon.
 
 We select our sample with
@@ -251,45 +253,207 @@ According to REVIEW, it is still uncertain what astrophysical systems these are 
 
 \begin{table}
 \centering
-\caption{
-Damped lyman alpha measurements
-References are (1) dessauges-zavadsky+03, (2) : pettini+08, 3: \citet{ellison+10}, }
 \begin{tabular}{lrlll}
-    \hline
-    Quasar & $z_{\rm abs}$ & [C/O] & [O/H] & references \\
-    \hline
-    Q1101-264 & 1.838000 & $0.77 \pm 0.09$ & $-1.66 \pm 0.07$ & (1) \\
-    Q2059-360 & 2.507000 & $-0.41 \pm 0.28$ & $-1.38 \pm 0.23$ & (1) \\
-    J2155+1358 & 4.212000 & $-0.29 \pm 0.08$ & $-1.82 \pm 0.11$ & (1) \\
-    Q0913+072 & 2.618000 & $-0.39 \pm 0.05$ & $-2.42 \pm 0.04$ & (2)\\
-    J1016+4040 & 2.816000 & $-0.21 \pm 0.05$ & $-2.48 \pm 0.11$ & (2)\\
-    J1558+4053 & 2.553000 & $-0.06 \pm 0.07$ & $-2.47 \pm 0.06$ & (2)\\
-    Q2206-199 & 2.076000 & $-0.38 \pm 0.04$ & $-2.09 \pm 0.05$ & (2)\\
-    J0140-0839 & 3.696000 & $-0.30 \pm 0.08$ & $-2.77 \pm 0.15$ & (3) \\
-    J1337+3152 & 3.167000 & $-0.19 \pm 0.11$ & $-2.59 \pm 0.17$ & srianand+10 \\
-    J0311-1722 & 3.734000 & $-0.42 \pm 0.11$ & $-2.31 \pm 0.10$ & cooke+11 \\
-    J1001+0343 & 3.078000 & $-0.41 \pm 0.03$ & $-2.67 \pm 0.05$ & cooke+11 \\
-    J1358+6522 & 3.067295 & $-0.03 \pm 0.11$ & $-2.24 \pm 0.09$ & cooke+12 \\
-    J0035-0918 & 2.340060 & $0.16 \pm 0.24$ & $-2.71 \pm 0.17$ & dutta+14 \\
-    J0953-0504 & 4.202870 & $-0.50 \pm 0.03$ & $-2.57 \pm 0.10$ & dutta+14 \\
-    J0035-0918 & 2.340000 & $0.08 \pm 0.16$ & $-2.46 \pm 0.07$ & cooke+15 \\
-    J1111+1332 & 2.270000 & $-0.18 \pm 0.11$ & $-1.94 \pm 0.08$ & cooke+15 \\
-    Q1202+3235 & 4.977000 & $0.20 \pm 0.09$ & $-2.00 \pm 0.12$ & morrison+16 \\
-    J0903+2628 & 3.077590 & $-0.38 \pm 0.04$ & $-3.07 \pm 0.05$ & cooke+17 \\
-    J0035-0918 & 2.340064 & $-0.12 \pm 0.14$ & $-2.47 \pm 0.06$ & welsh+20 \\
-    HS0105+1619 & 2.536000 & $0.11 \pm 0.04$ & $-1.78 \pm 0.02$ & cooke+14 \\
-    Q0913+072 & 2.618000 & $-0.36 \pm 0.01$ & $-2.42 \pm 0.01$ & cooke+14 \\
-    J1358+6522 & 3.067000 & $-0.27 \pm 0.06$ & $-2.33 \pm 0.02$ & cooke+14 \\
-    \hline
+\hline
+QSO & redshift & C/O & O/H & study \\
+\hline
+HS 0105+1619 & 2.535998 & $0.23 \pm 0.07$ & $-1.75 \pm 0.03$ & omera+01 \\
+J1358+6522 & 3.067259 & $-0.27 \pm 0.06$ & $-2.34 \pm 0.06$ & cooke+14 \\
+J0955+4116 & 3.279908 & $-0.46 \pm 0.15$ & $-2.47 \pm 0.06$ & welsh+2022 \\
+J0140-0839 & 3.696000 & $-0.30 \pm 0.08$ & $-2.77 \pm 0.15$ & ellison+10 \\
+J0035-0918 & 2.340064 & $-0.12 \pm 0.14$ & $-2.47 \pm 0.06$ & welsh+20 \\
+Q1243+307 & 2.525640 & $0.24 \pm 0.03$ & $-2.79 \pm 0.03$ & cooke+18 \\
+PKS1937-101 & 3.572400 & $1.56 \pm 0.13$ & $-2.57 \pm 0.13$ & riemer-sorensen+17 \\
+Q1101-264 & 1.838000 & $0.77 \pm 0.09$ & $-1.66 \pm 0.07$ & dessauges-zavadsky+03 \\
+Q2059-360 & 2.507000 & $-0.41 \pm 0.28$ & $-1.38 \pm 0.23$ & dessauges-zavadsky+03 \\
+J2155+1358 & 4.212000 & $-0.29 \pm 0.08$ & $-1.82 \pm 0.11$ & dessauges-zavadsky+03 \\
+J0903+2628 & 3.077590 & $-0.38 \pm 0.04$ & $-3.07 \pm 0.05$ & cooke+17 \\
+J0311-1722 & 3.734000 & $-0.42 \pm 0.11$ & $-2.31 \pm 0.10$ & cooke+11 \\
+J1001+0343 & 3.078000 & $-0.41 \pm 0.03$ & $-2.67 \pm 0.05$ & cooke+11 \\
+J0953-0504 & 4.202870 & $-0.50 \pm 0.03$ & $-2.57 \pm 0.10$ & dutta+14 \\
+Q1202+3235 & 4.977000 & $0.20 \pm 0.09$ & $-2.00 \pm 0.12$ & morrison+16 \\
+J1337+3152 & 3.167000 & $-0.19 \pm 0.11$ & $-2.69 \pm 0.17$ & srianand+10 \\
+Q0913+072 & 2.618000 & $-0.39 \pm 0.05$ & $-2.42 \pm 0.04$ & pettini+08 \\
+J1016+4040 & 2.816000 & $-0.21 \pm 0.05$ & $-2.48 \pm 0.11$ & pettini+08 \\
+J1558+4053 & 2.553000 & $-0.06 \pm 0.07$ & $-2.47 \pm 0.06$ & pettini+08 \\
+Q2206-199 & 2.076000 & $-0.38 \pm 0.04$ & $-2.09 \pm 0.05$ & pettini+08 \\
+J1332+0052 & 3.421086 & $-0.03 \pm 0.02$ & $-1.72 \pm 0.02$ & kislitsyn+24 \\
+J1111+1332 & 2.270000 & $-0.18 \pm 0.11$ & $-1.94 \pm 0.08$ & cooke+15 \\
+\hline
 \end{tabular}
 \end{table}
-
 C abundances are measured in XXXX.
 
 Hello
 
 
+\begin{longtable}{lllll}
+\hline
+galaxy & region & C/O & O/H & study \\
+\hline
+LMC & 30 Dor & $-0.27 \pm 0.26$ & $-0.51 \pm 0.10$ & garnett+1995 \\
+SMC & SMC N88A & $-0.51 \pm 0.17$ & $-0.72 \pm 0.04$ & garnett+1995 \\
+NGC 2363 & NGC 2363 & $-0.42 \pm 0.15$ & $-0.89 \pm 0.04$ & garnett+1995 \\
+Tol 1214-277 & Tol 1214-277 & $-0.59 \pm 0.28$ & $-1.22 \pm 0.05$ & garnett+1995 \\
+SDSS J094401.87-003832.1 & centre & $-1.15 \pm 0.06$ & $-1.00 \pm 0.07$ & senchyna+17 \\
+SDSS J102429.25+052450.9 & centre & $-0.60 \pm 0.20$ & $-0.89 \pm 0.04$ & senchyna+17 \\
+UGC 5189 & SDSS J094256.74+092816.2, & $-0.53 \pm 0.45$ & $-0.57 \pm 0.06$ & senchyna+17 \\
+Mrk 193 & Mrk 193 & $-0.31 \pm 0.04$ & $-0.90 \pm 0.04$ & senchyna+17 \\
+SDSS J094252.78+354726.0 & centre & $-0.47 \pm 0.30$ & $-0.64 \pm 0.08$ & senchyna+17 \\
+LEDA 41360 & centre & $-0.81 \pm 0.15$ & $-1.00 \pm 0.08$ & senchyna+17 \\
+IC 700 & LEDA 35380 & $-0.80 \pm 0.14$ & $-0.46 \pm 0.07$ & senchyna+17 \\
+LEDA 36857 & centre & $-0.54 \pm 0.09$ & $-0.80 \pm 0.04$ & senchyna+17 \\
+NGC 4204 & Mrk 1315 & $-0.53 \pm 0.09$ & $-0.51 \pm 0.07$ & senchyna+17 \\
+NGC 4301 & SDSS J122225.79+043404.7 & $-0.59 \pm 0.20$ & $-0.33 \pm 0.11$ & senchyna+17 \\
+I Zw 18 & I Zw 18 & $-0.54 \pm 0.07$ & $-1.69 \pm 0.04$ & izotov+thuan1999 \\
+SBS 0335-052 & SBS 0335-052 & $-0.62 \pm 0.08$ & $-1.49 \pm 0.01$ & izotov+thuan1999 \\
+UM 469 & UM 469 & $-0.24 \pm 0.20$ & $-0.84 \pm 0.05$ & izotov+thuan1999 \\
+NGC 4861 & NGC 4861 & $-0.17 \pm 0.16$ & $-0.78 \pm 0.02$ & izotov+thuan1999 \\
+Tol 1345-420 & Tol 1345-420 & $-0.40 \pm 0.16$ & $-0.70 \pm 0.05$ & izotov+thuan1999 \\
+NGC 5253 & NGC 5253 & $-0.35 \pm 0.13$ & $-0.65 \pm 0.05$ & izotov+thuan1999 \\
+M101 & NGC 5455 & $-0.11 \pm 0.15$ & $-0.42 \pm 0.03$ & garnett+1999 \\
+M101 & NGC 5461 & $0.01 \pm 0.21$ & $-0.30 \pm 0.03$ & garnett+1999 \\
+M101 & NGC 5471 & $-0.47 \pm 0.05$ & $-0.75 \pm 0.03$ & garnett+1999 \\
+NGC 2403 & VS 38 & $-0.17 \pm 0.13$ & $-0.23 \pm 0.05$ & garnett+1999 \\
+NGC 2403 & VS 44 & $-0.19 \pm 0.14$ & $-0.31 \pm 0.04$ & garnett+1999 \\
+NGC 2403 & VS 9 & $-0.38 \pm 0.19$ & $-0.65 \pm 0.03$ & garnett+1999 \\
+J082555 & NaN & $-0.08 \pm 0.06$ & $-1.44 \pm 0.01$ & berg+16 \\
+J104457 & NaN & $-0.50 \pm 0.06$ & $-1.36 \pm 0.02$ & berg+16 \\
+J120122 & NaN & $-0.24 \pm 0.11$ & $-1.36 \pm 0.03$ & berg+16 \\
+J124159 & NaN & $-0.61 \pm 0.16$ & $-1.08 \pm 0.04$ & berg+16 \\
+J122622 & NaN & $-0.56 \pm 0.05$ & $-0.91 \pm 0.01$ & berg+16 \\
+J122436 & NaN & $-0.38 \pm 0.07$ & $-0.97 \pm 0.02$ & berg+16 \\
+J124827 & NaN & $-0.42 \pm 0.17$ & $-1.00 \pm 0.03$ & berg+16 \\
+J223831 & NaN & $-0.45 \pm 0.10$ & $-1.23 \pm 0.02$ & berg+19 \\
+J141851 & NaN & $-0.67 \pm 0.07$ & $-1.27 \pm 0.02$ & berg+19 \\
+J120202 & NaN & $-0.59 \pm 0.09$ & $-1.18 \pm 0.02$ & berg+19 \\
+J121402 & NaN & $-0.28 \pm 0.10$ & $-1.15 \pm 0.02$ & berg+19 \\
+J084236 & NaN & $-0.74 \pm 0.11$ & $-1.20 \pm 0.02$ & berg+19 \\
+J171236 & NaN & $-0.56 \pm 0.10$ & $-1.12 \pm 0.02$ & berg+19 \\
+J113116 & NaN & $-0.58 \pm 0.14$ & $-1.17 \pm 0.02$ & berg+19 \\
+J133126 & NaN & $-0.51 \pm 0.07$ & $-1.12 \pm 0.02$ & berg+19 \\
+J132853 & NaN & $-0.83 \pm 0.12$ & $-1.09 \pm 0.02$ & berg+19 \\
+J095430 & NaN & $-0.39 \pm 0.11$ & $-1.11 \pm 0.02$ & berg+19 \\
+J132347 & NaN & $-0.82 \pm 0.08$ & $-1.23 \pm 0.02$ & berg+19 \\
+J094718 & NaN & $-0.17 \pm 0.12$ & $-1.09 \pm 0.02$ & berg+19 \\
+J150934 & NaN & $-0.58 \pm 0.09$ & $-1.11 \pm 0.02$ & berg+19 \\
+J100348 & NaN & $-0.34 \pm 0.13$ & $-1.07 \pm 0.02$ & berg+19 \\
+J025346 & NaN & $-0.40 \pm 0.11$ & $-0.90 \pm 0.02$ & berg+19 \\
+J015809 & NaN & $-0.32 \pm 0.14$ & $-1.06 \pm 0.02$ & berg+19 \\
+J104654 & NaN & $-0.58 \pm 0.10$ & $-0.90 \pm 0.02$ & berg+19 \\
+J093006 & NaN & $-0.68 \pm 0.10$ & $-0.79 \pm 0.02$ & berg+19 \\
+J092055 & NaN & $-0.44 \pm 0.12$ & $-0.95 \pm 0.02$ & berg+19 \\
+Mrk 960 & NaN & $-0.41 \pm 0.39$ & $-0.70 \pm 0.19$ & pena-guerreno+17 \\
+SBS 0218+003 & NaN & $-0.96 \pm 0.25$ & $-0.82 \pm 0.06$ & pena-guerreno+17 \\
+Mrk 1087 & NaN & $0.40 \pm 0.33$ & $-0.40 \pm 0.14$ & pena-guerreno+17 \\
+NGC 1741 & NaN & $-0.21 \pm 0.30$ & $-0.56 \pm 0.10$ & pena-guerreno+17 \\
+Mrk 5 & NaN & $-0.80 \pm 0.29$ & $-0.83 \pm 0.10$ & pena-guerreno+17 \\
+Mrk 1199 & NaN & $0.79 \pm 0.45$ & $-0.48 \pm 0.22$ & pena-guerreno+17 \\
+IRAS 08208+2816 & NaN & $-0.68 \pm 0.26$ & $-0.38 \pm 0.11$ & pena-guerreno+17 \\
+IRAS 08339+6517 & NaN & $0.06 \pm 0.26$ & $-0.39 \pm 0.07$ & pena-guerreno+17 \\
+SBS 0926+606A & NaN & $-0.48 \pm 0.24$ & $-0.83 \pm 0.09$ & pena-guerreno+17 \\
+Arp 252 & NaN & $0.06 \pm 0.34$ & $-0.68 \pm 0.15$ & pena-guerreno+17 \\
+SBS 0948+532 & NaN & $-0.49 \pm 0.24$ & $-0.78 \pm 0.09$ & pena-guerreno+17 \\
+Tol 9 & NaN & $0.17 \pm 0.36$ & $-0.23 \pm 0.15$ & pena-guerreno+17 \\
+SBS 1054+365 & NaN & $-0.42 \pm 0.20$ & $-0.70 \pm 0.09$ & pena-guerreno+17 \\
+POX 4 & NaN & $-0.49 \pm 0.14$ & $-0.75 \pm 0.05$ & pena-guerreno+17 \\
+SBS 1319+579 & NaN & $-0.32 \pm 0.26$ & $-0.62 \pm 0.09$ & pena-guerreno+17 \\
+SBS 1415+437 & NaN & $-1.42 \pm 0.24$ & $-1.25 \pm 0.07$ & pena-guerreno+17 \\
+Tol 1457-262 & NaN & $-1.22 \pm 0.46$ & $-0.98 \pm 0.16$ & pena-guerreno+17 \\
+III Zw 107 & NaN & $-0.51 \pm 0.28$ & $-0.59 \pm 0.10$ & pena-guerreno+17 \\
+\hline
+\end{longtable}
+
+
+
+\begin{longtable}{lllll}
+\hline
+galaxy & region & C/O & O/H & study \\
+\hline
+NGC 6822 & region V & $-0.15 \pm 0.21$ & $-0.44 \pm 0.09$ & peimbert+05 \\
+MW & Sh 2-311 & $-0.10 \pm 0.14$ & $-0.24 \pm 0.05$ & mendez-delgado+22 \\
+MW & NGC 2579 & $-0.14 \pm 0.09$ & $-0.26 \pm 0.03$ & mendez-delgado+22 \\
+MW & NGC 3576 & $-0.02 \pm 0.08$ & $-0.08 \pm 0.04$ & mendez-delgado+22 \\
+MW & NGC 3603 & $0.04 \pm 0.12$ & $-0.10 \pm 0.05$ & mendez-delgado+22 \\
+MW & M8 & $0.04 \pm 0.10$ & $-0.11 \pm 0.04$ & mendez-delgado+22 \\
+MW & M16 & $0.03 \pm 0.15$ & $-0.01 \pm 0.05$ & mendez-delgado+22 \\
+MW & M17 & $0.26 \pm 0.06$ & $-0.06 \pm 0.02$ & mendez-delgado+22 \\
+MW & M20 & $0.02 \pm 0.25$ & $-0.10 \pm 0.06$ & mendez-delgado+22 \\
+MW & M42 & $0.03 \pm 0.07$ & $-0.16 \pm 0.02$ & mendez-delgado+22 \\
+M101 & H1013 & $0.17 \pm 0.07$ & $-0.24 \pm 0.02$ & skillman+20 \\
+M101 & H1052 & $0.13 \pm 0.04$ & $-0.24 \pm 0.01$ & skillman+20 \\
+M101 & NGC 5461 & $-0.10 \pm 0.12$ & $-0.33 \pm 0.02$ & skillman+20 \\
+M101 & NGC 5462 & $-0.18 \pm 0.19$ & $-0.36 \pm 0.05$ & skillman+20 \\
+M101 & NGC 5462 & $-0.07 \pm 0.12$ & $-0.38 \pm 0.01$ & skillman+20 \\
+M101 & NGC 5455 & $-0.13 \pm 0.11$ & $-0.42 \pm 0.02$ & skillman+20 \\
+M101 & NGC 5447 & $-0.09 \pm 0.09$ & $-0.39 \pm 0.01$ & skillman+20 \\
+M101 & NGC 5447 & $-0.04 \pm 0.17$ & $-0.46 \pm 0.01$ & skillman+20 \\
+M101 & H1216 & $-0.42 \pm 0.50$ & $-0.55 \pm 0.03$ & skillman+20 \\
+M101 & NGC 5471 & $-0.26 \pm 0.46$ & $-0.67 \pm 0.03$ & skillman+20 \\
+NGC 300 & R20 & $-0.01 \pm 0.22$ & $-0.12 \pm 0.11$ & toribo-san-cipriano+16 \\
+NGC 300 & R23 & $-0.22 \pm 0.23$ & $-0.11 \pm 0.13$ & toribo-san-cipriano+16 \\
+NGC 300 & R14 & $-0.15 \pm 0.21$ & $-0.19 \pm 0.11$ & toribo-san-cipriano+16 \\
+NGC 300 & R2 & $-0.31 \pm 0.22$ & $-0.24 \pm 0.12$ & toribo-san-cipriano+16 \\
+M33 & NGC 588 & $-0.26 \pm 0.19$ & $-0.32 \pm 0.09$ & toribo-san-cipriano+16 \\
+M33 & IC 132 & $-0.12 \pm 0.15$ & $-0.34 \pm 0.12$ & toribo-san-cipriano+16 \\
+LMC & 30 Dor & $-0.29 \pm 0.06$ & $-0.28 \pm 0.04$ & toribo-san-cipriano+17 \\
+LMC & N44C & $-0.22 \pm 0.03$ & $-0.23 \pm 0.02$ & toribo-san-cipriano+17 \\
+LMC & IC 2111 & $-0.21 \pm 0.08$ & $-0.20 \pm 0.07$ & toribo-san-cipriano+17 \\
+LMC & NGC 1714 & $-0.24 \pm 0.07$ & $-0.25 \pm 0.07$ & toribo-san-cipriano+17 \\
+LMC & N11B & $-0.27 \pm 0.04$ & $-0.22 \pm 0.02$ & toribo-san-cipriano+17 \\
+SMC & N66A & $-0.46 \pm 0.06$ & $-0.46 \pm 0.03$ & toribo-san-cipriano+17 \\
+SMC & N81 & $-0.46 \pm 0.04$ & $-0.47 \pm 0.02$ & toribo-san-cipriano+17 \\
+SMC & NGC 456 & $-0.41 \pm 0.19$ & $-0.45 \pm 0.09$ & toribo-san-cipriano+17 \\
+SMC & N88A & $-0.33 \pm 0.03$ & $-0.59 \pm 0.02$ & toribo-san-cipriano+17 \\
+NGC 6822 & centre & $-0.31 \pm 0.15$ & $-0.46 \pm 0.05$ & esteban+14 \\
+NGC 5408 & centre & $-0.41 \pm 0.19$ & $-0.60 \pm 0.04$ & esteban+14 \\
+M31 & K932 & $0.05 \pm 0.16$ & $-0.19 \pm 0.03$ & esteban+09 \\
+M33 & NGC 595 & $0.05 \pm 0.17$ & $-0.12 \pm 0.05$ & esteban+09 \\
+M33 & NGC 604 & $0.01 \pm 0.14$ & $-0.21 \pm 0.03$ & esteban+09 \\
+NGC 2366 & NGC-2363 & $-0.08 \pm 0.14$ & $-0.77 \pm 0.05$ & esteban+09 \\
+NGC 2403 & VS 24 & $0.30 \pm 0.28$ & $-0.44 \pm 0.04$ & esteban+09 \\
+NGC 2403 & VS 38 & $0.42 \pm 0.20$ & $-0.52 \pm 0.05$ & esteban+09 \\
+NGC 2403 & VS 44 & $-0.08 \pm 0.22$ & $-0.20 \pm 0.04$ & esteban+09 \\
+\hline
+\end{longtable}
+
 \newpage
+
+\begin{table}[]
+\centering
+\begin{tabular}{lrlll}
+\toprule
+galaxy & redshift & C/O & O/H & study \\
+\midrule
+MOSFIRE stack & 2.400000 & $-0.39 \pm 0.09$ & $-0.43 \pm 0.10$ & steidel+2016 \\
+876\_330 & NaN & $-0.47 \pm 0.17$ & $-1.07 \pm 0.50$ & stark+2014 \\
+863\_348 & NaN & $-0.53 \pm 0.08$ & $-0.99 \pm 0.50$ & stark+2014 \\
+860\_359 & NaN & $-0.37 \pm 0.08$ & $-1.02 \pm 0.50$ & stark+2014 \\
+MARCS 0451-1.1 & NaN & $-0.50 \pm 0.13$ & $-1.52 \pm 0.50$ & stark+2014 \\
+XLS-z2 stack & 2.000000 & $-0.59 \pm 0.20$ & $-0.98 \pm 0.06$ & mathee+2021 \\
+RXCJ0232-588 & 1.644800 & $-0.47 \pm 0.19$ & $-1.21 \pm 0.24$ & mainali+2020 \\
+GLASS 150008 & 6.228950 & $-0.80 \pm 0.12$ & $-1.42 \pm 0.23$ & jones+2023 \\
+VUDS 510583858 & 2.414100 & $-0.74 \pm 0.10$ & $-1.38 \pm 0.31$ & amorin+2017 \\
+VUDS 510838687 & 2.553900 & $-0.36 \pm 0.06$ & $-1.25 \pm 0.36$ & amorin+2017 \\
+VUDS 511267982 & 2.825600 & $-0.46 \pm 0.08$ & $-1.22 \pm 0.24$ & amorin+2017 \\
+VUDS5100534435 & 2.963500 & $-0.79 \pm 0.09$ & $-1.10 \pm 0.20$ & amorin+2017 \\
+VUDS5100565880 & 3.050500 & $-0.17 \pm 0.10$ & $-1.22 \pm 0.26$ & amorin+2017 \\
+VUDS5100750978 & 2.963000 & $-0.57 \pm 0.04$ & $-1.26 \pm 0.21$ & amorin+2017 \\
+VUDS5100994378 & 2.797000 & $-0.40 \pm 0.06$ & $-1.30 \pm 0.32$ & amorin+2017 \\
+VUDS5100998761 & 2.446000 & $-0.43 \pm 0.06$ & $-1.43 \pm 0.19$ & amorin+2017 \\
+VUDS5101421970 & 2.465000 & $-0.60 \pm 0.11$ & $-1.23 \pm 0.38$ & amorin+2017 \\
+VUDS5101444192 & 3.424000 & $-0.46 \pm 0.08$ & $-1.15 \pm 0.25$ & amorin+2017 \\
+abell2895b & 3.720960 & $-0.78 \pm 0.23$ & $-1.45 \pm 0.02$ & iani+2023 \\
+CASSOWARY 20 & 1.433000 & $-0.85 \pm 0.30$ & $-0.99 \pm 0.21$ & james+2014 \\
+Q2343-BX418 & 2.304800 & $-0.41 \pm 0.10$ & $-1.01 \pm 0.10$ & erb+2010 \\
+SGAS J105039.6+001730 & 3.625300 & $-0.58 \pm 0.06$ & $-0.51 \pm 0.10$ & bayliss+2014 \\
+SL2S J0217-0513 & 1.844350 & $-0.60 \pm 0.09$ & $-1.31 \pm nan$ & berg+2018 \\
+Abell1689 Arc 31.1 & 1.833900 & $-0.82 \pm 0.08$ & $-1.12 \pm 0.13$ & christensen+2014 \\
+SMACS J2031.8-4036 ID 1.1 & 3.506100 & $-0.59 \pm 0.09$ & $-1.05 \pm 0.03$ & christensen+2014 \\
+s04590 & 8.459000 & $-0.62 \pm 0.38$ & $-1.69 \pm 0.12$ & AC2022 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \bibliographystyle{mnras}
 \bibliography{main}
