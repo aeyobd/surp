@@ -1,10 +1,11 @@
 inherits = "../yield_params.toml"
 
-y0_c_cc = 0.00244
-zeta_c_cc = 0.00142
+y0_c_cc = 0.00227
+zeta_c_cc = 0.00160
+alpha_c_agb = 2.23
 
 [kwargs_c_agb]
 mass_factor = 0.5
 
 [kwargs_c_cc]
-A = 0.00211
+A = 0.00318

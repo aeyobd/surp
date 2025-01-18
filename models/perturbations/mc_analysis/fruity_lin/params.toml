@@ -1,0 +1,17 @@
+mg_h_bins =  [-0.21578947, -0.17894737, -0.14210526, -0.10526316, -0.06842105, -0.03157895,  0.00526316,  0.04210526,  0.07894737,  0.11578947, 0.15263158,  0.18947368,  0.22631579,  0.26315789,  0.3] # same as default but removing bins < -0.2
+
+[alpha]
+name = "fruity"
+prior = "Normal"
+prior_args = [1.95, 0.0] # fixed fagb
+
+[y0_cc]
+name = "const_cc"
+prior = "Normal"
+prior_args = [2.0, 1.0]
+
+[zeta_cc]
+name = "piecelin_m2"
+y_shift = -2
+prior = "Normal"
+prior_args = [0.0, 2.0]

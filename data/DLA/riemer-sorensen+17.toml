@@ -2,7 +2,7 @@
 # ["riemer-sørensen+17"]
 link = "https://ui.adsabs.harvard.edu/abs/2017MNRAS.468.3239R/abstract"
 notes = """
-Have to sum all 4 components to measure OI.
+Have to sum all 4 components to measure OI, so not most reliable
 """
 
 [["galaxies"]]

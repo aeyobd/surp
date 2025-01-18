@@ -1,6 +1,7 @@
 inherits = "../params.toml"
 sf_law = "twoinfall"
 sfh_model = "twoinfall"
+mode = "ifr"
 
 [sfh_kwargs]
 tau1 = 0.4

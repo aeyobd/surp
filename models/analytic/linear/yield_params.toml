@@ -1,0 +1,16 @@
+inherits = "../yield_params.toml"
+
+y_c_cc = "BiLogLin"
+y0_c_cc = 2.41e-3
+zeta_c_cc = 0.89e-3
+
+alpha_c_agb = 0.43
+
+[kwargs_c_cc]
+y1 = 0.0008
+
+[kwargs_c_agb]
+y0 = 1e-3
+zeta = -1e-3
+tau_agb = 1.0
+t_D = 0.15

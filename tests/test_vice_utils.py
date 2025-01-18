@@ -62,9 +62,9 @@ def test_ssp_weight():
     assert vu.ssp_weight(1.2, 1, 10) == 1.2
     assert vu.ssp_weight(1.2, -0.5, 10) == 1.2
 
-    # truncated at 2Gyr
-    assert vu.ssp_weight(1, 0, 1.99) == 0
-    assert vu.ssp_weight(1, 0, 2.01) == 1
+    # time independent
+    assert vu.ssp_weight(1, 0, 0.2) == 1
+    assert vu.ssp_weight(1, 0, 9.25) == 1
 
 
 def test_zone_to_R():
