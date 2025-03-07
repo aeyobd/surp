@@ -9,9 +9,9 @@ N_SUBGIANTS = 14_066
 # Mag++2022 scale: 
 # Z_X = 0.0225 
 # Y_ini = 0.2734, X_ini = 0.0176
-Z_SUN = 0.016  # 0.0176 in paper
-Y_SUN  = 0.274 # 0.2734 in paper
-X_SUN = 0.71 # 0.709 inferred
+Z_SUN = 0.0176
+Y_SUN  = 0.2734
+X_SUN = 0.709 # 1 - Y - Z
 
 ELEMENTS = ["c", "n", "mg", "fe"]
 

@@ -31,23 +31,23 @@ def test_mol_mass():
 
 
 def test_solar_z():
-    assert gcem.solar_z('H') == approx(0.71)
-    assert gcem.solar_z('he') == approx(0.274)
-    assert gcem.solar_z('M') == approx(0.016)
+    assert gcem.solar_z('H') == approx(0.709)
+    assert gcem.solar_z('he') == approx(0.2734)
+    assert gcem.solar_z('M') == approx(0.0176)
     for ele in surp.ELEMENTS:
         assert gcem.solar_z(ele) == approx(vice.solar_z(ele))
 
 
 
 def test_Z_to_MH_single():
-    assert gcem.Z_to_MH(0.016) == approx(0.0)
-    assert gcem.Z_to_MH(0.0016) == approx(-1.0)
-    assert gcem.Z_to_MH(0.16) == approx(1.0)
+    assert gcem.Z_to_MH(0.0176) == approx(0.0)
+    assert gcem.Z_to_MH(0.00176) == approx(-1.0)
+    assert gcem.Z_to_MH(0.176) == approx(1.0)
     assert gcem.Z_to_MH(0) == -np.inf
 
 
 def test_MH_to_Z_single():
-    assert gcem.MH_to_Z(0.0) == approx(0.016)
+    assert gcem.MH_to_Z(0.0) == approx(0.0176)
     assert gcem.MH_to_Z(-1.0) == approx(0.0016)
     assert gcem.MH_to_Z(1.0) == approx(0.16)
     assert gcem.MH_to_Z(-np.inf) == 0.0
@@ -130,9 +130,9 @@ def test_abundance_scale():
     # use Mag + 22 meanwhie
     surp.yields.set_magg22_scale()
     correction = 0.04
-    acc = 8e-3 # rounding errors. We round to 100s place
+    acc = 8e-3 # rounding errors. We round to 1000s place like reported
     assert surp.Z_SUN + surp.Y_SUN + surp.X_SUN == approx(1.0)
-    assert surp.Z_SUN / surp.X_SUN == approx(0.0225, rel=acc)
+    assert surp.Z_SUN / surp.X_SUN == approx(0.0225 * 10**correction, rel=acc)
 
 
     assert gcem.eps_to_abundance(12, "h") == approx(gcem.X_SUN)
