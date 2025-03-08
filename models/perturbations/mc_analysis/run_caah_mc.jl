@@ -24,6 +24,14 @@ function get_args()
         "-e", "--ensemble"
             help = "Use emcee's ensemble sampler"
             action = "store_true"
+        "-t", "--threads"
+            help = "Number of threads"
+            arg_type = Int
+            default = 4
+        "-c", "--chains"
+            help = "Total number of chains"
+            arg_type = Int
+            default = 16
     end
 
     args = parse_args(s)
@@ -50,7 +58,12 @@ function main()
     if args["ensemble"]
         chain = sample_emcee(model, args["num-steps"])
     else
-        chain = sample(model, NUTS(0.65), args["num-steps"])
+        @info "running MCMC"
+        n_chains = ceil(Int, args["chains"] / args["threads"])
+
+        chain = mapreduce(
+            c ->sample(model, NUTS(0.65), MCMCThreads(), args["num-steps"], args["threads"]),
+            chainscat, 1:n_chains)
     end
 
     samples = DataFrame(chain)

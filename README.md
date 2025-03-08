@@ -10,7 +10,7 @@ To build (pip should take care of these)
 - meson-python
 
 Other main dependencies
-- my vice fork (https://github.com/aeyobd/VICE) on branch `new_yields`. Needs cython 3.0 to install but seems to install well.
+- my vice fork (https://github.com/aeyobd/VICE) on branch `new_yields`. Needs cython 3.0 to install but seems to install well. Install with `python setup.py build install`
 - pandas 
 - toml
 - pydantic
@@ -25,15 +25,11 @@ Optional dependencies to run all notebooks
 
 
 ## Installing the library
-To install surp, run 
-```bash
-pip install .
-```
-
-An editable install is also possible with 
+Recommended to install with
 ```bash
 python -m pip install --no-build-isolation --editable .
 ```
+because I have not figured out datafiles fully.
 
 which depends on `meson-python`, `ninja`, and `meson` python packages being installed. 
 

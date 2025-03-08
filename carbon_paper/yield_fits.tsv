@@ -1,0 +1,10 @@
+# all in units of 10^-4
+# derived from agb yields mcmc approx linear fits
+model		y0	zeta0	zeta0_err	zeta1	zeta1_err
+fruity		3.11	3.7	0.3		-3.5	0.3
+aton		-0.009	1.0	1.9		-10.	3
+monash		2.96	2.3	0.5		-11.0	1.0
+nugrid		9.25	8.1	1.9		-4.6	1.7
+fruity_mf0.5	2.83	3.3	0.2		-1.8	0.2
+fruity_mf0.7	3.60	4.2	0.3		-3.1	0.3
+fruity_mf1.5	3.11	3.4	0.2		-3.0	0.2

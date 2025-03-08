@@ -24,7 +24,15 @@ function get_args()
         "-n", "--num-steps"
             help = "The number of steps to take in the MCMC"
             arg_type = Float64
-            default = 10_000
+            default = 3_000
+        "-t", "--threads"
+            help = "Number of threads"
+            arg_type = Int
+            default = 4
+        "-c", "--chains"
+            help = "Total number of chains"
+            arg_type = Int
+            default = 16
     end
 
     args = parse_args(s)
@@ -51,7 +59,12 @@ function main()
     model = n_component_model(ah, afe, all_labels, priors)
 
     @info "running MCMC"
-    chain = sample(model, NUTS(0.65), args["num-steps"])
+    n_chains = ceil(Int, args["chains"] / args["threads"])
+
+    chain = mapreduce(
+        c ->sample(model, NUTS(0.65), MCMCThreads(), args["num-steps"], args["threads"]),
+        chainscat, 1:n_chains)
+
     samples = DataFrame(chain)
 
     @info "writing output"

@@ -21,11 +21,11 @@ for arg in $@; do
     else
         echo "cleaning $arg"
         cd "$arg"
-        rm *.pdf
-        rm model.json
-        rm *.out *.err
-        rm *.csv
-        rm *.dat
-        rm -r *.vice
+        rm -f *.pdf
+        rm -f model.json
+        rm -f *.out *.err
+        rm -f *.csv
+        rm -f *.dat
+        rm -f -r *.vice
     fi
 done

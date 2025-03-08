@@ -1,6 +1,9 @@
 # Data Files
 
 
+## apogee
+Download all star from https://www.sdss4.org/dr17/irspec/spectro_data/#SpectralData. 
+
 ## Galah
 Easy. just download from their dr4 website.
 

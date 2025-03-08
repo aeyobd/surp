@@ -1,7 +1,7 @@
 [alpha]
 name = "fruity_mf0.5"
 prior = "Normal"
-prior_args = [2.23, 0.0]
+prior_args = [2.69, 0.0]
 
 [y0_cc]
 name = "const_cc"
@@ -9,8 +9,8 @@ prior = "Normal"
 prior_args = [2.0, 1.0]
 
 [zeta_cc]
-name = "piecelin_m2"
-y_shift = -2
+name = "linear"
+y_shift = -1
 prior = "Normal"
 prior_args = [0.0, 2.0]
 

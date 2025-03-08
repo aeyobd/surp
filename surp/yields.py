@@ -27,7 +27,6 @@ def set_magg22_scale(verbose=True):
     vice.solar_z["mg"] = 0.000671
     vice.solar_z["fe"] = 0.00137
     vice.solar_z["n"] = 0.00104
-    vice.solar_z["ag"] = 1e-3 * vice.solar_z["c"]
 
     if verbose:
         print("yields set to Magg et al. 2022 abundances")

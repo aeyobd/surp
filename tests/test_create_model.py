@@ -104,7 +104,7 @@ def check_model_params(model, params):
     assert model.tau_ia == params.tau_ia
     assert model.m_upper == params.m_upper
     assert model.m_lower == params.m_lower
-    assert model.Z_solar == 0.016
+    assert model.Z_solar == 0.0176
 
     assert model.annuli[0] == 0
     assert model.annuli[-1] >= 20

@@ -48,8 +48,8 @@ def test_Z_to_MH_single():
 
 def test_MH_to_Z_single():
     assert gcem.MH_to_Z(0.0) == approx(0.0176)
-    assert gcem.MH_to_Z(-1.0) == approx(0.0016)
-    assert gcem.MH_to_Z(1.0) == approx(0.16)
+    assert gcem.MH_to_Z(-1.0) == approx(0.00176)
+    assert gcem.MH_to_Z(1.0) == approx(0.176)
     assert gcem.MH_to_Z(-np.inf) == 0.0
 
 
@@ -129,10 +129,12 @@ def test_abundance_scale():
     # eps to abund
     # use Mag + 22 meanwhie
     surp.yields.set_magg22_scale()
-    correction = 0.04
-    acc = 8e-3 # rounding errors. We round to 1000s place like reported
+    # there is also a systematic error due to the atomic mass of h being assumed
+    correction = 0.04 + 0.00343
+    acc = 3e-3 # rounding errors. We round to 100s place like reported
+    # to be 1 in david's paper.
     assert surp.Z_SUN + surp.Y_SUN + surp.X_SUN == approx(1.0)
-    assert surp.Z_SUN / surp.X_SUN == approx(0.0225 * 10**correction, rel=acc)
+    assert (surp.Z_SUN / surp.X_SUN) == approx(0.0225 * 10**correction, abs=2e-3)
 
 
     assert gcem.eps_to_abundance(12, "h") == approx(gcem.X_SUN)
