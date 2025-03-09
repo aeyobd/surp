@@ -82,8 +82,8 @@ usenatbib]{mnras}
 \newcommand{\nugrid}{\texttt{\hyperlink{nugrid}{NuGrid}}}
 \newcommand{\monash}{\texttt{\hyperlink{monash}{Monash}}}
 \newcommand{\aton}{\texttt{\hyperlink{aton}{ATON}}}
-\newcommand{\cfactor}{1.95}
-\newcommand{\nsubgiants}{14,069}
+\newcommand{\cfactor}{2.40}
+\newcommand{\nsubgiants}{14,066}
 
 % displays fractions within fractions well
 \newcommand{\ddfrac}[2]{\ensuremath{%
@@ -108,7 +108,6 @@ usenatbib]{mnras}
 
 
 % other
-\newcommand{\fmeas}{20\%}
 
 \makeatletter
 \newcommand{\C}[1][\@nil]{
@@ -379,7 +378,7 @@ Following \citet{jack}, we also exclude stars with the flags:
         \verb|APOGEE2_W345|,
         \verb|APOGEE2_EB|, and
         \verb|DUPLICATE|.
-We additionally remove stars with no reported (or flagged unreliable), C, Mg, or Fe abundances. These cuts yield a sample containing \nsubgiants\ subgiants.
+We additionally remove stars with no reported (or flagged unreliable), C, N, Mg, or Fe abundances. These cuts yield a sample containing \nsubgiants\ subgiants.
 
 
 Fig.~\ref{fig:subgiants} shows out subgiant sample plotted in the \caah\ and \caafe{} planes.\footnotemark{} In this sample, [C/Mg] increases with [Mg/H], and [C/Mg] decreases with [Mg/Fe] at fixed [Mg/H]. Our aim is to reproduce these trends.
@@ -410,7 +409,7 @@ The integrated yield of $X$ is
 where $M_X$ is the total expelled mass of element X, $M_{\rm ssp}$ is the birth mass of the single stellar population (SSP)\footnote{An SSP is a cluster of stars born at the same time from the same material.}, and $r$ is the return fraction (fraction of the SSP mass returned to the interstellar medium). 
 
 Table~\ref{tab:fiducial_mod} summarizes our yield choices. 
-Following \citet{james+23}, we integrate yields and our GCE models using the publicly available Versatile Integrator for Chemical Evolution (\VICE, \citealt{JW20}). We use the O, Mg, and Fe yields recommended by \citet{david_fe} based on measurements of the mean CCSN Fe yield \citep{rodriguez+23} and APOGEE chemical abundances.
+Following \citet{james+23}, we integrate yields and our GCE models using the publicly available Versatile Integrator for Chemical Evolution (\VICE, \citealt{JW20}). Our solar abundance scale is from \citet{magg+22} with a 0.04 dex gravitational settling correction. Also from \citet{magg+22}, we adopt $\Zo = 0.0176$. We use the O, Mg, and Fe yields recommended by \citet{david_fe} based on measurements of the mean CCSN Fe yield \citep{rodriguez+23} and APOGEE chemical abundances.
 Our N yield is scaled from \citep{james+23}.
 We assume a \citet{kroupa01} initial mass function (IMF).
 
@@ -418,6 +417,7 @@ We assume a \citet{kroupa01} initial mass function (IMF).
 \begin{table}
 	\centering
     \caption[]{Solar abundance scale and fiducial yields (in units of stellar population birth mass). See section \ref{sec:agb} for the definition of \fruity. The solar abundance scale is \citet{magg+22} + 0.04 dex suggested by \citet{david_fe}.
+        \dbnote{Technically, I believe this abundance scale is off by the hydrogen 1 atomic weight. But this is < the systematic correction so I think this is negligable?}.
     \dbnote{any tips to make this table a little bit smaller?}
     }
 	\label{tab:fiducial_mod}
@@ -452,7 +452,7 @@ We assume a \citet{kroupa01} initial mass function (IMF).
     \includegraphics{y_agb_vs_t.pdf}
 
     \caption[]{\textbf{Left} The integrated \agb\ C yield $\Ycagb$ as a function of metallicity for each of the \agb\ yield tables.
-    \textbf{Right} cumulative C return fraction as a function of age for a solar metallicity single stellar population. The dashed black line shows the cumulative return fraction of type Ia supernovae ($\propto t^{-1.1}$) for comparison. The minimum of \aton{} is at $y( 0.30\,{\rm Gyr})/y(t_{\rm end})=-7.81$ and is large as the net yield is close to zero.
+        \textbf{Right} cumulative C return fraction as a function of age for a metallicity of ${\rm [M/H]}=-0.1$ single stellar population. The dashed black line shows the cumulative return fraction of type Ia supernovae ($\propto t^{-1.1}$) for comparison. The minimum of \aton{} is at $y( 0.30\,{\rm Gyr})/y(t_{\rm end})=-3$ and is large as the net yield is close to zero.
 }
 
     \label{fig:agb-ssp}
@@ -569,34 +569,34 @@ Super AGB stars are the class of AGB stars with masses $\sim8$ to $\sim10\Mo$ wh
                 & masses ($\Mo$) & metallicities ($Z$)\\
         \hline
         \fruity 
-                & 3.229
-                &  $3.8\pm0.3$
+                & 3.11
+                &  $3.7\pm0.3$
                 & $-3.5\pm0.3$
-                & 0.14
+                & 0.13
                 & 1.3, 1.5, 2, 2.5, 3, 4, 5, 6
                 & 0.0001, 0.0003, 0.001, 0.002, 0.003, 0.006, 0.008, 0.01, 0.014, 0.02
                 \\
         \aton 
-                & 0.2851
-                & $1.4\pm1.8$
+                & -0.009
+                & $1.0\pm1.8$
                 & $-10. \pm 3$
-                & 0.05
+                & 0.04
                 & 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 6.5, 7
                 & 0.0003, 0.001, 0.002, 0.004, 0.008, 0.014, 0.04
                 \\
         \monash 
-                &  3.444
-                & $2.8 \pm 0.5$
+                &  2.96
+                & $2.3 \pm 0.5$
                 & $-11.0\pm 1.0$
-                & 0.10
+                & 0.08
                 & 1, 1.25, 1.5, 1.75, 2.25, 2.5, 2.75, 3, 3.25, 3.5, 3.75, 4, 4.5, 5, 5.5, 6, 7 
                 & 0.0028, 0.007, 0.014, 0.03
                 \\
         \nugrid 
-                & 10.95
-                & $8.3\pm 1.9$
+                & 9.25
+                & $8.1\pm 1.9$
                 & $-4.6\pm1.7$
-                & 0.30
+                & 0.29
                 & 1, 1.65, 2, 3, 4, 5, 6, 7
                 &  0.0001, 0.001, 0.006, 0.01, 0.02
                 \\
@@ -662,6 +662,7 @@ In our fiducial model, we take $x_{\rm low} = -\zetai / 2\zetaii$ to be the vert
     \includegraphics{cc_yields.pdf}
     \caption[]{
     \dbnote{might be interesting to plot every CCSNe yield used in this paper in light grey to show strength of our constraint}
+    \dbnote{I may change the piecewise model to be linear in log-log space instead of log-linear space}
         C yields from high-mass stars.
         \textbf{Left} The IMF-weighted \cc\ yield of C as a function of metallicity.
         \textbf{Right} The \cc\ [C/Mg] abundance ratio, defined in Eq.~\ref{eq:c_mg_cc}. The black line is the derived C yield from section~\ref{sec:mcmc_results}. Yields are shown for tables from 
@@ -711,16 +712,18 @@ The gas inflow is calculated to maintain the SFH for each radius and time, using
 \end{equation} 
 The scaling of this relationship varies with time due to the redshift dependence of $\tau_\star$ in molecular gas observed by \citet{tacconi18}.
 
-
-We use the radial migration prescription described in appendix C of \citet{dubay+24}.\footnote{Not shown here, we also explored variations of temporal, spatial resolution, migration strength, and the mass lifetimre relation. We found these do not affect median trends significantly.}
+For radial migration of stars, inspired by \citet{frankel18}, we sample the change of radii of stars from a gaussian distribution with standard deviation $\sigma = 3.6\,{\rm kpc} ((t_{\rm end} - t_{\rm birth})/8\,{\rm Gyr})^{0.5}$, where $t_{\rm birth}$ is the birth time of the SSP and $t_{\rm end}=13.2$\,Gyr is the simulation end time.
+Stars migrate to their final position with a $\sqrt{t}$ dependence, consistent with diffusion of angular momentum \citep{frankel18, frankel20}. If a star's would move past $R=0$ or $R=20\,$kpc, the star reflects off these boundaries instead with the same velocity.% 
+\footnote{Not shown here, we also explored variations of temporal, spatial resolution, migration strength, and the mass lifetime relation. We found these do not affect median trends significantly.}
+\dbnote{ Final set of models will use the radial migration prescription described in appendix C of {dubay+24} instead. I have checked that changes to derived parameters for the fiducial model is within the parameter uncertanties, so nothing substantial should change. }.
 We do not account for radial gas flows.
 Not shown here, we also explore migration based on random walks and the \texttt{h277} hydrodynamical
 simulation results\footnote{(with simulation parameters as in \citealt{bird+21}; see also \citealt{christensen12, zolotov12, loebman12, BZ14} \dbnote{is this okay as footnote?} }, which leaves our qualitative conclusions unchanged. 
 The full impact of the details of a galaxy's dynamical history on its chemical evolution is still unknown.
 
-As the strength of outflows controls the resulting $\alpha$-element abundances, we extend \JJ and create a metallicity gradient by defining
+As the strength of outflows controls the resulting equilibrium $\alpha$-element abundances, we extend \JJ and create a metallicity gradient by defining
 \begin{equation}\label{eq:mass_loading}
-\eta(R) = \frac{y_{\alpha}^{\rm cc}}{Z_{\alpha}(R)} -1 + r + \tau_{\star} / \tau_{\rm sfh} 
+\eta(R) = \frac{y_{\alpha}^{\rm cc}}{Z_{\alpha}(R)} -1 + r %+ \tau_{\star} / \tau_{\rm sfh} 
 \end{equation}
 where 
 \begin{equation}
@@ -731,7 +734,7 @@ where
         -0.09(R-5) & R \geq 5
     \end{cases}
 \end{equation}
-is adapted from \citet{hayden+14}.  We approximate $r=0.4$, and $\tau_\star/\tau_{\rm sfh} = 0.0$ .
+is adapted from \citet{hayden+14}.  We approximate $r=0.4$. %, and $\tau_\star/\tau_{\rm sfh} = 0.0$ .
 This choice of $\eta(R)$ results in a [$\alpha$/H] gradient consistent with Milky Way observations \citep[e.g.][]{hayden+14, weinberg+19, frinchaboy+13}.
 If we change our assumed $y_{\rm Mg}$, the values of $\eta$ will change similarly to maintain the correct chemical trends.
 
@@ -788,7 +791,7 @@ We adopt the following priors
     \zeta^{(0)} &\sim N(2, 1) \\
     \zeta^{(1)} &\sim N(0, 1) \\
     \zeta^{(2)} &\sim N(0, 4) \\
-    \ln \sigma _{\rm int}&\sim N(-3, 1) \\
+    \ln \sigma _{\rm int}&\sim N(-3, 1)
 \end{align}
 \end{subequations}
 We run the MCMC using Turing.jl with a No-U-turn sampler (acceptance rate of 0.65), combining 16 independent chains with 3,000 steps each for a total of 48,000 samples.
@@ -891,8 +894,8 @@ Modifications of $\fagb$ affect both \caafe\ and \caah. At fixed metallicity, th
 \centering
 \includegraphics{figures/mcmc_corner.pdf}
 \caption[]{
-A corner plot of the posterior samples from the MCMC simulation for the fiducial + \fruity\ model fit to the binned mean trends.
-$\alpha$ represents the scale factor for the AGB yields, and $\zetao$, $\zetai$ and $\zetaii$ represent the constant, linear, and quadratic components of the CCSN yield.
+A corner plot of the posterior samples from the MCMC simulation for the analytic model fit to the binned mean trends.
+$\alpha$ represents the scale factor for the AGB yields, and $\zetao$, $\zetai$ and $\zetaii$ represent the constant, linear, and quadratic components of the CCSN yield (all scaled by $10^{-3}$). $\sigma_{\rm int}$ is the intrensic scatter.
 See section~\ref{sec:mcmc_methods} for a description of the methods.
 }
 
@@ -906,9 +909,8 @@ See section~\ref{sec:mcmc_methods} for a description of the methods.
     \includegraphics[]{figures/mcmc_y_tot.pdf}
     
     \caption[]{
-    \textbf{Left:} Posterior distribution of $\fagb$ from MCMC samples for each model we show. Regardless of assumptions, the best values of $\fagb$ range from about 0.1 to 0.35 and in all cases is less than 0.5.
+        \textbf{Left:} Posterior distribution of $\fagb$ from MCMC samples for each model we show. Regardless of assumptions, the best values of $\fagb$ range from about 0.1 to 0.35 and in all cases is less than 0.5. The black X marks the predicted value of $\fagb$ assuming our fiducial yield scale (as in Table~\ref{tab:agb}).
     \textbf{Right:} The final total C yield (CCSN + AGB) for the median parameters from MCMC fits for each model. Additionally, we show individual samples from the \fruity{} \ MCMC model as faint blue lines.
-    \dbnote{mark alpha=1.}
     }
     
     \label{fig:mcmc_ytot}
@@ -929,32 +931,29 @@ In essentially each case, the majority of samples have a AGB fraction between 0.
 
 
 \begin{table*}
-
-
     \caption{
-    Best-fit parameters (medians and 16-84th percentile errors) from MCMC analysis for various models discussed.
-    The columns are:  modelname \textit{model}, best fit reduced $\chi^2$, best fit log posterior probability $\log p$, AGB scaling $\aagb$, 
-    \dbnote{Not sure if we should use analytic, nugrid, shifted fruity or normal fruity yields as fiducial for this section, e.g. for eta, lateburst, twoinfall, etc...}}
+        Best-fit parameters (medians and 16-84th percentile errors) from MCMC analysis for various models discussed.
+        The columns are:  modelname \textit{model}, best fit reduced $\chi^2$, best fit log posterior probability $\log p$, AGB scaling $\aagb$, CCSN constant, linear, and quadratic coefficients times $10^3$ $\zetao$, $\zetai$, $\zetaii$, the intrensic scatter $\sigma_{\rm int}$, the AGB fraction $\fagb$, the total C yield at solar metallicity $\Yct$, and the total C yield at solar metallicity $\zeta_{\rm 1, tot}$.
+    }
     \label{tab:mcmc_results}
+
 { 
 \renewcommand{\baselinestretch}{1.2}
     \begin{tabular}{l l l l l l l l l l l} 
     \hline
     model            & $\chi2$  & $\log p$ & $\aagb$ & $\zetao$ & $\zetai$ & $\zetaii$ & $\sigma_{\rm int}$ & $\fagb$ & $\Yct$ & $\zeta_{\rm 1, tot}$\\
 \hline
-fruity           &      6.9 &    20.06 & $1.96^{+0.21}_{-0.21}$  &  $2.01^{+0.08}_{-0.08}$  &  $2.20^{+0.15}_{-0.15}$  &  $2.73^{+0.31}_{-0.31}$  &  $0.08^{+0.02}_{-0.01}$  &  $0.27^{+0.03}_{-0.03}$  &  $2.75^{+0.02}_{-0.02}$  &  $1.52^{+0.13}_{-0.13}$\\ 
-fruity m0.7      &      6.3 &    28.60 & $1.10^{+0.10}_{-0.10}$  &  $2.33^{+0.04}_{-0.04}$  &  $1.71^{+0.11}_{-0.11}$  &  $2.89^{+0.27}_{-0.27}$  &  $0.06^{+0.01}_{-0.01}$  &  $0.17^{+0.01}_{-0.01}$  &  $2.80^{+0.01}_{-0.02}$  &  $1.37^{+0.10}_{-0.10}$\\ 
-aton             &     10.5 &    10.66 & $1.56^{+0.24}_{-0.24}$  &  $2.50^{+0.04}_{-0.04}$  &  $3.37^{+0.32}_{-0.32}$  &  $2.50^{+0.40}_{-0.39}$  &  $0.11^{+0.02}_{-0.02}$  &  $0.08^{+0.01}_{-0.01}$  &  $2.72^{+0.02}_{-0.02}$  &  $1.81^{+0.17}_{-0.17}$\\ 
-monash           &     10.8 &     6.86 & $2.06^{+0.37}_{-0.39}$  &  $1.92^{+0.16}_{-0.15}$  &  $3.68^{+0.42}_{-0.45}$  &  $3.52^{+0.47}_{-0.47}$  &  $0.13^{+0.03}_{-0.02}$  &  $0.23^{+0.05}_{-0.05}$  &  $2.49^{+0.05}_{-0.05}$  &  $1.41^{+0.20}_{-0.19}$\\ 
-nugrid           &      6.1 &    23.68 & $1.00^{+0.10}_{-0.10}$  &  $1.75^{+0.10}_{-0.10}$  &  $1.58^{+0.12}_{-0.12}$  &  $3.19^{+0.31}_{-0.30}$  &  $0.07^{+0.02}_{-0.01}$  &  $0.32^{+0.03}_{-0.03}$  &  $2.58^{+0.02}_{-0.02}$  &  $1.12^{+0.12}_{-0.13}$\\ 
-analytic         &      5.1 &    29.80 & $0.43^{+0.04}_{-0.04}$  &  $2.33^{+0.04}_{-0.04}$  &  $1.57^{+0.10}_{-0.10}$  &  $2.69^{+0.27}_{-0.26}$  &  $0.06^{+0.01}_{-0.01}$  &  $0.15^{+0.01}_{-0.01}$  &  $2.75^{+0.01}_{-0.01}$  &  $1.15^{+0.10}_{-0.11}$\\ 
-eta2             &      6.6 &    24.28 & $0.47^{+0.05}_{-0.04}$  &  $2.24^{+0.05}_{-0.05}$  &  $1.45^{+0.09}_{-0.10}$  &  $2.95^{+0.32}_{-0.32}$  &  $0.07^{+0.02}_{-0.01}$  &  $0.17^{+0.02}_{-0.02}$  &  $2.71^{+0.02}_{-0.01}$  &  $0.98^{+0.09}_{-0.09}$\\ 
-lateburst        &      8.0 &    21.72 & $0.56^{+0.05}_{-0.05}$  &  $2.25^{+0.05}_{-0.05}$  &  $1.75^{+0.18}_{-0.18}$  &  $2.55^{+0.37}_{-0.36}$  &  $0.08^{+0.02}_{-0.01}$  &  $0.20^{+0.02}_{-0.02}$  &  $2.81^{+0.02}_{-0.02}$  &  $1.19^{+0.18}_{-0.18}$\\ 
-twoinfall        &      6.3 &    17.12 & $0.54^{+0.06}_{-0.06}$  &  $2.31^{+0.07}_{-0.07}$  &  $1.72^{+0.19}_{-0.20}$  &  $1.69^{+0.30}_{-0.30}$  &  $0.09^{+0.02}_{-0.02}$  &  $0.19^{+0.02}_{-0.02}$  &  $2.85^{+0.02}_{-0.03}$  &  $1.18^{+0.20}_{-0.20}$\\ 
-fruitylin       &    &    & $1.95$  &  $2.10^{+0.02}_{-0.02}$  &  $1.55^{+0.08}_{-0.08}$  &     &  $0.09^{+0.02}_{-0.01}$  &  $0.26^{+0.00}_{-0.00}$  &  $2.84^{+0.02}_{-0.02}$  &  $0.87^{+0.08}_{-0.08}$\\ 
-analyticlin     &    &    & $0.43$  &  $2.41^{+0.02}_{-0.02}$  &  $0.89^{+0.09}_{-0.09}$  &     &  $0.10^{+0.02}_{-0.01}$  &  $0.15^{+0.00}_{-0.00}$  &  $2.84^{+0.02}_{-0.02}$  &  $0.46^{+0.09}_{-0.09}$\\ 
-\hline
-total & &   &  -  &  $2.26^{+0.11}_{-0.37}$  &  $1.74^{+1.53}_{-0.24}$  &  $2.79^{+0.49}_{-0.58}$  &  $0.08^{+0.03}_{-0.02}$  &  $0.19^{+0.09}_{-0.04}$  &  $2.74^{+0.07}_{-0.16}$  &  $1.26^{+0.32}_{-0.24}$\\
+\fruity          &      7.4 &    18.43 & $2.41^{+0.26}_{-0.27}$  &  $1.90^{+0.10}_{-0.09}$  &  $2.28^{+0.15}_{-0.16}$  &  $2.59^{+0.30}_{-0.30}$  &  $0.08^{+0.02}_{-0.01}$  &  $0.32^{+0.03}_{-0.04}$  &  $2.79^{+0.02}_{-0.02}$  &  $1.43^{+0.12}_{-0.13}$\\ 
+\aton            &     14.9 &     5.30 & $1.71^{+0.34}_{-0.34}$  &  $2.55^{+0.05}_{-0.05}$  &  $3.19^{+0.40}_{-0.40}$  &  $1.92^{+0.45}_{-0.44}$  &  $0.14^{+0.03}_{-0.02}$  &  $0.06^{+0.01}_{-0.01}$  &  $2.72^{+0.03}_{-0.03}$  &  $1.48^{+0.20}_{-0.19}$\\ 
+\monash          &     15.4 &     2.24 & $2.06^{+0.52}_{-0.54}$  &  $2.03^{+0.19}_{-0.18}$  &  $3.82^{+0.64}_{-0.66}$  &  $3.48^{+0.57}_{-0.59}$  &  $0.15^{+0.03}_{-0.02}$  &  $0.19^{+0.05}_{-0.05}$  &  $2.50^{+0.07}_{-0.07}$  &  $1.55^{+0.21}_{-0.22}$\\ 
+\nugrid          &      5.8 &    24.19 & $1.21^{+0.11}_{-0.11}$  &  $1.58^{+0.11}_{-0.11}$  &  $1.58^{+0.11}_{-0.11}$  &  $3.16^{+0.29}_{-0.28}$  &  $0.07^{+0.02}_{-0.01}$  &  $0.38^{+0.04}_{-0.04}$  &  $2.56^{+0.02}_{-0.02}$  &  $1.02^{+0.11}_{-0.11}$\\ 
+\fruity\ m0.7    &      4.5 &    32.86 & $1.39^{+0.11}_{-0.10}$  &  $2.25^{+0.04}_{-0.04}$  &  $1.55^{+0.09}_{-0.08}$  &  $2.54^{+0.23}_{-0.22}$  &  $0.05^{+0.01}_{-0.01}$  &  $0.21^{+0.02}_{-0.01}$  &  $2.83^{+0.01}_{-0.01}$  &  $1.12^{+0.09}_{-0.09}$\\ 
+\fruity\ linear  &   3036 &    16.18 & $2.40^{+0.00}_{-0.00}$  &  $1.99^{+0.02}_{-0.02}$  &  $1.68^{+0.08}_{-0.09}$  &     &  $0.10^{+0.02}_{-0.02}$  &  $0.31^{+0.00}_{-0.00}$  &  $2.88^{+0.02}_{-0.02}$  &  $0.84^{+0.08}_{-0.09}$\\ 
+$y\rightarrow 2y$ &      6.0 &    20.61 & $2.51^{+0.25}_{-0.25}$  &  $1.83^{+0.09}_{-0.09}$  &  $2.00^{+0.12}_{-0.12}$  &  $2.41^{+0.29}_{-0.29}$  &  $0.08^{+0.02}_{-0.01}$  &  $0.34^{+0.03}_{-0.03}$  &  $2.76^{+0.02}_{-0.02}$  &  $1.12^{+0.08}_{-0.08}$\\ 
+lateburst        &     18.7 &     8.35 & $2.41^{+0.35}_{-0.36}$  &  $2.00^{+0.12}_{-0.12}$  &  $2.92^{+0.34}_{-0.34}$  &  $3.51^{+0.66}_{-0.65}$  &  $0.13^{+0.02}_{-0.02}$  &  $0.31^{+0.04}_{-0.04}$  &  $2.89^{+0.03}_{-0.03}$  &  $2.07^{+0.32}_{-0.32}$\\ 
+twoinfall        &     10.6 &    18.05 & $2.03^{+0.21}_{-0.21}$  &  $2.05^{+0.08}_{-0.08}$  &  $2.65^{+0.20}_{-0.20}$  &  $3.52^{+0.35}_{-0.36}$  &  $0.09^{+0.02}_{-0.01}$  &  $0.27^{+0.03}_{-0.03}$  &  $2.80^{+0.02}_{-0.02}$  &  $1.94^{+0.18}_{-0.19}$\\ 
+SN Ia 1.2        &      9.3 &    13.10 & $3.29^{+0.43}_{-0.45}$  &  $1.57^{+0.16}_{-0.15}$  &  $2.73^{+0.22}_{-0.23}$  &  $2.72^{+0.35}_{-0.35}$  &  $0.10^{+0.02}_{-0.02}$  &  $0.44^{+0.06}_{-0.06}$  &  $2.79^{+0.02}_{-0.02}$  &  $1.58^{+0.14}_{-0.14}$\\ 
+
 \hline
     \end{tabular}
 
@@ -971,10 +970,9 @@ total & &   &  -  &  $2.26^{+0.11}_{-0.37}$  &  $1.74^{+1.53}_{-0.24}$  &  $2.79
     
     \caption[]{
         Similar to Fig.~\ref{fig:zeta_f}, except for \caafe\ for a variety of models.
-        {\bf Left} models where both the \agb\ fraction and the CCSNe slope are varied simultaneously.
-        {\bf Middle} models where the \agb\ yields are shifted by some factor in mass.
-        {\bf Right} alternate star formations and a model where yields and outflows are $\sim$ doubled.
-    \dbnote{update caption here}
+        {\bf Left} models for AGB fractions of 0.1, 0.25 (fiducial), and 0.4. 
+        {\bf Middle} models where the \agb\ yields are shifted by a factor in mass.
+        {\bf Right} alternate star formations histories (lateburst and twoinfall) and a model with all yields doubled.
     }
     \label{fig:sims_degens}
 \end{figure*}
@@ -984,7 +982,6 @@ total & &   &  -  &  $2.26^{+0.11}_{-0.37}$  &  $1.74^{+1.53}_{-0.24}$  &  $2.79
 
     \caption[]{
         Similar to Fig.~\ref{fig:zeta_f} except showing the mean tracks for different best-fit AGB yield tables with best-fit CCSNe parameters. Variations in the \caafe\ plane are due to the different total AGB C yield and variations in the mass-dependence of each yield table.
-    \dbnote{use actual best fit median trends here instead of inferred yields? Update labels, remove one of analytic / fruity m0.7}.
     }
     \label{fig:agb_predictions}
 \end{figure*}
@@ -1010,11 +1007,11 @@ adds a Gaussian burst to the fiducial inside-out model,
 \end{equation}
 where $A=1.5$ represents the amplitude of the birth, $\tau_\text{burst}=10.8$\,Gyr is the time where the burst is strongest, and $\sigma_\text{burst}=1$\,Gyr is the width of the burst.
 
-We also consider a two-infall like model as presented in \dbadd{dubay + 24}, which is defined as.
+We also consider a two-infall like model as presented in \citep{dubay+24},
 \begin{equation}\label{twoinfall}
 \dot{\Sigma}_{\rm in} \propto e^{-t/\tau_1} + A \theta(t - t_{2}) e^{-t/\tau_2}
 \end{equation}
-where $\tau_1=\#\,$Gyr, $\tau_2=4\,$Gyr, $A=\Sigma_{\rm thin} / \Sigma_{\rm thick}$ \dbadd{explanation}, $t_2=4$, and the star formation also abruptly transitions from $\nu=2$/Gyr to $\nu=1$/Gyr at $t=t_1$?
+where $\tau_1=1\,$Gyr, $\tau_2=4\,$Gyr, $t_2=4$\,Gyr, and the the amplitude is given by the ratio between the thick and thin disk in  
 
 The right panel of Fig.~\ref{fig:sims_degens} compares the fiducial, lateburst, and two-infall models. The pertubations to \caafe\ are small. The largest change is to the distribution of [Mg/Fe], but the \caafe\ trends are identical for the lateburst or is slightly shifted and steeper for the two infall model. So, variations due to SFH considered here are most likely smaller than width of the observed distribution.
 Building on \citet{james+23}, we conclude that the \caah\ and \caafe\ trends reflect nucleosynthetic yields more than the Galactic SFH. 
@@ -1060,8 +1057,9 @@ N production, also affected by the CNO cycle, is closely tied to C. As a test of
 \centering
 \includegraphics[]{figures/summary.pdf}
 \caption[]{
-\dbnote{will probably add each SZ model description to fig caption. Should citations be moved outside of caption for reader's sake?}
-\dbnote{remove connecting lines on MW HII regions. Should I plot outliers at all?}.
+\dbnote{Should citations be moved outside of caption for reader's sake?}
+\dbnote{Remove connecting lines on MW HII regions. Should I plot outliers at all?}.
+\dbnote{unfortunantly the models in this figure are not consistent with this draft, accedentily deleted/didn't save some of the observed data and will fix in next draft.}
 Gas-phase C abundances. 
 We plot the fiducial model's present-day ISM abundances as a thick blue line.
 Black lines are single-zone models: a fiducial yields and MW-like model (solid black), and three corrected yield models representing the MW (dotted), GSE (dashed) and Wukong (dash-dots).
@@ -1276,7 +1274,7 @@ and Yale University.
 
 \begin{table}
 	\centering
-    \caption[]{Description of the models presented in this paper.}
+        \caption[]{Description of the models presented in this paper. \dbnote{none of these are accurate currently}}
 	\label{tab:model_parameters}
 
 	\begin{tabular}{l l l l l l l l l l}
