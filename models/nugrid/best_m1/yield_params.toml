@@ -1,0 +1,10 @@
+inherits = "../yield_params.toml"
+
+alpha_c_agb = 1.21
+y0_c_cc = 0.00158
+zeta_c_cc = 0.00158
+Y_c_agb = "battino19"
+
+[kwargs_c_cc]
+A = 0.00316
+Z1 = 0.00176

@@ -18,7 +18,7 @@ prior_args = [2.0, 1.0]
 [zeta_cc]
 name = "lateburst"
 C_MG = "IN_MG"
-y_shift = -2
+y_shift = -1
 prior = "Normal"
 prior_args = [0.0, 2.0]
 

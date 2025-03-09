@@ -1,2 +1,2 @@
-inherits = "../yield_params.toml"
+inherits = "../analytic_all/yield_params.toml"
 yield_scale = 2

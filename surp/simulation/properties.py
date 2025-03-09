@@ -30,7 +30,6 @@ def create_migration(bins, params):
     - params.n_stars: the number of stars to produce per timestep (gaussian and
         random walk)
     - params.timestep: the timestep of the model
-    - params.sigma_R: the standard deviation of the migration in R 
     - params.verbose: whether to print verbose output (gaussian only)
     - params.seed: the seed for the migration (gaussian only)
     - params.N_star_tot: the total number of stars in the model (hydrodisk only)
@@ -43,7 +42,7 @@ def create_migration(bins, params):
 
     if kind == "rand_walk":
         migration = rand_walk_stars(bins, n_stars=params.n_stars, dt=params.timestep, 
-            name=filename, sigma_R=params.sigma_R
+            name=filename, **params.migration_kwargs
             )
     elif kind == "gaussian":
         final_positions = final_positions_gaussian_py(

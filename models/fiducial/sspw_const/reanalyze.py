@@ -2,11 +2,12 @@ import surp
 from surp import ViceModel, MWParams
 import sys
 import argparse
+import numpy as np
 
 # weight function here
 
 def weight_func(mass, metallicity, age):
-    return mass
+    return np.where(age > 2, mass, 0)
 
 
 args = argparse.ArgumentParser(description="Run a VICE model with the given parameters and yields")

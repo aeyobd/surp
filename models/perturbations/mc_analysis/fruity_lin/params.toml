@@ -3,7 +3,7 @@ mg_h_bins =  [-0.21578947, -0.17894737, -0.14210526, -0.10526316, -0.06842105, -
 [alpha]
 name = "fruity"
 prior = "Normal"
-prior_args = [1.95, 0.0] # fixed fagb
+prior_args = [2.40, 0.0] # fixed fagb
 
 [y0_cc]
 name = "const_cc"

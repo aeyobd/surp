@@ -8,7 +8,7 @@ from multi_run import ag_run
 m_h_0 = -1
 zeta_0 = 0.001
 
-agb_model = surp.agb_interpolator.interpolator("c", prefactor=zeta_0)
+agb_model = surp.agb_interpolator.interpolator("c")
 cc_lin = surp.yield_models.BiLogLin_CC(y0=-m_h_0 * zeta_0, zeta=zeta_0, y1=0)
 cc_quad = surp.yield_models.Quadratic_CC(y0=0, zeta=0, A=0.001, Z1=surp.Z_SUN * 10**m_h_0)
 
