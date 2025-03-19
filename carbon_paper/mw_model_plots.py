@@ -13,6 +13,9 @@ from surp import gce_math as gcem
 import arya
 arya.style.set_size((10/3, 10/3))
 from arya import COLORS
+import os
+
+file_dir = os.path.dirname(os.path.abspath(__file__))
 
 def find_model(name):
     """
@@ -20,7 +23,7 @@ def find_model(name):
     and returns the csv summary
     """
     
-    file_name = "../models/" + name + "/stars.csv"
+    file_name = file_dir + "/../models/" + name + "/stars.csv"
     model =  pd.read_csv(file_name, index_col=0)
     return model
 

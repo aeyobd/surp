@@ -10,6 +10,9 @@ from corner import corner
 import arya
 import surp.gce_math as gcem
 
+import os
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
 @dataclass
 class MCMCResult:
@@ -23,7 +26,7 @@ class MCMCResult:
 
     @classmethod
     def from_file(cls, modelname, y0=None, y_a=None, zeta_a=None, burn=0):
-        modeldir = "../models/perturbations/mc_analysis/" + modelname + "/"
+        modeldir = current_dir + "/../models/perturbations/mc_analysis/" + modelname + "/"
     
         with open(modeldir + "params.toml", "r") as f:
             params = toml.load(f)
