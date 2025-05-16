@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import vice
 import seaborn as sns
+import warnings
 
 import surp
 from surp import gce_math as gcem
@@ -17,6 +18,59 @@ fiducial = surp.ViceModel.from_file(model_dir + "/model.json")
 
 yp = surp.yields.YieldParams.from_file(model_dir + "/yield_params.toml")
 surp.yields.set_yields(yp)
+
+
+def colored_line(x, y, c, ax, **lc_kwargs):
+    """
+    Plot a line with a color specified between (x, y) points by a third value.
+
+    It does this by creating a collection of line segments between each pair of
+    neighboring points. The color of each segment is determined by the
+    made up of two straight lines each connecting the current (x, y) point to the
+    midpoints of the lines connecting the current point with its two neighbors.
+    This creates a smooth line with no gaps between the line segments.
+
+    Parameters
+    ----------
+    x, y : array-like
+        The horizontal and vertical coordinates of the data points.
+    c : array-like
+        The color values, which should have a size one less than that of x and y.
+    ax : Axes
+        Axis object on which to plot the colored line.
+    **lc_kwargs
+        Any additional arguments to pass to matplotlib.collections.LineCollection
+        constructor. This should not include the array keyword argument because
+        that is set to the color argument. If provided, it will be overridden.
+
+    Returns
+    -------
+    matplotlib.collections.LineCollection
+        The generated line collection representing the colored line.
+    """
+    if "array" in lc_kwargs:
+        warnings.warn('The provided "array" keyword argument will be overridden')
+
+    # Check color array size (LineCollection still works, but values are unused)
+    if len(c) != len(x) - 1:
+        warnings.warn(
+            "The c argument should have a length one less than the length of x and y. "
+            "If it has the same length, use the colored_line function instead."
+        )
+
+    # Create a set of line segments so that we can color them individually
+    # This creates the points as an N x 1 x 2 array so that we can stack points
+    # together easily to get the segments. The segments array for line collection
+    # needs to be (numlines) x (points per line) x 2 (for x and y)
+    points = np.array([x, y]).T.reshape(-1, 1, 2)
+    segments = np.concatenate([points[:-1], points[1:]], axis=1)
+    lc = mpl.collections.LineCollection(segments, **lc_kwargs)
+
+    # Set the values used for colormapping
+    lc.set_array(c)
+
+    return ax.add_collection(lc)
+
 
 def calc_eq_caah(M_H, **kwargs):
     Zs = gcem.MH_to_Z(M_H)
@@ -44,6 +98,7 @@ def plot_eq_caafe(**kwargs):
     ofe = gcem.abund_ratio_to_brak(ymg/yfe, "mg", "fe")
     
     plt.plot(ofe, co, label="equilibrium", color=arya.COLORS[2], lw=2, **kwargs)
+
 
 MH = np.linspace(-2, 1, 1000)
 Z = gcem.MH_to_Z(MH)
@@ -91,7 +146,15 @@ for i in range(len(coords)):
     text = plt.annotate(texts[i], xy=coords[i],  zorder=20, ha="center", va="bottom",  
                         xycoords='data', textcoords='offset points', xytext=offset)
 
-sns.scatterplot(h[(h.R > 1) & (h.R < 15.5)], x="MG_H", y="C_MG", hue="time", s=0.3, alpha=1, zorder=0, legend=False, edgecolor="none", palette="arya_r", rasterized=True)
+for R in np.arange(2, 15):
+    df = h[np.isclose(h.R, R - 0.05)][1:]
+    x = df.MG_H
+    y = df.C_MG
+    c = df.time
+
+    lines = colored_line(x, y, c, axs[0], rasterized=True)
+
+
 plt.xlim(-2.5, 0.5)
 #plt.ylim(-0.45, 0.05)
 #surp.plots.plot_annulus_at_t(fiducial, "MG_H", "C_MG", t=2, zorder=-2)
@@ -117,29 +180,19 @@ cb = arya.Colorbar(clim=(0, 13.2), label=r"time (Gyr)", cmap="arya_r", cax=cax)
 label_Rs = [4,8,12]
 coords = []
 
-for R in np.sort(h.R.unique()):
-    if (R < 1) or (R > 15.5):
-        continue
-        
-    dfa = h[h.R == R]
-    s = 1# 0*(0.05 - np.abs(dfa["[o/h]"] + 0.10))
-    plt.scatter(dfa.O_FE, dfa.C_O, c=cb(dfa.time), s=0.3, ec="none", rasterized=True, zorder=1)
-    if any(np.isclose(R+0.05, label_Rs)):
+for R in np.arange(2, 15):
+    df = h[np.isclose(h.R, R - 0.05)][1:]
+    x = df.MG_FE
+    y = df.C_MG
+    c = df.time
+
+    lines = colored_line(x, y, c, axs[1], rasterized=True)
+
+    if any(np.isclose(R, label_Rs)):
         coords.append((
-            dfa["MG_FE"].iloc[-1], 
-            dfa["C_MG"].iloc[-1]
+            x.iloc[-1], 
+            y.iloc[-1]
         ))
-
-        plt.plot(dfa["MG_FE"], dfa["C_MG"], color="k", zorder=2, lw=1)
-    
-
-texts = [
-    "4\\,kpc",
-   #"6",
-    "8",
-    #"10",
-    r"12"
-]
 
 
 for i in range(len(coords)):

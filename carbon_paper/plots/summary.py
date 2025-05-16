@@ -28,7 +28,8 @@ import arya
 from arya import COLORS
 
 
-
+import sys
+sys.path.append("..")
 
 from singlezone import run_singlezone, exp_sfh
 
@@ -38,6 +39,7 @@ from singlezone import run_singlezone, exp_sfh
 def to_nice(apogee_name):
     return "[" + apogee_name.title().replace("_", "/") + "]"
 
+surp.set_yields(verbose=False)
 
 
 
@@ -106,6 +108,9 @@ def plot_sample_err(df, df_err=None, color=COLORS[0], edgecolors=None, marker="*
     plt.scatter(df["O_H"], df["C_O"], marker=marker, color=color, edgecolors=edgecolors, label=label, **kwargs)
     
 
+    if color == "none":
+        color = edgecolors
+
     plt.errorbar(df_err["O_H"], df_err["C_O"],  xerr=df_err.O_H_err, yerr=df_err.C_O_err,
              marker="none", ls="none", color=color, capsize=0, **kwargs)
     
@@ -115,12 +120,11 @@ def plot_sample_err(df, df_err=None, color=COLORS[0], edgecolors=None, marker="*
 
 
 
-surp.set_yields(verbose=False)
 
 
 
 
-all_stars = pd.read_csv("data_analysis/amarsi19_cleaned.csv")
+all_stars = pd.read_csv("../data_analysis/amarsi19_cleaned.csv")
 
 
 
@@ -138,7 +142,7 @@ all_star_err
 
 
 
-RL = pd.read_csv("data_analysis/RL_combined.csv")
+RL = pd.read_csv("../data_analysis/RL_combined.csv")
 RL = RL[~np.isnan(RL.C_O_err)]
 RL_err = calc_errs(RL)
 
@@ -159,7 +163,7 @@ np.sort(RL.galaxy.unique())
 
 
 
-DLA = pd.read_csv("data_analysis/DLA_combined.csv")
+DLA = pd.read_csv("../data_analysis/DLA_combined.csv")
 DLA = DLA[~np.isnan(DLA.C_O_err)]
 
 DLA_err = calc_errs(DLA)
@@ -170,7 +174,7 @@ DLA_err = calc_errs(DLA)
 DLA.sort_values("C_O")[["galaxy", "study", "C_O", "O_H"]]
 
 
-CEL = pd.read_csv("data_analysis/CEL_combined.csv")
+CEL = pd.read_csv("../data_analysis/CEL_combined.csv")
 CEL_filt = ~np.isin(CEL.galaxy, RL.galaxy.unique())
 CEL_filt &= ~np.isnan(CEL.C_O_err)
 CEL = CEL[CEL_filt]
@@ -189,7 +193,7 @@ CEL.sort_values("C_O")[["region", "galaxy", "O_H", "C_O", "study"]]
 
 
 
-high_z = pd.read_csv("data_analysis/high_z_cleaned.csv")
+high_z = pd.read_csv("../data_analysis/high_z_cleaned.csv")
 high_z = high_z[~np.isnan(high_z.C_O_err)]
 
 high_z_err = calc_errs(high_z)
@@ -204,7 +208,7 @@ high_z_err = calc_errs(high_z)
 
 subgiants_ha = subgiants[subgiants.high_alpha]
 
-fiducial = ViceModel.from_file("../models/fiducial/run/model.json")
+fiducial = ViceModel.from_file("../../models/fiducial/run/model.json")
 
 
 
@@ -218,6 +222,9 @@ h_today
 
 def plot_fiducial():
     plt.plot(h_today.MG_H, h_today.C_MG, label="Model (present day)", zorder=9, lw=1.5, color=arya.style.COLORS[0])
+
+    h = fiducial.history[np.isclose(fiducial.history.R, 8 - 0.05)]
+    plt.plot(h.MG_H, h.C_MG, color="k")
     
 
 # Parameters from james et al. dwarf paper:
@@ -247,10 +254,11 @@ def plot_fiducial():
 
 
 
-yp = surp.YieldParams.from_file("../models/analytic/mc_best/yield_params.toml")
+yp = surp.YieldParams.from_file("../../models/fiducial/yield_params.toml")
 surp.set_yields(yp)
 
-sz_fiducial = run_singlezone()[1]
+y_scale = 0.6# 0.712
+sz_fiducial = run_singlezone(eta=y_scale * 9.56, t_end=10.73, tau_star=26.60, tau_sfh=2.18, sfh=exp_sfh(None), mode="ifr", verbose=True)[1] # GSE
 
 
 # change dwarf parameters to
@@ -264,16 +272,14 @@ sz_fiducial = run_singlezone()[1]
 
 
 
-yp_lowz = surp.YieldParams.from_file("../models/analytic/linear/yield_params.toml")
+yp_lowz = surp.YieldParams.from_file("../../models/fruity/cc_BiLogLin/yield_params.toml")
 
 surp.set_yields(yp_lowz)
 
-y_scale = 0.6# 0.712
 
 sz_models = [
-    run_singlezone(verbose=True)[1],
+        sz_fiducial,
     run_singlezone(eta=y_scale * 9.56, t_end=10.73, tau_star=26.60, tau_sfh=2.18, sfh=exp_sfh(None), mode="ifr", verbose=True)[1], # GSE
-    run_singlezone(eta=y_scale * 48, t_end=3.4, tau_star=45, tau_sfh=3.08, sfh=exp_sfh(None), mode="ifr", verbose=True)[1], # wukong
 ]
 
 
@@ -308,14 +314,8 @@ def plot_sz(zorder=10):
         plt.plot(out.MG_H, out.C_MG, label=label, color="k", 
                  lw=1, zorder=zorder, ls=[":", "--", "-."][i])
 
-    plt.plot(sz_fiducial.MG_H, sz_fiducial.C_MG, label=label, color="k", 
-             lw=1, zorder=zorder)
-    
     plt.xlabel("[O/H]")
     plt.ylabel("[C/O]")
-
-
-
 
 
 
@@ -365,9 +365,7 @@ def lower_legend_label(fig):
 
 def plot_all_data():
     plot_sample_err(all_stars, all_star_err, marker="*", color=COLORS[8], label="MW stars")
-    plot_sample_err(RL_mw, marker="p", color=COLORS[1], label="MW HII Regions")
-    df = RL_mw.sort_values("O_H")
-    plt.plot(df.O_H, df.C_O, color=COLORS[1])
+    plot_sample_err(RL_mw, marker="p", color="none", edgecolors=COLORS[1], label="MW HII Regions", lw=0.5)
     
     plot_sample_err(RL, marker="d", edgecolors=COLORS[2], color="none", lw=0.5, label="HII Regions (RL)")
     plot_sample_err(CEL, CEL_err, marker="d", color=COLORS[2], label="HII regions (CEL)")
@@ -381,7 +379,7 @@ def plot_all_data():
     plot_sample_err(high_z, high_z_err, marker="s", color=COLORS[6], label=r"high-$z$ galaxies")
     
     
-    plot_sample_err(DLA, DLA_err, marker="^", color=COLORS[3], label=r"damped Lyman$\alpha$ systems")
+    # plot_sample_err(DLA, DLA_err, marker="^", color=COLORS[3], label=r"damped Lyman$\alpha$ systems")
 
 
     cooh_subgiants()
@@ -404,7 +402,7 @@ plot_fiducial()
 plot_sz()
 
 lower_legend_label(fig)
-plt.xlim(-3.25, 0.5)
+plt.xlim(-2.6, 0.5)
 plt.ylim(-1.2, 0.4)
 plt.tight_layout()
 
