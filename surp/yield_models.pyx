@@ -371,7 +371,7 @@ cdef class Lin_CC(AbstractCC):
         return self
 
     def copy(self):
-        return Lin_CC(y0=self.y0, zeta=self.zeta, slope=self.slope)
+        return Lin_CC(y0=self.y0, zeta=self.zeta)
 
 
 cdef class BiLin_CC(AbstractCC):

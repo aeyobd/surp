@@ -51,12 +51,12 @@ function main()
 
     params = TOML.parsefile(joinpath(modelname, "params.toml"))
     params = Dict(key => val for (key, val) in params if val isa Dict)
-    all_labels, priors = make_labels_priors(params)
+    all_labels, priors, sigma_prior = make_labels_priors(params)
     println("labels = ", all_labels)
     println("priors = ", priors)
 
     @info "creating model"
-    model = n_component_model(ah, afe, all_labels, priors)
+    model = n_component_model(ah, afe, all_labels, priors, sigma_prior)
 
     @info "running MCMC"
     n_chains = ceil(Int, args["chains"] / args["threads"])
@@ -79,23 +79,37 @@ function main()
 
 end
 
+
 function make_distribution(kind, args)
     if kind == "Normal" && args[2] == 0.0
         return ConstDist(args[1])
+    elseif kind == "TruncNormal"
+        low = args[3]
+        high = args[4]
+        dist = Normal(args[1:2]...)
+        return truncated(dist, low, high)
     end
+
 
     dist = getproperty(Distributions, Symbol(kind))
     return dist(args...)
 end
 
+
 function make_labels_priors(params)
     labels = String[]
     priors = Distribution{Univariate, Continuous}[]
+    sigma_prior = LogNormal(-2, 1)
 
     for (key, val) in params
         prior = make_distribution(val["prior"], val["prior_args"])
-        push!(labels, key)
-        push!(priors, prior)
+        if key == "sigma_int"
+            sigma_prior = prior
+            @info "sigma prior: $prior" 
+        else
+            push!(labels, key)
+            push!(priors, prior)
+        end
     end
 
     is_const = [p isa ConstDist for p in priors]
@@ -104,7 +118,7 @@ function make_labels_priors(params)
     labels = labels[idx]
     priors = priors[idx]
 
-    return labels, priors
+    return labels, priors, sigma_prior
 end
 
 
@@ -126,7 +140,7 @@ end
 
 
 
-@model function n_component_model(models_ah, models_afe, labels, priors)
+@model function n_component_model(models_ah, models_afe, labels, priors, sigma_prior)
     # Create parameters based on the specified priors
     #
     is_const = [p isa ConstDist for p in priors]
@@ -139,7 +153,12 @@ end
         
 
     params ~ arraydist(priors[.!is_const])
-    sigma_int ~ LogNormal(-3, 1) # mean of 0.05 dex
+
+    if sigma_prior isa ConstDist
+        sigma_int = sigma_prior.mean
+    else
+        sigma_int ~ sigma_prior
+    end
 
     const_params = [p.mean for p in priors[is_const]]
     all_params = vcat(const_params, params)
@@ -147,14 +166,14 @@ end
     # Compute model contributions for each dataset
     mu_ah = sum(p * models_ah[:, key] for (p, key) in zip(all_params, labels))
     mu_afe = sum(p * models_afe[:, key] for (p, key) in zip(all_params, labels))
-    sem_ah = sum(p * models_ah[:, Symbol("$(key)_err")] ./ sqrt.(models_ah[:, Symbol("_counts")])  for (p, key) in zip(all_params, labels))
-    sem_afe = sum(p * models_afe[:, Symbol("$(key)_err")] ./ sqrt.(models_afe[:, Symbol("_counts")]) for (p, key) in zip(all_params, labels))
+    sigma2_ah = sum(p .^2 .* models_ah[:, Symbol("$(key)_err")] .^2 ./ models_ah[:, Symbol("_counts")]  for (p, key) in zip(all_params, labels))
+    sigma2_afe = sum(p .^2 .* models_afe[:, Symbol("$(key)_err")] .^2 ./ models_afe[:, Symbol("_counts")] for (p, key) in zip(all_params, labels))
 
     sigma_ah = models_ah.obs_err ./ sqrt.(models_ah.obs_counts)
     sigma_afe = models_afe.obs_err ./ sqrt.(models_afe.obs_counts)
 
-    sigma2_ah = @. sigma_ah^2 + sem_ah^2 + sigma_int^2
-    sigma2_afe = @. sigma_afe^2 + sem_afe^2 + sigma_int^2
+    sigma2_ah = @. sigma_ah^2 + sigma2_ah + sigma_int^2
+    sigma2_afe = @. sigma_afe^2 + sigma2_afe + sigma_int^2
 
     # Data likelihoods
     models_ah.obs ~ MvNormal(mu_ah, diagm(sigma2_ah))

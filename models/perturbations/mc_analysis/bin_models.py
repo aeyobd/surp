@@ -52,6 +52,8 @@ def main():
     y_shifts = []
 
     for key, value in params.items():
+        if key == "sigma_int":
+            continue
         if type(value) != dict:
             continue
         names.append(value["name"])
@@ -126,16 +128,13 @@ def make_multicomponent_model(names, labels, C_MG_s, *,
 
     mg_h = {label: bin_mg_h(model, **mg_h_kwargs) for label, model in zip(labels, models)}
     mg_fe = {label: bin_mg_fe(model, **mg_fe_kwargs) for label, model in zip(labels, models)}
-    bin2d = {label: bin_2d(model, mg_fe_bins=mg_fe_bins, mg_h_bins=mg_h_bins, n_min=mg_h_n_min) for label, model in zip(labels, models)}
 
     df = load_observations(datafile)
     mg_fe_obs = bin_mg_fe(df, x="MG_FE", m_h="MG_H", **mg_fe_kwargs)
     mg_h_obs = bin_mg_h(df, x="MG_H", **mg_h_kwargs)
-    bin2d_obs = bin_2d(df, x="MG_H", y="MG_FE", mg_h_bins=mg_h_bins, mg_fe_bins=mg_fe_bins, n_min=mg_h_n_min)
 
     mg_fe = combine_dfs(mg_fe)
     mg_h = combine_dfs(mg_h)
-    bin2d = combine_dfs(bin2d, special_columns=["x", "y", "counts"])
 
     mg_fe["obs"] = mg_fe_obs.med
     mg_fe["obs_err"] = mg_fe_obs.err
@@ -143,9 +142,6 @@ def make_multicomponent_model(names, labels, C_MG_s, *,
     mg_h["obs"] = mg_h_obs.med
     mg_h["obs_err"] = mg_h_obs.err
     mg_h["obs_counts"] = mg_h_obs.counts
-    bin2d["obs"] = bin2d_obs.med
-    bin2d["obs_err"] = bin2d_obs.err
-    bin2d["obs_counts"] = bin2d_obs.counts
 
     N = len(mg_h)
     mg_h = mg_h.dropna()
@@ -170,16 +166,11 @@ def make_multicomponent_model(names, labels, C_MG_s, *,
     Nf = np.nansum(mg_fe["obs_counts"])
     print(f"Fraction of observed in bins: {Nf} / {N}")
 
-    N = len(bin2d)
-    bin2d = bin2d.dropna()
-    dN = N - len(bin2d)
-    print(f"Removed {dN} bins from 2d")
 
 
     return {
         "mg_fe": mg_fe,
         "mg_h": mg_h,
-        "2d": bin2d,
         }
 
 def combine_dfs(dataframes, special_columns=["x", "counts"]):
@@ -210,12 +201,10 @@ def bin_model(name):
     model = find_model(name)
     mgfe = bin_mg_fe(model)
     mgh = bin_mg_h(model)
-    bin2d = bin_2d(model)
 
     return {
         "mg_fe": mgfe,
         "mg_h": mgh,
-        "2d": bin2d
     }
 
 
@@ -233,45 +222,6 @@ def find_model(name, C_MG = "AG_MG", mg_fe_shift=0):
     model["MG_FE"] += mg_fe_shift
     return model
 
-
-
-def bin_2d(df, x="MG_H_true", y="MG_FE_true", val="z_c",
-    mg_h_bins = np.arange(-1, 0.4, 0.1),
-    mg_fe_bins = np.arange(0, 0.41, 0.05),
-    n_min = 3
-           ):
-
-    df["x_bin"] = pd.cut(df[x], bins=mg_fe_bins, labels=False, include_lowest=True)
-    df["y_bin"] = pd.cut(df[y], bins=mg_fe_bins, labels=False, include_lowest=True)
-
-    grouped = df.groupby(["x_bin", "y_bin"])
-
-    results = grouped.agg(
-        med=pd.NamedAgg(aggfunc="mean", column=val),
-        err=pd.NamedAgg(aggfunc="std", column=val),        
-        xmed=pd.NamedAgg(aggfunc="mean", column=x),
-        ymed=pd.NamedAgg(aggfunc="mean", column=y),
-        counts=pd.NamedAgg(aggfunc="count", column=val),
-    ).reset_index()
-
-    # Create a full grid of all (x_bin, y_bin) combinations
-    x_bin_range = range(len(mg_fe_bins)-1)  # Number of x bins
-    y_bin_range = range(len(mg_fe_bins)-1)  # Number of y bins
-    full_grid = pd.MultiIndex.from_product([x_bin_range, y_bin_range], names=['x_bin', 'y_bin'])
-    full_grid_df = full_grid.to_frame(index=False)
-    
-    df = pd.merge(full_grid_df, results, on=['x_bin', 'y_bin'], how='left')
-
-    x_bin_mids = (mg_fe_bins[:-1] + mg_fe_bins[1:])/2
-    y_bin_mids = (mg_fe_bins[:-1] + mg_fe_bins[1:])/2
-    
-    df["x"] = x_bin_mids[df.x_bin]
-    df["y"] = y_bin_mids[df.y_bin]
-
-    df.loc[df.counts < n_min, "med"] = np.nan
-    df.loc[df.counts < n_min, "err"] = np.nan
-    
-    return df
 
 
 

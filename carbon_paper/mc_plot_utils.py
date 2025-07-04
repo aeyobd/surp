@@ -36,6 +36,7 @@ class MCMCResult:
         filt = samples.iteration >= burn
         samples = samples[filt]
 
+        params = {k: v for k, v in params.items() if k != "sigma_int"}
         all_labels = [k for k, v in params.items() if type(v) == dict]
         filt_const = [(v["prior"] != "Normal" or v["prior_args"][1] != 0.0) for k, v in params.items() if type(v) == dict]
         labels = np.array(all_labels)[filt_const]
@@ -60,15 +61,14 @@ class MCMCResult:
             f = ya / yt
             samples["f_agb_a"] = f
             samples["y_tot_a"] = yt
-            samples["zeta1_a"] = samples["zeta_cc"] * 1e-3 + samples["alpha"] * zeta_a
+            if "zeta1_a" in samples.keys():
+                samples["zeta1_a"] = samples["zeta_cc"] * 1e-3 + samples["alpha"] * zeta_a
         
         afe = pd.read_csv(modeldir + "mg_fe_binned.csv")
         ah = pd.read_csv(modeldir + "mg_h_binned.csv")
         labels = [k for k, v in params.items() if type(v) == dict and (v["prior"] != "Normal" or v["prior_args"][1] != 0.0)]
 
             
-        all_labels = [k for k, v in params.items() if type(v) == dict ]
-    
         return cls(params=params, labels=labels, all_labels=all_labels, afe=afe, ah=ah, samples=samples)
 
 

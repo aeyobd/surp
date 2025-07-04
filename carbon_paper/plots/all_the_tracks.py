@@ -116,7 +116,7 @@ arya.Legend(-1)
 fig, axs = plt.subplots(1, 2, sharey=True, gridspec_kw={"wspace": 0}, figsize=(7, 10/3), dpi=350)
 
 plt.sca(axs[0])
-plot_eq_caah(zorder=-1)
+#plot_eq_caah(zorder=-1)
 h = fiducial.history
 
 coords = []
@@ -166,7 +166,7 @@ plt.ylabel("[C/Mg]")
 plt.sca(axs[1])
 
 
-plot_eq_caafe(zorder=-1)
+#plot_eq_caafe(zorder=-1)
 
 filt = fiducial.history["MG_H"] > -0.15
 filt &= fiducial.history["MG_H"] < -0.05
