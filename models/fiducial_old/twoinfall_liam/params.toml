@@ -1,0 +1,12 @@
+inherits = "../params.toml"
+sfh_model = "twoinfall"
+mode = "ifr"
+
+[sfh_kwargs]
+tau1 = 1
+tau2 = 4
+t2 = 4
+
+# ratio given by thin/thick ratios inside the code
+A2 = 1
+

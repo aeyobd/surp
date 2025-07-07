@@ -1,4 +1,0 @@
-inherits = "../params.toml"
-migration = "rand_walk"
-
-[migration_kwargs]

@@ -1,3 +1,0 @@
-inherits = "../params.toml"
-timestep = 0.01
-n_stars = 8

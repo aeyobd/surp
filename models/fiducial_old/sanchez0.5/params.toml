@@ -1,0 +1,5 @@
+inherits = "../params.toml"
+
+[sfh_kwargs]
+tau_sfh = "0.5sanchez"
+tau_rise = 2

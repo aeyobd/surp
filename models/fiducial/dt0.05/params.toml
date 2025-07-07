@@ -1,2 +1,0 @@
-inherits = "../params.toml"
-timestep = 0.05

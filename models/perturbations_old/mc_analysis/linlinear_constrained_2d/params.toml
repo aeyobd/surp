@@ -1,0 +1,21 @@
+[alpha]
+name = "fruity"
+prior = "Normal"
+prior_args = [1.0, 1.0]
+
+
+[y0_cc]
+name = "const_cc"
+prior = "Normal"
+prior_args = [0.8, 0.1]
+
+
+
+[zeta_cc]
+name = "linlinear"
+prior = "Normal"
+prior_args = [0.0, 2.0]
+
+[sigma_int]
+prior="Normal"
+prior_args = [0.0, 0.0]

@@ -1,0 +1,20 @@
+[alpha]
+name = "fruity"
+prior = "Normal"
+prior_args = [1.0, 0.0]
+
+[y0_cc]
+name = "const_cc"
+prior = "Normal"
+prior_args = [2.0, 1.0]
+
+[zeta_cc]
+name = "piecelin_m2"
+prior = "Normal"
+prior_args = [0.0, 2.0]
+y_shift = -2
+
+[A_cc]
+name = "quadratic"
+prior = "Normal"
+prior_args = [0.0, 4.0]

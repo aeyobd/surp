@@ -1,5 +1,0 @@
-inherits = "../params.toml"
-sfh_model = "static"
-
-[sfh_kwargs]
-

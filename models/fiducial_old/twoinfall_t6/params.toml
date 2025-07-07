@@ -1,0 +1,11 @@
+inherits = "../params.toml"
+sfh_model = "twoinfall"
+sf_law = "twoinfall"
+
+[sfh_kwargs]
+tau1 = 1
+tau2 = 4
+A21 = 1
+t1 = 6
+nu1 = 2
+nu2 = 1

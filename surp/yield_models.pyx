@@ -332,7 +332,7 @@ cdef class Lin_CC(AbstractCC):
     """
     Lin_CC(y0, zeta)
 
-    Constructs a linear piecewise yield model for CCSNe
+    Constructs a linear yield model (in Z) for CCSNe
     y = y_0 + slope * (Z - Z_\\odot)
 
     Note that the slope is defined as zeta / (Z_\\odot \\ln(10)) as to be 
@@ -352,10 +352,15 @@ cdef class Lin_CC(AbstractCC):
     cdef public double zeta
     cdef public double slope
 
-    def __cinit__(self, double y0=0.004, double zeta=0.1):
+    def __cinit__(self, double y0=0.004, double zeta=0.1, double slope=m.NAN):
         self.y0 = y0
-        self.zeta = zeta
-        self.slope = zeta_to_slope(zeta)
+
+        if m.isnan(slope):
+            self.slope = zeta_to_slope(zeta)
+            self.zeta = zeta
+        else:
+            self.slope = slope
+            self.zeta = slope * Z_SUN * m.log(10)
 
 
     cpdef ccall(self, double Z):
@@ -373,6 +378,111 @@ cdef class Lin_CC(AbstractCC):
     def copy(self):
         return Lin_CC(y0=self.y0, zeta=self.zeta)
 
+
+cdef class LinQuad_CC(AbstractCC):
+    """
+    LinQuad_CC(y0, zeta)
+
+    Constructs a quadratic linear model
+    y = y_0 + slope * (Z - Z_\\odot) + A_lin * (Z - Z_\\odot)^2
+
+    Note that the slope is defined as zeta / (Z_\\odot \\ln(10)) as to be 
+    the slope in the log10 space where zeta = d y / d Z
+
+    Parameters
+    ----------
+    y0: the yield at solar
+    zeta: the logarithmic yield slope at solar 
+    A: the quadratic coefficient
+
+    Attributes
+    ----------
+    slope : the linear slope at solar = zeta / (Z_\\odot \\ln(10))
+    """
+
+    cdef public double y0
+    cdef public double zeta
+    cdef public double slope
+    cdef public double A
+
+    def __cinit__(self, double y0=0.004, double zeta=0.1, double A=0, double slope = m.NAN):
+        self.y0 = y0
+        self.A = A
+
+        if m.isnan(slope):
+            self.slope = zeta_to_slope(zeta)
+            self.zeta = zeta
+        else:
+            self.slope = slope
+            self.zeta = slope * Z_SUN * m.log(10)
+
+
+
+    cpdef ccall(self, double Z):
+        return (self.y0 + self.slope * (Z - Z_SUN) + self.A * (Z-Z_SUN)**2)
+
+    def __str__(self):
+        return f"{self.y0:0.2e} + {self.slope:0.2e} (Z - Z0)"
+
+    def __imul__(self, scale):
+        self.y0 *= scale
+        self.zeta *= scale
+        self.slope *= scale
+        self.A *= scale
+        return self
+
+    def copy(self):
+        return LinQuad_CC(y0=self.y0, zeta=self.zeta, A=self.A)
+
+
+cdef class Sqrt_CC(AbstractCC):
+    """
+    Sqrt_CC(y0, zeta)
+
+    Constructs a sqrt model
+    y = y_0 + slope * \sqrt{Z - Z_\\odot) + Q * (Z - Z_\\odot)^0.5
+
+    Note that the slope is defined as zeta / (Z_\\odot \\ln(10)) as to be 
+    the slope in the log10 space where zeta = d y / d Z
+
+    Parameters
+    ----------
+    y0: the yield at solar
+    zeta: the logarithmic yield slope at solar 
+    A: the quadratic coefficient
+
+    Attributes
+    ----------
+    slope : the linear slope at solar = zeta / (Z_\\odot \\ln(10))
+    """
+
+    cdef public double y0
+    cdef public double zeta
+    cdef public double slope
+    cdef public double Q
+
+    def __cinit__(self, double y0=0.004, double zeta=0.1, double Q=0):
+        self.y0 = y0
+        self.zeta = zeta
+        self.slope = zeta_to_slope(zeta)
+        self.Q = Q
+
+
+    cpdef ccall(self, double Z):
+        return (self.y0 + self.slope * (Z - Z_SUN) + self.Q * m.sqrt(Z))
+
+    def __str__(self):
+        return f"{self.y0:0.2e} + {self.slope:0.2e} (Z - Z0)"
+
+    def __imul__(self, scale):
+        self.y0 *= scale
+        self.zeta *= scale
+        self.slope *= scale
+        self.Q *= scale
+        return self
+
+    def copy(self):
+        return Sqrt_CC(y0=self.y0, zeta=self.zeta, Q=self.Q)
 
 cdef class BiLin_CC(AbstractCC):
     r"""
