@@ -1,0 +1,2 @@
+inherits = "../fiducial/params.toml"
+seed = 1234

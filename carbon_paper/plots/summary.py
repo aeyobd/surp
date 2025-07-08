@@ -266,20 +266,9 @@ sz_fiducial = run_singlezone(eta=y_scale * 9.56, t_end=10.73, tau_star=26.60, ta
 # 𝜏★ = 44.97 ± 7, 𝜏sfh = 3.08 ± 1
 
 
-
-48 * 0.6
-
-
-
-
-yp_lowz = surp.YieldParams.from_file("../../models/fruity/cc_BiLogLin/yield_params.toml")
-
-surp.set_yields(yp_lowz)
-
-
 sz_models = [
         sz_fiducial,
-    run_singlezone(eta=y_scale * 9.56, t_end=10.73, tau_star=26.60, tau_sfh=2.18, sfh=exp_sfh(None), mode="ifr", verbose=True)[1], # GSE
+    run_singlezone(eta=y_scale * 47.99, t_end=3.36, tau_star=44.97, tau_sfh=3.08, sfh=exp_sfh(None), mode="ifr", verbose=True)[1], # Wukong
 ]
 
 

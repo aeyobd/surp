@@ -52,8 +52,9 @@ function main()
     params = TOML.parsefile(joinpath(modelname, "params.toml"))
     params = Dict(key => val for (key, val) in params if val isa Dict)
     all_labels, priors, sigma_prior = make_labels_priors(params)
-    println("labels = ", all_labels)
-    println("priors = ", priors)
+
+    @info "labels = $all_labels"
+    @info "priors = $priors"
 
     @info "creating model"
     model = n_component_model(binned_model, all_labels, priors, sigma_prior)
@@ -99,7 +100,7 @@ end
 function make_labels_priors(params)
     labels = String[]
     priors = Distribution{Univariate, Continuous}[]
-    sigma_prior = Normal(0., 0.)
+    sigma_prior = ConstDist(0.0)
 
     for (key, val) in params
         prior = make_distribution(val["prior"], val["prior_args"])

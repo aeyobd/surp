@@ -97,8 +97,9 @@ def plot_y_cc(ele='c', ele2=None):
                      marker=marker, s=sizes[i])
 
 y_z0 = lambda z: 1e-3
-y_z1 = np.vectorize(lambda z: -1*y_z0(z) + surp.yield_models.BiLogLin_CC(y0=0.001, zeta=0.001, y1=0)(z))
-y_z2 = np.vectorize(surp.yield_models.Quadratic_CC(y0=0, zeta=0, A=0.001, Z1=0.00176))
+y_z1 = np.vectorize(lambda z: surp.yield_models.Lin_CC(y0=0.001, slope=0.001/surp.Z_SUN)(z))
+
+
 
 
 def plot_y_cc_mcmc(samples, thin=100, M_H=np.linspace(-0.5, 0.5, 1000), color="black", alpha=None):
@@ -108,11 +109,11 @@ def plot_y_cc_mcmc(samples, thin=100, M_H=np.linspace(-0.5, 0.5, 1000), color="b
         
     ys_z0 = y_z0(Z)
     ys_z1 = y_z1(Z)
-    ys_z2 = y_z2(Z)
+    #ys_z2 = y_z2(Z)
     ymg = vice.yields.ccsne.settings["mg"]
 
     for i, sample in samples[::thin].iterrows():
-        yt = sample.y0_cc * ys_z0 + sample.zeta_cc * ys_z1 + sample.A_cc * ys_z2 
+        yt = sample.y0_cc * ys_z0 + sample.zeta_cc * ys_z1 #+ sample.A_cc * ys_z2 
         plt.plot(M_H, yt , color=color, alpha=alpha, rasterized=False)
     
 
@@ -123,11 +124,11 @@ def plot_c_mg_mcmc(samples, thin=100, M_H=np.linspace(-0.5, 0.5, 1000), color="b
         
     ys_z0 = y_z0(Z)
     ys_z1 = y_z1(Z)
-    ys_z2 = y_z2(Z)
+    #ys_z2 = y_z2(Z)
     ymg = vice.yields.ccsne.settings["mg"]
 
     for i, sample in samples[::thin].iterrows():
-        yt = sample.y0_cc * ys_z0 + sample.zeta_cc * ys_z1 + sample.A_cc * ys_z2 
+        yt = sample.y0_cc * ys_z0 + sample.zeta_cc * ys_z1 #+ sample.A_cc * ys_z2 
         plt.plot(M_H, gcem.abund_ratio_to_brak(yt / ymg, "c", "mg"), color=color, alpha=alpha, rasterized=False)
 
 
@@ -138,7 +139,7 @@ surp.yields.set_yields(surp.YieldParams.from_file(current_dir + "../models/fiduc
 
 y_c_cc = vice.yields.ccsne.settings["c"]
 
-surp.yields.set_yields(surp.YieldParams.from_file(current_dir + "../models/fruity/cc_BiLogLin/yield_params.toml"), verbose=False)
+surp.yields.set_yields(surp.YieldParams.from_file(current_dir + "../models/fiducial_old/yield_params.toml"), verbose=False)
 y_c_cc2 = vice.yields.ccsne.settings["c"]
 
 

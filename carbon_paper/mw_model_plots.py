@@ -80,7 +80,8 @@ def zooh_models(models, labels,x="MG_H", y="C_MG", use_true=True, sequential=Fal
     else:
         df = subgiants
         
-    arya.medianplot(df, x=x, y=y, zorder=-2, **data_kwargs, **kwargs)
+    kwargs = {"zorder":-2, **data_kwargs, **kwargs}
+    arya.medianplot(df, x=x, y=y, **kwargs)
     plt.xlabel(to_nice_name(x))
     plt.ylabel(to_nice_name(y))
     
@@ -93,7 +94,8 @@ def zofeo_models(models, labels, x="MG_FE", y="C_MG", use_true=True, sequential=
     kwargs = dict(numbins=12, x=x, y=y, **kwargs)
     df = surp.filter_metallicity(subgiants, c=mg_0, w=w)
 
-    arya.medianplot(df, **data_kwargs, **kwargs)
+    kwargs = {**data_kwargs, **kwargs}
+    arya.medianplot(df, **kwargs)
     
     N = len(models)
     if use_true:

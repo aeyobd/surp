@@ -99,7 +99,7 @@ end
 function make_labels_priors(params)
     labels = String[]
     priors = Distribution{Univariate, Continuous}[]
-    sigma_prior = LogNormal(-2, 1)
+    sigma_prior = ConstDist(0.0)
 
     for (key, val) in params
         prior = make_distribution(val["prior"], val["prior_args"])

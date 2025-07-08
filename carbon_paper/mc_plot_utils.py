@@ -25,14 +25,13 @@ class MCMCResult:
 
 
     @classmethod
-    def from_file(cls, modelname, y0=None, y_a=None, zeta_a=None, burn=0):
-        modeldir = current_dir + "/../models/perturbations/mc_analysis/" + modelname + "/"
+    def from_file(cls, modeldir, y0=None, y_a=None, zeta_a=None, burn=0):
     
-        with open(modeldir + "params.toml", "r") as f:
+        with open(modeldir + "/params.toml", "r") as f:
             params = toml.load(f)
     
     
-        samples = pd.read_csv(modeldir + "mcmc_samples.csv")
+        samples = pd.read_csv(modeldir + "/mcmc_samples.csv")
         filt = samples.iteration >= burn
         samples = samples[filt]
 
@@ -48,9 +47,13 @@ class MCMCResult:
         print("length of samples = ", len(samples))
 
         
+        print(params)
         if y0 is not None:
             ya = samples["alpha"] * y0
             yt = ya + samples["y0_cc"] * 1e-3
+            for label in all_labels:
+                if "y0" in params[label].keys():
+                    yt = yt + samples[label] * params[label]["y0"]
             f = ya / yt
             samples["f_agb"] = f
             samples["y_tot"] = yt
@@ -235,7 +238,7 @@ def plot_samples_caafe_mean(mcmc_result, plot_obs=True, **kwargs):
 
 
 def plot_fagb_hist(results):
-    f = results.samples["f_agb_a"]
+    f = results.samples["f_agb"]
     plt.hist(f)
     plt.xlabel(r"$f_{\rm AGB}$")
     plt.ylabel("counts")
