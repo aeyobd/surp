@@ -116,8 +116,8 @@ def make_multicomponent_model(names, labels, C_MG_s, *,
 
     bin2d = combine_dfs(bin2d, special_columns=["x", "y", "counts"])
 
-    bin2d["obs"] = bin2d_obs.med
-    bin2d["obs_err"] = bin2d_obs.err
+    bin2d["obs"] = bin2d_obs["mean"]
+    bin2d["obs_sem"] = bin2d_obs["sem"]
     bin2d["obs_counts"] = bin2d_obs.counts
 
 
@@ -134,8 +134,8 @@ def combine_dfs(dataframes, special_columns=["x", "counts"]):
     df = {}
 
     for key, val in dataframes.items():
-        df[key] = val.med
-        df[f"{key}_err"] = val.err
+        df[key] = val["mean"]
+        df[f"{key}_sem"] = val["sem"]
 
         for col in special_columns:
             if col in df.keys():
@@ -188,12 +188,13 @@ def bin_2d(df, x="MG_H_true", y="MG_FE_true", val="z_c",
     grouped = df.groupby(["x_bin", "y_bin"])
 
     results = grouped.agg(
-        med=pd.NamedAgg(aggfunc="mean", column=val),
-        err=pd.NamedAgg(aggfunc="std", column=val),        
-        xmed=pd.NamedAgg(aggfunc="mean", column=x),
-        ymed=pd.NamedAgg(aggfunc="mean", column=y),
+        mean=pd.NamedAgg(aggfunc="mean", column=val),
+        std=pd.NamedAgg(aggfunc="std", column=val),        
+        xmean=pd.NamedAgg(aggfunc="mean", column=x),
+        ymean=pd.NamedAgg(aggfunc="mean", column=y),
         counts=pd.NamedAgg(aggfunc="count", column=val),
     ).reset_index()
+
 
     # Create a full grid of all (x_bin, y_bin) combinations
     x_bin_range = range(len(mg_h_bins)-1)  # Number of x bins
@@ -211,6 +212,7 @@ def bin_2d(df, x="MG_H_true", y="MG_FE_true", val="z_c",
 
     df.loc[df.counts < n_min, "med"] = np.nan
     df.loc[df.counts < n_min, "err"] = np.nan
+    df["sem"] = df["std"] / np.sqrt(df.counts)
     
     return df
 

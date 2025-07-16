@@ -3,11 +3,11 @@ yield_scale = 1
 mlr = "larson1974"
 
 y_c_cc = "Lin"
-y0_c_cc = 1.80e-3
-zeta_c_cc = 2.00e-3
+y0_c_cc = 1.69e-3
+zeta_c_cc = 1.89e-3
 
 Y_c_agb = "cristallo11"
-alpha_c_agb = 2.703
+alpha_c_agb = 3.3
 y_c_ia = 0
 Y_n_agb = "A"
 eta_n_agb = 0.000502

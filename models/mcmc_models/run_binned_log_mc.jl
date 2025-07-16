@@ -172,8 +172,8 @@ end
     sigma_ah = models_ah.obs_err ./ sqrt.(models_ah.obs_counts)
     sigma_afe = models_afe.obs_err ./ sqrt.(models_afe.obs_counts)
 
-    sigma2_ah = @. sigma_ah^2 + sigma2_ah + sigma_int^2
-    sigma2_afe = @. sigma_afe^2 + sigma2_afe + sigma_int^2
+    sigma2_ah = @. sigma_ah^2 + sigma2_ah
+    sigma2_afe = @. sigma_afe^2 + sigma2_afe 
 
     if any(mu_ah .< 0) || any(mu_afe .< 0)
         Turing.@addlogprob! -Inf
@@ -183,12 +183,12 @@ end
     # A/H likelihood
     log_mu_ah = log.(mu_ah)
     log_sigma_ah = sqrt.(sigma2_ah) ./ mu_ah 
-    models_ah.obs ~ MvLogNormal(log_mu_ah, diagm(log_sigma_ah .^ 2))
+    models_ah.obs ~ MvLogNormal(log_mu_ah, diagm(log_sigma_ah .^ 2 .+ sigma_int .^ 2))
 
     # A/FE likelihood
     log_mu_afe = log.(mu_afe)
     log_sigma_afe = sqrt.(sigma2_afe) ./ mu_afe 
-    models_afe.obs ~ MvLogNormal(log_mu_afe, diagm(log_sigma_afe .^ 2))
+    models_afe.obs ~ MvLogNormal(log_mu_afe, diagm(log_sigma_afe .^ 2 .+ sigma_int .^2))
     return nothing
 end
 

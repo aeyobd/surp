@@ -76,11 +76,53 @@ function main()
     rename!(samples, ["params[$i]" => labels[i] for i in eachindex(labels)]...)
 
     outfile = joinpath(modelname, "mcmc_samples.csv")
-    CSV.write(outfile, samples)
 
+    CSV.write(outfile, samples)
+    if !(sigma_prior isa ConstDist)
+        push!(labels, "sigma_int")
+    end
+
+    summary = summarize_chain(chain, labels)
+    summary_file = joinpath(modelname, "mcmc_summary.csv")
+    CSV.write(summary_file, summary)
 end
 
 
+function summarize_chain(chain, labels; p=0.16)
+    df = DataFrame(chain)
+    summary = DataFrame(Turing.summarize(chain))
+
+    Nr = size(summary, 1)
+    meds = zeros(Nr)
+    err_low = zeros(Nr)
+    err_high = zeros(Nr)
+    
+    for i in 1:Nr
+        sym = summary[i, :parameters]
+        meds[i] = median(df[!, sym])
+        err_low[i] = meds[i] - quantile(df[!, sym], p)
+        err_high[i] = quantile(df[!, sym], 1-p) - meds[i]
+    end
+
+    summary[!, :median] = meds
+    summary[!, :err_low] = err_low
+    summary[!, :err_high] = err_high
+    summary[!, :parameters] = labels
+
+    # reorder columns
+    select!(summary, :parameters, :median, :err_low, :err_high, Not([:parameters, :median, :err_low, :err_high]))
+    return summary
+end
+
+
+"""
+    make_distribution(kind, args)
+
+Creates a distribution from a kind (type in Distributions)
+and ordered arguments (constructor from Distributions). 
+Special models include "Normal" with zero Std gives custom ConstDist
+and TruncNormal returns truncated(Normal(arg1, arg2), arg3, arg4). 
+"""
 function make_distribution(kind, args)
     if kind == "Normal" && args[2] == 0.0
         return ConstDist(args[1])
@@ -91,16 +133,21 @@ function make_distribution(kind, args)
         return truncated(dist, low, high)
     end
 
-
     dist = getproperty(Distributions, Symbol(kind))
     return dist(args...)
 end
 
 
+"""
+    make_label_priors(params::Dict)
+
+Create labels and priors from MCMC parameters dict. 
+Return a tuple of string labels, Distributions, and the intrinsic sigma prior.
+"""
 function make_labels_priors(params)
     labels = String[]
     priors = Distribution{Univariate, Continuous}[]
-    sigma_prior = ConstDist(0.0)
+    sigma_prior = ConstDist(0.05)
 
     for (key, val) in params
         prior = make_distribution(val["prior"], val["prior_args"])
@@ -126,7 +173,7 @@ end
 
 """
 Loads the binned models from a given model directory
-from the files `mg_fe_binned.csv` and `mg_h_binned.csv`
+from the file `2d_binned.csv`. Returns the DataFrame.
 """
 function load_binned_models(modelname)
     dir = "$modelname"
@@ -134,6 +181,9 @@ function load_binned_models(modelname)
     afe = CSV.read(dir * "/2d_binned.csv", DataFrame)
 
     disallowmissing!(afe)
+
+    # add log obs column for later
+    afe[:, :log_obs] = log.(afe.obs) 
     return afe
 end
 
@@ -143,14 +193,9 @@ end
     # Create parameters based on the specified priors
     #
     is_const = [p isa ConstDist for p in priors]
-    dc = sum(diff(is_const))
-    if dc == 1
-        @assert is_const[1] && !is_const[end] "all const parameters must be at the beginning of the parameter list."
-    elseif dc > 1
-        error("All const parameters must be at the beginning of the parameter list.")
-    end
-        
+    check_const_order(is_const)
 
+    # only sample non-constant parameters.
     params ~ arraydist(priors[.!is_const])
 
     if sigma_prior isa ConstDist
@@ -164,16 +209,42 @@ end
     
     # Compute model contributions for each dataset
     mu = sum(p * models[:, key] for (p, key) in zip(all_params, labels))
-    # linear variance added since not independent!
-    sigma_model = sum(p .* models[:, Symbol("$(key)_err")] ./ sqrt.(models[:, Symbol("_counts")])  for (p, key) in zip(all_params, labels))
+    # add standard deviations instead of variances.
+    sigma_model = sum(abs.(p) .* models[:, Symbol("$(key)_sem")] 
+                      for (p, key) in zip(all_params, labels))
 
-    sigma2_obs = @. models.obs_err^2 ./ models.obs_counts
+    sigma2_model = sigma_model .^ 2
+    sigma2_obs = models.obs_sem .^ 2 
 
-    sigma2 = @. sigma2_obs + sigma_model^2 + sigma_int^2
+    # check for negative mu
+    if any(mu .< 0) 
+        Turing.@addlogprob! -Inf
+        return nothing
+    end
+
+    # logarithmic
 
     # Data likelihoods
-    models.obs ~ MvNormal(mu, diagm(sigma2))
+    # just take ln of models for simplicity
+    #  log10 only is a additive shift :)
+
+    log_sigma2_obs = sigma2_obs ./ models.obs .^ 2
+    log_sigma2_model = sigma2_model ./ mu .^ 2
+    log_sigma2 = @. sigma_int^2 + log_sigma2_obs + log_sigma2_model
+    log_mu = log.(mu)
+    models.log_obs ~ MvNormal(log_mu, diagm(log_sigma2))
 end
+
+
+function check_const_order(is_const)
+    dc = sum(diff(is_const))
+    if dc == 1
+        @assert is_const[1] && !is_const[end] "all const parameters must be at the beginning of the parameter list."
+    elseif dc > 1
+        error("All const parameters must be at the beginning of the parameter list.")
+    end
+end
+        
 
 if abspath(PROGRAM_FILE) == @__FILE__
     main()
