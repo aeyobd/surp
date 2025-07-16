@@ -48,7 +48,7 @@ function main()
     outfile = joinpath(modelname, "mcmc_samples.csv")
 
     CSV.write(outfile, samples)
-    if sigma_prior isa ConstDist
+    if !(sigma_prior isa ConstDist)
         push!(labels, "sigma_int")
     end
 
@@ -80,7 +80,7 @@ end
     # Compute model contributions for each dataset
     mu = sum(p * models[:, key] for (p, key) in zip(all_params, labels))
     # add standard deviations instead of variances.
-    sigma_model = sum(p .* models[:, Symbol("$(key)_sem")] 
+    sigma_model = sum(abs(p) .* models[:, Symbol("$(key)_sem")] 
                       for (p, key) in zip(all_params, labels))
 
     sigma2_obs = models.obs_sem .^2 

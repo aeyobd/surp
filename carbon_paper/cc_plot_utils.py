@@ -139,15 +139,15 @@ surp.yields.set_yields(surp.YieldParams.from_file(current_dir + "../models/fiduc
 
 y_c_cc = vice.yields.ccsne.settings["c"]
 
-surp.yields.set_yields(surp.YieldParams.from_file(current_dir + "../models/fiducial_old/yield_params.toml"), verbose=False)
-y_c_cc2 = vice.yields.ccsne.settings["c"]
+# old fiducial yield
+#surp.yields.set_yields(surp.YieldParams.from_file(current_dir + "../models/fiducial_old/yield_params.toml"), verbose=False)
+#y_c_cc2 = vice.yields.ccsne.settings["c"]
 
 
 def plot_analy():
     m_h = np.linspace(-5, 1, 1000)
     Z = gcem.MH_to_Z(m_h)
     plt.plot(m_h, [y_c_cc(z) for z in Z], color="k", ls="-", zorder=-2, label="Analytic")
-    plt.plot(m_h, [y_c_cc2(z) for z in Z], color="k", ls="--", zorder=-2)
 
     
 def plot_c11():

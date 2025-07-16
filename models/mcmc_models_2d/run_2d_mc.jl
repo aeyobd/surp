@@ -147,7 +147,7 @@ Return a tuple of string labels, Distributions, and the intrinsic sigma prior.
 function make_labels_priors(params)
     labels = String[]
     priors = Distribution{Univariate, Continuous}[]
-    sigma_prior = ConstDist(0.05)
+    sigma_prior = ConstDist(0.00)
 
     for (key, val) in params
         prior = make_distribution(val["prior"], val["prior_args"])
@@ -182,8 +182,7 @@ function load_binned_models(modelname)
 
     disallowmissing!(afe)
 
-    # add log obs column for later
-    afe[:, :log_obs] = log.(afe.obs) 
+    afe[:, :log_obs] = log10.(afe.obs) 
     return afe
 end
 
@@ -228,10 +227,10 @@ end
     # just take ln of models for simplicity
     #  log10 only is a additive shift :)
 
-    log_sigma2_obs = sigma2_obs ./ models.obs .^ 2
-    log_sigma2_model = sigma2_model ./ mu .^ 2
+    log_sigma2_obs = sigma2_obs ./ models.obs .^ 2 ./ log(10)^2
+    log_sigma2_model = sigma2_model ./ mu .^ 2 ./ log(10)^2
     log_sigma2 = @. sigma_int^2 + log_sigma2_obs + log_sigma2_model
-    log_mu = log.(mu)
+    log_mu = log10.(mu)
     models.log_obs ~ MvNormal(log_mu, diagm(log_sigma2))
 end
 

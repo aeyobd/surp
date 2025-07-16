@@ -203,7 +203,7 @@ for i in range(len(coords)):
 
 
 plt.xlim(-0.06, 0.48)
-plt.ylim(-0.40, 0.05)
+plt.ylim(-0.60, 0.05)
 plt.xlabel("[Mg/Fe]")
 
 

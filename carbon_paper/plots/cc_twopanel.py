@@ -8,12 +8,12 @@ import vice
 
 import sys
 sys.path.append("..")
-from cc_plot_utils import plot_y_cc, plot_c11, plot_y_cc_mcmc, plot_analy, plot_c_mg_mcmc, y_c_cc, y_c_cc2
+from cc_plot_utils import plot_y_cc, plot_c11, plot_y_cc_mcmc, plot_analy, plot_c_mg_mcmc, y_c_cc
 
 fig, axs = plt.subplots(1, 2, figsize=(7, 3), gridspec_kw={"wspace": 0.3})
 
 
-samples = pd.read_csv("../../models/perturbations/mc_analysis/fruity_quad/mcmc_samples.csv")
+samples = pd.read_csv("../../models/mcmc_models_2d/fiducial_constrained/mcmc_samples.csv")
 
 # left panel
 plt.sca(axs[0])
@@ -50,8 +50,8 @@ y_mg = vice.yields.ccsne.settings["mg"]
 y = gcem.abund_ratio_to_brak([y_c_cc(z)/y_mg for z in Z], "c", "mg")
 plt.plot(m_h, y, color="k")
 
-y = gcem.abund_ratio_to_brak([y_c_cc2(z)/y_mg for z in Z], "c", "mg")
-plt.plot(m_h, y, color="k", linestyle="--")
+#y = gcem.abund_ratio_to_brak([y_c_cc2(z)/y_mg for z in Z], "c", "mg")
+#plt.plot(m_h, y, color="k", linestyle="--")
 plot_c_mg_mcmc(samples)
 
 # y = gcem.abund_ratio_to_brak([y_c_cc2(z)/y_mg for z in Z], "c", "mg")
@@ -79,4 +79,4 @@ ym = (t2.y0 + t1.y1)/2
 # plt.legend(handles =l, bbox_to_anchor=(0,-0.2), loc="upper left")
 fig.add_artist(mpl.lines.Line2D([t1.x0, t1.x1], [ym, ym], color="k", lw=0.5))
 
-plt.savefig("figures/cc_yields.pdf")
+plt.savefig("figures/cc_yields_2.pdf")
