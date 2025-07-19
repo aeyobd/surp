@@ -13,18 +13,18 @@ from cc_plot_utils import plot_y_cc, plot_c11, plot_y_cc_mcmc, plot_analy, plot_
 
 fig, ax = plt.subplots()
 
-samples = pd.read_csv("../../models/mcmc_models_2d/fiducial_constrained/mcmc_samples.csv")
+samples = pd.read_csv("../../models/mcmc_models_2d/fiducial/mcmc_samples.csv")
 
 plot_y_cc()
 plot_c11()
 
 plot_analy()
-plot_y_cc_mcmc(samples)
+#plot_y_cc_mcmc(samples)
 
 
 plt.ylabel(r"integrated CCSN C yield")
 
-plt.ylim(0.0001, 0.008)
+plt.ylim(0.000001, 0.008)
 
 # add secondary axis
 ymg = vice.yields.ccsne.settings["mg"]
@@ -39,6 +39,7 @@ def log10_to_linear(c_mg):
 # Add secondary y-axis with transform
 ax2 = ax.secondary_yaxis('right', functions=(linear_to_log10, log10_to_linear))
 ax2.set_ylabel(r"${\rm [C/Mg]}^{\rm CC}$")
+ax2.set_yticklabels([-1, -0.5, 0.0])
 ax.tick_params(axis="y", which="both", right=False, left=True)
 
 

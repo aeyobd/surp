@@ -1,0 +1,6 @@
+inherits = "../params.toml"
+sfh_model = "lateburst"
+
+[sfh_kwargs]
+tau_sfh = "sanchez"
+tau_rise = 2

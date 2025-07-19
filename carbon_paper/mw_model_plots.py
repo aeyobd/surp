@@ -94,8 +94,7 @@ def zofeo_models(models, labels, x="MG_FE", y="C_MG", use_true=True, sequential=
     kwargs = dict(numbins=12, x=x, y=y, **kwargs)
     df = surp.filter_metallicity(subgiants, c=mg_0, w=w)
 
-    kwargs = {**data_kwargs, **kwargs}
-    arya.medianplot(df, **kwargs)
+    arya.medianplot(df, **{**data_kwargs, **kwargs})
     
     N = len(models)
     if use_true:

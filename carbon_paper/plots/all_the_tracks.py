@@ -123,7 +123,7 @@ coords = []
 
 for R in [4,8, 12]:
     df = h[np.isclose(h.R, R - 0.05)]
-    plt.plot(df.MG_H, df.C_MG, color="k")
+    #plt.plot(df.MG_H, df.C_MG, color="k")
     coords.append((
             df.MG_H.iloc[-1], 
             df.C_MG.iloc[-1]

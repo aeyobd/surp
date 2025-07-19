@@ -1,2 +1,2 @@
 inherits = "../yield_params.toml"
-zeta_c_cc = 0.003
+zeta_c_cc = 3e-3

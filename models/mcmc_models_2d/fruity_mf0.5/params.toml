@@ -1,0 +1,21 @@
+[alpha]
+name = "perturbations/fruity_mf0.5"
+prior = "Normal"
+prior_args = [1.0, 1.0]
+
+
+[y0_cc]
+name = "perturbations/constant"
+prior = "Normal"
+prior_args = [2.0, 1.0]
+
+
+
+
+[zeta_cc]
+name = "perturbations/linear"
+prior = "Normal"
+prior_args = [0.0, 2.0]
+y0 = 1e-3
+
+
