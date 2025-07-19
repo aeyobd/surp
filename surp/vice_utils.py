@@ -201,14 +201,14 @@ def create_star_sample(stars, cdf = None, num=N_SUBGIANTS,
     sample["FE_H_true"] = sample.FE_H
 
     MH = sample.FE_H
-    sample["C_MG_err"] = c_mg_err(MH)
-    sample["MG_H_err"] = mg_h_err(MH)
-    sample["MG_FE_err"] = mg_fe_err(MH)
+    sample["C_MG_ERR"] = c_mg_err(MH)
+    sample["MG_H_ERR"] = mg_h_err(MH)
+    sample["MG_FE_ERR"] = mg_fe_err(MH)
 
     N = len(sample)
-    sample.C_MG += rng.normal(0, sample.C_MG_err, N)
-    sample.MG_H += rng.normal(0, sample.MG_H_err, N)
-    sample.MG_FE += rng.normal(0, sample.MG_FE_err, N)
+    sample.C_MG += rng.normal(0, sample.C_MG_ERR, N)
+    sample.MG_H += rng.normal(0, sample.MG_H_ERR, N)
+    sample.MG_FE += rng.normal(0, sample.MG_FE_ERR, N)
 
     return sample
 

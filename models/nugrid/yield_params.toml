@@ -1,5 +1,7 @@
 inherits = "../fiducial/yield_params.toml"
-y0_c_cc = 2.76e-3
-zeta_c_cc = 1.17e-3
-alpha_c_agb = 1.0
+
 Y_c_agb = "battino19"
+
+y0_c_cc = 2.22e-3
+zeta_c_cc = 0.83e-3
+alpha_c_agb = 0.58

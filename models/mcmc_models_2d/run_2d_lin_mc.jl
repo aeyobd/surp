@@ -85,7 +85,8 @@ end
 
     sigma2_obs = models.obs_sem .^2 
 
-    sigma2 = @. sigma2_obs + sigma_model^2 + sigma_int^2
+    sigma_int_abs = sigma_int .* models.obs .* log(10) # convert log-relative sigma into absolute
+    sigma2 = @. sigma2_obs + sigma_model^2 + sigma_int_abs^2
 
     # Data likelihoods
     models.obs ~ MvNormal(mu, diagm(sigma2))

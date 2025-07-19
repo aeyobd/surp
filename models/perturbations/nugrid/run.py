@@ -8,7 +8,6 @@ from ag_run import ag_run
 
 
 agb_model = surp.agb_interpolator.interpolator("c", study="battino19")
-agb_model = surp.yield_models.ZeroAGB()
 cc_model = 0.0
 ia_model = 0
 

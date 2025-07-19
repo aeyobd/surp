@@ -170,13 +170,13 @@ def find_model(name, C_MG = "AG_MG", mg_fe_shift=0):
     file_name = "../" + name + "/stars.csv"
     model =  pd.read_csv(file_name, index_col=0)
     model["z_c"] = gcem.brak_to_abund_ratio(model[C_MG], "c", "mg")
-    model["MG_FE_true"] += mg_fe_shift
+    model["MG_FE"] += mg_fe_shift
     model["MG_FE"] += mg_fe_shift
     return model
 
 
 
-def bin_2d(df, x="MG_H_true", y="MG_FE_true", val="z_c",
+def bin_2d(df, x="MG_H", y="MG_FE", val="z_c",
     mg_h_bins = np.arange(-1, 0.4, 0.1),
     mg_fe_bins = np.arange(0, 0.41, 0.05),
     n_min = 3

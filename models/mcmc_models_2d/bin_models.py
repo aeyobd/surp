@@ -158,7 +158,7 @@ def make_multicomponent_model(names, labels, C_MG_s, *,
     mg_fe = mg_fe.dropna()
     dN = N - len(mg_fe)
     print(f"Removed {dN} bins from mg_fe")
-    N = np.sum((models[0].MG_H_true < m_h_0 + d_m_h) & (models[0].MG_H_true >= m_h_0 - d_m_h))
+    N = np.sum((models[0].MG_H < m_h_0 + d_m_h) & (models[0].MG_H >= m_h_0 - d_m_h))
     Nf = np.nansum(mg_fe["_counts"])
     print(f"Fraction of stars in bins: {Nf} / {N}")
     filt = (df.MG_H < m_h_0 + d_m_h) & (df.MG_H >= m_h_0 - d_m_h)
@@ -218,15 +218,15 @@ def find_model(name, C_MG = "AG_MG", mg_fe_shift=0):
     file_name = "../" + name + "/stars.csv"
     model =  pd.read_csv(file_name, index_col=0)
     model["z_c"] = gcem.brak_to_abund_ratio(model[C_MG], "c", "mg")
-    model["MG_FE_true"] += mg_fe_shift
+    model["MG_FE"] += mg_fe_shift
     model["MG_FE"] += mg_fe_shift
     return model
 
 
 
 
-def bin_mg_fe(df, x="MG_FE_true", val="z_c", 
-        n_min =3, m_h="MG_H_true",
+def bin_mg_fe(df, x="MG_FE", val="z_c", 
+        n_min =3, m_h="MG_H",
         m_h_0 = -0.1, d_m_h=0.05, 
         mg_fe_bins = np.arange(-1, 0.4, 0.1)
         ):
@@ -260,7 +260,7 @@ def bin_mg_fe(df, x="MG_FE_true", val="z_c",
     return df
 
 
-def bin_mg_h(df, x="MG_H_true", val="z_c", n_min =3, mg_h_bins = np.arange(-1, 0.4, 0.1)):
+def bin_mg_h(df, x="MG_H", val="z_c", n_min =3, mg_h_bins = np.arange(-1, 0.4, 0.1)):
 
     df = df[~df.high_alpha].copy()
     df["x_bin"] = pd.cut(df[x], bins=mg_h_bins, labels=False, include_lowest=True)
