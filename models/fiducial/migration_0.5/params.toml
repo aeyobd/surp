@@ -1,0 +1,7 @@
+inherits = "../params.toml"
+
+[migration_kwargs]
+sigma_r8 = 1.34
+tau_power = 0.33
+R_power = 0.61
+hz_s = 0.24

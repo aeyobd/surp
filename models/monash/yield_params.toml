@@ -1,6 +1,7 @@
 inherits = "../fiducial/yield_params.toml"
 
 Y_c_agb = "karakas16"
-alpha_c_agb = 0.87
-y0_c_cc = 2.45e-3
-zeta_c_cc = 2.07e-3
+alpha_c_agb = 1.11
+y0_c_cc = 2.37e-03
+zeta_c_cc = 2.48e-03
+

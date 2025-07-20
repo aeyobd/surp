@@ -14,7 +14,7 @@ def load_model(filename, props, test=False, burn=0):
     if test:
         result = MCMCResult.from_test_file(filename, burn=burn)
     else:
-        result = MCMCResult.from_file(filename, y0=y0, burn=burn, y_a=y_a, zeta_a=zeta_a)
+        result = MCMCResult.from_file("../../models/mcmc_models_2d/" + filename + "/", y0=y0, burn=burn, y_a=y_a, zeta_a=zeta_a)
     return result
 
 
@@ -32,6 +32,7 @@ for _, row in df.iterrows():
 fig = plt.figure(figsize=(3.3, 3.3))
 
 result = load_model("fiducial", yagb_props["fruity"])
+print(result.all_labels)
 
 result.plot_corner( 
     fig = fig,

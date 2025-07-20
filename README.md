@@ -10,7 +10,7 @@ To build (pip should take care of these)
 - meson-python
 
 Other main dependencies
-- my vice fork (https://github.com/aeyobd/VICE) on branch `new_yields`. Needs cython 3.0 to install but seems to install well. Install with `python setup.py build install`
+- my vice fork (https://github.com/aeyobd/VICE) on branch `develop`. Needs cython 3.0 to install but seems to install well. Install with `python setup.py build install` as pip seems to break things in VICE :/.
 - pandas 
 - toml
 - pydantic

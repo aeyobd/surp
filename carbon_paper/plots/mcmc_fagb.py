@@ -1,3 +1,27 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import surp
+
+import surp.gce_math as gcem
+import arya
+import vice
+import numpy as np
+
+from mcmc_setup import results, yagb_props
+
+
+
+plot_labels = {
+    "fiducial": r"FRUITY+gas-phase",
+    "fruity": r"FRUITY",
+    "aton": r"ATON",
+    "monash": r"Monash",
+    "nugrid": r"NuGrid",
+    "fruity_mf0.7": r"FRUITY m0.7",
+}
+
+
+
 Nr = len(plot_labels)
 fig, axs = plt.subplots(Nr, 1, figsize=(3, 2), sharex="col", gridspec_kw={"hspace": 0})
 
@@ -23,7 +47,7 @@ for i, (key, label) in enumerate(plot_labels.items()):
     result = results[key]
     ax = axs[i]
     plt.sca(axs[i])
-    plt.hist(result.samples.f_agb_a, color=color, ls=ls)
+    plt.hist(result.samples.f_agb, color=color, ls=ls)
     plt.ylabel(label, rotation=0, ha="right", va="center")
 
     if key in yagb_props.keys():
@@ -62,4 +86,3 @@ plt.xlim(0, 0.6)
 
 plt.tight_layout()
 plt.savefig("figures/mcmc_fagb.pdf")
-plt.savefig("figures/mcmc_fagb.png")

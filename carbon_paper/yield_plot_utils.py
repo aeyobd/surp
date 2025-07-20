@@ -62,7 +62,7 @@ def plot_yield_table(study = "cristallo11", hmap=hmap, ele="c", fmt="o",
         x = np.linspace(1, 8, 1000)
         
         y = [y_agb(m, Z) * factor for m in x]
-        ax.plot(x, y, c=c, lw=0.5, **kwargs)
+        ax.plot(x, y, c=c, **kwargs)
         
     ax.axhline(0, color="k", ls=":", zorder=-1)
 
@@ -93,7 +93,7 @@ def plot_yields(study = "cristallo11", masses=np.linspace(0.08, 8.01, 1000), Zs=
         Z = Zs[i] 
         c = hmap(Z_to_MH(Z))
         y = [ya(m, Z)*factor for m in masses]
-        f = ax.plot(masses, y, label=f"Z = {Z}", c=c, lw=0.15, **kwargs)
+        f = ax.plot(masses, y, label=f"Z = {Z}", c=c, **kwargs)
 
     return f
 

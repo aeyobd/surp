@@ -9,14 +9,14 @@ from mw_model_plots import find_model, compare, compare_coofe, compare_cooh
 
 
 names = [    
-    "fiducial/run",
-    "aton/best",
-    "monash/best",
-    "nugrid/best",
-  # "analytic/mc_best",
+    "fiducial/best",
+    "aton/run",
+    "monash/run",
+    "nugrid/run",
+   "fruity/agb_mass_0.7_alpha",
   ]
 
-labels = ["FRUITY", "ATON", "Monash",  "NuGrid"]# "analytic"]
+labels = ["FRUITY", "ATON", "Monash",  "NuGrid", "FRUITY shifted"]
 
 compare(names, labels)
 plt.ylim(-0.25, 0.05)

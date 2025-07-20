@@ -148,6 +148,7 @@ class MCMCResult:
             plot_labels = plot_labels.copy()
             plot_labels.append(r"$\sigma_{\rm int}$")
 
+        print(labels)
         corner(result.samples[labels],  
                show_titles=True, 
                quantiles=[0.16, 0.5, 0.84], 

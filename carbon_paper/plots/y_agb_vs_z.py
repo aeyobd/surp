@@ -37,7 +37,6 @@ for i in range(4):
     MoverH_max = Z_to_MH(max(Zs))
     
     kwargs["fmt"] = "-"
-    kwargs["lw"] = 0.5
     Zs = MH_to_Z(np.linspace(MoverH_min, MoverH_max, N_points))
     plot_y_z(Zs, label=AGB_LABELS[model], **kwargs)
 

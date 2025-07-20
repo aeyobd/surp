@@ -15,9 +15,9 @@ names = [
     "fruity/zeta_higher",
 ]
 labels = [
-    r"$\zeta^{\rm cc} = 0.001$", 
-    r"$\zeta^{\rm cc} = 0.00227$", 
-    r"$\zeta^{\rm cc} = 0.003$"
+    r"shallower CC yield", 
+    r"fiducial", 
+    r"steeper CC yield"
 ]
 
 compare(names, labels, axs = axs[0], sequential=True)
