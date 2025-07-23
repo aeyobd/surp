@@ -11,7 +11,9 @@ import arya
 import surp.gce_math as gcem
 
 import os
+import surp
 
+surp.set_yields()
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 @dataclass

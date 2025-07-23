@@ -260,6 +260,10 @@ surp.set_yields(yp)
 y_scale = 0.6# 0.712
 sz_fiducial = run_singlezone(eta=y_scale * 9.56, t_end=10.73, tau_star=26.60, tau_sfh=2.18, sfh=exp_sfh(None), mode="ifr", verbose=True)[1] # GSE
 
+# yp = surp.YieldParams.from_file("../../models/fiducial/best/yield_params.toml")
+# surp.set_yields(yp)
+# 
+# sz_better = run_singlezone(eta=y_scale * 9.56, t_end=10.73, tau_star=26.60, tau_sfh=2.18, sfh=exp_sfh(None), mode="ifr", verbose=True)[1] # GSE
 
 # change dwarf parameters to
 # match Wukong from James’ dwarf paper. 𝜂 = 47.99 ± 5, 𝑡end = 3.36 ± 0.5,
@@ -268,7 +272,8 @@ sz_fiducial = run_singlezone(eta=y_scale * 9.56, t_end=10.73, tau_star=26.60, ta
 
 sz_models = [
         sz_fiducial,
-    run_singlezone(eta=y_scale * 47.99, t_end=3.36, tau_star=44.97, tau_sfh=3.08, sfh=exp_sfh(None), mode="ifr", verbose=True)[1], # Wukong
+        #sz_better
+    # run_singlezone(eta=y_scale * 47.99, t_end=3.36, tau_star=44.97, tau_sfh=3.08, sfh=exp_sfh(None), mode="ifr", verbose=True)[1], # Wukong
 ]
 
 

@@ -34,6 +34,5 @@ names = [
 labels = [r"$f_{\rm C}^{\rm AGB}=0.1$", r"$f_{\rm C}^{\rm AGB}=0.3$", r"$f_{\rm C}^{\rm AGB}=0.5$",]
 compare(names, labels, sequential=True, axs=axs[1])
 
-plt.ylim(-0.25)
 
 plt.savefig("figures/sims_zeta_f.pdf")

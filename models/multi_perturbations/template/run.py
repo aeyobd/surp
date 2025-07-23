@@ -18,7 +18,7 @@ yields_dict = {
         "agb": agb_model
     },
     "cd" : {
-        "ccsne": 0.001
+        "ccsne": zeta_0
         },
     "in" : {
         "ccsne": cc_lin

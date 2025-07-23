@@ -12,12 +12,13 @@ from surp.agb_interpolator import interpolator as agb_interpolator
 
 
 y_z0 = lambda z: 1e-3
-y_z1 = np.vectorize(lambda z: 1*y_z0(z) + surp.yield_models.Lin_CC(slope=0.001 / surp.Z_SUN, y0=0)(z))
+y_z1 = np.vectorize(lambda z: surp.yield_models.Lin_CC(slope=0.001 / surp.Z_SUN, y0=1e-3)(z))
 
 M_H=np.linspace(-0.5, 0.5, 1000)
 Z = gcem.MH_to_Z(M_H)
 surp.set_yields(verbose=False)
 ys_fiducial = surp.yields.calc_y(Z)
+
 
 Y_agbs = {
     "fruity": agb_interpolator("c"),
@@ -105,7 +106,7 @@ for i, (key, label) in enumerate(plot_labels.items()):
         y_agb = y_agbs["analytic"]
 
     
-    plot_y_tot_mean(result, y_agb, color=arya.COLORS[i], label=label, ls=["-", ":", "--", "-."][i%4])
+    plot_y_tot_mean(result, y_agb, color=arya.COLORS[i], label=label)
     
 
 plt.xlabel(r"$\log Z / Z_\odot$")

@@ -56,7 +56,6 @@ plt.sca(axs[2])
 compare_coofe(names_sfh, labels_sfh)
 plt.ylabel("")
 
-plt.ylim(-0.3, -0.0)
 plt.tight_layout()
 
 plt.savefig("figures/zeta_f_mass_sfh.pdf")

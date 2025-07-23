@@ -12,13 +12,8 @@ from surp import gce_math as gcem
 from surp.yields import calc_y
 import arya
 
-model_dir = "../../models/fiducial/run"
-
-fiducial = surp.ViceModel.from_file(model_dir + "/model.json")
-
-yp = surp.yields.YieldParams.from_file(model_dir + "/yield_params.toml")
-surp.yields.set_yields(yp)
-
+TMAX = 13.2
+CLIM = (-TMAX, 0)
 
 def colored_line(x, y, c, ax, **lc_kwargs):
     """
@@ -72,141 +67,90 @@ def colored_line(x, y, c, ax, **lc_kwargs):
     return ax.add_collection(lc)
 
 
-def calc_eq_caah(M_H, **kwargs):
-    Zs = gcem.MH_to_Z(M_H)
-    ys = calc_y(Zs)
-    ymg = calc_y(Zs, "mg")
 
-    co = gcem.abund_ratio_to_brak(ys / ymg, "C", "MG")
-    
-    return co
+def plot_tracks(h, ax = plt.gca(), Rs = np.arange(2, 15), x="MG_H", y="C_MG", c="time"):
+    for R in Rs:
+        df = h[np.isclose(h.R, R - 0.05)][1:]
+        xs = df[x]
+        ys = df[y]
+        cs = df[c].values
+        cs = (cs[1:]+ cs[:-1])/2
+        cs = cs - TMAX
 
-def plot_eq_caah(M_H = np.linspace(-0.8, 0.4, 1000),  **kwargs):
-    co = calc_eq_caah(M_H)
-    
-    plt.plot(M_H, co, label="equilibrium", color=arya.COLORS[2], lw=2, **kwargs)
-    
-    
-def plot_eq_caafe(**kwargs):
-    M_H = np.linspace(-0.8, 0.4, 1000)
-    Zs = gcem.MH_to_Z(M_H)
-    yc = calc_y(Zs)
-    ymg = calc_y(Zs, "mg")
-    yfe = calc_y(Zs, "fe")
-
-    co = gcem.abund_ratio_to_brak(yc / ymg, "C", "MG")
-    ofe = gcem.abund_ratio_to_brak(ymg/yfe, "mg", "fe")
-    
-    plt.plot(ofe, co, label="equilibrium", color=arya.COLORS[2], lw=2, **kwargs)
-
-
-MH = np.linspace(-2, 1, 1000)
-Z = gcem.MH_to_Z(MH)
-y = calc_y(Z, kind="all")
-plt.plot(MH, y, label="total")
-y = calc_y(Z, kind="cc")
-plt.plot(MH, y, label="CC")
-
-y = calc_y(Z, kind="agb")
-plt.plot(MH, y, label="AGB")
-plt.xlabel("[M/H]")
-plt.ylabel("yield of C")
-arya.Legend(-1)
-
-fig, axs = plt.subplots(1, 2, sharey=True, gridspec_kw={"wspace": 0}, figsize=(7, 10/3), dpi=350)
-
-plt.sca(axs[0])
-#plot_eq_caah(zorder=-1)
-h = fiducial.history
-
-coords = []
-
-for R in [4,8, 12]:
-    df = h[np.isclose(h.R, R - 0.05)]
-    #plt.plot(df.MG_H, df.C_MG, color="k")
-    coords.append((
-            df.MG_H.iloc[-1], 
-            df.C_MG.iloc[-1]
-        ))
-
-
-texts = [
-    "4",
-    #"6",
-    "8",
-    #"10",
-    r"12\,kpc"
-]
-
-for i in range(len(coords)):
-    if i >= 2:
-        offset = (-6, 12)
-    else:
-        offset = (-3, 6)
-    text = plt.annotate(texts[i], xy=coords[i],  zorder=20, ha="center", va="bottom",  
-                        xycoords='data', textcoords='offset points', xytext=offset)
-
-for R in np.arange(2, 15):
-    df = h[np.isclose(h.R, R - 0.05)][1:]
-    x = df.MG_H
-    y = df.C_MG
-    c = df.time
-
-    lines = colored_line(x, y, c, axs[0], rasterized=True)
-
-
-plt.xlim(-2.5, 0.5)
-#plt.ylim(-0.45, 0.05)
-#surp.plots.plot_annulus_at_t(fiducial, "MG_H", "C_MG", t=2, zorder=-2)
+        lines = colored_line(xs, ys, cs, ax, rasterized=True, clim=CLIM)
 
 
 
-plt.xlabel("[Mg/H]")
-plt.ylabel("[C/Mg]")
-plt.sca(axs[1])
+def plot_labels(h, Rs = [4, 8, 12], offsets = None, labels = None, x="MG_H", y="C_MG"):
 
+    if offsets is None:
+        offsets = [(0., 0.) for _ in range(len(Rs))]
 
-#plot_eq_caafe(zorder=-1)
+    elif isinstance(offsets, tuple):
+        offsets = [offsets for _ in range(len(Rs))]
 
-filt = fiducial.history["MG_H"] > -0.15
-filt &= fiducial.history["MG_H"] < -0.05
-h = fiducial.history
+    if labels is None:
+        labels = []
+        for R in Rs:
+            labels.append(str(R))
 
-cax = axs[1].inset_axes([1.05, 0., 0.05, 1])
+    for i, R in enumerate(Rs):
+        df = h[np.isclose(h.R, R - 0.05)]
+        xs = df[x].iloc[-1] 
+        ys = df[y].iloc[-1]
 
-cb = arya.Colorbar(clim=(0, 13.2), label=r"time (Gyr)", cmap="arya_r", cax=cax)
+        offset = offsets[i]
 
-
-label_Rs = [4,8,12]
-coords = []
-
-for R in np.arange(2, 15):
-    df = h[np.isclose(h.R, R - 0.05)][1:]
-    x = df.MG_FE
-    y = df.C_MG
-    c = df.time
-
-    lines = colored_line(x, y, c, axs[1], rasterized=True)
-
-    if any(np.isclose(R, label_Rs)):
-        coords.append((
-            x.iloc[-1], 
-            y.iloc[-1]
-        ))
-
-
-for i in range(len(coords)):
-    text = plt.annotate(texts[i], xy=coords[i],  zorder=20, ha="right",  va="center",
-                        xycoords='data', textcoords='offset points', xytext=(-3, 0))
-#     text.set_path_effects([mpl.patheffects.Stroke(linewidth=5, foreground='w'),
-#                    mpl.patheffects.Normal()])
-
-
-plt.xlim(-0.06, 0.48)
-plt.ylim(-0.60, 0.05)
-plt.xlabel("[Mg/Fe]")
+        text = plt.annotate(labels[i], xy=(xs, ys),  
+            zorder=20, ha="center", va="bottom",  xycoords='data', 
+            textcoords='offset points', xytext=offset)
 
 
 
-plt.savefig("figures/all_the_tracks.pdf")
-plt.savefig("figures/all_the_tracks.png")
+
+
+def make_plot(h):
+    h = fiducial.history
+    fig, axs = plt.subplots(1, 2, sharey=True, gridspec_kw={"wspace": 0}, figsize=(7, 10/3), dpi=350)
+
+    plt.sca(axs[0])
+
+    plot_tracks(h, ax=axs[0])
+    plot_labels(h, Rs=[4,8,12], labels=["4 kpc", "8", "12"])
+
+    plt.xlim(-2.5, 0.5)
+    plt.xlabel("[Mg/Fe]")
+    plt.ylabel("[C/Mg]")
+
+
+    # RHS
+
+    plt.sca(axs[1])
+
+    plot_tracks(h, x="MG_FE", y="C_MG", ax=axs[1])
+    plot_labels(h, x="MG_FE", y="C_MG", offsets=[(0,0), (0,0), (6,0)])
+
+    plt.xlim(-0.06, 0.48)
+    plt.ylim(-0.60, 0.05)
+    plt.xlabel("[Mg/Fe]")
+
+    # colorbar
+    cax = axs[1].inset_axes([1.05, 0., 0.05, 1])
+    cb = arya.Colorbar(clim=CLIM, label=r"lookback time (Gyr)", cmap="arya_r", cax=cax)
+
+
+
+if __name__ == "__main__":
+
+    model_dir = "../../models/fiducial/run"
+
+    fiducial = surp.ViceModel.from_file(model_dir + "/model.json")
+
+    yp = surp.yields.YieldParams.from_file(model_dir + "/yield_params.toml")
+    surp.yields.set_yields(yp)
+
+    h = fiducial.history
+
+    make_plot(h)
+    plt.savefig("figures/all_the_tracks.pdf")
+
