@@ -10,7 +10,7 @@ struct ConstDist  <: ContinuousUnivariateDistribution
     mean::Float64
 end
 
-include("run_2d_mc.jl")
+include("run_2d_log_mc.jl")
 
 function main()
     args = get_args()

@@ -1,0 +1,39 @@
+[alpha]
+name = "perturbations/fruity"
+prior = "Normal"
+prior_args = [1.0, 1.0]
+
+
+[y0_cc]
+name = "perturbations/constant"
+prior = "Normal"
+prior_args = [0.79, 0.0]
+
+
+
+
+[zeta_cc]
+name = "perturbations/linear"
+prior = "Normal"
+prior_args = [0.0, 2.0]
+
+
+[zeta_2]
+name = "perturbations/quadratic"
+prior = "Normal"
+prior_args = [0.0, 2.0]
+
+[zeta_3]
+name = "perturbations/cubic"
+prior = "Normal"
+prior_args = [0.0, 2.0]
+
+[zeta_4]
+name = "perturbations/quartic"
+prior = "Normal"
+prior_args = [0.0, 2.0]
+
+[zeta_5]
+name = "perturbations/quintic"
+prior = "Normal"
+prior_args = [0.0, 2.0]

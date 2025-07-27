@@ -10,8 +10,8 @@ from ag_run import ag_run
 agb_model = surp.yield_models.ZeroAGB()
 ia_model = 0
 
-A_0 = 0.001 / surp.Z_SUN**2
-cc_model = surp.yield_models.LinQuad_CC(y0=0, zeta=0, A=A_0)
+A_0 = 0.001
+cc_model = surp.yield_models.LinQuad_CC(y0=A_0, slope=2*A_0/surp.Z_SUN, A=A_0 / surp.Z_SUN**2)
 
 
 if __name__ == "__main__":

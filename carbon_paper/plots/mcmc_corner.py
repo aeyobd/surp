@@ -13,8 +13,8 @@ result.plot_corner(
     fig = fig,
     labels={
         "alpha": r"$\alpha$",
-        "y0_cc": r"$\zeta_{0}$",
-        "zeta_cc": r"$\zeta_{1}$",
+        "y0_cc": r"$y_{\rm low} / 10^{-3}$",
+        "zeta_cc": r"$\zeta / 10^{-3}$",
         "A_cc": r"$\zeta_{2}$",},
     labelpad=0.15,
     title_kwargs = {

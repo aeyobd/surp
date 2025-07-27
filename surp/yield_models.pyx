@@ -435,6 +435,41 @@ cdef class LinQuad_CC(AbstractCC):
         return LinQuad_CC(y0=self.y0, zeta=self.zeta, A=self.A)
 
 
+cdef class Polynomial_CC(AbstractCC):
+    """
+    Polynomial_CC(coefficients)
+
+    Constructs a linear yield model (in Z) for CCSNe
+    y = \sum a_i x^i
+
+    where $a_i$ is the input list of coefficients (first term is constant, second linear, etc.)
+
+    Parameters
+    ----------
+    coefficients
+
+    """
+
+    cdef public list coefficients
+
+    def __cinit__(self, list coefficients):
+        self.coefficients = coefficients
+
+
+    cpdef ccall(self, double Z):
+        x = (Z - Z_SUN) / Z_SUN
+        return sum([self.coefficients[i] * x**i for i in range(len(self.coefficients))])
+
+    def __str__(self):
+        return f"polynomial with coefficients {self.coefficients}"
+
+    def __imul__(self, scale):
+        self.coefficients = [coef * scale for coef in self.coefficients]
+        return self
+
+    def copy(self):
+        return Polynomial_CC(self.coefficients.copy())
+
 cdef class Sqrt_CC(AbstractCC):
     """
     Sqrt_CC(y0, zeta)

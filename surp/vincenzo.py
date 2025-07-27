@@ -54,39 +54,40 @@ def vincenzo2021():
 
     data = pd.DataFrame({"apogee_id": raw["apogee_id"]})
 
-    data["[mg/fe]"] = raw["MgFe_stars_bracket"]
-    data["[fe/h]"] = raw["FeH_stars_bracket"]
+    data["MG_FE"] = raw["MgFe_stars_bracket"]
+    data["FE_H"] = raw["FeH_stars_bracket"]
 
     # these are uncorrected
-    data["[c/fe]_apo"] = raw["CFe_stars_bracket"]
-    data["[n/fe]_apo"] = raw["NFe_stars_bracket"]
+    data["C_FE_apo"] = raw["CFe_stars_bracket"]
+    data["N_FE_apo"] = raw["NFe_stars_bracket"]
 
-    data["[c/h]"] = raw["CHbirth_stars_bracket"]
-    data["[n/h]"] = raw["NHbirth_stars_bracket"]
+    data["C_H"] = raw["CHbirth_stars_bracket"]
+    data["N_H"] = raw["NHbirth_stars_bracket"]
 
-    data["[n/o]"] = gcem.log_to_brak(raw["NObirth_stars"], "n", "o")
-    data["[c/n]"] = gcem.log_to_brak(raw["CNbirth_stars"], "c", "n")
+    data["N_O"] = gcem.log_to_brak(raw["NObirth_stars"], "n", "o")
+    data["C_N"] = gcem.log_to_brak(raw["CNbirth_stars"], "c", "n")
 
     data["age"] = raw["age_stars"]
 
     # additional columns for sanity's sake
-    data["[mg/h]"] = data["[mg/fe]"] + data["[fe/h]"]
-    data["[o/h]"] = data["[n/h]"] - data["[n/o]"]
+    data["MG_H"] = data["MG_FE"] + data["FE_H"]
+    data["O_H"] = data["N_H"] - data["N_O"]
 
-    data["[c/o]"] = data["[c/h]"] - data["[o/h]"]
+    data["C_O"] = data["C_H"] - data["O_H"]
 
-    data["[c/mg]"] = data["[c/h]"] - data["[mg/h]"]
-    data["[n/mg]"] = data["[n/h]"] - data["[mg/h]"]
-    data["[o/fe]"] = data["[o/h]"] - data["[fe/h]"]
+    data["C_MG"] = data["C_H"] - data["MG_H"]
+    data["N_MG"] = data["N_H"] - data["MG_H"]
+    data["O_FE"] = data["O_H"] - data["FE_H"]
 
-    data["high_alpha"]  = gcem.is_high_alpha(data["[mg/fe]"], data["[fe/h]"])
+    data["high_alpha"]  = gcem.is_high_alpha(data["MG_FE"], data["FE_H"])
 
     # broadly filter out the chaos
-    filt = data["[o/h]"] >= -10
-    filt &= data["[o/h]"] <= 10
-    filt &= data["[n/o]"] >= -10
-    filt &= data["[n/o]"] <= 10
+    filt = data["O_H"] >= -10
+    filt &= data["O_H"] <= 10
+    filt &= data["N_O"] >= -10
+    filt &= data["N_O"] <= 10
 
+    data["C_MG_ERR"] = 0.0
     return data[filt]
 
 
