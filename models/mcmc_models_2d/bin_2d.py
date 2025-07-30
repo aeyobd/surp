@@ -75,10 +75,10 @@ def main():
 
     )
 
-    models_const = model.y0_cc
 
     for shift, label in zip(y_shifts, labels):
         if shift != 0:
+            models_const = model.y0_cc
             dy = models_const * shift 
             model[label] += dy
 

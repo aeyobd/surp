@@ -118,6 +118,8 @@ def get_c_cc_model(params):
         model = yield_models.Quadratic_CC(y0=params.y0_c_cc, zeta=params.zeta_c_cc, **params.kwargs_c_cc)
     elif params.y_c_cc == "LinQuad":
         model = yield_models.LinQuad_CC(y0=params.y0_c_cc, zeta=params.zeta_c_cc, **params.kwargs_c_cc)
+    elif params.y_c_cc == "Spline":
+        model = yield_models.Spline_CC(**params.kwargs_c_cc)
     else:
         model = params.y_c_cc
 

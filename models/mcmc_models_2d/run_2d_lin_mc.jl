@@ -4,6 +4,8 @@ using LinearAlgebra: diagm
 import TOML
 using ArgParse
 using Random
+import LoggingExtras: FileLogger, TeeLogger, MinLevelLogger
+import Logging: with_logger, global_logger, Info
 
 
 struct ConstDist  <: ContinuousUnivariateDistribution
@@ -12,8 +14,7 @@ end
 
 include("run_2d_log_mc.jl")
 
-function main()
-    args = get_args()
+function main(args)
     modelname = args["modelname"]
 
     @info "loading parameters and models"
@@ -94,5 +95,13 @@ end
 
 
 if abspath(PROGRAM_FILE) == @__FILE__
-    main()
+    args = get_args()
+    logger = TeeLogger(
+        global_logger(),
+        MinLevelLogger(FileLogger(joinpath(args["modelname"], "log.out")), Info)
+   )
+
+    with_logger(logger) do
+        main(args)
+    end
 end

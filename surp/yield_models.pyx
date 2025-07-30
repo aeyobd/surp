@@ -710,6 +710,57 @@ cdef class Piecewise_CC(AbstractCC):
         return Piecewise_CC(self.y0s.copy(), self.zetas.copy(), self.Zs.copy())
 
 
+cdef class Spline_CC(AbstractCC):
+    """
+    Spline_CC(Zs, ys)
+
+    Constructs a spline model for CCSN  in linear Z
+    If Z is between Zs[i] and Zs[i+1], then 
+    y = x * ys[i+1]  + (1-x) * ys[i]
+    where
+    x = (Z - Zs[i]) / (Zs[i+1] - Zs[i])
+
+    Yields are held constant after the first and last node.
+
+    Parameters
+    ----------
+    ys: the yields at each metallicity Zs
+    Zs: list(float)
+        The threshold metallicities between pieces. 
+        Should be ascending and length of ys
+    """
+
+    cdef public list ys
+    cdef public list Zs
+
+    def __cinit__(self, list Zs, list ys):
+        assert len(ys) == len(Zs)
+        self.Zs = Zs
+        self.ys = ys
+
+    def __imul__(self, scale):
+        self.ys = [y*scale for y in self.ys]
+        return self
+
+    cpdef double ccall(self, double Z):
+        cdef double y = m.NAN
+
+        if Z <= self.Zs[0]:
+            y =  self.ys[0]
+        elif Z >= self.Zs[-1]:
+            return self.ys[-1]
+        else:
+            for i in range(len(self.Zs) - 1):
+                if self.Zs[i] <= Z < self.Zs[i+1]:
+                    x = (Z - self.Zs[i]) / (self.Zs[i+1] - self.Zs[i])
+                    y = self.ys[i] * (1-x) + self.ys[i+1] * x
+
+        return y
+
+    def copy(self):
+        return Spline_CC(self.Zs.copy(), self.ys.copy())
+
+
 
 cdef class Quadratic_CC(AbstractCC):
     """

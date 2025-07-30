@@ -1,0 +1,45 @@
+[alpha]
+name = "perturbations/fruity_mf0.7"
+prior = "Normal"
+prior_args = [1.0, 1.0]
+
+
+[spline_0]
+name = "perturbations/spline_0"
+prior = "Normal"
+prior_args = [0.79, 0.0]
+
+[spline_1]
+name = "perturbations/spline_1"
+prior = "Normal"
+prior_args = [2.0, 1.0]
+
+[spline_2]
+name = "perturbations/spline_2"
+prior = "Normal"
+prior_args = [2.0, 1.0]
+
+[spline_3]
+name = "perturbations/spline_3"
+prior = "Normal"
+prior_args = [2.0, 1.0]
+
+[spline_4]
+name = "perturbations/spline_4"
+prior = "Normal"
+prior_args = [2.0, 1.0]
+
+[spline_5]
+name = "perturbations/spline_5"
+prior = "Normal"
+prior_args = [2.0, 1.0]
+
+[spline_6]
+name = "perturbations/spline_6"
+prior = "Normal"
+prior_args = [2.0, 1.0]
+
+[spline_7]
+name = "perturbations/spline_7"
+prior = "Normal"
+prior_args = [2.0, 1.0]

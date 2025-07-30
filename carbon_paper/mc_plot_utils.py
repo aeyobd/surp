@@ -27,7 +27,7 @@ class MCMCResult:
 
 
     @classmethod
-    def from_file(cls, modeldir, y0=None, y_a=None, zeta_a=None, burn=0):
+    def from_file(cls, modeldir, y0=None, y0_keys = {"y0_cc": 1e-3}, y_a=None, zeta_a=None, burn=0):
     
         with open(modeldir + "/params.toml", "r") as f:
             params = toml.load(f)
@@ -52,7 +52,10 @@ class MCMCResult:
         print(params)
         if y0 is not None:
             ya = samples["alpha"] * y0
-            yt = ya + samples["y0_cc"] * 1e-3
+            yt = ya.copy()
+            for key, val in y0_keys.items():
+                yt += samples[key] * val
+
             for label in all_labels:
                 if "y0" in params[label].keys():
                     yt = yt + samples[label] * params[label]["y0"]
@@ -62,7 +65,9 @@ class MCMCResult:
             
         if y_a is not None:
             ya = samples["alpha"] * y_a
-            yt = ya + samples["y0_cc"] * 1e-3
+            yt = ya 
+            for key, val in y0_keys.items():
+                yt += samples[key] * val
             f = ya / yt
             samples["f_agb_a"] = f
             samples["y_tot_a"] = yt
