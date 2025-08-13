@@ -14,12 +14,15 @@ from mcmc_setup import results, yagb_props
 Y_C_0 = 2.67e-3
 
 plot_labels = {
-    "fiducial": r"FRUITY+gas-phase",
+    #"fiducial": r"FRUITY+gas-phase",
     "fruity": r"FRUITY",
     "aton": r"ATON",
     "monash": r"Monash",
     "nugrid": r"NuGrid",
     "fruity_mf0.7": r"FRUITY m0.7",
+    "lateburst": r"lateburst",
+    "twoinfall": r"twoinfall",
+    "eta2": r"eta2",
 }
 
 

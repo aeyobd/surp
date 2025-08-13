@@ -80,10 +80,10 @@ def main():
 
     )
 
-    models_const = {key: val.y0_cc for key, val in model.items()}
 
     for shift, label in zip(y_shifts, labels):
         if shift != 0:
+            models_const = {key: val.y0_cc for key, val in model.items()}
             for group in models_const.keys():
                 dy = models_const[group] * shift 
                 model[group][label] += dy

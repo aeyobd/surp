@@ -1,0 +1,27 @@
+[alpha]
+name = "perturbations/fruity"
+prior = "Normal"
+prior_args = [1.0, 1.0]
+
+
+[spline_0]
+name = "perturbations/4spline_0"
+prior = "Normal"
+prior_args = [0.79, 0.03]
+
+
+[spline_1]
+name = "perturbations/4spline_1"
+prior = "Normal"
+prior_args = [2.0, 1.0]
+
+[spline_2]
+name = "perturbations/4spline_2"
+prior = "Normal"
+prior_args = [2.0, 1.0]
+
+[spline_3]
+name = "perturbations/4spline_3"
+prior = "Normal"
+prior_args = [2.0, 1.0]
+

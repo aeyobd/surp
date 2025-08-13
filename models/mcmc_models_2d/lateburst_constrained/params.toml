@@ -1,0 +1,23 @@
+[alpha]
+name = "multi_perturbations/lateburst"
+C_MG = "AG_MG"
+prior = "Normal"
+prior_args = [1.0, 1.0]
+
+
+[y0_cc]
+name = "multi_perturbations/lateburst"
+C_MG = "CD_MG"
+prior = "Normal"
+prior_args = [0.79, 0.0]
+
+
+
+
+[zeta_cc]
+name = "multi_perturbations/lateburst"
+C_MG = "IN_MG"
+prior = "Normal"
+prior_args = [0.0, 2.0]
+
+

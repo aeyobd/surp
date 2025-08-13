@@ -11,11 +11,11 @@ from mcmc_setup import results
 
 
 names = [    
-    "fiducial/best",
-    "aton/run",
-    "monash/run",
-    "nugrid/run",
-   "fruity/agb_mass_0.7_alpha",
+    "fiducial/run",
+    "aton/constrained",
+    "monash/constrained",
+    "nugrid/constrained",
+   "fruity/agb_mass_0.7_constrained",
   ]
 
 labels = ["FRUITY", "ATON", "Monash",  "NuGrid", "FRUITY shifted"]

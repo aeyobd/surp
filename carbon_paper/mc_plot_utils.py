@@ -27,7 +27,7 @@ class MCMCResult:
 
 
     @classmethod
-    def from_file(cls, modeldir, y0=None, y0_keys = {"y0_cc": 1e-3}, y_a=None, zeta_a=None, burn=0):
+    def from_file(cls, modeldir, y0=None, y0_keys = {"y0_cc": 1e-3, "zeta_cc": 1e-3}, y0_shift=0, y_a=None, zeta_a=None, burn=0):
     
         with open(modeldir + "/params.toml", "r") as f:
             params = toml.load(f)
@@ -43,16 +43,12 @@ class MCMCResult:
         labels = np.array(all_labels)[filt_const]
         
         for label in np.array(all_labels)[~np.array(filt_const)]:
-            print("adding ", label)
             samples[label] = params[label]["prior_args"][0]
             
-        print("length of samples = ", len(samples))
-
         
-        print(params)
         if y0 is not None:
             ya = samples["alpha"] * y0
-            yt = ya.copy()
+            yt = ya.copy() + y0_shift
             for key, val in y0_keys.items():
                 yt += samples[key] * val
 
@@ -65,7 +61,7 @@ class MCMCResult:
             
         if y_a is not None:
             ya = samples["alpha"] * y_a
-            yt = ya 
+            yt = ya  + y0_shift
             for key, val in y0_keys.items():
                 yt += samples[key] * val
             f = ya / yt
@@ -87,7 +83,6 @@ class MCMCResult:
         modeldir = "./mcmc_samples/"
     
         samples = pd.read_csv(modeldir + f"{modelname}.csv")
-        print("length of samples = ", len(samples))
         
         if y0 is not None:
             ya = samples["alpha"] * y0

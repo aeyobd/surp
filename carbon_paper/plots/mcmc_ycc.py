@@ -22,7 +22,7 @@ ys_fiducial = surp.yields.calc_y(Z)
 
 Y_agbs = {
     "fruity": agb_interpolator("c"),
-    "fiducial": agb_interpolator("c"),
+    #"fiducial": agb_interpolator("c"),
     "fruity_mf0.7": agb_interpolator("c", mass_factor=0.7),
     "aton": agb_interpolator("c", study="ventura13"),
     "monash": agb_interpolator("c", study="karakas16"),
@@ -83,18 +83,21 @@ def plot_y_tot_mean(result, ys_a, M_H=M_H, y_z0=y_z0, y_z1=y_z1, **kwargs):
 
 
 plot_labels = {
-    "fiducial": r"FRUITY+gas-phase",
+    #"fiducial": r"FRUITY+gas-phase",
     "fruity": r"FRUITY",
     "aton": r"ATON",
     "monash": r"Monash",
     "nugrid": r"NuGrid",
     "fruity_mf0.7": r"FRUITY m0.7",
+    "lateburst": r"lateburst",
+    "twoinfall": r"twoinfall",
+    "eta2": r"eta2",
 }
 
 
 
 plt.figure()
-plot_y_tot(results["fiducial"], y_agbs["fruity"], thin=100, alpha=0.01, color=arya.COLORS[0])
+plot_y_tot(results["fruity"], y_agbs["fruity"], thin=100, alpha=0.01, color=arya.COLORS[0])
 
 for i, (key, label) in enumerate(plot_labels.items()): 
     result = results[key]
@@ -103,7 +106,7 @@ for i, (key, label) in enumerate(plot_labels.items()):
     else:
         print("warning, no agb for ", key)
         
-        y_agb = y_agbs["analytic"]
+        y_agb = y_agbs["fruity"]
 
     
     plot_y_tot_mean(result, y_agb, color=arya.COLORS[i], label=label)

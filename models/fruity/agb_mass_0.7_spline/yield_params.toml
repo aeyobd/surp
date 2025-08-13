@@ -1,0 +1,12 @@
+inherits = "../yield_params.toml"
+
+alpha_c_agb = 1.373
+y_c_cc = "Spline"
+
+[kwargs_c_cc]
+ys = [3.0e-3, 0.843e-3, 0.843e-3, 2.673e-3, 1.962e-3, 9.174e-3]
+Zs = [0.00000176, 0.0000176, 0.000176, 0.00442092, 0.01110485, 0.176]
+
+
+[kwargs_c_agb]
+mass_factor = 0.7
