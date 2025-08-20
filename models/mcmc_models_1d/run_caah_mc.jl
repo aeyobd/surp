@@ -31,17 +31,30 @@ function main()
     samples = DataFrame(chain)
     @info "writing output"
     # give columns nicer names 
-    rename!(samples, ["params[$i]" => labels[i] for i in eachindex(labels)]...)
+
+    is_const = [p isa ConstDist for p in priors]
+
+    rename!(samples, ["sampled_params[$i]" => labels[.!is_const][i] for i in eachindex(labels[.!is_const])]...)
 
     outfile = joinpath(modelname, "mcmc_samples.csv")
     CSV.write(outfile, samples)
 
+    summary = summarize_chain(chain, labels[.!is_const])
+    summary_file = joinpath(modelname, "mcmc_summary.csv")
+    CSV.write(summary_file, summary)
 end
 
 
 @model function caah_model(models_ah, labels, priors)
     # Create parameters based on the specified priors
-    params ~ arraydist(priors)
+    is_const = [p isa ConstDist for p in priors]
+    check_const_order(is_const)
+
+    sampled_params ~ arraydist(priors[.!is_const])
+
+    const_params = [p.mean for p in priors[is_const]]
+    params = vcat(const_params, sampled_params)
+
     
     # Compute model contributions for each dataset
     mu_ah = sum(p * models_ah[:, key] for (p, key) in zip(params, labels))
@@ -54,6 +67,45 @@ end
     # Data likelihoods
     models_ah.obs ~ MvNormal(mu_ah, diagm(sigma2_ah))
 end
+
+
+
+function check_const_order(is_const)
+    dc = sum(diff(is_const))
+    if dc == 1
+        @assert is_const[1] && !is_const[end] "all const parameters must be at the beginning of the parameter list."
+    elseif dc > 1
+        error("All const parameters must be at the beginning of the parameter list.")
+    end
+end
+
+
+function summarize_chain(chain, labels; p=0.16)
+    df = DataFrame(chain)
+    summary = DataFrame(Turing.summarize(chain))
+
+    Nr = size(summary, 1)
+    meds = zeros(Nr)
+    err_low = zeros(Nr)
+    err_high = zeros(Nr)
+    
+    for i in 1:Nr
+        sym = summary[i, :parameters]
+        meds[i] = median(df[!, sym])
+        err_low[i] = meds[i] - quantile(df[!, sym], p)
+        err_high[i] = quantile(df[!, sym], 1-p) - meds[i]
+    end
+
+    summary[!, :median] = meds
+    summary[!, :err_low] = err_low
+    summary[!, :err_high] = err_high
+    summary[!, :parameters] = labels
+
+    # reorder columns
+    select!(summary, :parameters, :median, :err_low, :err_high, Not([:parameters, :median, :err_low, :err_high]))
+    return summary
+end
+
 
 if abspath(PROGRAM_FILE) == @__FILE__
     main()

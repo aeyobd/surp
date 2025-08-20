@@ -11,6 +11,7 @@ from mcmc_setup import results, yagb_props
 from surp.agb_interpolator import interpolator as agb_interpolator
 
 
+
 y_z0 = lambda z: 1e-3
 y_z1 = np.vectorize(lambda z: surp.yield_models.Lin_CC(slope=0.001 / surp.Z_SUN, y0=1e-3)(z))
 
@@ -88,16 +89,16 @@ plot_labels = {
     "aton": r"ATON",
     "monash": r"Monash",
     "nugrid": r"NuGrid",
-    "fruity_mf0.7": r"FRUITY m0.7",
-    "lateburst": r"lateburst",
-    "twoinfall": r"twoinfall",
-    "eta2": r"eta2",
+    "fruity_mf0.7": r"FRUITY shifted",
+    #"lateburst": r"lateburst",
+    #"twoinfall": r"twoinfall",
+    #"eta2": r"eta2",
 }
 
 
 
-plt.figure()
-plot_y_tot(results["fruity"], y_agbs["fruity"], thin=100, alpha=0.01, color=arya.COLORS[0])
+plt.figure(figsize=(10/3, 10/4))
+plot_y_tot(results["fruity_sigma"], y_agbs["fruity"], thin=100, alpha=0.01, color=arya.COLORS[0])
 
 for i, (key, label) in enumerate(plot_labels.items()): 
     result = results[key]
@@ -113,7 +114,7 @@ for i, (key, label) in enumerate(plot_labels.items()):
     
 
 plt.xlabel(r"$\log Z / Z_\odot$")
-plt.ylabel(r"$y_{\rm C} / y_{\rm Mg}$")
+plt.ylabel(r"$y_{\rm C}^{\rm tot} / y_{\rm Mg}$")
 
 plt.legend()
 plt.savefig("figures/mcmc_y_tot.pdf")

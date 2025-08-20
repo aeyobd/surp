@@ -48,15 +48,22 @@ def load_model(filename, props, test=False, burn=0):
 
 results = {}
 
-results["fruity"] = load_model("fiducial_constrained", yagb_props["fruity"])
-#results["fruity"] = load_model("fiducial", yagb_props["fruity"])
-results["fruity_mf0.7"] = load_model("fruity_mf0.7_constrained", yagb_props["fruity_mf0.7"])
-results["aton"] = load_model("aton_constrained", yagb_props["aton"])
-results["nugrid"] = load_model("nugrid_constrained", yagb_props["nugrid"])
-results["monash"] = load_model("monash_constrained", yagb_props["monash"])
+results["fruity"] = load_model("fiducial", yagb_props["fruity"])
+results["fruity_mf0.7"] = load_model("fruity_mf0.7", yagb_props["fruity_mf0.7"])
+results["aton"] = load_model("aton", yagb_props["aton"])
+results["nugrid"] = load_model("nugrid", yagb_props["nugrid"])
+results["monash"] = load_model("monash", yagb_props["monash"])
 
-results["lateburst"] = load_model("lateburst_constrained", yagb_props["fruity"])
-results["twoinfall"] = load_model("twoinfall_constrained", yagb_props["fruity"])
-results["eta2"] = load_model("eta2_constrained", yagb_props["fruity"])
-#results["sneia_1.2"] = load_model("sneia_1.2_constrained", yagb_props["fruity"])
+
+results["fruity_sigma"] = load_model("fiducial_sigma0.05", yagb_props["fruity"])
+#results["fruity"] = load_model("fiducial", yagb_props["fruity"])
+results["fruity_mf0.7_sigma"] = load_model("fruity_mf0.7_sigma0.05", yagb_props["fruity_mf0.7"])
+results["aton_sigma"] = load_model("aton_sigma0.05", yagb_props["aton"])
+results["nugrid_sigma"] = load_model("nugrid_sigma0.05", yagb_props["nugrid"])
+results["monash_sigma"] = load_model("monash_sigma0.05", yagb_props["monash"])
+
+results["lateburst"] = load_model("lateburst", yagb_props["fruity"])
+results["twoinfall"] = load_model("twoinfall", yagb_props["fruity"])
+results["eta2"] = load_model("eta2", yagb_props["fruity"])
+results["sneia_1.2"] = load_model("sneia_1.2", yagb_props["fruity"])
 

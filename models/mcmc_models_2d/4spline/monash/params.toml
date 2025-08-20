@@ -1,7 +1,7 @@
 [alpha]
 name = "perturbations/monash"
-prior = "Normal"
-prior_args = [1.0, 1.0]
+prior = "TruncNormal"
+prior_args = [1.0, 1.0, 0.0, 6.0]
 
 
 [spline_0]

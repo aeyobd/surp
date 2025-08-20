@@ -7,18 +7,27 @@ import sys
 sys.path.append("..")
 from mw_model_plots import find_model, compare, compare_coofe, compare_cooh
 
-names_fz = [   
-    "fruity/fz_0.1",
-    "fiducial/run",
-    "fruity/fz_0.5",
+#names_fz = [   
+    #"fruity/fz_0.1",
+    #"fiducial/run",
+    #"fruity/fz_0.5",
+  #]
+
+#labels_fz = [r"$f_{\rm C}^{\rm AGB}=0.1$", r"$f_{\rm C}^{\rm AGB}=0.3$", r"$f_{\rm C}^{\rm AGB}=0.5$",]
+names_agb = [    
+    "fruity/best",
+    "aton/run",
+    "monash/run",
+    "nugrid/run",
+   "fruity/agb_mass_0.7_alpha",
   ]
 
-labels_fz = [r"$f_{\rm C}^{\rm AGB}=0.1$", r"$f_{\rm C}^{\rm AGB}=0.3$", r"$f_{\rm C}^{\rm AGB}=0.5$",]
+labels_agb = ["FRUITY", "ATON", "Monash",  "NuGrid", "FRUITY shifted"]
 
 
 names_agbm = [   
     "fruity/agb_mass_0.5",
-    "fruity/agb_mass_0.7",
+    "fruity/agb_mass_0.7_fixed",
     "fiducial/run",
     "fruity/agb_mass_1.5",
     #"fruity/agb_mass_2",
@@ -44,8 +53,8 @@ labels_sfh = [
 fig, axs = plt.subplots(1, 3, figsize=(7, 2.5), sharex="col", sharey=True, gridspec_kw={"wspace": 0, "hspace": 0})
 
 plt.sca(axs[0])
-compare_coofe(names_fz, labels_fz, sequential=True, legend=False)
-arya.Legend(loc=1, color_only=True, title=r"Free CC:", labelspacing=0.1)
+compare_coofe(names_agb, labels_agb, sequential=False, legend=False)
+arya.Legend(loc=3, color_only=True, title=r"", labelspacing=0.1)
 
 plt.sca(axs[1])
 compare_coofe(names_agbm, labels_agbm, sequential=True, legend=False)

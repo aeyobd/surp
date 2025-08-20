@@ -14,6 +14,7 @@ import arya
 
 TMAX = 13.2
 CLIM = (-TMAX, 0)
+CMAP = "arya_r"
 
 def colored_line(x, y, c, ax, **lc_kwargs):
     """
@@ -77,7 +78,7 @@ def plot_tracks(h, ax = plt.gca(), Rs = np.arange(2, 15), x="MG_H", y="C_MG", c=
         cs = (cs[1:]+ cs[:-1])/2
         cs = cs - TMAX
 
-        lines = colored_line(xs, ys, cs, ax, rasterized=True, clim=CLIM)
+        lines = colored_line(xs, ys, cs, ax, rasterized=True, clim=CLIM, cmap=CMAP)
 
 
 
@@ -118,7 +119,7 @@ def make_plot(h):
     plot_tracks(h, ax=axs[0])
     plot_labels(h, Rs=[4,8,12], labels=["4 kpc", "8", "12"])
 
-    plt.xlim(-2.5, 0.5)
+    plt.xlim(-2.5, 0.7)
     plt.xlabel("[Mg/Fe]")
     plt.ylabel("[C/Mg]")
 
@@ -131,12 +132,12 @@ def make_plot(h):
     plot_labels(h, x="MG_FE", y="C_MG", offsets=[(0,0), (0,0), (6,0)])
 
     plt.xlim(-0.06, 0.48)
-    plt.ylim(-0.60, 0.05)
+    plt.ylim(-0.55, 0.05)
     plt.xlabel("[Mg/Fe]")
 
     # colorbar
     cax = axs[1].inset_axes([1.05, 0., 0.05, 1])
-    cb = arya.Colorbar(clim=CLIM, label=r"lookback time (Gyr)", cmap="arya_r", cax=cax)
+    cb = arya.Colorbar(clim=CLIM, label=r"lookback time (Gyr)", cmap=CMAP, cax=cax)
 
 
 

@@ -271,9 +271,9 @@ sz_fiducial = run_singlezone(eta=y_scale * 9.56, t_end=10.73, tau_star=26.60, ta
 
 
 sz_models = [
-        sz_fiducial,
+        #sz_fiducial,
         #sz_better
-    # run_singlezone(eta=y_scale * 47.99, t_end=3.36, tau_star=44.97, tau_sfh=3.08, sfh=exp_sfh(None), mode="ifr", verbose=True)[1], # Wukong
+        run_singlezone(eta=y_scale * 47.99, t_end=3.36, tau_star=44.97, tau_sfh=3.08, sfh=exp_sfh(None), mode="ifr", verbose=True)[1], # Wukong
 ]
 
 
@@ -373,7 +373,7 @@ def plot_all_data():
     plot_sample_err(high_z, high_z_err, marker="s", color=COLORS[6], label=r"high-$z$ galaxies")
     
     
-    # plot_sample_err(DLA, DLA_err, marker="^", color=COLORS[3], label=r"damped Lyman$\alpha$ systems")
+    plot_sample_err(DLA, DLA_err, marker="^", color=COLORS[3], label=r"damped Lyman$\alpha$ systems")
 
 
     cooh_subgiants()
@@ -396,7 +396,7 @@ plot_fiducial()
 plot_sz()
 
 lower_legend_label(fig)
-plt.xlim(-2.6, 0.5)
+plt.xlim(-3.4, 0.5)
 plt.ylim(-1.2, 0.4)
 plt.tight_layout()
 

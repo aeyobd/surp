@@ -1,9 +1,0 @@
-inherits = "../fiducial/yield_params.toml"
-
-alpha_c_agb = 2.9
-
-y0_c_cc  = 1.71e-3
-zeta_c_cc =  2.106e-3
-
-
-y_c_cc = "Lin"

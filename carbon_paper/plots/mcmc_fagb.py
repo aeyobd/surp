@@ -19,7 +19,7 @@ plot_labels = {
     "aton": r"ATON",
     "monash": r"Monash",
     "nugrid": r"NuGrid",
-    "fruity_mf0.7": r"FRUITY m0.7",
+    "fruity_mf0.7": r"FRUITY shifted",
     "lateburst": r"lateburst",
     "twoinfall": r"twoinfall",
     "eta2": r"eta2",
@@ -28,7 +28,7 @@ plot_labels = {
 
 
 Nr = len(plot_labels)
-fig, axs = plt.subplots(Nr, 1, figsize=(3, 2), sharex="col", gridspec_kw={"hspace": 0})
+fig, axs = plt.subplots(Nr, 1, figsize=(10/3, 10/4), sharex="col", gridspec_kw={"hspace": 0})
 
 for i, (key, label) in enumerate(plot_labels.items()):
     if key == "hline":
@@ -52,7 +52,13 @@ for i, (key, label) in enumerate(plot_labels.items()):
     result = results[key]
     ax = axs[i]
     plt.sca(axs[i])
-    plt.hist(result.samples.f_agb, color=color, ls=ls)
+    plt.hist(result.samples.f_agb, color=color, ls=ls, density=True)
+
+    # add wider histogram
+    if key not in ["lateburst", "twoinfall", "eta2"]:
+        result2 = results[key + "_sigma"]
+        plt.hist(result2.samples.f_agb, color=color, histtype="step", density=True, ls="-", lw=0.5)
+
     plt.ylabel(label, rotation=0, ha="right", va="center")
 
     if key in yagb_props.keys():
@@ -66,7 +72,7 @@ for i, (key, label) in enumerate(plot_labels.items()):
     f0 = y_a / Y_C_0
     print("f = ", f0, " key, ", key)
     #plt.scatter(f0, 0, c="black", marker="o", s=5)
-    plt.scatter(f0, 0, c=color, marker="o", s=3, lw=0.5, edgecolors="black")
+    plt.annotate("", (f0, 0), xytext=(0, 0.5), textcoords="offset fontsize", arrowprops={"width": 0.5, "headwidth": 3, "headlength": 3, "color": "k", "linewidth": 0.0, "edgecolor": "black"})
 
     if Nr - 1 > i > 0:
         ax.spines[['bottom', 'top']].set_visible(False)
@@ -81,7 +87,7 @@ for i, (key, label) in enumerate(plot_labels.items()):
 
     ax.set_yticks([])
     ax.set_yticks([], minor=True)
-    plt.ylim(-1000)
+    #plt.ylim(-0.1)
 
 
 
@@ -89,5 +95,5 @@ plt.sca(axs[-1])
 plt.xlabel(r"$f_{\rm AGB}$")
 plt.xlim(-0.05, 0.6)
 
-plt.tight_layout()
+#plt.tight_layout()
 plt.savefig("figures/mcmc_fagb.pdf")

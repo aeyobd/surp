@@ -1,8 +1,8 @@
 inherits = "../yield_params.toml"
 
-alpha_c_agb = 1.29
 y0_c_cc = 0.00233
 zeta_c_cc = 0.00106
+alpha_c_agb = 1.29
 
 [kwargs_c_agb]
 mass_factor = 0.7
