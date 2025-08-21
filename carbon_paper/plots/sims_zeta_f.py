@@ -14,9 +14,9 @@ names = [
     "fruity/zeta_higher",
 ]
 labels = [
-    r"shallower CC yield", 
-    r"fiducial", 
-    r"steeper CC yield"
+    r"$\zeta_{\rm C}^{\rm CC} = 0.0004$", 
+    r"$\zeta_{\rm C}^{\rm CC} = 0.0008$ (fiducial)", 
+    r"$\zeta_{\rm C}^{\rm CC} = 0.0012$", 
 ]
 
 compare(names, labels, axs = axs[0], sequential=True)
@@ -30,7 +30,7 @@ names = [
     "fruity/f_0.5",
   ]
 
-labels = [r"$f_{\rm C}^{\rm AGB}=0$", r"$f_{\rm C}^{\rm AGB}=0.3$", r"$f_{\rm C}^{\rm AGB}=0.5$",]
+labels = [r"$f_{\rm C}^{\rm AGB}=0$", r"$f_{\rm C}^{\rm AGB}=0.3$ (fiducial)", r"$f_{\rm C}^{\rm AGB}=0.5$",]
 compare(names, labels, sequential=True, axs=axs[1])
 
 
@@ -41,7 +41,7 @@ names = [
     "fruity/fz_0.5",
   ]
 
-labels = [r"$f_{\rm C}^{\rm AGB}=0$, shallower CC", r"$f_{\rm C}^{\rm AGB}=0.3$", r"$f_{\rm C}^{\rm AGB}=0.5$, steeper CC",]
+labels = [r"$f_{\rm C}^{\rm AGB}=0$, $\zeta_{\rm C}^{\rm CC} = 0.0004$", r"fiducial", r"$f_{\rm C}^{\rm AGB}=0.5$, $\zeta_{\rm C}^{\rm CC} = 0.0012$",]
 compare(names, labels, sequential=True, axs=axs[2])
 
 

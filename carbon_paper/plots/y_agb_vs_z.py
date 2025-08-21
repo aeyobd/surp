@@ -52,5 +52,5 @@ for i in range(4):
 
 
 arya.Legend(color_only=True, handlelength=0, ncols=2, columnspacing=1, loc=3, transpose=True)
-plt.ylabel(r"Integrated AGB C Yield $\quad [\times 10^{-4}]$")
+plt.ylabel(r"integrated AGB C yield $\quad [\times 10^{-4}]$")
 plt.savefig("figures/y_agb_vs_z.pdf")

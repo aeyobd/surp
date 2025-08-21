@@ -26,8 +26,8 @@ for i in range(4):
 arya.Colorbar(huemap=hmap, ax=axs.ravel().tolist(), 
               label=r"Metallicity ($\log Z/Z_\odot$)")
 
-plt.setp(axs[-1, :], xlabel=r'Initial Mass / ${\rm M}_\odot$')
-fig.supylabel(r"Stellar C Yield $\quad[\times 10^{-2}]$")
+plt.setp(axs[-1, :], xlabel=r'initial mass / ${\rm M}_\odot$')
+fig.supylabel(r"stellar C yield $\quad[\times 10^{-2}]$")
 
 plt.gca().xaxis.set_minor_locator(mpl.ticker.AutoMinorLocator(2))
 

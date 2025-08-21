@@ -12,10 +12,10 @@ fig = plt.figure(figsize=(3.3, 3.3))
 result.plot_corner( 
     fig = fig,
     labels={
-        "alpha": r"$\alpha$",
+        "alpha": r"$\beta_{\rm C}^{\rm AGB}$",
         "y0_cc": r"$y_{\rm low} / 10^{-3}$",
-        "zeta_cc": r"$\zeta / 10^{-3}$",
-        "A_cc": r"$\zeta_{2}$",},
+        "zeta_cc": r"$\zeta_{\rm C}^{\rm CC} / 10^{-3}$",
+        },
     labelpad=0.15,
     title_kwargs = {
         "fontsize": 6,

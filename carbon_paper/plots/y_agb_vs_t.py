@@ -30,7 +30,7 @@ def make_plot():
     plt.ylim(-0.3, 1.2)
     plt.xlim(0.03, 13.2)
     plt.xticks([0.1, 1, 10], labels=[0.1, 1, 10])
-    plt.ylabel("Cumulative AGB C Production (normalized)")
+    plt.ylabel("cumulative AGB C production (normalized)")
     plt.xlabel("time / Gyr")
     arya.Legend(color_only=True)
 

@@ -54,15 +54,18 @@ fig, axs = plt.subplots(1, 3, figsize=(7, 2.5), sharex="col", sharey=True, grids
 
 plt.sca(axs[0])
 compare_coofe(names_agb, labels_agb, sequential=False, legend=False)
+plt.xticks([0, 0.1, 0.2, 0.3])
 arya.Legend(loc=3, color_only=True, title=r"", labelspacing=0.1)
 
 plt.sca(axs[1])
 compare_coofe(names_agbm, labels_agbm, sequential=True, legend=False)
 arya.Legend(loc=1, color_only=True, title=r"AGB mass shift:", labelspacing=0.1)
+plt.xticks([0.1, 0.2, 0.3])
 plt.ylabel("")
 
 plt.sca(axs[2])
 compare_coofe(names_sfh, labels_sfh)
+plt.xticks([0.1, 0.2, 0.3, 0.4])
 plt.ylabel("")
 
 plt.tight_layout()

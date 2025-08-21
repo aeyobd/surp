@@ -271,9 +271,9 @@ sz_fiducial = run_singlezone(eta=y_scale * 9.56, t_end=10.73, tau_star=26.60, ta
 
 
 sz_models = [
-        #sz_fiducial,
+        sz_fiducial,
         #sz_better
-        run_singlezone(eta=y_scale * 47.99, t_end=3.36, tau_star=44.97, tau_sfh=3.08, sfh=exp_sfh(None), mode="ifr", verbose=True)[1], # Wukong
+        #run_singlezone(eta=y_scale * 47.99, t_end=3.36, tau_star=44.97, tau_sfh=3.08, sfh=exp_sfh(None), mode="ifr", verbose=True)[1], # Wukong
 ]
 
 
@@ -315,7 +315,7 @@ def plot_sz(zorder=10):
 
 data_kwargs = dict(
     stat="median",
-    label = r"low $\alpha$ subgiants",
+    label = r"low-$\alpha$ subgiants",
     color=COLORS[4],
     err_kwargs=dict(facecolor=COLORS[4], alpha=0.0)
 )
@@ -359,10 +359,10 @@ def lower_legend_label(fig):
 
 def plot_all_data():
     plot_sample_err(all_stars, all_star_err, marker="*", color=COLORS[8], label="MW stars")
-    plot_sample_err(RL_mw, marker="p", color="none", edgecolors=COLORS[1], label="MW HII Regions", lw=0.5)
+    plot_sample_err(RL_mw, marker="p", color="none", edgecolors=COLORS[1], label="MW H {\sc ii} Regions", lw=0.5)
     
-    plot_sample_err(RL, marker="d", edgecolors=COLORS[2], color="none", lw=0.5, label="HII Regions (RL)")
-    plot_sample_err(CEL, CEL_err, marker="d", color=COLORS[2], label="HII regions (CEL)")
+    plot_sample_err(RL, marker="d", edgecolors=COLORS[2], color="none", lw=0.5, label="H {\sc ii} Regions (RL)")
+    plot_sample_err(CEL, CEL_err, marker="d", color=COLORS[2], label="H {\sc ii} regions (CEL)")
 
     for galaxy in RL.galaxy.unique():
         df = RL[RL.galaxy == galaxy].sort_values("O_H")
@@ -373,7 +373,7 @@ def plot_all_data():
     plot_sample_err(high_z, high_z_err, marker="s", color=COLORS[6], label=r"high-$z$ galaxies")
     
     
-    plot_sample_err(DLA, DLA_err, marker="^", color=COLORS[3], label=r"damped Lyman$\alpha$ systems")
+    plot_sample_err(DLA, DLA_err, marker="^", color=COLORS[3], label=r"damped Lyman-$\alpha$ systems")
 
 
     cooh_subgiants()
@@ -394,10 +394,11 @@ fig = plt.figure(figsize=(7, 4))
 plot_all_data()
 plot_fiducial()
 plot_sz()
+plt.savefig("figures/summary_nolims.pdf")
 
 lower_legend_label(fig)
 plt.xlim(-3.4, 0.5)
-plt.ylim(-1.2, 0.4)
+plt.ylim(-1.0, 0.4)
 plt.tight_layout()
 
 

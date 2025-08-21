@@ -31,13 +31,13 @@ plot_y_cc(scale=scale)
 plot_c11(scale=scale)
 plot_analy(scale=scale)
 
-plt.ylabel(r"integrated CCSN C yield $[\times10^{-4}]$")
+plt.ylabel(r"integrated massive-star C yield $[\times10^{-4}]$")
 plt.xlim(-4.8, 0.8)
 plt.ylim(1e-12, 80)
 
 # add secondary axis
 ax2 = ax.secondary_yaxis('right', functions=(linear_to_log10, log10_to_linear))
-ax2.set_ylabel(r"${\rm [C/Mg]}^{\rm CC}$")
+ax2.set_ylabel(r"${\rm [C/Mg]}^{\rm CC}$", rotation=-90)
 ax2.set_yticks([-2.5, -2, -1.5, -1, -0.5, 0.0], labels=["", "", "", -1, -0.5, 0])
 ax.tick_params(axis="y", which="both", right=False, left=True)
 

@@ -155,10 +155,10 @@ def compare(names, labels=None, axs=None, **kwargs):
         
     plt.sca(axs[0])
     compare_cooh(names, labels, **kwargs, legend=False)
+    arya.Legend(color_only=True)
     
     plt.sca(axs[1])
     compare_coofe(names, labels, legend=False, **kwargs)
     plt.ylabel("")
-    arya.Legend(color_only=True)
 
 

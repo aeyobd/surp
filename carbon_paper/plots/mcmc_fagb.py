@@ -23,6 +23,7 @@ plot_labels = {
     "lateburst": r"lateburst",
     "twoinfall": r"twoinfall",
     "eta2": r"eta2",
+    "sneia_1.2": r"$1.2 \times y_{\rm Fe}^{\rm Ia}$"
 }
 
 
@@ -55,7 +56,7 @@ for i, (key, label) in enumerate(plot_labels.items()):
     plt.hist(result.samples.f_agb, color=color, ls=ls, density=True)
 
     # add wider histogram
-    if key not in ["lateburst", "twoinfall", "eta2"]:
+    if key not in ["lateburst", "twoinfall", "eta2", "sneia_1.2"]:
         result2 = results[key + "_sigma"]
         plt.hist(result2.samples.f_agb, color=color, histtype="step", density=True, ls="-", lw=0.5)
 
@@ -92,7 +93,7 @@ for i, (key, label) in enumerate(plot_labels.items()):
 
 
 plt.sca(axs[-1])
-plt.xlabel(r"$f_{\rm AGB}$")
+plt.xlabel(r"$f_{\rm C}^{\rm AGB}$")
 plt.xlim(-0.05, 0.6)
 
 #plt.tight_layout()

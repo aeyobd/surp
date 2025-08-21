@@ -120,7 +120,7 @@ def make_plot(h):
     plot_labels(h, Rs=[4,8,12], labels=["4 kpc", "8", "12"])
 
     plt.xlim(-2.5, 0.7)
-    plt.xlabel("[Mg/Fe]")
+    plt.xlabel("[Mg/H]")
     plt.ylabel("[C/Mg]")
 
 
