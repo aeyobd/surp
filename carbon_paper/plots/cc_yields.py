@@ -7,6 +7,9 @@ import pandas as pd
 import numpy as np
 import vice
 
+from matplotlib.ticker import MultipleLocator
+
+
 import sys
 sys.path.append("..")
 from cc_plot_utils import plot_y_cc, plot_c11, plot_y_cc_mcmc, plot_analy, plot_c_mg_mcmc
@@ -38,7 +41,8 @@ plt.ylim(1e-12, 80)
 # add secondary axis
 ax2 = ax.secondary_yaxis('right', functions=(linear_to_log10, log10_to_linear))
 ax2.set_ylabel(r"${\rm [C/Mg]}^{\rm CC}$", rotation=-90)
-ax2.set_yticks([-2.5, -2, -1.5, -1, -0.5, 0.0], labels=["", "", "", -1, -0.5, 0])
+ax2.set_yticks([-2.3, -2, -1.6, -1.3, -1, -0.6, -0.3, 0.0, 0.3], labels=["", "", "", "", -1, -0.6, -0.3, 0, 0.3])
+ax2.yaxis.set_minor_locator(MultipleLocator(0.1))
 ax.tick_params(axis="y", which="both", right=False, left=True)
 
 

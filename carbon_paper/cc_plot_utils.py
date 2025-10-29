@@ -15,6 +15,7 @@ import arya
 
 ALLOWED_MH = {
     "LC18": [-3, -2, -1, 0],
+    "P16": [-2.15, -1.15, -0.37, -0.15, 0.15],
     "S16/N20": [0],
     "S16/W18": [0],
     "S16/W18F": [0],
@@ -26,6 +27,7 @@ ALLOWED_MH = {
 
 MAX_MASS = {
     "LC18": 120,
+    "P16": 25,
     "S16/N20": 120,
     "S16/W18": 120,
     "S16/W18F": 120,
@@ -50,16 +52,17 @@ Y_C_CC_FIDUCIAL = load_fiducial()
 
 
 def plot_y_cc(ele='c', ele2=None,
-        ccsne_studies = ["LC18", "LC18", "S16/W18F", "S16/W18", "NKT13", "WW95"],
-        colors = [arya.style.COLORS[i] for i in [0,0,1,1,2,3,4]],
-        markers = ["o", "o", "s", "d", "*", "^"],
-        sizes = [30, 30,30, 30,30,30],
-        rotations = [0, 300, 0, 0, 0, 0],
+        ccsne_studies = ["LC18", "LC18", "P16", "S16/W18F", "S16/W18", "NKT13", "WW95"],
+        colors = [arya.style.COLORS[i] for i in [0,0,1,2,2,3,4,5]],
+        markers = ["o", "o", "h", "s", "d", "*", "^"],
+        sizes = [30, 30, 30, 30, 30, 30, 30],
+        rotations = [0, 300, 0, 0, 0, 0, 0],
         scale = 1
               ):
 
     labels = [r"LC18, $v_{\rm rot}=0\;{\rm km\,s^{-1}}$", 
               r"LC18, $v_{\rm rot}=300\;{\rm km\,s^{-1}}$",
+              "P16",
               "S16/All explode", 
               "S16/W18", 
               "NKT13", 

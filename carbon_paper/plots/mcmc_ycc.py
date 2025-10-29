@@ -97,7 +97,7 @@ plot_labels = {
 
 
 
-plt.figure(figsize=(10/3, 10/4))
+plt.figure(figsize=(8/3, 10/4))
 plot_y_tot(results["fruity_sigma"], y_agbs["fruity"], thin=100, alpha=0.01, color=arya.COLORS[0])
 
 for i, (key, label) in enumerate(plot_labels.items()): 
