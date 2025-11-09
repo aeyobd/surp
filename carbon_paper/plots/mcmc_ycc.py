@@ -16,9 +16,6 @@ y_z0 = lambda z: 1e-3
 y_z1 = np.vectorize(lambda z: surp.yield_models.Lin_CC(slope=0.001 / surp.Z_SUN, y0=1e-3)(z))
 
 M_H=np.linspace(-0.5, 0.5, 1000)
-Z = gcem.MH_to_Z(M_H)
-surp.set_yields(verbose=False)
-ys_fiducial = surp.yields.calc_y(Z)
 
 
 Y_agbs = {
@@ -100,6 +97,13 @@ plot_labels = {
 plt.figure(figsize=(8/3, 10/4))
 plot_y_tot(results["fruity_sigma"], y_agbs["fruity"], thin=100, alpha=0.01, color=arya.COLORS[0])
 
+
+Z = gcem.MH_to_Z(M_H)
+surp.set_yields(verbose=False)
+ys_fiducial = surp.yields.calc_y(Z)
+ymg = vice.yields.ccsne.settings["mg"]
+plt.plot(M_H, ys_fiducial / ymg, color="black", label="fiducial")
+
 for i, (key, label) in enumerate(plot_labels.items()): 
     result = results[key]
     if key in y_agbs.keys():
@@ -110,12 +114,12 @@ for i, (key, label) in enumerate(plot_labels.items()):
         y_agb = y_agbs["fruity"]
 
     
-    plot_y_tot_mean(result, y_agb, color=arya.COLORS[i], label=label)
+    plot_y_tot_mean(result, y_agb, color=arya.COLORS[i], label=label, ls=["-", "--", "-.", ":", (0, (6.4,1.6,1,1.6,1,1.6))][i])
     
 
 plt.xlabel(r"$\log Z / Z_\odot$")
 plt.ylabel(r"$y_{\rm C}^{\rm tot} / y_{\rm Mg}$")
 
-plt.legend()
+plt.legend(labelspacing=0.1)
 plt.savefig("figures/mcmc_y_tot.pdf")
 

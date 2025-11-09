@@ -14,7 +14,7 @@ from mcmc_setup import results, yagb_props
 Y_C_0 = 2.67e-3
 
 plot_labels = {
-    #"fiducial": r"FRUITY+gas-phase",
+    "fiducial": r"fiducial",
     "fruity": r"FRUITY",
     "aton": r"ATON",
     "monash": r"Monash",
@@ -22,9 +22,16 @@ plot_labels = {
     "fruity_mf0.7": r"FRUITY shifted",
     "lateburst": r"lateburst",
     "twoinfall": r"twoinfall",
-    "eta2": r"eta2",
-    "sneia_1.2": r"$1.2 \times y_{\rm Fe}^{\rm Ia}$"
+    "eta2": r"doubled yields",
+    "sneia_1.2": r"higher SN Ia"
 }
+
+
+def plot_dist(x, y=1, color=None, **kwargs):
+    ll, l, m, h, hh = np.quantile(x, [0.02, 0.16, 0.5, 0.84, 0.98])
+    plt.scatter(m, y, color=color, **kwargs)
+    plt.plot([l, h], [y, y], color=color)
+    plt.plot([ll, hh], [y, y], color=color, lw=0.5)
 
 
 def plot_hists(axs, col, ylabel=True):
@@ -46,19 +53,29 @@ def plot_hists(axs, col, ylabel=True):
         else:
             ls = "--"
             color = arya.COLORS[0]
-
-        result = results[key]
+        
         ax = axs[i]
         plt.sca(axs[i])
-        if key == "eta2" and col == "alpha":
-            plt.hist(2*result.samples[col], color=color, ls=ls, density=True)
+
+        if key == "fiducial":
+            if col == "f_agb":
+                plt.scatter(0.3, 0, color="black")
+            else:
+                plt.scatter(2.47, 0, color="black")
         else:
-            plt.hist(result.samples[col], color=color, ls=ls, density=True)
+            result = results[key]
+            if key == "eta2" and col == "alpha":
+                x = 2*result.samples[col]
+            else:
+                x = result.samples[col]
+                #plt.hist(2*result.samples[col], color=color, ls=ls, density=True)
+            plot_dist(x, color=color)
 
         # add wider histogram
-        if key not in ["lateburst", "twoinfall", "eta2", "sneia_1.2"]:
+        if key not in ["fiducial", "lateburst", "twoinfall", "eta2", "sneia_1.2"]:
             result2 = results[key + "_sigma"]
-            plt.hist(result2.samples[col], color=color, histtype="step", density=True, ls="-", lw=0.5)
+            #plt.hist(result2.samples[col], color=color, histtype="step", density=True, ls="-", lw=0.5)
+            plot_dist(result2.samples[col], marker="^", color=color, y=-1)
         if ylabel:
             plt.ylabel(label, rotation=0, ha="right", va="center")
 
@@ -84,33 +101,30 @@ def plot_hists(axs, col, ylabel=True):
             ax.tick_params(axis='x',  top=False, which="both")
 
 
-        ax.set_yticks([])
+        ax.set_yticks([0])
+        ax.axes.yaxis.set_ticklabels([])
         ax.set_yticks([], minor=True)
-        #plt.ylim(-0.1)
+        plt.ylim(-4, 4)
 
 
 
 
 
 Nr = len(plot_labels)
-fig, axs = plt.subplots(Nr, 2, figsize=(12/3, 10/4), sharex="col", gridspec_kw={"hspace": 0})
+fig, axs = plt.subplots(Nr, 2, figsize=(11.5/3, 10/4), sharex="col", gridspec_kw={"hspace": 0, "wspace": 0})
 
 plot_hists(axs[:, 0], "f_agb")
 plot_hists(axs[:, 1], "alpha", ylabel=False)
 
 
 for ax in axs[:, 1]:
-    ax.axvline(1, color="black")
+    ax.axvline(1, color="black", linewidth=0.5)
 
 
-f0 = 0.3
-axs[0, 0].annotate("", (f0, 0), xytext=(0, 0.5), textcoords="offset fontsize", arrowprops={"width": 0.5, "headwidth": 3, "headlength": 3, "color": "k", "linewidth": 0.0, "edgecolor": "black"})
-f0 = 2.47
-axs[0, 1].annotate("", (f0, 0), xytext=(0, 0.5), textcoords="offset fontsize", arrowprops={"width": 0.5, "headwidth": 3, "headlength": 3, "color": "k", "linewidth": 0.0, "edgecolor": "black"})
 
 plt.sca(axs[-1, 0])
 plt.xlabel(r"$f_{\rm C}^{\rm AGB}$")
-plt.xlim(-0.05, 0.6)
+plt.xlim(-0.05, 0.55)
 
 plt.sca(axs[-1, 1])
 plt.xlabel(r"$\beta_{\rm C}^{\rm AGB}$")
