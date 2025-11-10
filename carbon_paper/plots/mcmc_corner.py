@@ -9,12 +9,15 @@ result = results["fruity"]
 
 fig = plt.figure(figsize=(3.3, 3.3))
 
+result.samples.y0_cc *= 10
+result.samples.zeta_cc *= 10
+
 result.plot_corner( 
     fig = fig,
     labels={
         "alpha": r"$\beta_{\rm C}^{\rm AGB}$",
-        "y0_cc": r"$y_{\rm low} / 10^{-3}$",
-        "zeta_cc": r"$\zeta_{\rm C}^{\rm CC} / 10^{-3}$",
+        "y0_cc": r"$y_{\rm low} / 10^{-4}$",
+        "zeta_cc": r"$\zeta_{\rm C}^{\rm CC} / 10^{-4}$",
         },
     labelpad=0.15,
     title_kwargs = {

@@ -95,7 +95,7 @@ plot_labels = {
 
 
 plt.figure(figsize=(8/3, 10/4))
-plot_y_tot(results["fruity_sigma"], y_agbs["fruity"], thin=100, alpha=0.01, color=arya.COLORS[0])
+plot_y_tot(results["fruity"], y_agbs["fruity"], thin=100, alpha=0.01, color=arya.COLORS[0])
 
 
 Z = gcem.MH_to_Z(M_H)
@@ -114,7 +114,7 @@ for i, (key, label) in enumerate(plot_labels.items()):
         y_agb = y_agbs["fruity"]
 
     
-    plot_y_tot_mean(result, y_agb, color=arya.COLORS[i], label=label, ls=["-", "--", "-.", ":", (0, (6.4,1.6,1,1.6,1,1.6))][i])
+    plot_y_tot_mean(result, y_agb, color=arya.COLORS[i], label=label, ls=["-", "--", ":", "-.", (0, (6.4,1.6,1,1.6,1,1.6))][i])
     
 
 plt.xlabel(r"$\log Z / Z_\odot$")

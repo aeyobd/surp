@@ -47,11 +47,11 @@ def plot_hists(axs, col, ylabel=True):
             
             continue
 
-        if i < 5:
-            color = arya.COLORS[i]
-            ls = "-"
+        if i == 0:
+            color = "black"
+        elif i < 6:
+            color = arya.COLORS[i-1]
         else:
-            ls = "--"
             color = arya.COLORS[0]
         
         ax = axs[i]
@@ -77,7 +77,7 @@ def plot_hists(axs, col, ylabel=True):
             #plt.hist(result2.samples[col], color=color, histtype="step", density=True, ls="-", lw=0.5)
             plot_dist(result2.samples[col], marker="^", color=color, y=-1)
         if ylabel:
-            plt.ylabel(label, rotation=0, ha="right", va="center")
+            plt.ylabel(label, rotation=0, ha="right", va="center", color=color)
 
         if key in yagb_props.keys():
             y_a = yagb_props[key]["y0"]

@@ -159,7 +159,7 @@ def plot_analy(scale = 1):
     """Plot fiducial C CC yield"""
     m_h = np.linspace(-5, 1, 1000)
     Z = gcem.MH_to_Z(m_h)
-    plt.plot(m_h, [Y_C_CC_FIDUCIAL(z) * scale for z in Z], color="k", ls="-", zorder=-2, label="Adopted")
+    plt.plot(m_h, [Y_C_CC_FIDUCIAL(z) * scale for z in Z], color="k", ls="-", zorder=-2, label="Fiducial")
 
     
 

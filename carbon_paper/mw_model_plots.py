@@ -15,6 +15,9 @@ arya.style.set_size((10/3, 10/3))
 from arya import COLORS
 import os
 
+ls_dashdotdot = (0, (6.4,1.6,1,1.6,1,1.6))
+LINESTYLES = ["-", "--", ":", "-.", ls_dashdotdot]
+
 file_dir = os.path.dirname(os.path.abspath(__file__))
 
 def find_model(name):
@@ -46,16 +49,10 @@ model_kwargs = dict(
 )
 
 
-def zooh_models(models, labels,x="MG_H", y="C_MG", use_true=True, sequential=False, filt_ha=True, **kwargs):
+def zooh_models(models, labels, colors=COLORS, linestyles=LINESTYLES, x="MG_H", y="C_MG", use_true=True, filt_ha=True, **kwargs):
     kwargs = dict(numbins=20, **kwargs)
     
     N = len(models)
-    
-    if sequential:
-        hm = arya.HueMap(clim=(0, N))
-    else:
-        hm = lambda i: COLORS[i]
-    # end
         
     if use_true:
         xm=x + "_true"
@@ -70,9 +67,11 @@ def zooh_models(models, labels,x="MG_H", y="C_MG", use_true=True, sequential=Fal
             df = surp.filter_high_alpha(model)
         else:
             df = model
-        color = hm(i)
-            
-        arya.medianplot(df, xm, ym, label=name, color=color, **model_kwargs, **kwargs)
+        color = colors[i]
+        ls = linestyles[i]
+        
+        arya.medianplot(df, xm, ym, label=name, color=color, ls=ls,
+                        **model_kwargs, **kwargs)
     # end
 
     if filt_ha:
@@ -90,7 +89,7 @@ def zooh_models(models, labels,x="MG_H", y="C_MG", use_true=True, sequential=Fal
 
 
     
-def zofeo_models(models, labels, x="MG_FE", y="C_MG", use_true=True, sequential=False, mg_0=-0.1, w=0.05, **kwargs):
+def zofeo_models(models, labels, colors=COLORS, linestyles=LINESTYLES, x="MG_FE", y="C_MG", use_true=True, mg_0=-0.1, w=0.05, **kwargs):
     kwargs = dict(numbins=12, x=x, y=y, **kwargs)
     df = surp.filter_metallicity(subgiants, c=mg_0, w=w)
 
@@ -101,18 +100,13 @@ def zofeo_models(models, labels, x="MG_FE", y="C_MG", use_true=True, sequential=
         kwargs["x"] = x + "_true"
         kwargs["y"] = y+ "_true"
 
-    if sequential:
-        hm = arya.HueMap(clim=(0, N))
-    else:
-        hm = lambda i: COLORS[i]
-    # end    
-    
     for i in range(N):
         model = models[i]
         df = surp.filter_metallicity(model, c=mg_0, w=w)
-        color = hm(i)
+        color = colors[i]
 
-        arya.medianplot(df, label=labels[i], color=color, **model_kwargs, **kwargs)
+        arya.medianplot(df, label=labels[i], color=color, ls=linestyles[i],
+                        **model_kwargs, **kwargs)
     plt.xlabel(to_nice_name(x))
     plt.ylabel(to_nice_name(y))
     
@@ -124,7 +118,7 @@ def compare_cooh(names, labels, ylim=None, legend=True, **kwargs):
     models = names_to_models(names)
     zooh_models(models, labels,legend=legend, **kwargs)
     if legend:
-        arya.Legend(color_only=True)
+        arya.Legend(color_only=False)
     
     if ylim is not None:
         plt.ylim(ylim)
@@ -140,7 +134,7 @@ def compare_coofe(names, labels, legend=True, ylim=None, **kwargs):
     models = names_to_models(names)
     zofeo_models(models, labels, legend=legend, **kwargs)
     if legend:
-        arya.Legend(color_only=True)
+        arya.Legend(color_only=False)
 
     plt.xlim(-0.00, 0.4)
 
@@ -155,7 +149,7 @@ def compare(names, labels=None, axs=None, **kwargs):
         
     plt.sca(axs[0])
     compare_cooh(names, labels, **kwargs, legend=False)
-    arya.Legend(color_only=True)
+    arya.Legend(color_only=False)
     
     plt.sca(axs[1])
     compare_coofe(names, labels, legend=False, **kwargs)

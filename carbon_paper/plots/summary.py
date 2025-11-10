@@ -221,10 +221,10 @@ h_today
 
 
 def plot_fiducial():
-    plt.plot(h_today.MG_H, h_today.C_MG, label="Model (present day)", zorder=9, lw=1.5, color=arya.style.COLORS[0])
+    plt.plot(h_today.MG_H, h_today.C_MG, label="model (present day)", zorder=9, lw=1.5, color=arya.style.COLORS[0])
 
     h = fiducial.history[np.isclose(fiducial.history.R, 8 - 0.05)]
-    plt.plot(h.MG_H, h.C_MG, color="k")
+    plt.plot(h.MG_H, h.C_MG, color="k", label="model (solar zone)")
     
 
 # Parameters from james et al. dwarf paper:
@@ -302,7 +302,7 @@ def plot_sz(zorder=10):
     for i in range(len(sz_models)):
         out = sz_models[i]
         if i == 0:
-            label="singlezone"
+            label="GSE (singlezone)"
         else:
             label=""
         plt.plot(out.MG_H, out.C_MG, label=label, color="k", 

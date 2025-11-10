@@ -1,10 +1,10 @@
 from mcmc_setup import results
 import numpy as np
 
-keys = results["aton"].labels + ["f_agb_a", "y_tot_a", "zeta1_a"]
+keys = results["aton"].labels + ["f_agb", "y_tot"]
 latex_table = ""
 
-print(f"{'model':16} & $\\chi2$  & $\\log p$ & " + " & ".join(keys) + r"\\")
+print(f"{'model':16} & $\\log p$ & " + " & ".join(keys) + r"\\")
 print("\\hline\\\\")
 
 labels = {
@@ -43,14 +43,21 @@ for key, label in labels.items():
             parameter_lines.append(" ")
             continue
             
-        if key in ["y_tot_a", "zeta1_a"]:
-            x = result.samples[key] / 1e-3
+        if key in ["y_tot", "zeta1_a"]:
+            x = result.samples[key] / 1e-4
         else:
             x = result.samples[key]
+
+        if key in ["y0_cc", "zeta_cc"]:
+            x *= 10 # 1e-3 to 1e-4
         median = np.median(x)
         lower, upper = np.quantile(x, [0.16, 0.84])
         uncertainty = (upper - median, median - lower)  # Asymmetric uncertainties
-        formatted_value = f"${median:.2f}^{{+{uncertainty[0]:.2f}}}_{{-{uncertainty[1]:.2f}}}$"
+
+        if key in ["alpha", "f_agb"]:
+            formatted_value = f"${median:.2f}^{{+{uncertainty[0]:.2f}}}_{{-{uncertainty[1]:.2f}}}$"
+        else:
+            formatted_value = f"${median:.1f}^{{+{uncertainty[0]:.1f}}}_{{-{uncertainty[1]:.1f}}}$"
         parameter_lines.append(f"{formatted_value}")
         
     latex_table += "  &  ".join(parameter_lines)
