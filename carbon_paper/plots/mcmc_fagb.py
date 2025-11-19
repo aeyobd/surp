@@ -118,7 +118,7 @@ plot_hists(axs[:, 1], "alpha", ylabel=False)
 
 
 for ax in axs[:, 1]:
-    ax.axvline(1, color="black", linewidth=0.5)
+    ax.axvline(1, color="grey", ls=":")
 
 
 
