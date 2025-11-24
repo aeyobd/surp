@@ -42,7 +42,7 @@ for modelname, label in labels.items():
             x = surp.yield_models.zeta_to_slope(x) * surp.Z_SUN
 
         if key in ["y0_c_cc", "zeta_c_cc"]:
-            x *= 1/1e-3
+            x *= 1/1e-4
 
         if isinstance(x, Number):
             s = f"{x:0.2f}"

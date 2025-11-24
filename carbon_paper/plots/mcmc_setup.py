@@ -56,7 +56,6 @@ results["monash"] = load_model("monash", yagb_props["monash"])
 
 
 results["fruity_sigma"] = load_model("fiducial_sigma0.05", yagb_props["fruity"])
-#results["fruity"] = load_model("fiducial", yagb_props["fruity"])
 results["fruity_mf0.7_sigma"] = load_model("fruity_mf0.7_sigma0.05", yagb_props["fruity_mf0.7"])
 results["aton_sigma"] = load_model("aton_sigma0.05", yagb_props["aton"])
 results["nugrid_sigma"] = load_model("nugrid_sigma0.05", yagb_props["nugrid"])
