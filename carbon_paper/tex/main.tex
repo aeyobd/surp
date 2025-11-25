@@ -84,7 +84,7 @@ usenatbib]{mnras}
 \newcommand{\VICE}{\textsc{vice}}
 
 % AGB yield tables
-\newcommand{\fruity}{\texttt{\hyperlink{fruity}{Fruity}}}
+\newcommand{\fruity}{\texttt{\hyperlink{fruity}{FRUITY}}}
 \newcommand{\nugrid}{\texttt{\hyperlink{nugrid}{NuGrid}}}
 \newcommand{\monash}{\texttt{\hyperlink{monash}{Monash}}}
 \newcommand{\aton}{\texttt{\hyperlink{aton}{ATON}}}
@@ -309,7 +309,7 @@ Following \citet[eq.~1]{jack}, low-$\alpha$ stars are defined to have
 Compared to the low-$\alpha$ sequence in \caah, the high-$\alpha$ sequence has a systematically lower [C/Mg] value and steeper slope. This is consistent with the shape of the \caafe{} trend.
 Note that the \caafe{} trend follows a two-component linear distribution, with a separation in [Mg/Fe] corresponding to the gap between high- and low-$\alpha$ stars. Additionally, the \caafe{} trend is approximately independent of metallicity. We aim to reproduce these trends in our GCE models.
 
-\footnotetext{In this paper, we use the standard notation for chemical abundances. $[A/B] = \log_{10}\left(A/B\right) - \log_{10}\left(A_{\sun}/B_{\sun}\right)$, i.e. $[A/B]$ is the logarithm of the mass ratio between A and B, scaled such that $[A/B]=0$ for the Sun (see Table~\ref{tab:fiducial_mod} for solar scale.) 
+\footnotetext{In this paper, we use the standard notation for chemical abundances. $[A/B] = \log_{10}\left(A/B\right) - \log_{10}\left(A_{\sun}/B_{\sun}\right)$, i.e. $[A/B]$ is the logarithm of the mass ratio between A and B, scaled such that $[A/B]=0$ for the Sun. (See Table~\ref{tab:fiducial_mod} for the solar scale).
 }
 
 While any abundance trend likely suffers from systematic biases, we find that these biases do not impact our qualitative conclusions. 
@@ -363,13 +363,10 @@ We explore four different AGB star yield tables from the literature, which provi
 \end{description}
 Each AGB yield table reports yields for stellar models on a grid of masses and metallicities as reported in Table~\ref{tab:agb}.
 We use the same tables as \citet{james+23}, except that we have swapped \citet{karakas10} for \citet{pignatari+16}. (See Appendix~\ref{sec:nugrid_yields} for the implementation and recalculation of these yields.)
-For our models to better match observations, we uniformly amplify the yield tables according to
-\begin{equation} \label{eq:alpha}
-        \ycagb(m, Z) \rightarrow \aagb\ \ycagb(m, Z).
-\end{equation}
-As our fiducial AGB yield, we use the \fruity\ table with $\aagb=\cfactor$, (balancing MW and gas-phase constraints; see Section~\ref{sec:results} and Section~\ref{sec:gas}).
 
-Fig.~\ref{fig:y_agb} compares the C yields for these four AGB models, which we leave unmodified (i.e., $\aagb = 1$) for this comparison.
+
+
+Fig.~\ref{fig:y_agb} compares the C yields for these four AGB models.
 Most models agree on general yield trends in mass and metallicity.
 C production peaks between masses of $\sim$ 2--4 $\Mo$. As metallicity increases, the net yield decreases and the mass of peak C production increases slightly. As a result, these models predict AGB C production to decrease and become more rapid with increasing metallicity.
 
@@ -421,7 +418,7 @@ TDU increases C yields, while HBB decreases C.
 
 
 Both HBB and TDU result in mass and metallicity-dependent C yields. 
-Lower mass stars ($\lesssim 1\,\Mo$)  do not experience (strong) TDU. As a result, C yields from these stars are affected only by first dredge-up, resulting in small net C yields \citep[table 1]{karakas10}.
+Lower mass stars ($\lesssim 1\,\Mo$)  do not experience (strong) TDU. As a result, C yields from these stars are affected only by first dredge-up, resulting in small net C yields \citep{karakas10}.
 Above ${\sim}1\,\Mo$, TDU becomes more important, enriching the outer layers with C.
 In AGB stars more massive than ${\sim}5\,\Mo$, efficient HBB turns most of the $^{12}$C into $^{14}$N.
 TDU is more efficient for compact, massive cores. HBB requires a more massive AGB star to reach sufficient temperatures at the base of the convective envelope to initiate the CNO cycle. Both processes are more efficient at low metallicity due to the lower opacities, hotter temperatures, and more compact internal structures. The details of each process are ultimately set by uncertain choices in stellar evolution models. 
@@ -437,13 +434,16 @@ Mass-loss rates, convection, and extra mixing are not sufficiently well understo
 
 Super AGB stars are the class of AGB stars with masses ${\sim}8$ to ${\sim}10\,\Mo$, which burn O into Si and Mg. While we neglect super-AGB stars in the discussion above, these stars are not predicted to be substantial producers of C, similar to high-mass AGB stars. From the \citet{doherty+14, doherty+14b} yield table (extending the \monash\ yields), the highest net fractional yield is only $-0.002$ for super solar metallicity, which would have a negligible impact on the integrated yield. Additionally, as discussed in Section~\ref{sec:agb_results} below, the short lifetimes of high-mass AGB and super-AGB stars imply that they minimally affect our conclusions and can be grouped with CCSN yields.
 
-%\dbnote{also NUGRID... https://ui.adsabs.harvard.edu/abs/2012ApJ...757..132H/abstract, https://ui.adsabs.harvard.edu/abs/2016MNRAS.455.3848J/abstract}
-
-For our comparisons later, we define the AGB yield fraction, 
+For our models to better match observations, we uniformly amplify the yield tables according to
+\begin{equation} \label{eq:alpha}
+        \ycagb(m, Z) \rightarrow \aagb\ \ycagb(m, Z).
+\end{equation}
+We also define the AGB yield fraction, 
 \begin{equation}\label{eq:f_agb}
     \fagb := \frac{\Ycagb(\Zo)}{\Ycc(\Zo) + \Ycagb(\Zo)}.
     \end{equation}
 This quantity should approximately represent the fraction of the Sun's birth C abundance originating from AGB stars. However, since the Sun was not enriched entirely by solar metallicity predecessors, the equivalence of $\fagb{}$ to the yield ratio is not exact.
+As our fiducial AGB yield, we use the \fruity\ table with $\aagb=\cfactor$ ($\fagb=0.3$), balancing MW and gas-phase constraints (see Sections~\ref{sec:results} and \ref{sec:gas}).
 
 \begin{table*}
 	\centering
@@ -505,9 +505,9 @@ y_{X}^{\rm CC} = \int_{l_{\rm CC}}^{u} \left[E(m) m_{X\rm, SN} + w_X - Z_X\,(m-m
 where $E(m)$ is the fraction of stars of mass $m$ which explode, $m_{X,\rm SN}$ is the mass of $X$ ejected during the CCSN, $w_X$ is the mass of $X$ ejected through stellar winds, $Z_X$ is the initial abundance of $X$, $m_{\rm rem}$ is the remnant mass, $dN/dm$ is the IMF, $l_{\rm CC}=8\,\Mo$ is the minimum initial mass of a CCSN progenitor, and $u$ is the maximum mass in the CCSN yield table. 
 
 CCSN models predict a wide range of C yields, spanning nearly a factor of ten, even at fixed metallicity.
-Fig.~\ref{fig:y_cc} shows the integrated yields of massive star models from the literature. At solar metallicity, \citepos{sukhbold+16} C yield is $\approx0.5$ dex higher than \cite[non-rotating]{LC18}, likely driven by much stronger (C-enhanced) mass loss in \citet{sukhbold+16} for stars more massive than $\gtrsim40\,\Mo$.
- The \cite{LC18} models, which include rotation, show that the induced mixing (e.g., \citealt{frischknecht+16}) can dramatically increase the magnitude and metallicity dependence of $\Ycc$. As we will later empirically show, CCSN C production needs to be strongly metallicity-dependent at $Z \approx \Zo$, which is consistent with \citepos{LC18} rapidly rotating models and to a lesser extent \citet{NKT13}.
-Fig.~\ref{fig:y_cc} also shows the IMF-averaged AGB star yields from the \fruity\ model (in Fig.~\ref{fig:agb-ssp}). Especially at $Z\approx \Zo$, most CCSN models dominate AGB C production. 
+Fig.~\ref{fig:y_cc} shows the integrated yields of massive star models from the literature. At solar metallicity, \citepos{sukhbold+16} C yield is $\approx0.5$ dex higher than \citepos{LC18} non-rotating models, likely driven by much stronger (C-enhanced) mass loss in \citet{sukhbold+16} for stars more massive than $\gtrsim40\,\Mo$.
+ The \cite{LC18} models including rotation show that the induced mixing (e.g., \citealt{frischknecht+16}) can dramatically increase the magnitude and metallicity dependence of $\Ycc$. As we will later empirically show, CCSN C production needs to be strongly metallicity-dependent at $Z \approx \Zo$, which is consistent with \citepos{LC18} rapidly rotating models and to a lesser extent \citet{NKT13}.
+Fig.~\ref{fig:y_cc} also shows the IMF-averaged AGB star yields from the \fruity\ model (from Fig.~\ref{fig:agb-ssp}). Especially at $Z\approx \Zo$, most CCSN models dominate AGB C production. 
 
 
 If we consider CCSN production alone, the [C/Mg] ratio depends only on the yield ratio,
@@ -536,7 +536,7 @@ As shown in Fig.~\ref{fig:y_cc}, the fiducial parameters imply a yield that agre
         The right axis provides the equivalent CCSN [C/Mg]  ratio, assuming our fiducial $y_{\rm Mg}$ yield. The black line is our fiducial massive star yield (see Eq.~\ref{eq:y_cc}).
         Yields are shown for tables from \citet[LC18, blue circles]{LC18}, \nugrid{} (P16, orange hexagons),  \citet[S16, green square and diamond]{sukhbold+16},  \citet[NKT13, red stars]{NKT13}, and 
     \citet[WW95, pink triangles]{WW95}. \citet{sukhbold+16} report yields for different black hole landscapes, while \citet{LC18} provide yields at different rotational velocities.
-   The pink line denotes $\Ycagb$ from the \fruity{} AGB star model for comparison (see Fig.~\ref{fig:agb-ssp}). All models include wind yields. 
+   The light blue line denotes $\Ycagb$ from the \fruity{} AGB star model for comparison (see Fig.~\ref{fig:agb-ssp}). All models include wind yields. 
 }
     \label{fig:y_cc}
 \end{figure}
@@ -551,7 +551,7 @@ Novae are important contributors of $^{13}$C, but do not process enough material
 \section{The Multi-zone Model}\label{sec:vice}
 
 Our models extend the \citet[hereafter \JJ]{james+21} Milky Way model. We integrate the model using the publicly available Versatile Integrator for Chemical Evolution (\VICE; \citealt{JW20}).%
-    \footnote{\VICE~is available at \url{https://github.com/giganano/VICE}}
+    \footnote{\VICE~is available at \url{https://github.com/giganano/VICE}.}
 This model is described extensively in \JJ~and summarized in \citet{james+23}. Here, we provide an overview of the relevant components.
 
 Classical \textit{one-zone} models of chemical evolution assume instantaneous mixing of metals in the star-forming ISM\ \citep[e.g.,][]{matteucci21}. The one-zone framework is a poor approximation of the Milky Way, where the radial metallicity gradient in the ISM is believed to reflect variations in GCE parameters \citep[e.g.,][]{tinsley80, boissier+prantzos99, palla+20, james+24}. Stars can also migrate several kpc over their lifetimes, mixing populations from different chemical environments across the Galaxy \citep{sellwood+binney02, schonrich-binney09, bird+13, minchev+13}. To account for these effects, multi-zone models stitch together multiple one-zone models while mixing stellar populations between zones \citep[e.g.,][]{matteucci+francois1989}.
@@ -830,7 +830,7 @@ We add the model standard deviations linearly since the C abundances are calcula
 $\sigma_{\rm sys}$ represents a systematic uncertainty.
 We consider models with both $\sigma_{\rm sys} = 0$ and 0.05 dex. While approximate, $0.05$ dex is similar to typical mean deviations between APOGEE and the C and Mg abundances in other surveys \citep{hegedhus+2023, jonsson+2018}. Discrepancies between APOGEE's reported abundance uncertainties and other measurements of dispersion indicate a similar level of systematic error \citep{mead+2024}. While systematic uncertainties are unlikely to be well-described by an independent, uncorrelated, constant-width Gaussian distribution, we can nonetheless use this parameter as an approximation of the likely uncertainties of our results.
 
-We adopt the following priors for each model parameter: $\aagb \sim N(1, 1)$, $\zcc \sim N(0, 10^{-3})$, and $\yl \sim N(2\times10^{-3}, 1\times10^{-3})$, where $N(\mu, \sigma)$ is a Gaussian distribution with mean $\mu$ and standard deviation $\sigma$. 
+We adopt the following priors for each model parameter: $\aagb \sim N(1, 1)$, $\zcc \sim N(0, 10^{-3})$, and $\yl \sim N(2\times10^{-3}, 1\times10^{-3})$, where $N(\mu, \sigma)$ is a Gaussian distribution with mean $\mu$ and standard deviation $\sigma$. (For the doubled yields and outflows model, the priors are correspondingly doubled). 
 We run the MCMC using Turing.jl \citep{turingjl} with a No-U-turn sampler (an adaptive Hamilton Monte-Carlo algorithm, \citealt{NUTS}) with an acceptance rate of 0.65. We combine 16 independent chains with 3,000 steps each for a total of 48,000 samples.
 The median parameters derived from this model provide the yield choices for the AGB yield models shown in the left panel of Fig.~\ref{fig:sims_degens}.
 
@@ -882,7 +882,7 @@ damped Lyman-$\alpha$ systems from \citet[][]{omera+01, cooke+14, welsh+22, elli
 \end{figure*}
 
 As a final test of our model, we compare the predictions against C abundances
-in the gas phase. We consider measurements in Galactic and extragalactic \Hii{} regions, Damped Lyman-$\alpha$ systems\footnote{damped Lyman-$\alpha$ systems (or DLAs) are gas clouds observed as absorption spectra in front of background quasars}, and Milky Way halo main-sequence stars (all references in the caption of Fig.~\ref{fig:gas_phase}, which we do not repeat here for brevity).
+in the gas phase. We consider measurements in Galactic and extragalactic \Hii{} regions, Damped Lyman-$\alpha$ systems,\footnote{Damped Lyman-$\alpha$ systems (or DLAs) are gas clouds observed as absorption spectra in front of background quasars.} and Milky Way halo main-sequence stars (all references in the caption of Fig.~\ref{fig:gas_phase}, which we do not repeat here for brevity).
 While we used Mg as our representative alpha element in our APOGEE sample, we shift focus to O in this Section because O is more readily observed in the gas phase.
 C abundances are challenging to measure in \Hii{} regions because of a lack of strong recombination lines. The collisionally excited lines of C fall in the far ultraviolet without nearby reference H lines \citep[][]{skillman+20}. 
 %Furthermore, CEL and RL derived abundances are systematically discrepant by \about{0.5}\,dex \citep{GR07}.
@@ -936,7 +936,7 @@ The \caah{} relation in low-$\alpha$ stars arises as a superposition of the endp
 Instead, the \caafe{} relation at fixed [Mg/H] is sensitive to the amount of delayed C production, due to the sensitivity of [Mg/Fe] to delayed SN Ia nucleosynthesis.
 
 
-From the combined constraints on the [C/Mg] trend with metallicity and [$\alpha$/Fe], we have inferred possible combinations of yields that reproduce thin-disk abundance trends. In all cases, we find that $\Yct / \Ymg \approx 4.2 \pm 0.2$ at solar metallicity, with total C production increasing with increasing metallicity. We also show that low-intermediate mass AGB stars likely produce a fraction of between 0.10 and 0.40 of solar C, across GCE assumptions and AGB yield tables.
+From the combined constraints on the [C/Mg] trend with [Mg/H] and [Mg/Fe], we have inferred possible combinations of yields that reproduce thin-disk abundance trends. In all cases, we find that $\Yct / \Ymg \approx 4.2 \pm 0.2$ at solar metallicity, with total C production increasing with increasing metallicity. We also show that low-intermediate mass AGB stars likely produce a fraction of between 0.10 and 0.40 of solar C, across GCE assumptions and AGB yield tables.
 At the normalization of stellar yields recommended by \citep{david_fe},  most AGB star models predict C yields within a factor of ${\sim}2$ of our inference.  We find that the best-fitting models require between ${\sim}0.6$ and 2 times more C than predicted by the chosen AGB table.
 
 A range of choices can fit the subgiant data modelled here, but one reasonable model based on our fit results is CCSN yields following Eq.~\ref{eq:y_cc} with $\yo=22.3\times10^{-4}$ and slope $\zcc=7.9\times10^{-4}$ and the \fruity{} AGB yields multiplied by a scaling factor $\aagb=1.55$. If the Mg yield $\Ymg$ is increased relative to our adopted value of $\Ymg=0.97\,Z_{\rm Mg, \odot}$, then all three C yield parameters should be boosted by the same factor.
@@ -1065,21 +1065,21 @@ Data and code used in this paper are happily available upon request.
 		\hline
             name & $\aagb$ & $\ycagb$ & $\yo/10^{-4}$ & $\zcc/10^{-4}$ \\ 
             \hline
-            fiducial & 2.57 & fruity & 18.7 & 7.9 \\
-            $\zcc=0.0004$ & 2.57 & fruity & 18.7 & 4.0 \\
-            $\zcc=0.0012$ & 2.57 & fruity & 18.7 & 11.9 \\
-            $\fagb = 0$ & 0.0 & fruity & 27.1 & 7.9 \\
-            $\fagb = 0.5$ & 4.36 & fruity & 13.3 & 7.9 \\
-            lower $\fagb$, $\zcc$ & 0 & fruity & 27.9 & 4.1 \\
-            higher $\fagb$, $\zcc$ & 4.36 & fruity & 12.1 & 12.1 \\
-            \fruity{} & 1.55 & fruity & 22.3 & 7.2 \\
-            \aton{} & 1.07 & aton & 26.2 &  11.3 \\
-            \monash{} & 1.12 & monash & 23.7 & 10.9 \\
-            \nugrid{} & 0.59 & nugrid & 22.3 & 4.5 \\
-            \fruity{} shifted & 1.29 & fruity(m/0.7) & 23.3 & 4.6 \\
-            mass shift 0.5 & 2.98 & fruity(m/0.5)  & 22.1 & 14.5 \\
-            mass shift 0.7 & 2.34 & fruity(m/0.7) & 19.7 & 3.2 \\
-            mass shift 1.5 & 2.71 & fruity(m/1.5) & 18.6 & 8.5 \\
+            fiducial & 2.57 & FRUITY & 18.7 & 7.9 \\
+            $\zcc=0.0004$ & 2.57 & FRUITY & 18.7 & 4.0 \\
+            $\zcc=0.0012$ & 2.57 & FRUITY & 18.7 & 11.9 \\
+            $\fagb = 0$ & 0.0 & FRUITY & 27.1 & 7.9 \\
+            $\fagb = 0.5$ & 4.36 & FRUITY & 13.3 & 7.9 \\
+            lower $\fagb$, $\zcc$ & 0 & FRUITY & 27.9 & 4.1 \\
+            higher $\fagb$, $\zcc$ & 4.36 & FRUITY & 12.1 & 12.1 \\
+            \fruity{} & 1.55 & FRUITY & 22.3 & 7.2 \\
+            \aton{} & 1.07 & ATON & 26.2 &  11.3 \\
+            \monash{} & 1.12 & Monash & 23.7 & 10.9 \\
+            \nugrid{} & 0.59 & NuGrid & 22.3 & 4.5 \\
+            \fruity{} shifted & 1.29 & FRUITY($M/0.7$) & 23.3 & 4.6 \\
+            mass shift 0.5 & 2.98 & FRUITY($M/0.5$)  & 22.1 & 14.5 \\
+            mass shift 0.7 & 2.34 & FRUITY($M/0.7$) & 19.7 & 3.2 \\
+            mass shift 1.5 & 2.71 & FRUITY($M/1.5$) & 18.6 & 8.5 \\
 		\hline
 	\end{tabular}
 \end{table}
@@ -1105,7 +1105,7 @@ In this Section, we present updated calculations of the \citet{battino+19, batti
 
 \citet{battino+19, battino+21} update the \citet{ritter+18} yield models with new reaction rates and increased mixing. These changes allow for an improved treatment of {\it s}--process isotopes in their models. However, between these models, the only updates are for masses 2 and $3\,\Mo$ at metallicities $Z=0.01, 0.02, 0.001, 0.002$. 
 
-Because the yield tables included in \citep{battino+19, battino+21} are inconsistent with the \citet{ritter+18} definitions of yields, we recalculate these yields from the publicly available data on \url{https://astrohub.uvic.ca}. 
+Because the yield tables included in \citet{battino+19, battino+21} are inconsistent with the \citet{ritter+18} definitions of yields, we recalculate these yields from the publicly available data on \url{https://astrohub.uvic.ca}. 
 
 The total ejected mass of $X$ from an AGB star is given by 
 \begin{equation}
