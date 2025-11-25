@@ -45,7 +45,8 @@ data_kwargs = dict(
 
 model_kwargs = dict(
     stat="median", errorbar=None,
-    aes="line"
+    aes="line",
+    linewidth=1.5
 )
 
 

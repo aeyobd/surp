@@ -179,5 +179,5 @@ def plot_c11(scale=1):
     Zs = gcem.MH_to_Z(MH)
     ys = surp.yields.calc_y(Zs, ele="c", kind="agb")
         
-    plt.plot(MH, ys * scale, label="Fruity (AGB)", color=arya.COLORS[4])
+    plt.plot(MH, ys * scale, label="Fruity (AGB)", color=arya.COLORS[-1])
     

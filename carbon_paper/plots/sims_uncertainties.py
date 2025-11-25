@@ -38,7 +38,7 @@ names_agbm = [
 
 labels_agbm = ["0.5", "0.7", "1", "1.5", "2"]
 colors_agbm = [COLORS[0], COLORS[2], "black", COLORS[1]]
-ls_agbm = ["-.", "--", "-", ":"]
+ls_agbm = [":", "--", "-", "-."]
 
 
 names_sfh = [
@@ -51,7 +51,7 @@ labels_sfh = [
     r"fiducial",  
     r"twoinfall",
     "lateburst",
-    r"doubled yields/$\eta$",
+    r"doubled yields \& $\eta$",
 ]
 colors_sfh = ["black", *COLORS]
 ls_sfh = ["-", *LINESTYLES]

@@ -9,7 +9,7 @@ fig, axs = plt.subplots(3, 2, figsize=(7, 7), sharex="col", sharey=True, gridspe
 
 
 colors = [COLORS[0], "black", COLORS[1]]
-linestyles = ["--", "-", ":"]
+linestyles = [":", "-", "--"]
 
 names = [
     "fruity/zeta_lower",
