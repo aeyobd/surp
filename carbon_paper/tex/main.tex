@@ -134,8 +134,8 @@ usenatbib]{mnras}
 %%%%%%%%%%% JWJ' editing macros %%%%%%%%%%%
 \newcommand{\red}[1]{{\color{red} #1}}
 \newcommand{\add}[1]{\red{#1}}
-%\newcommand{\strike}[1]{\red{\sout{#1}}}
-%\newcommand{\replace}[2]{\red{\sout{#1}} \red{#2}}
+\newcommand{\strike}[1]{\red{\sout{#1}}}
+\newcommand{\replace}[2]{\red{\sout{#1}} \red{#2}}
 
 
 
@@ -189,6 +189,7 @@ We benchmark our results against APOGEE subgiant abundances.
 The trend between [C/Mg] and [Mg/H] is set by the total C yield as a function of metallicity. Observations indicate a gently rising [C/Mg] with [Mg/H], but AGB C production is predicted to decline with metallicity. 
 Our sample therefore favours a scenario in which CCSN yields rise with metallicity to offset declining AGB C yields and drive a subtle increase in [C/Mg] with [Mg/H].
 This result is consistent with massive star nucleosynthesis models incorporating rotation.
+\add{However, we show the [C/Mg] trend with metallicity alone cannot constrain the amount of AGB C production, being degenerate on the uncertain metallicity dependence of CCSN C production.}
 %
 The [C/Mg]-[Mg/Fe] trend is sensitive to delayed enrichment and therefore constrains the amount of AGB C production.
 Given the slope of this relation, we find that AGB stars likely account for 10--40 per cent of C at solar metallicity.
@@ -219,7 +220,7 @@ galaxies: abundances -- galaxies: evolution -- galaxies: star formation -- galax
 
 Despite being the second most abundant metal in the Universe~\citep[e.g.,][]{magg+22}, the nucleosynthetic origin of C is poorly understood. 
 There is broad agreement that both massive and asymptotic giant branch (AGB) stars produce C \citep[e.g.,][]{jennifer19}, but their relative yields are disputed (see, e.g., the reviews by \citealt{romano22} and \citealt{RM21}). 
-From a Galactic chemical evolution (GCE) perspective, some authors have argued that massive stars should dominate~\citep[e.g.,][]{prantzos+94, HEK00, romano+20, franchini+20, gustafsson22}, and others have argued that AGB stars should contribute a majority of C in the Universe~\citep[e.g.,][]{tinsley79, chiappini+03, mattsson10, KKU11, KKL20}. In addition, some studies like \citet{rybizki+17} find that AGB stars may produce about 20 to 50 per cent of solar C depending on the yield tables assumed.
+From a Galactic chemical evolution (GCE) perspective, some authors have argued that massive stars should dominate~\citep[e.g.,][]{prantzos+94, HEK00, romano+20, franchini+20, gustafsson22}, and others have argued that AGB stars should contribute at least half of C in the Universe \citep[e.g.,][]{tinsley79, chiappini+03, carigi+05, cescutti+2009, mattsson10, KKU11, KKL20}. In addition, some studies like \citet{rybizki+17} find that AGB stars may produce about 20 to 50 per cent of solar C depending on the yield tables assumed.
 In this paper, we aim to constrain C production by comparing abundance measurements in subgiant stars with multi-zone GCE models.%
 
 
@@ -234,7 +235,7 @@ Robust predictions of metal yields from stellar evolution models therefore remai
 Given the challenge of theoretical yield predictions, previous work has attempted to constrain chemical yields empirically. 
 Even early chemical evolution work, such as \citet{garnett1997}, began to test stellar theory with observed abundance trends.
 More recently, \citet{weinberg+19, weinberg+22} analysed the abundance ratio trends of high- and low-$\alpha$ sequence stars in APOGEE~\citep{apogee17} to infer relative yields of prompt and delayed enrichment sources and their metallicity dependence.
-\citet{emily+19, emily+22, emily+24} applied the same methodology to GALAH~\citep{DeSilva2015, Martell2017}. In addition, models such as \citet{eitner+2020} and \citet{dubay+24} have used abundance trends of Fe and related elements to understand the physics and origin of SN Ia.
+\citet{emily+19, emily+22, emily+24} applied the same methodology to GALAH~\citep{DeSilva2015, Martell2017}. In addition, models such as \citet{maoz+graur2017}, \citet{eitner+2020}, and \citet{dubay+24} have used abundance trends of Fe and related elements to understand the physics and origin of SN Ia.
 Most directly relevant to our analysis, \citet{james+24} applied Milky Way chemical evolution models to N and recommended a yield prescription that reproduces the observed relation between N and O abundances. We  extend their methodology to C in this paper.
 
 % \citet{rodriguez+21, rodriguez+23} measured the mean Fe yield of core-collapse supernovae (CCSN) using the radioactive tails of their lightcurves.
@@ -298,7 +299,7 @@ Following \citet{jack}, we also exclude stars with the flags:
 We additionally remove stars with no reported (or flagged unreliable) C, N, Mg, or Fe abundances. These cuts yield a sample containing \nsubgiants\ subgiants.
 
 
-Fig.~\ref{fig:subgiants} shows the [C/Mg] abundance ratios of our subgiant sample as a function of [Mg/H] and [Mg/Fe].\footnotemark{} In this sample, [C/Mg] increases with [Mg/H], and [C/Mg] decreases with [Mg/Fe] at fixed [Mg/H].
+Fig.~\ref{fig:subgiants} shows the [C/Mg] abundance ratios of our subgiant sample as a function of [Mg/H] and [Mg/Fe].\footnotemark{} \add{We chose Mg as the comparison element, instead of Fe, since Mg is both well-measured and thought to be produced only by massive stars without metallicity dependence \citep[in contrast to both massive stars and type Ia supernovae for Fe, e.g.,][]{andrews+17}. Our results are similar when using Fe instead of Mg (see Appendix~\ref{sec:extra_mcmc}).} In this sample, [C/Mg] increases with [Mg/H], and [C/Mg] decreases with [Mg/Fe] at fixed [Mg/H].
 Following \citet[eq.~1]{jack}, low-$\alpha$ stars are defined to have 
 \begin{equation}\label{eq:high_alpha}
 \begin{cases}
@@ -381,7 +382,7 @@ To integrate AGB yields with \VICE, we linearly interpolate yield tables in both
 where $u_{\rm AGB}=8\,\Mo$ is the maximum birth mass of an AGB star, $m_\textrm{post-AGB}(\tau)$ is the birth mass of stars which complete AGB evolution at age $\tau$, and $dN/dm$ is the initial mass function (IMF). The IMF normalization is $
     A := \int_l^u m \frac{dN}{dm} dm
 $
-where  $l=0.08\,\Mo$ and $u = 100\,\Mo$ are the assumed minimum and maximum mass of star formation. We assume a \citet{larson74} main sequence mass-lifetime-relationship. We take the total stellar lifetime (through post-AGB) to be $1.1\times$ the main sequence lifetime. Thus, the mass $m_\textrm{post-AGB}$ is slightly larger than the main-sequence turn-off mass.
+where  $l=0.08\,\Mo$ and $u = 100\,\Mo$ are the assumed minimum and maximum mass of star formation. We assume a \citet{larson74} main sequence mass-lifetime-relationship. \add{More recent mass-lifetime-relationships, such as \citet{vincenzo+2016}, predict similar AGB lifetimes and do not substantially change our results.} We take the total stellar lifetime (through post-AGB) to be $1.1\times$ the main sequence lifetime. Thus, the mass $m_\textrm{post-AGB}$ is slightly larger than the main-sequence turn-off mass.
 
 
 The IMF-averaged yields computed from the literature tables differ in normalization and metallicity dependence.  
@@ -520,13 +521,16 @@ Because the yield ratio depends on metallicity, the abundance ratio will settle 
 The metallicity dependence of CCSN C yields is due to an interplay between rotation, opacity, and stellar evolution. As opacity increases with metallicity, massive stars experience stronger winds. In particular, C-enriched envelope material is lost through winds before conversion into heavier elements, resulting in metallicity-dependent C production \citep{LC18}.
 While there are many stellar models providing predictions of CCSN yields, the results of these models are highly uncertain. Furthermore, rotation, binarity, and explodability introduce substantial uncertainties in CCSN predictions \citep{farmer+21}.
 
-We chose to adopt a linear yield model instead of a particular literature yield table, given the wide range of predictions for CCSN C. We parameterize the yield as
+\add{Given the wide range of predictions for CCSN C yields, w}\strike{W}e chose to adopt a linear yield model instead of a particular literature yield table\strike{, given the wide range of predictions for CCSN C}. We parameterize the yield as
 \begin{equation}\label{eq:y_cc}
     \Ycc =  \yo + \zcc \left(\frac{Z - \Zo}{\Zo}\right),
 \end{equation}
-where $\yo$ represents the yield at solar metallicity and $\zcc$ is the slope of the metallicity dependence. For our fiducial model, we adopt $\yo = 18.7\times 10^{-4}$ and $\zcc = 7.9 \times 10^{-4}$, leading to reasonable agreement with the \caah{}, \caafe{}, and gas-phase (Section~\ref{sec:gas}) relations. We present best-fitting models to subgiants only in Section~\ref{sec:mcmc_results}. We have also explored higher-order prescriptions (i.e., second-, third-, and fourth-order polynomials), finding improved agreement with the observed abundances with each successive free parameter.
+where $\yo$ represents the yield at solar metallicity and $\zcc$ is the slope of the metallicity dependence. 
+\add{$\yo$ can be thought of as the yield of primary CCSN C (produced without dependence on metallicity) and $\zcc$ as the amount of secondary CCSN C (produced with a linear dependence on metallicity). This functional form is able to adequately represent most CCSN yield tables, including \citepos{LC18}'s rotating massive star models.}
+
+For our fiducial model, we adopt $\yo = 18.7\times 10^{-4}$ and $\zcc = 7.9 \times 10^{-4}$, leading to reasonable agreement with the \caah{}, \caafe{}, and gas-phase (Section~\ref{sec:gas}) relations. We present best-fitting models to subgiants only in Section~\ref{sec:mcmc_results}. We have also explored higher-order prescriptions (i.e., second-, third-, and fourth-order polynomials), finding improved agreement with the observed abundances with each successive free parameter.
 The linear prescription likely does not fully capture C production by massive stars, but more complex models do not significantly alter our conclusions. 
-As shown in Fig.~\ref{fig:y_cc}, the fiducial parameters imply a yield that agrees reasonably well with the model predictions at low $Z$ and a metallicity dependence in between that of \citeauthor{LC18}'s (\citeyear{LC18}, LC18) non-rotation and $v_{0}=300\,{\rm km\,s^{-1}}$ models.
+\strike{As shown in Fig.~\ref{fig:y_cc}, the fiducial parameters imply a yield that agrees reasonably well with the model predictions at low $Z$ and a metallicity dependence in between that of}\red{ \citeauthor{LC18}'s (\citeyear{LC18}, LC18) }\strike{non-rotation and $v_{0}=300\,{\rm km\,s^{-1}}$ models.}
 
 \begin{figure}
     \centering
@@ -557,7 +561,7 @@ This model is described extensively in \JJ~and summarized in \citet{james+23}. H
 Classical \textit{one-zone} models of chemical evolution assume instantaneous mixing of metals in the star-forming ISM\ \citep[e.g.,][]{matteucci21}. The one-zone framework is a poor approximation of the Milky Way, where the radial metallicity gradient in the ISM is believed to reflect variations in GCE parameters \citep[e.g.,][]{tinsley80, boissier+prantzos99, palla+20, james+24}. Stars can also migrate several kpc over their lifetimes, mixing populations from different chemical environments across the Galaxy \citep{sellwood+binney02, schonrich-binney09, bird+13, minchev+13}. To account for these effects, multi-zone models stitch together multiple one-zone models while mixing stellar populations between zones \citep[e.g.,][]{matteucci+francois1989}.
 
 
-In these models, the Galaxy is divided into 200 rings, each representing a single 100\,pc zone. Each ring has a separate stellar population and gas supply. We initially assume the inside-out SFH from \JJ, where the star formation surface density $\dot{\Sigma}_\star$ is given by 
+In these models, the Galaxy is divided into 200 rings, each representing a single 100\,pc zone. Each ring has a separate stellar population\replace{and gas supply}{, gas reservoir, gas inflow, and possible gas outflow}. We initially assume the inside-out SFH from \JJ, where the star formation surface density $\dot{\Sigma}_\star$ is given by 
 \begin{equation}\label{eq:inside_out}
     \dot{\Sigma}_\star \propto \left(1-e^{-t/\tau_{\rm rise}}\right) e^{-t/\tau_{\rm sfh}}.
 \end{equation}
@@ -584,8 +588,8 @@ where
 is adapted from \citet{hayden+14} assuming Mg is representative of $\alpha$ elements.
 The recycling correction $r\approx 0.4$ accounts for the return of stellar envelopes back to the ISM (for a \citealt{kroupa01} IMF after 10 Gyr; see section 2 from \citealt{WAF17}).
 This choice of $\eta(R)$ results in a [$\alpha$/H] gradient consistent with APOGEE measurements \citep[e.g.,][]{frinchaboy+13, hayden+14, weinberg+19}.
-Compared to \citet{james+21, james+24}, our metallicity gradient is flatter within 5 kpc (and our $\eta\to0$ at similar radius).
-If we change our assumed yield scale, the values of $\eta$ will re-scale accordingly to maintain observationally-consistent chemical trends. Following \JJ, we neglect radial gas flows.
+Compared to \citet{james+21, james+24}, our metallicity gradient is flatter within 5 kpc\add{, and out outflows reduce to zero at a similar radius}\strike{(and our $\eta\to0$ at similar radius)}.
+If we change our assumed yield scale, the values of $\eta$ will re-scale accordingly to maintain observationally-consistent chemical trends. Following \JJ, we neglect radial gas flows. \red{Outflowing gas may also be recycled back onto the Milky Way in Galactic fountains \citep[e.g.][]{oppenheimer+dave2008}, which are not included here.}
 
 To create representative stellar samples to compare with APOGEE, 
 we draw \nsubgiants\ stars from the simulated stellar populations. First, we draw a random zone (weighted by the number of observed subgiants in each zone) and then draw a random particle in the zone weighted by the stellar population mass.
@@ -594,7 +598,7 @@ Galactocentric radii are taken from astroNN \citep{leung+bovy19, leung+bovy19b} 
 
 Table~\ref{tab:fiducial_mod} summarizes our yield choices. 
 Our solar abundance scale is from \citet{magg+22} with a 0.04 dex gravitational settling correction. Also from \citet{magg+22}, we adopt $\Zo = 0.0176$. We use the O, Mg, and Fe yields recommended by \citet{david_fe} based on measurements of the mean CCSN Fe yield \citep{rodriguez+21, rodriguez+23} and APOGEE chemical abundances.
-Our AGB N yield is scaled from \citep[eq. 14]{james+23}, based on the differences in the assumed solar N/O ratio and the median [N/Mg] or [N/O] value of each sample.  Following \citet{james+23}, we use a $t^{-1.1}$  delay time distribution (DTD) for SN Ia with a minimum delay-time of 150 Myr, based on comparisons of the SN Ia rate as a function of redshift and the cosmic SFR (e.g., \citealt{maoz+mannucci12}). We assume $2.2\times10^{-3}$ SN Ia events per unit mass of star formation with a mean $0.355\,\Mo$ of new Fe produced per supernova.
+Our AGB N yield is scaled from \citep[eq. 14]{james+23}, based on the differences in the assumed solar N/O ratio and the median [N/Mg] or [N/O] value of each sample.  Following \citet{james+23}, we use a $t^{-1.1}$  delay time distribution (DTD) for SN Ia with a minimum delay-time of 150 Myr, based on comparisons of the SN Ia rate as a function of redshift and the cosmic SFR (e.g., \citealt{maoz+mannucci12}). \add{While a shorter minimum SN Ia delay time may be more realistic \citep[e.g.][]{mannucci+2006}, prompt SN Ia minimally affect our models.} We assume $2.2\times10^{-3}$ SN Ia events per unit mass of star formation with a mean $0.355\,\Mo$ of new Fe produced per supernova.
 We use a \citet{kroupa01} initial mass function (IMF).
 
 
@@ -644,7 +648,7 @@ The evolution of chemical abundances can be understood as the interplay between 
  
 This evolution is predominantly driven by our chosen elemental yields, their
 metallicity dependence, and their DTDs.
-As we will demonstrate in Section~\ref{sec:agb_results} below, the final locus of the \caah\ trend (the end points of the curves in the left panel) depends mostly on the metallicity dependence of the total C yield. The \caafe{} trend instead reveals the nature of delayed C production.
+As we will demonstrate in Section~\ref{sec:agb_results} below, the final locus of the \caah\ trend (the end points of the curves in the left panel) depends mostly on the metallicity dependence of the total C yield. The \caafe{} trend instead reveals the nature of delayed C production. \add{Stars with lower [Mg/Fe] values have been enriched more by delayed (SN Ia) Fe and, consequently, should contain more delayed AGB C (a higher [C/Mg] value). Although we only use Mg as a reference element in the main text, the [C/Fe]-[Fe/H], similar to \caah{}, mostly tracks the total metallicity-dependence of C production (see Appendix~\ref{sec:extra_mcmc}).}
 
 
 
@@ -731,6 +735,7 @@ However, recent GCE models indicate that abundance trends favour, if anything, a
 
 \subsection{Star formation history and yield scale } \label{sec:sfh} \label{sec:outflows}
 
+
 \begin{figure*}
     \includegraphics{figures/zeta_f_mass_sfh.pdf}
     
@@ -738,26 +743,27 @@ However, recent GCE models indicate that abundance trends favour, if anything, a
         Similar to Fig.~\ref{fig:zeta_f}, but focusing on [C/Mg] versus [$\alpha$/Fe].
         {\bf Left:} The best-fitting yield combination for each AGB table and the \fruity{} table with a mass shift of 0.7. We fit $\aagb$, $\yo$, and $\zeta$ using the method in Section~\ref{sec:mcmc_methods}.
         {\bf Middle:} Models where the \fruity{} AGB yields are artificially shifted by different multiplicative factors in progenitor mass, but maintaining the same $\fagb$. 
-        {\bf Right:} Models with alternative star formation histories (Eqs.~\ref{eq:lateburst}, \ref{eq:twoinfall}), and a model where all yields are doubled (with mass-loading adjusted accordingly; see Section~\ref{sec:vice}).
+        {\bf Right:} \strike{Models with alternative star formation histories (Eqs.~\ref{eq:lateburst}, \ref{eq:twoinfall})}\add{A model with a two-infall star formation history (Eq.~\ref{eq:twoinfall})}, and a model where all yields are doubled (with mass-loading adjusted accordingly; see Section~\ref{sec:vice}).
     }
     \label{fig:sims_degens}
 \end{figure*}
 
-In the right-hand panel of Fig.~\ref{fig:sims_degens}, we consider two alternative SFHs.
-Motivated by the findings of \citet{mor+19} and \citet[see discussion in \JJ]{isern19}, the \textit{lateburst} model adds a Gaussian-shaped burst to the fiducial inside-out model, 
+\strike{In the right-hand panel of Fig.~\ref{fig:sims_degens}, we consider two alternative SFHs.
+Motivated by the findings of Mor et al. (2019) and Isern (2019; see discussion in \JJ), the \textit{lateburst} model adds a Gaussian-shaped burst to the fiducial inside-out model, }
 \begin{equation}\label{eq:lateburst}
-    \dot{\Sigma}_\text{lateburst} \propto \dot{\Sigma}_\text{inside-out} \left(1 + A\,e^{-(t-t_{\rm burst})^2/2\sigma^2_{\rm burst}} \right),
+    \red{\dot{\Sigma}_\text{lateburst} \propto \dot{\Sigma}_\text{inside-out} \left(1 + A\,e^{-(t-t_{\rm burst})^2/2\sigma^2_{\rm burst}} \right),}
 \end{equation}
-where $A=1.5$ represents the amplitude of the burst, $t_\text{burst}=10.8$\,Gyr is the time where the burst is strongest, and $\sigma_\text{burst}=1$\,Gyr is the width of the burst.
+\strike{where $A=1.5$ represents the amplitude of the burst, $t_\text{burst}=10.8$\,Gyr is the time where the burst is strongest, and $\sigma_\text{burst}=1$\,Gyr is the width of the burst.
+}
 
-We also consider a two-infall evolutionary history \citep[e.g.,][]{chiappini+97,spitoni19, spitoni21, spitoni+23}. This prescription posits that the majority of the stellar mass of the Galactic disk was built up during two events of substantial metal-poor accretion separated in time. The two-infall scenario offers a natural explanation \citep{spitoni19, spitoni21} for the bimodal distribution of [$\alpha$/Fe] ratios observed in the MW \citep[e.g.,][]{hayden+15}. However, the two-infall model has recently faced challenges when confronted with large catalogues of stellar age measurements \citep{dubay+25}. 
-For these models, we switch \VICE{} to `infall mode' and let it compute the SFR from a specified accretion history, in contrast to the other models where we specify the SFH (see discussion in Section~\ref{sec:vice}). Our accretion history, following \citet{dubay+24}, is given by
+\replace{We also}{In the right-hand panel of Fig.~\ref{fig:sims_degens}, we } consider a two-infall evolutionary history \citep[e.g.,][]{chiappini+97,spitoni19, spitoni21, spitoni+23}. This prescription posits that the majority of the stellar mass of the Galactic disk was built up during two events of substantial metal-poor accretion separated in time. The two-infall scenario offers a natural explanation \citep{spitoni19, spitoni21} for the bimodal distribution of [$\alpha$/Fe] ratios observed in the MW \citep[e.g.,][]{hayden+15}. However, the two-infall model has recently faced challenges when confronted with large catalogues of stellar age measurements \citep{dubay+25}. 
+For \replace{these models}{this model}, we switch \VICE{} to `infall mode' and let it compute the SFR from a specified accretion history, in contrast to the other models where we specify the SFH (see discussion in Section~\ref{sec:vice}). Our accretion history, following \citet{dubay+24}, is given by
 \begin{equation}\label{eq:twoinfall}
 \dot{\Sigma}_{\rm in} \propto e^{-t/\tau_1} + A \theta(t - t_{2}) e^{-t/\tau_2},
 \end{equation}
 where $\tau_1=1\,$Gyr, $\tau_2=4\,$Gyr control the duration of the first and second burst, $t_2=4$\,Gyr specifies the onset of the second infall epoch, $A$ is the relative amplitude of the second burst, and $\theta$ is the Heaviside step function. We chose $A(R)$ such that the ratio between the stellar mass produced in the first and second burst by $13.2\,{\rm Gyr}$ matches the ratio between the thin and thick disks from \citet{BHG16}.
 
-The right panel of Fig.~\ref{fig:sims_degens} compares the fiducial SFH with these lateburst and two-infall variations. The differences in the \caafe\ trend are small. Each model predicts a different distribution in [Mg/Fe] as expected \citep[e.g.,][]{JW20} but not shown here.
+The right panel of Fig.~\ref{fig:sims_degens} compares the fiducial SFH with \strike{these lateburst and two-infall variations}\add{ a two-infall SFH}. The differences in the \caafe\ trend are small. \replace{Each}{This} model predicts a different distribution in [Mg/Fe] as expected \citep[e.g.,][]{JW20} but not shown here.
 Most importantly, the relationship between these abundance ratios is largely unaffected by the assumed SFH. 
 
 
@@ -897,9 +903,8 @@ Below solar metallicity, [C/O] appears to follow a non-monotonic trend, reaching
 
 
 
-To better represent the evolution of low-metallicity and dwarf galaxy environments, we construct an example {\it Gaia}-Sausage Enceladus (GSE, \citealt{meza+05, belokurov+18, helmi18}) --like model. This model is a single-zone model,  evolving one homogeneous gas supply. 
-We use the same yields as our fiducial multi-zone model.
-Our GSE-like model parameters are derived from the best-fitting parameters of \citet{james_dwarfs}, except adjusting outflows to our yield scale. We adopt a constant mass loading of $\eta=5.74$, total star formation time of 10.73 Gyr, a constant star formation efficiency time-scales of 26.60 Gyr, and an exponential infall history $\dot \Sigma_{\rm in} = \exp(-t / 2.18\,{\rm Gyr})$ (in contrast to star formation rate specification for our fiducial model). In summary, the GSE-like model compared to our fiducial MW model does not include radial migration and has a more rapid star formation history, elevated outflows, and lower star formation efficiency. 
+To better represent the evolution of low-metallicity and dwarf galaxy environments, we construct an example {\it Gaia}-Sausage Enceladus (GSE, \citealt{meza+05, belokurov+18, helmi18}) --like model. This model \replace{is}{has} a single-zone \strike{model},  evolving one homogeneous gas supply \add{without radial migration. Compared to our Milky Way model, the GSE-like model uses the same yields but has a lower star-formation efficient, a more rapid decline in star formation over time, and significantly higher outflows.}
+Our GSE-like model parameters are derived from the best-fitting parameters of \citet{james_dwarfs}, except adjusting outflows to our yield scale. We adopt a constant mass loading of $\eta=5.74$, total star formation time of 10.73 Gyr, a constant star formation efficiency time-scales of 26.60 Gyr, and an exponential infall history $\dot \Sigma_{\rm in} = \exp(-t / 2.18\,{\rm Gyr})$ (in contrast to star formation rate specification for our fiducial model). \add{We adopt the same \citet{kroupa01} initial mass function as the fiducial model}. \strike{In summary, the GSE-like model compared to our fiducial MW model does not include radial migration and has a more rapid star formation history, elevated outflows, and lower star formation efficiency. }
 
 The gas-phase C abundances reveal a breakdown of our fiducial yield prescription (presented in Section~\ref{sec:nucleosynthesis}). While the fiducial model sits well within the scatter of C/O ratios observed in low-redshift \Hii{} regions near solar metallicity, the evolution of the $R = 8$ kpc annulus overestimates the mean [C/O] at lower metallicities. The CCSN-only, low-metallicity plateau of [C/O] in the fiducial model is near $-0.5$, whereas the data sit closer to [C/O] $\sim -0.7$ near [O/H] $\sim - 1$. Furthermore, our GSE-like model overpredicts [C/O] across most of this range. Due to the higher mass-loading factor, this evolutionary track can be interpreted as shifted toward low metallicity relative to the solar zone at $R = 8$ kpc. Consequently, near-solar [C/O] ratios arise at low [O/H], resulting in a relatively poor fit to the gas-phase data. We note that our subgiant sample only extends as low as a metallicity of ${\rm [O/H]} \sim -0.4$, so any application of the model at these metallicities requires substantial extrapolation. 
 
@@ -962,7 +967,7 @@ Observing C across a range of environments at higher precision will allow for ye
  
 \section*{Acknowledgements}
 
-We thank Falk Herwig and Jennifer Johnson for helpful comments and discussion.
+We thank Jennifer Johnson and Falk Herwig for helpful comments and discussion. JWJ acknowledges financial support from a Carnegie Theoretical Astrophysics Center postdoctoral fellowship and an Ohio State University Presidential Fellowship. This work was partly supported by NSF grant AST-2307621.
 
 This paper uses APOGEE data \citep{apogee_instrumentation, apogee17, aspcap}. APOGEE is  part of SDSS-IV \citep{sloan_telescope, sdss_iv_overview, sdss17}.
 
@@ -1126,7 +1131,18 @@ We use the \citet{ritter+18} tables from $M_{X, \rm ej}$, which we can reproduce
 
 
 
-\section{MCMC additional results}\label{sec:extra_mcmc}
+\section{Additional results}\label{sec:extra_mcmc}
+
+\add{
+Fig.~\ref{fig:sims_fe} compares the low-$\alpha$ [C/Fe]-[Fe/H] trends for different C CCSN yield slopes and AGB yield fractions. Similar to the \caah{} plots we use in the main text, the [C/Fe]-[Fe/H] trend is predominantly determined by the metallicity dependence of the C yield. As such, increasing both the AGB and metallicity-dependent ($\zcc$) CCSN C contributions leaves the [C/Fe]-[Fe/H] trend unchanged.
+}
+
+\begin{figure}
+    \centering
+    \includegraphics{figures/sims_zeta_f_fe.pdf}
+    \caption{\red{Similar to the left panel of Fig.~\ref{fig:zeta_f} except using Fe as the reference element instead of Mg. Increasing the fraction of AGB production of C similarly affects the [C/Fe]-[Fe/H] trend as decreasing the metallicity dependence of CCSN C production, like for \caah{}.}}
+    \label{fig:sims_fe}
+\end{figure}
 
 Fig.~\ref{fig:mcmc} shows the posterior distributions of our MCMC fit to the C yield models, described in Section~\ref{sec:mcmc}, assuming the \fruity{} AGB table. Each parameter is relatively well-constrained. The most prominent degeneracy, between $\yl$ and $\aagb$, represents the constraint on the equilibrium abundance of C near solar. Another clear correlation, between $\yl$ and $\zcc$, is related to the solar yield constraint as well, allowing a narrow range of $\zcc$ values while retaining the solar $\yo = \yl + \zcc$ yield.
 
@@ -1184,6 +1200,7 @@ $\aagb$ represents the scale factor for the AGB yields, and $\yl$, $\zcc$ repres
 \bsp	% typesetting comment
 \label{lastpage}
 \end{document}
+
 
 
 

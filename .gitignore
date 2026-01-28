@@ -6,6 +6,8 @@ build
 pickles
 results
 
+.DS_Store
+.virtual_documents
 *.jpeg
 *.vice
 *.gif
