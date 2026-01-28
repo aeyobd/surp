@@ -44,13 +44,13 @@ ls_agbm = [":", "--", "-", "-."]
 names_sfh = [
     "fiducial/run",
     "fiducial/twoinfall",
-    "fiducial/lateburst",
+    #"fiducial/lateburst",
     "fiducial/eta2",
 ]
 labels_sfh = [
     r"fiducial",  
     r"twoinfall",
-    "lateburst",
+    #"lateburst",
     r"doubled yields \& $\eta$",
 ]
 colors_sfh = ["black", *COLORS]

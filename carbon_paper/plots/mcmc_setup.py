@@ -65,4 +65,7 @@ results["lateburst"] = load_model("lateburst", yagb_props["fruity"])
 results["twoinfall"] = load_model("twoinfall", yagb_props["fruity"])
 results["eta2"] = load_model("eta2", yagb_props["fruity"])
 results["sneia_1.2"] = load_model("sneia_1.2", yagb_props["fruity"])
+results["mlr_v16"] = load_model("mlr_v16", yagb_props["fruity"])
+results["t_d_ia0.03"] = load_model("t_d_ia0.03", yagb_props["fruity"])
+
 
