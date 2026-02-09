@@ -20,7 +20,7 @@ ele = "c"
 vice.yields.ccsne.settings[ele] = 0
 vice.yields.sneia.settings[ele] = 0
 
-plt.figure(figsize=(10/3, 10/3))
+plt.figure(figsize=(20/9, 20/9))
 
 for i in range(4):
     model = AGB_MODELS[i]

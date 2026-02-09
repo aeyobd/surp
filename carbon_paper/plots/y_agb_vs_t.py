@@ -9,7 +9,7 @@ from yield_plot_utils import AGB_MODELS, AGB_LABELS, agb_interpolator, plot_ssp_
 
 
 def make_plot():
-    plt.figure(figsize=(10/3, 10/3))
+    plt.figure(figsize=(20/9, 20/9))
 
     vice.yields.ccsne.settings["c"] = 0
     vice.yields.sneia.settings["c"] = 0
