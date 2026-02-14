@@ -34,8 +34,8 @@ Nr = len(plot_labels)
 def plot_dist(x, y=0, color=None, **kwargs):
     ll, l, m, h, hh = np.quantile(x, [0.02, 0.16, 0.5, 0.84, 0.98])
     plt.scatter(m, y, color=color, **kwargs)
-    plt.plot([l, h], [y, y], color=color)
-    plt.plot([ll, hh], [y, y], color=color, lw=0.5)
+    #plt.plot([l, h], [y, y], color=color)
+    #plt.plot([ll, hh], [y, y], color=color, lw=0.5)
 
 
 def plot_hists(ax, col, ylabel=True):
@@ -60,7 +60,9 @@ def plot_hists(ax, col, ylabel=True):
 
 
 
-fig, ax = plt.subplots(figsize=(11.5/6, 10/4))
+fig, ax = plt.subplots()
+
+plt.axvspan(0.1, 0.3, color="k", alpha=0.1)
 
 plot_hists(ax, "f_agb")
 plt.ylim(-0.5, Nr - 0.5)
@@ -72,10 +74,9 @@ for label, color in zip(ax.get_yticklabels(), reversed(colors[:Nr])):
 
 
 
-plt.axvspan(0.1, 0.3, color="k", alpha=0.1)
 
 
 plt.xlabel(r"$f_{\rm C}^{\rm AGB}$")
-plt.xlim(-0.05, 0.55)
+plt.xlim(-0.05, 0.35)
 
 plt.savefig("figures/mcmc_fagb.pdf")

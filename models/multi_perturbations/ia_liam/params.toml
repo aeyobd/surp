@@ -1,0 +1,4 @@
+inherits = "../params.toml"
+RIa = "liam"
+
+t_d_ia = 0.03

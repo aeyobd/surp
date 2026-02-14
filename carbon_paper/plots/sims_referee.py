@@ -15,6 +15,7 @@ names = [
     "fiducial/run",
     #"multi_perturbations/fiducial",
     "multi_perturbations/t_d_ia0.03",
+    "multi_perturbations/ia_liam",
     "fiducial/snia_0.7",
     "multi_perturbations/mlr_vincenzo",
 ]
@@ -22,6 +23,7 @@ labels = [
     "fiducial",
     #"fiducial2",
     r"$t_{\rm D, min}=30\,$Myr",
+    "dubay+ Ia",
     r"0.7$\times$SN Ia",
     "Vincenzo+16 MLR"
 ]

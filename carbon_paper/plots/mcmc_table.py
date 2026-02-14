@@ -25,6 +25,7 @@ labels = {
     "fruity_mf0.7_sigma": r"\fruity\ m0.7",
     "t_d_ia0.03": "short SN Ia min DT",
     "mlr_v16": "updated MLR",
+    "ia_liam": "Liam's SN Ia",
 }
 
 

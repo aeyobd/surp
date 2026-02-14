@@ -10,7 +10,7 @@ from surp.simulation.sfh_models import insideout, exp_sfh, linexp, static, lateb
 def run_singlezone(
         dt=0.01, t_end=13.2, tau_sfh=14, 
         eta=0.5, tau_star=2.5, mode="sfr", sfh=insideout(tau_sfh=None),
-        RIa="plaw", Mg0=1, verbose=False,
+        RIa="plaw", Mg0=1, verbose=False, **kwargs
     ):
     """
 
@@ -37,6 +37,7 @@ def run_singlezone(
         Total gas mass
     verbose : bool
         print vice model info
+    kwargs: extra keywords passed to vice.signlezone
 
     Returns
     -------
@@ -53,7 +54,7 @@ def run_singlezone(
         elements=surp.ELEMENTS,
         func=sfh, mode=mode,
         eta=eta, tau_star=tau_star, 
-        Mg0=Mg0, dt=dt
+        Mg0=Mg0, dt=dt, **kwargs
     )
 
     sz.RIa = RIa

@@ -47,7 +47,10 @@ def create_model(params):
 
     model.smoothing = params.smoothing
     model.IMF = properties.get_imf(params)
-    model.RIa = params.RIa
+    if params.RIa == "liam":
+        model.RIa = properties.liam_RIa
+    else:
+        model.RIa = params.RIa
     model.tau_ia = params.tau_ia
     model.delay = params.t_d_ia
     model.m_upper = params.m_upper

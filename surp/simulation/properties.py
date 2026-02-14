@@ -124,7 +124,22 @@ def conroy_tau_star(t):
     else:
         tau_st = 2.36
     return tau_st
-"sfr"
+
+def liam_RIa(t, W=1, alpha=-1.1):
+    """
+    liam_RIa()
+
+    The recommended SN Ia DTD from Dubay et al 2024. 
+
+    ... Dubay LO, Johnson JA, Johnson JW. 2024. Astrophys. J. 973:55
+    """
+
+
+    if t < W:
+        return 1
+    else:
+        return (t/W)**alpha
+
 
 
 class conroy_sf_law:
