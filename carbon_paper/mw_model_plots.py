@@ -64,6 +64,8 @@ def zooh_models(models, labels, colors=COLORS, linestyles=LINESTYLES, x="MG_H", 
     for i in range(N):
         name = labels[i]
         model = models[i]
+        # a column we now need for revised version
+        model["C_FE_true"] = model["C_MG_true"] + model["MG_FE_true"]
         if filt_ha:
             df = surp.filter_high_alpha(model)
         else:

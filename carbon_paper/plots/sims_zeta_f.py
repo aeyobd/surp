@@ -13,13 +13,13 @@ linestyles = [":", "-", "--"]
 
 names = [
     "fruity/zeta_lower",
-    "fiducial/run",
+    "fruity/best",
     "fruity/zeta_higher",
 ]
 labels = [
-    r"$\zeta_{\rm C}^{\rm CC} = 0.0004$", 
-    r"$\zeta_{\rm C}^{\rm CC} = 0.0008$ (fiducial)", 
-    r"$\zeta_{\rm C}^{\rm CC} = 0.0012$", 
+    r"shallow CCSN yield", 
+    r"fiducial", 
+    r"steep CCSN yield", 
 ]
 
 compare(names, labels, axs = axs[0], colors=colors, linestyles=linestyles)
@@ -29,7 +29,8 @@ compare(names, labels, axs = axs[0], colors=colors, linestyles=linestyles)
 
 names = [    
     "fruity/f_0",
-    "fiducial/run",
+    #"fiducial/run",
+    "fruity/best",
     "fruity/f_0.5",
   ]
 
@@ -40,11 +41,12 @@ compare(names, labels, colors=colors, linestyles=linestyles, axs=axs[1])
 
 names = [    
     "fruity/fz_0",
-    "fiducial/run",
+    #"fiducial/run",
+    "fruity/best",
     "fruity/fz_0.5",
   ]
 
-labels = [r"$f_{\rm C}^{\rm AGB}=0$, $\zeta_{\rm C}^{\rm CC} = 0.0004$", r"fiducial", r"$f_{\rm C}^{\rm AGB}=0.5$, $\zeta_{\rm C}^{\rm CC} = 0.0012$",]
+labels = [r"$f_{\rm C}^{\rm AGB}=0$, shallow CCSN yield", r"fiducial", r"$f_{\rm C}^{\rm AGB}=0.5$, steep CCSN yield",]
 compare(names, labels, colors=colors, linestyles=linestyles, axs=axs[2])
 
 

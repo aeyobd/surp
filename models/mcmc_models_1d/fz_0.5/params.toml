@@ -1,7 +1,7 @@
 [alpha]
 name = "perturbations/fruity"
 prior = "Normal"
-prior_args = [4.360, 0.0]
+prior_args = [4.25, 0.0]
 
 
 [y0_cc]

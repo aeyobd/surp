@@ -24,9 +24,6 @@ if [[ ! -d "$MODEL_NAME" ]]; then
     exit 1
 fi
 
-echo removing files in model
-#rm -rf $MODEL_NAME/milkyway.vice
-bash clean_model.sh $MODEL_NAME
 
 
 echo submitting job $MODEL_NAME

@@ -24,7 +24,7 @@ def read_params(paramfile):
     
     add_default(params, "datafile", None)
     add_default(params, "mg_h_bins", np.linspace(-0.4, 0.3, 20))
-    add_default(params, "mg_fe_bins", np.linspace(0.025, 0.25, 12))
+    add_default(params, "mg_fe_bins", np.linspace(0.025, 0.5, 12))
     add_default(params, "mg_fe_n_min", 3)
     add_default(params, "mg_h_n_min", 3)
     add_default(params, "m_h_0", -0.1)

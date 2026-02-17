@@ -11,10 +11,11 @@ if [ ! -d $1 ]; then
 fi
 
 set -x
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+#SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 
 for arg in $@; do
-    cd $SCRIPT_DIR
+    #cd $SCRIPT_DIR
 
     if [ ! -d "$arg" ]; then
         echo "warning: no such directory $arg"

@@ -1,5 +1,5 @@
 inherits = "../yield_params.toml"
 
-alpha_c_agb = 1.55
-y0_c_cc = 2.23e-03
-zeta_c_cc = 1.65e-03
+alpha_c_agb = 2.14
+y0_c_cc = 1.97e-03
+zeta_c_cc = 1.97e-03 # * log(10) of the paper value

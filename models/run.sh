@@ -44,6 +44,10 @@ fi
 PARAMSPATH=params.toml
 YIELDSPATH=yield_params.toml
 
+echo removing files in model
+#rm -rf $MODEL_NAME/milkyway.vice
+bash $SCRIPT_DIR/clean_model.sh $MODEL_DIR
+
 $PYTHON $SCRIPTNAME $PARAMSPATH $YIELDSPATH
 status=$?
 

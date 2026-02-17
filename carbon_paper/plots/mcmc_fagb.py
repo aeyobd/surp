@@ -10,12 +10,8 @@ import numpy as np
 from mcmc_setup import results, yagb_props
 
 
-
-Y_C_0 = 2.67e-3
-
 plot_labels = {
-    "fiducial": r"fiducial",
-    "fruity": r"FRUITY",
+    "fruity": r"FRUITY (fiducial)",
     "aton": r"ATON",
     "monash": r"Monash",
     "nugrid": r"NuGrid",
@@ -23,11 +19,11 @@ plot_labels = {
     #"lateburst": r"lateburst",
     "twoinfall": r"twoinfall",
     "eta2": r"doubled yields",
-    "sneia_1.2": r"higher SN Ia"
+    "sneia_1.2": r"1.2$\times$ SN Ia",
 }
 
 
-colors = ["k", *arya.COLORS[:5], *np.full(5, arya.COLORS[0])]
+colors = [*arya.COLORS[:5], *np.full(5, arya.COLORS[0])]
 
 Nr = len(plot_labels)
 
@@ -40,29 +36,23 @@ def plot_dist(x, y=0, color=None, **kwargs):
 
 def plot_hists(ax, col, ylabel=True):
     for i, (key, label) in enumerate(plot_labels.items()):
-        if i < 6:
-            color = arya.COLORS[i-1]
+        if i < 5:
+            color = arya.COLORS[i]
         else:
             color = arya.COLORS[0]
 
-        if key == "fiducial":
-            if col == "f_agb":
-                print("annotating")
-                plt.annotate("", xy=(0.3, Nr - 1 -  0.25), xytext=(0.3, Nr - 1 + 0.25),
-                             arrowprops=dict(color="k", width=0.5, headwidth=2.5, headlength=2.5))
+        result = results[key]
+        if key == "eta2" and col == "alpha":
+            x = 2*result.samples[col]
         else:
-            result = results[key]
-            if key == "eta2" and col == "alpha":
-                x = 2*result.samples[col]
-            else:
-                x = result.samples[col]
-            plot_dist(x, color=color, y=Nr-i-1)
+            x = result.samples[col]
+        plot_dist(x, color=color, y=Nr-i-1)
 
 
 
 fig, ax = plt.subplots()
 
-plt.axvspan(0.1, 0.3, color="k", alpha=0.1)
+plt.axvspan(0.15, 0.3, color="k", alpha=0.1)
 
 plot_hists(ax, "f_agb")
 plt.ylim(-0.5, Nr - 0.5)
@@ -77,6 +67,6 @@ for label, color in zip(ax.get_yticklabels(), reversed(colors[:Nr])):
 
 
 plt.xlabel(r"$f_{\rm C}^{\rm AGB}$")
-plt.xlim(-0.05, 0.35)
+plt.xlim(-0.05, 0.5)
 
 plt.savefig("figures/mcmc_fagb.pdf")

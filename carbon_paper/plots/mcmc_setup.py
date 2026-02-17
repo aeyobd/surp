@@ -56,17 +56,15 @@ results["monash"] = load_model("monash", yagb_props["monash"])
 
 
 results["fruity_sigma"] = load_model("fiducial_sigma0.05", yagb_props["fruity"])
-results["fruity_mf0.7_sigma"] = load_model("fruity_mf0.7_sigma0.05", yagb_props["fruity_mf0.7"])
+#results["fruity_mf0.7_sigma"] = load_model("fruity_mf0.7_sigma0.05", yagb_props["fruity_mf0.7"]) # running
 results["aton_sigma"] = load_model("aton_sigma0.05", yagb_props["aton"])
-results["nugrid_sigma"] = load_model("nugrid_sigma0.05", yagb_props["nugrid"])
+#results["nugrid_sigma"] = load_model("nugrid_sigma0.05", yagb_props["nugrid"]) #running
 results["monash_sigma"] = load_model("monash_sigma0.05", yagb_props["monash"])
 
 results["lateburst"] = load_model("lateburst", yagb_props["fruity"])
 results["twoinfall"] = load_model("twoinfall", yagb_props["fruity"])
 results["eta2"] = load_model("eta2", yagb_props["fruity"])
-results["sneia_1.2"] = load_model("sneia_1.2", yagb_props["fruity"])
-results["mlr_v16"] = load_model("mlr_v16", yagb_props["fruity"])
-results["t_d_ia0.03"] = load_model("t_d_ia0.03", yagb_props["fruity"])
-results["ia_liam"] = load_model("ia_liam", yagb_props["fruity"])
+results["sneia_1.2"] = load_model("sneia_1.2_mf0.7", yagb_props["fruity_mf0.7"])
+#results["mlr_v16"] = load_model("mlr_v16", yagb_props["fruity"]) # running
 
 

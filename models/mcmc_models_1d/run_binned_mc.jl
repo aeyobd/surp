@@ -77,6 +77,9 @@ function main()
     outfile = joinpath(modelname, "mcmc_samples.csv")
     CSV.write(outfile, samples)
 
+    summary = summarize_chain(chain, labels)
+    summary_file = joinpath(modelname, "mcmc_summary.csv")
+    CSV.write(summary_file, summary)
 end
 
 
@@ -178,6 +181,33 @@ end
     # Data likelihoods
     models_ah.obs ~ MvNormal(mu_ah, diagm(sigma2_ah))
     models_afe.obs ~ MvNormal(mu_afe, diagm(sigma2_afe))
+end
+
+
+function summarize_chain(chain, labels; p=0.16)
+    df = DataFrame(chain)
+    summary = DataFrame(Turing.summarize(chain))
+
+    Nr = size(summary, 1)
+    meds = zeros(Nr)
+    err_low = zeros(Nr)
+    err_high = zeros(Nr)
+    
+    for i in 1:Nr
+        sym = summary[i, :parameters]
+        meds[i] = median(df[!, sym])
+        err_low[i] = meds[i] - quantile(df[!, sym], p)
+        err_high[i] = quantile(df[!, sym], 1-p) - meds[i]
+    end
+
+    summary[!, :median] = meds
+    summary[!, :err_low] = err_low
+    summary[!, :err_high] = err_high
+    summary[!, :parameters] = labels
+
+    # reorder columns
+    select!(summary, :parameters, :median, :err_low, :err_high, Not([:parameters, :median, :err_low, :err_high]))
+    return summary
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__

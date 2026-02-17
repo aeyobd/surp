@@ -21,11 +21,9 @@ labels = {
     "fruity_sigma": r"\fruity",
     "aton_sigma": r"\aton",
     "monash_sigma": r"\monash",
-    "nugrid_sigma": r"\nugrid",
-    "fruity_mf0.7_sigma": r"\fruity\ m0.7",
-    "t_d_ia0.03": "short SN Ia min DT",
-    "mlr_v16": "updated MLR",
-    "ia_liam": "Liam's SN Ia",
+    #"nugrid_sigma": r"\nugrid",
+    #"fruity_mf0.7_sigma": r"\fruity\ m0.7",
+    #"mlr_v16": "updated MLR",
 }
 
 
@@ -95,6 +93,9 @@ for model_key, label in labels.items():
             x = result.samples[key] / 1e-4
         else:
             x = result.samples[key]
+
+        if key == "y0_cc":
+            x += result.samples["zeta_cc"] # convert to y_0 in paper
 
         if key in ["y0_cc", "zeta_cc"]:
             x *= 10 # 1e-3 to 1e-4
