@@ -52,7 +52,7 @@ def plot_y_agb_vs_t():
     for i in range(4):
         model = AGB_MODELS[i]
         vice.yields.agb.settings["c"] = agb_interpolator("c", study=model)
-        times, y = plot_ssp_time(Z=surp.gce_math.MH_to_Z(-0.1), label=AGB_LABELS[model])
+        times, y = plot_ssp_time(Z=surp.gce_math.MH_to_Z(-0.2), label=AGB_LABELS[model])
       
         
     plt.text(3, 0.7, "SNe Ia Fe", rotation=42, color="k")

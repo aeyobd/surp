@@ -34,7 +34,7 @@ names = [
     "fruity/f_0.5",
   ]
 
-labels = [r"$f_{\rm C}^{\rm AGB}=0$", r"$f_{\rm C}^{\rm AGB}=0.3$ (fiducial)", r"$f_{\rm C}^{\rm AGB}=0.5$",]
+labels = [r"$f_{\rm C}^{\rm AGB}=0$", r"$f_{\rm C}^{\rm AGB}=0.25$ (fiducial)", r"$f_{\rm C}^{\rm AGB}=0.5$",]
 compare(names, labels, colors=colors, linestyles=linestyles, axs=axs[1])
 
 
