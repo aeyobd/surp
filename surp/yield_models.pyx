@@ -336,7 +336,9 @@ cdef class Lin_CC(AbstractCC):
     y = y_0 + slope * (Z - Z_\\odot)
 
     Note that the slope is defined as zeta / (Z_\\odot \\ln(10)) as to be 
-    the slope in the log10 space where zeta = d y / d Z
+    the slope in the log10 space where zeta = d y / d Z.
+    In the carbon paper, the reported zeta is instead defined to be ln(10) times 
+    smaller than how zeta is defined here.
 
     Parameters
     ----------

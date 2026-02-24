@@ -29,3 +29,7 @@ fi
 echo submitting job $MODEL_NAME
 nohup bash ./run.sh $MODEL_NAME > $MODEL_NAME/log.out 2> $MODEL_NAME/err.out &
 
+if [[ "$MODEL_NAME" -ne "fiducial/run" ]]; then
+  cd $MODEL_NAME
+  rm -rf milkyway.vice
+fi
