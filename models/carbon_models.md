@@ -33,16 +33,18 @@ Then, for the last section and to derive the parameters for these models, we run
 - `perturbations/monash`
 - `perturbations/nugrid`
 - `perturbations/fruity_mf0.7`
+- `perturbations/fruity_mf0.5`
+- `perturbations/fruity_mf1.5`
 
 - `multi_perturbations/lateburst`
 - `multi_perturbations/twoinfall`
 - `multi_perturbations/eta2`
 - `multi_perturbations/sneia_1.2`
+- `multi_perturbations/sneia_1.2_mf0.7`
 
 
 And the associated MCMC models
 - `mcmc_models_2d/fiducial`
-- `mcmc_models_2d/fiducial_constrained`
 - `mcmc_models_2d/aton`
 - `mcmc_models_2d/nugrid`
 - `mcmc_models_2d/monash`
@@ -58,8 +60,14 @@ And the associated MCMC models
 - `mcmc_models_2d/twoinfall`
 - `mcmc_models_2d/eta2`
 - `mcmc_models_2d/sneia_1.2`
+- `mcmc_models_2d/sneia_1.2_mf0.7`
 
 Once these models are run, the parameters are derived from the notebook `carbon_paper/mcmc_samples.ipynb` which collects and reports the derived parameters. 
+
+The parameters of a few of the above models are derived from a very simple best-fit routine in the `mcmc_models_caah` folder.
+- `mcmc_models_caah/fruity_fz_0`	
+- `mcmc_models_caah/fruity_fz_0.5`	
+- `mcmc_models_caah/fruity_mf...`
 
 
 

@@ -19,7 +19,7 @@ plot_labels = {
     #"lateburst": r"lateburst",
     "twoinfall": r"twoinfall",
     "eta2": r"doubled yields",
-    "sneia_1.2": r"1.2$\times$ SN Ia",
+    #"sneia_1.2": r"1.2$\times$ SN Ia",
 }
 
 

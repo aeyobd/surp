@@ -56,7 +56,9 @@ cd $SCRIPT_DIR
 echo visualizing model >> log.out
 $PYTHON visualize.py $MODEL_DIR -o . >> log.out
 
-if [ "$MODEL_DIR" -ne "fiducial/run" ]; then
+cd $MODEL_DIR
+
+if [ "$MODEL_DIR" != "fiducial/run" ]; then
     echo removing milkyway.vice
     rm -rf milkyway.vice onezonemodel.vice
 fi

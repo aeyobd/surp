@@ -1,5 +1,5 @@
 inherits = "../yield_params.toml"
-alpha_c_agb = 4.246
-y0_c_cc = 1.22e-03
+alpha_c_agb = 4.11
+y0_c_cc = 1.28e-03
 zeta_c_cc = 2.955e-3 # simply 1.5x fiducial
 

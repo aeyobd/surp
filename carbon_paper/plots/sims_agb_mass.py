@@ -9,10 +9,9 @@ from mw_model_plots import find_model, compare, compare_coofe, compare_cooh, COL
 
 names_agbm = [   
     "fruity/agb_mass_0.5",
-    "fruity/agb_mass_0.7_constrained",
+    "fruity/agb_mass_0.7_fixed",
     "fiducial/run",
     "fruity/agb_mass_1.5",
-    #"fruity/agb_mass_2",
   ]
 
 labels_agbm = ["0.5", "0.7", "1", "1.5", "2"]

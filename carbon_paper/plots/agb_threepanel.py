@@ -52,7 +52,7 @@ def plot_y_agb_vs_t():
     for i in range(4):
         model = AGB_MODELS[i]
         vice.yields.agb.settings["c"] = agb_interpolator("c", study=model)
-        times, y = plot_ssp_time(Z=surp.gce_math.MH_to_Z(-0.2), label=AGB_LABELS[model])
+        times, y = plot_ssp_time(Z=surp.gce_math.MH_to_Z(-0.1), label=AGB_LABELS[model])
       
         
     plt.text(3, 0.7, "SNe Ia Fe", rotation=42, color="k")
@@ -104,19 +104,22 @@ def plot_y_agb_vs_z():
 
 
     arya.Legend(color_only=True, handlelength=0, ncols=2, columnspacing=1, loc=3, transpose=True, fontsize=8)
-    plt.ylabel(r"integrated AGB C yield $\quad [\times 10^{-4}]$")
+    plt.ylabel(r"integrated AGB C yield $ [\times 10^{-4}]$")
 
 
 def main():
     fig, axs = plt.subplots(1, 3, figsize=(7, 2.5))
 
     plt.sca(axs[0])
+    axs[0].set_box_aspect(1)
     plot_y_agb(fig, axs[0])
 
     plt.sca(axs[1])
+    axs[1].set_box_aspect(1)
     plot_y_agb_vs_z()
 
     plt.sca(axs[2])
+    axs[2].set_box_aspect(1)
     plot_y_agb_vs_t()
 
     plt.tight_layout()

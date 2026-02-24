@@ -13,7 +13,7 @@ linestyles = [":", "-", "--"]
 
 names = [
     "fruity/zeta_lower",
-    "fruity/best",
+    "fiducial/run",
     "fruity/zeta_higher",
 ]
 labels = [
@@ -29,8 +29,7 @@ compare(names, labels, axs = axs[0], colors=colors, linestyles=linestyles)
 
 names = [    
     "fruity/f_0",
-    #"fiducial/run",
-    "fruity/best",
+    "fiducial/run",
     "fruity/f_0.5",
   ]
 
@@ -41,8 +40,7 @@ compare(names, labels, colors=colors, linestyles=linestyles, axs=axs[1])
 
 names = [    
     "fruity/fz_0",
-    #"fiducial/run",
-    "fruity/best",
+    "fiducial/run",
     "fruity/fz_0.5",
   ]
 
