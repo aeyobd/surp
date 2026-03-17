@@ -69,4 +69,5 @@ for label, color in zip(ax.get_yticklabels(), reversed(colors[:Nr])):
 plt.xlabel(r"$f_{\rm C}^{\rm AGB}$")
 plt.xlim(-0.05, 0.5)
 
+plt.tight_layout()
 plt.savefig("figures/mcmc_fagb.pdf")

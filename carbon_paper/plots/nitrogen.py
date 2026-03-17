@@ -9,6 +9,7 @@ from mw_model_plots import compare_cooh
 
 names = ["fiducial/run"]
 labels = ["fiducial model"]
+fig, axs = plt.subplots(figsize=(10/3, 10/4))
 
 compare_cooh(names, labels, y="C_N", ylim=(-0.3, 0.3), legend=False, use_true=False)
 

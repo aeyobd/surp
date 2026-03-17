@@ -27,7 +27,7 @@ colors_agb = ["black", *COLORS[1:]]
 ls_agb = LINESTYLES
 
 
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(10/3, 10/4))
 
 plt.sca(ax)
 compare_coofe(names_agb, labels_agb, legend=False, colors=colors_agb, linestyles=ls_agb)
