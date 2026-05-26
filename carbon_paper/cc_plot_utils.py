@@ -12,6 +12,11 @@ from surp import subgiants
 import surp
 import arya
 
+surp.set_yields()
+Y_MG = vice.yields.ccsne.settings["mg"]
+
+def linear_to_log10(y):
+    return gcem.abund_ratio_to_brak(np.array(y) / Y_MG, "c", "mg")
 
 ALLOWED_MH = {
     "LC18": [-3, -2, -1, 0],
@@ -57,7 +62,9 @@ def plot_y_cc(ele='c', ele2=None,
         markers = ["o", "o", "h", "s", "d", "*", "^"],
         sizes = [30, 30, 30, 30, 30, 30, 30],
         rotations = [0, 300, 0, 0, 0, 0, 0],
-        scale = 1
+        scale = 1,
+        xscale = "log",
+        yscale = "lin",
               ):
 
     labels = [r"LC18, $v_{\rm rot}=0\;{\rm km\,s^{-1}}$", 
@@ -91,7 +98,7 @@ def plot_y_cc(ele='c', ele2=None,
         label = labels[i]
 
         # handle 0 metallicity stars by plotting at -4.5
-        if np.isinf(metalicities[0]):
+        if np.isinf(metalicities[0]) and (xscale == "log"):
             if study == "WW95":
                 x0 = -4.5
                 ms = 5
@@ -104,10 +111,15 @@ def plot_y_cc(ele='c', ele2=None,
                          xuplims=[1],ms=ms, zorder=zorder, capsize=0)
 
             # remove problematic point
-            x = metalicities[1:]
+            m_h = metalicities[1:]
             y = y[1:]
         else:
-            x = metalicities
+            m_h = metalicities
+
+        if xscale == "log":
+            x = m_h
+        elif xscale == "lin":
+            x = gcem.MH_to_Z(np.float64(m_h))
 
         # rotation is transparent
         if rotation == 150:
@@ -115,8 +127,14 @@ def plot_y_cc(ele='c', ele2=None,
         if rotation == 300:
             facecolor=(1,1,1,0)
 
+        y = [yy * scale for yy in y]
+        if yscale == "lin":
+            y = y
+        elif yscale == "log":
+            y = linear_to_log10(y)
+
         # plot the points
-        plt.scatter(x, [yy * scale for yy in y], 
+        plt.scatter(x, y, 
                 ec=color, label=label, lw=1, fc=facecolor, 
                     marker=marker, s=sizes[i])
 
@@ -155,15 +173,26 @@ def plot_c_mg_mcmc(samples, thin=100, M_H=np.linspace(-0.5, 0.5, 1000), color="b
 
 
 
-def plot_analy(scale = 1):
+def plot_analy(scale = 1, xscale="log", yscale="lin"):
     """Plot fiducial C CC yield"""
     m_h = np.linspace(-5, 1, 1000)
     Z = gcem.MH_to_Z(m_h)
-    plt.plot(m_h, [Y_C_CC_FIDUCIAL(z) * scale for z in Z], color="k", ls="-", zorder=-2, label="Fiducial")
+    if xscale == "log":
+        x = m_h
+    elif xscale == "lin":
+        x = Z
+
+    y = [Y_C_CC_FIDUCIAL(z) * scale for z in Z]
+    if yscale == "lin":
+        y = y
+    elif yscale == "log":
+        y = linear_to_log10(y)
+
+    plt.plot(x, y, color="k", ls="-", zorder=-2, label="Fiducial")
 
     
 
-def plot_c11(scale=1):
+def plot_c11(scale=1, xscale="log", yscale="lin"):
     """Plot the cristallo ++ yield with metallicity"""
 
     vice.yields.agb.settings["c"] = surp.agb_interpolator.interpolator("c", study="cristallo11")
@@ -179,5 +208,14 @@ def plot_c11(scale=1):
     Zs = gcem.MH_to_Z(MH)
     ys = surp.yields.calc_y(Zs, ele="c", kind="agb")
         
-    plt.plot(MH, ys * scale, label="Fruity (AGB)", color=arya.COLORS[-1])
+    if xscale == "log":
+        x = MH
+    elif xscale == "lin":
+        x = Zs
+
+    if yscale == "lin":
+        y = ys*scale
+    elif yscale == "log":
+        y = linear_to_log10(ys*scale)
+    plt.plot(x, y, label="Fruity (AGB)", color=arya.COLORS[-1])
     
