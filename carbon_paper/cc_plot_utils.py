@@ -80,7 +80,7 @@ def plot_y_cc(ele='c', ele2=None,
 
     for i in range(N):
         study = ccsne_studies[i]
-        metalicities = ALLOWED_MH[study]
+        metalicities = np.array(ALLOWED_MH[study])
         m_upper = MAX_MASS[study]
         rotation = rotations[i]
 
@@ -97,29 +97,11 @@ def plot_y_cc(ele='c', ele2=None,
         color = facecolor = colors[i]
         label = labels[i]
 
-        # handle 0 metallicity stars by plotting at -4.5
-        if np.isinf(metalicities[0]) and (xscale == "log"):
-            if study == "WW95":
-                x0 = -4.5
-                ms = 5
-                zorder = 2
-            else:
-                x0 = -4.5
-                ms = 6
-                zorder = 3
-            plt.errorbar(x0, y[0] * scale, xerr=[0.2], fmt=marker, color=color, 
-                         xuplims=[1],ms=ms, zorder=zorder, capsize=0)
-
-            # remove problematic point
-            m_h = metalicities[1:]
-            y = y[1:]
-        else:
-            m_h = metalicities
 
         if xscale == "log":
-            x = m_h
+            x = metalicities
         elif xscale == "lin":
-            x = gcem.MH_to_Z(np.float64(m_h))
+            x = gcem.MH_to_Z(np.float64(metalicities)) / gcem.Z_SUN
 
         # rotation is transparent
         if rotation == 150:
@@ -127,11 +109,36 @@ def plot_y_cc(ele='c', ele2=None,
         if rotation == 300:
             facecolor=(1,1,1,0)
 
-        y = [yy * scale for yy in y]
         if yscale == "lin":
-            y = y
+            y = [yy * scale for yy in y]
         elif yscale == "log":
             y = linear_to_log10(y)
+
+        # handle points outside xrange
+        xlim = plt.gca().get_xlim()
+        err_width = 0.05 * (xlim[1] - xlim[0])
+
+        if np.any(x < xlim[0]):
+            for idx in np.where(x < xlim[0])[0]:
+                print(x[idx])
+                x0 = xlim[0] + 2*err_width
+                y0 = y[idx]
+                print(x0, y0)
+
+                plt.errorbar(x0, y0, xerr=[err_width], fmt=".", color=color, 
+                             xuplims=True, capsize=0)
+                plt.scatter(x0, y0, marker=marker, color=color, ec=color, lw=1, s=sizes[i])
+        if np.any(x > xlim[1]):
+            for idx in np.where(x > xlim[1])[0]:
+                print(x[idx])
+                x0 = xlim[1] - 2*err_width
+                y0 = y[idx]
+                print(x0, y0)
+
+                plt.errorbar(x0, y0, xerr=[err_width], fmt=".", color=color, 
+                             xlolims=True, capsize=0)
+                plt.scatter(x0, y0, marker=marker, color=color, ec=color, lw=1, s=sizes[i])
+
 
         # plot the points
         plt.scatter(x, y, 
@@ -180,7 +187,7 @@ def plot_analy(scale = 1, xscale="log", yscale="lin"):
     if xscale == "log":
         x = m_h
     elif xscale == "lin":
-        x = Z
+        x = Z / gcem.Z_SUN
 
     y = [Y_C_CC_FIDUCIAL(z) * scale for z in Z]
     if yscale == "lin":
@@ -211,7 +218,7 @@ def plot_c11(scale=1, xscale="log", yscale="lin"):
     if xscale == "log":
         x = MH
     elif xscale == "lin":
-        x = Zs
+        x = Zs / gcem.Z_SUN
 
     if yscale == "lin":
         y = ys*scale

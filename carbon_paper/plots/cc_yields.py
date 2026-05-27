@@ -29,14 +29,14 @@ def log10_to_linear(c_mg):
 
 
 fig, ax = plt.subplots(figsize=(10/3, 8/3))
+plt.xlim(-4.8, 0.8)
+plt.ylim(1e-12, 80)
 
 plot_y_cc(scale=scale)
 plot_c11(scale=scale)
 plot_analy(scale=scale)
 
 plt.ylabel(r"integrated massive-star C yield $[\times10^{-4}]$")
-plt.xlim(-4.8, 0.8)
-plt.ylim(1e-12, 80)
 
 # add secondary axis
 ax2 = ax.secondary_yaxis('right', functions=(linear_to_log10, log10_to_linear))
