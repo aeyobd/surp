@@ -29,16 +29,34 @@ def log10_to_linear(c_mg):
 
 
 fig, ax = plt.subplots(figsize=(10/3, 8/3))
+plt.sca(ax)
 plt.xlim(-4.8, 0.8)
 plt.ylim(1e-12, 80)
 
-plot_y_cc(scale=scale)
-plot_c11(scale=scale)
-plot_analy(scale=scale)
+plot_y_cc(scale=scale, ax=ax)
+plot_c11(scale=scale, ax=ax)
+plot_analy(scale=scale, ax=ax)
 
 plt.ylabel(r"integrated massive-star C yield $[\times10^{-4}]$")
 
+
+# inset axis
+ax_in = ax.inset_axes((0.1, 0.6, 0.3, 0.3))
+
+scale = 1e4
+ax_in.set_xlim(0.0, 2)
+ax_in.set_ylim(1e-12, 80)
+
+plot_y_cc(scale=scale, xscale="lin", ax=ax_in)
+plot_c11(scale=scale, xscale="lin", ax=ax_in)
+plot_analy(scale=scale, xscale="lin", ax=ax_in)
+ax_in.set_xlabel(r"$Z/Z_\odot$", fontsize=8)
+ax_in.tick_params(which="major", labelsize=6.4)
+
+
+
 # add secondary axis
+plt.sca(ax)
 ax2 = ax.secondary_yaxis('right', functions=(linear_to_log10, log10_to_linear))
 ax2.set_ylabel(r"${\rm [C/Mg]}^{\rm CC}$", rotation=-90)
 ax2.set_yticks([-2.3, -2, -1.6, -1.3, -1, -0.6, -0.3, 0.0, 0.3], labels=["", "", "", "", -1, -0.6, -0.3, 0, 0.3])
