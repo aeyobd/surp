@@ -9,7 +9,7 @@
 % Basic setup. Most papers should leave these options alone.
 \documentclass[fleqn,
 %onecolumn,
-doublespacing, % this line changes to double-spaced 1 column
+%doublespacing, % this line changes to double-spaced 1 column
 %referee,
 usenatbib]{mnras}
 
@@ -499,7 +499,7 @@ where $\yo$ represents the yield at solar metallicity and $\zcc$ is the slope of
 For our fiducial model, we adopt $\yo = {19.7}\times 10^{-4}$ and $\zcc = {8.56} \times 10^{-4}$, leading to reasonable agreement with the \caah{}, \caafe{}, and gas-phase abundance relations \add{(see Section~\ref{sec:results} and Appendix~\ref{sec:extra_gas}). The rise in $\Ycc$ with metallicity is intended to qualitatively capture the effects of rotation (see the $v_\text{rot}=300\,\text{km}\,\text{s}^{-1}$ model from \citealt{LC18} in Fig.~\ref{fig:y_cc}). However, we refrain from using a detailed match to any one rotating star model, since stars should span a range of rotational velocities.
 }
 \add{
-Our linear prescription is able to capture all of the effects necessary for the purposes of this paper, despite its simplicity (see also Fig.~\ref{fig:lin_y_cc}). We have repeated our analysis with higher order prescriptions (e.g., second-, third-, and fourth-order polynomials) and found that these additional degrees of freedom do not change our qualitative conclusions. The metallicity dependence may well be more complex than Eq.~\ref{eq:y_cc}, but current observations do not provide good constraints on more complex models.  
+Our linear prescription is able to capture all of the effects necessary for the purposes of this paper, despite its simplicity (see the inset of Fig.~\ref{fig:y_cc}). We have repeated our analysis with higher order prescriptions (e.g., second-, third-, and fourth-order polynomials) and found that these additional degrees of freedom do not change our qualitative conclusions. The metallicity dependence may well be more complex than Eq.~\ref{eq:y_cc}, but current observations do not provide good constraints on more complex models.  
 }
 
 \begin{figure}
@@ -511,7 +511,7 @@ Our linear prescription is able to capture all of the effects necessary for the 
         Yields are shown for tables from \citet[LC18, blue circles]{LC18}, \nugrid{} (P16, orange hexagons),  \citet[S16, green square and diamond]{sukhbold+16},  \citet[NKT13, red stars]{NKT13}, and 
     \citet[WW95, pink triangles]{WW95}. \citet{sukhbold+16} report yields for different black hole landscapes, while \citet{LC18} provide yields at different rotational velocities.
    The light blue line denotes $\Ycagb$ from the \fruity{} AGB star model for comparison (see Fig.~\ref{fig:agb_yields}). All models include wind yields. 
-   \add{See Fig.~\ref{fig:lin_y_cc} for a version where the $x$-axis is linear.}
+   \add{The inset shows the same comparison except with a linear-scaled metallicity ($x$) axis}
 }
     \label{fig:y_cc}
 \end{figure}
@@ -932,12 +932,6 @@ In general, all tables have a similar qualitative shape. AGB C production peaks 
         \label{fig:y_agb}
 \end{figure*}
 
-\begin{figure}
-    \centering
-    \includegraphics[]{lin_cc_yields.pdf}
-    \caption{Similar to Fig.~\ref{fig:y_cc} except where the $x$-axis is linear in metallicity. Most CCSN yield tables of C are approximately linear in metallicity.}
-    \label{fig:lin_y_cc}
-\end{figure}
 
 
 
@@ -1008,9 +1002,6 @@ While our mass shift models are deliberately simple, they illustrate that the ob
 Adjusting our SN Ia DTD to a prescription that declines more rapidly with stellar population age would also linearize the [C/Mg]-[Mg/Fe] relation.
 However, recent GCE models indicate that abundance trends favour \add{the more extended DTD we adopt here} (see discussion in \citealt{palicio+2024} and \citealt{dubay+24}).
 
-\add{Fig.~\ref{fig:lin_y_cc} shows the CCSN yields of C except where the metallicity is linear (instead of logarithmic in Fig.~\ref{fig:y_cc})
-Given the current sampling of CCSN models in metallicity, all models are adequatly described by a linear model near solar metallicity.
-}
 
 \subsection{Star formation history and yield scale}
 
