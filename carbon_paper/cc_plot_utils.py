@@ -65,6 +65,7 @@ def plot_y_cc(ele='c', ele2=None,
         scale = 1,
         xscale = "log",
         yscale = "lin",
+        ax=plt.gca(),
               ):
 
     labels = [r"LC18, $v_{\rm rot}=0\;{\rm km\,s^{-1}}$", 
@@ -115,7 +116,7 @@ def plot_y_cc(ele='c', ele2=None,
             y = linear_to_log10(y)
 
         # handle points outside xrange
-        xlim = plt.gca().get_xlim()
+        xlim = ax.get_xlim()
         err_width = 0.05 * (xlim[1] - xlim[0])
 
         if np.any(x < xlim[0]):
@@ -125,9 +126,9 @@ def plot_y_cc(ele='c', ele2=None,
                 y0 = y[idx]
                 print(x0, y0)
 
-                plt.errorbar(x0, y0, xerr=[err_width], fmt=".", color=color, 
+                ax.errorbar(x0, y0, xerr=[err_width], fmt=".", color=color, 
                              xuplims=True, capsize=0)
-                plt.scatter(x0, y0, marker=marker, color=color, ec=color, lw=1, s=sizes[i])
+                ax.scatter(x0, y0, marker=marker, color=color, ec=color, lw=1, s=sizes[i])
         if np.any(x > xlim[1]):
             for idx in np.where(x > xlim[1])[0]:
                 print(x[idx])
@@ -135,13 +136,13 @@ def plot_y_cc(ele='c', ele2=None,
                 y0 = y[idx]
                 print(x0, y0)
 
-                plt.errorbar(x0, y0, xerr=[err_width], fmt=".", color=color, 
+                ax.errorbar(x0, y0, xerr=[err_width], fmt=".", color=color, 
                              xlolims=True, capsize=0)
-                plt.scatter(x0, y0, marker=marker, color=color, ec=color, lw=1, s=sizes[i])
+                ax.scatter(x0, y0, marker=marker, color=color, ec=color, lw=1, s=sizes[i])
 
 
         # plot the points
-        plt.scatter(x, y, 
+        ax.scatter(x, y, 
                 ec=color, label=label, lw=1, fc=facecolor, 
                     marker=marker, s=sizes[i])
 
@@ -160,7 +161,7 @@ def plot_y_cc_mcmc(samples, thin=100, M_H=np.linspace(-0.5, 0.5, 1000), color="b
 
     for i, sample in samples[::thin].iterrows():
         yt = sample.y0_cc * ys_z0 + sample.zeta_cc * ys_z1 #+ sample.A_cc * ys_z2 
-        plt.plot(M_H, yt , color=color, alpha=alpha, rasterized=False)
+        ax.plot(M_H, yt , color=color, alpha=alpha, rasterized=False)
     
 
 def plot_c_mg_mcmc(samples, thin=100, M_H=np.linspace(-0.5, 0.5, 1000), color="black", alpha=None):
@@ -180,7 +181,7 @@ def plot_c_mg_mcmc(samples, thin=100, M_H=np.linspace(-0.5, 0.5, 1000), color="b
 
 
 
-def plot_analy(scale = 1, xscale="log", yscale="lin"):
+def plot_analy(scale = 1, xscale="log", yscale="lin", ax=plt.gca()):
     """Plot fiducial C CC yield"""
     m_h = np.linspace(-5, 1, 1000)
     Z = gcem.MH_to_Z(m_h)
@@ -195,11 +196,11 @@ def plot_analy(scale = 1, xscale="log", yscale="lin"):
     elif yscale == "log":
         y = linear_to_log10(y)
 
-    plt.plot(x, y, color="k", ls="-", zorder=-2, label="Fiducial")
+    ax.plot(x, y, color="k", ls="-", zorder=-2, label="Fiducial")
 
     
 
-def plot_c11(scale=1, xscale="log", yscale="lin"):
+def plot_c11(scale=1, xscale="log", yscale="lin", ax=plt.gca()):
     """Plot the cristallo ++ yield with metallicity"""
 
     vice.yields.agb.settings["c"] = surp.agb_interpolator.interpolator("c", study="cristallo11")
@@ -224,5 +225,5 @@ def plot_c11(scale=1, xscale="log", yscale="lin"):
         y = ys*scale
     elif yscale == "log":
         y = linear_to_log10(ys*scale)
-    plt.plot(x, y, label="Fruity (AGB)", color=arya.COLORS[-1])
+    ax.plot(x, y, label="Fruity (AGB)", color=arya.COLORS[-1])
     
