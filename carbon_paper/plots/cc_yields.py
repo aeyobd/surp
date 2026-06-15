@@ -41,16 +41,19 @@ plt.ylabel(r"integrated massive-star C yield $[\times10^{-4}]$")
 
 
 # inset axis
-ax_in = ax.inset_axes((0.1, 0.6, 0.3, 0.3))
+ax_in = ax.inset_axes((0.1, 0.6, 0.4, 0.35))
 
 scale = 1e4
 ax_in.set_xlim(0.0, 2)
 ax_in.set_ylim(1e-12, 80)
 
-plot_y_cc(scale=scale, xscale="lin", ax=ax_in)
+plot_y_cc(scale=scale, xscale="lin", ax=ax_in,
+        sizes = [15, 15, 15, 15, 15, 15, 15],
+          )
 plot_c11(scale=scale, xscale="lin", ax=ax_in)
 plot_analy(scale=scale, xscale="lin", ax=ax_in)
 ax_in.set_xlabel(r"$Z/Z_\odot$", fontsize=8)
+#ax_in.xaxis.set_label_coords(0.0, -0.15)
 ax_in.tick_params(which="major", labelsize=6.4)
 
 

@@ -69,7 +69,7 @@ def colored_line(x, y, c, ax, **lc_kwargs):
 
 
 
-def plot_tracks(h, ax = plt.gca(), Rs = np.arange(2, 15), x="MG_H", y="C_MG", c="time"):
+def plot_tracks(h, ax = plt.gca(), Rs = np.arange(2, 16), x="MG_H", y="C_MG", c="time"):
     for R in Rs:
         df = h[np.isclose(h.R, R - 0.05)][1:]
         xs = df[x]
@@ -82,7 +82,7 @@ def plot_tracks(h, ax = plt.gca(), Rs = np.arange(2, 15), x="MG_H", y="C_MG", c=
 
 
 
-def plot_labels(h, Rs = [4, 8, 12], offsets = None, labels = None, x="MG_H", y="C_MG"):
+def plot_labels(h, Rs = [4, 8, 12], offsets = None, labels = None, x="MG_H", y="C_MG", **kwargs):
 
     if offsets is None:
         offsets = [(0., 0.) for _ in range(len(Rs))]
@@ -103,8 +103,11 @@ def plot_labels(h, Rs = [4, 8, 12], offsets = None, labels = None, x="MG_H", y="
         offset = offsets[i]
 
         text = plt.annotate(labels[i], xy=(xs, ys),  
-            zorder=20, ha="center", va="bottom",  xycoords='data', 
-            textcoords='offset points', xytext=offset)
+            zorder=20, xycoords='data', 
+            textcoords='offset points', xytext=offset, 
+            arrowprops=dict(color='black', arrowstyle="-", linewidth=1, shrinkA=0),
+            **kwargs
+        )
 
 
 
@@ -117,7 +120,8 @@ def make_plot(h):
     plt.sca(axs[0])
 
     plot_tracks(h, ax=axs[0])
-    plot_labels(h, Rs=[4,8,12], labels=["4 kpc", "8", "12"])
+    plot_labels(h, Rs=[4,8,12], labels=["4 kpc", "8", "12"], 
+                offsets=[(-20, 10), (-2, 15), (0, 15)])
 
     plt.xlim(-2.5, 0.7)
     plt.xlabel("[Mg/H]")
@@ -129,7 +133,7 @@ def make_plot(h):
     plt.sca(axs[1])
 
     plot_tracks(h, x="MG_FE", y="C_MG", ax=axs[1])
-    plot_labels(h, x="MG_FE", y="C_MG", offsets=[(0,0), (0,0), (6,0)])
+    plot_labels(h, x="MG_FE", y="C_MG", offsets=[(-20,0), (-20,0), (-20,-5)], va="center")
 
     plt.xlim(-0.06, 0.48)
     plt.ylim(-0.55, 0.05)
